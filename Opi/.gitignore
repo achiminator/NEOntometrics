@@ -1,0 +1,4 @@
+/target/
+/ontometrics.war
+/data/
+/docker-compose.yml

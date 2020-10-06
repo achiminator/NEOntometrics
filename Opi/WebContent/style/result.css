@@ -1,0 +1,99 @@
+div.base_metrics {
+	background-color: #f4f4f4;
+}
+
+
+div.metric_body {
+	background-color: #e0e0e0;
+}
+
+div.metric_header_line {
+	display: flex;
+	justify-content: space-between;
+	padding-left: 0px;
+	padding-top: 35px;
+	padding-bottom: 4px;
+}
+
+div.metric_header {
+	width: 500px;
+	font-size: 25px;
+	display: inline-block;
+	font-weight: bold;
+	padding-top: 7px;
+	padding-bottom: 2px;
+	padding-left: 0px;
+}
+
+div.sub_metric_header {
+	width: 500px;
+	font-size: 21px;
+	display: inline-block;
+	font-weight: bold;
+	padding-top: 7px;
+	padding-bottom: 2px;
+	padding-left: 0px;
+}
+
+div.toggleBtn {
+	display: inline-block;
+	vertical-align: baseline;
+	text-align: justify;
+	font-size: 20px;
+	padding-top: 5px;
+}
+
+div.hideShowDiv {
+	padding-top: 5px;
+	padding-bottom: 4px;
+}
+
+p.hint {
+	padding-top: 0px;
+	padding-bottom: 12px;
+	margin: 0px;
+}
+
+input.classMetricCB {
+	margin: 0px;
+}
+
+div.classMetricArea {
+	padding: 0px;
+}
+
+div.classMetricContent {
+	padding: 0px;
+}
+
+
+div.space {
+	display: inline-block;
+	vertical-align: baseline;
+	text-align: justify;
+	padding-right: 400px;
+}
+
+div.warnings {
+	
+}
+
+div.errors {
+	padding: 0px;
+}
+
+table.metric_result {
+	
+}
+
+
+a.wiki_link {
+	color: #000000;
+	font-size: 20px;
+	text-decoration: underline;
+}
+
+a.wiki_link:hover {
+	color: #004A99;
+	text-decoration: underline;
+}

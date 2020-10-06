@@ -1,0 +1,41 @@
+
+from rest.git import GitHandler
+from rest.opiHandler import OpiHandler
+from django.shortcuts import render
+from rest_framework.views import APIView
+#from rest_framework.renderers import 
+from rest_framework.response import Response
+from rest_framework.request import Request
+from rest_framework.exceptions import APIException, ParseError
+
+# Create your views here.
+
+class CalculateMetric(APIView):
+    def get(self, request, format=None):
+        opi = OpiHandler
+        url = request.GET.get("url")
+        xmlDict = opi.opiUrlRequest(url)
+        return(Response(xmlDict))
+
+
+class CalculateGitMetric(APIView):
+    def get(self, request: Request, format=None):
+        try:
+            if "classMetrics" in request.query_params:
+                classMetrics = bool(request.query_params["classMetrics"])
+            else:
+                classMetrics = False
+            if "branch" in request.query_params:
+                branch = request.query_params["branch"]
+            else:
+                branch = "master"
+            repository = request.query_params["repository"]
+            targetLocation = request.query_params["target"]
+        except KeyError as identifier:
+            print(identifier)
+            raise ParseError("Wrong Input parameter! Check Documentation")
+            
+        
+        gitHandler = GitHandler()
+        metrics = gitHandler.getObject(repositoryUrl=repository, objectLocation=targetLocation, branch=branch, classMetrics=classMetrics)
+        return(Response(metrics))
