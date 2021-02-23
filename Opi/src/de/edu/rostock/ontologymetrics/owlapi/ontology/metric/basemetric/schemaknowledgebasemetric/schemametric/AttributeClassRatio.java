@@ -27,7 +27,10 @@ public class AttributeClassRatio extends SchemaMetric {
 		// new
 		// for (OWLClass cls : ontology.getClassesInSignature(true)) {
 		for (OWLClass cls : ontology.getClassesInSignature(OntologyUtility.ImportClosures(true))) { // new
-			for (OWLDataProperty dataProperty : cls.getDataPropertiesInSignature()) {
+		System.out.println(cls.getIRI());
+		System.out.println(cls.getNestedClassExpressions());
+		System.out.println(cls.getDataPropertiesInSignature());
+		    for (OWLDataProperty dataProperty : cls.getDataPropertiesInSignature()) {
 				// exklusiv-oder
 				if (dataProperty.isOWLDataProperty() ^ dataProperty.isOWLObjectProperty()) {
 					classesWithAttributes++;
