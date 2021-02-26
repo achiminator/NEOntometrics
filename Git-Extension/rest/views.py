@@ -20,6 +20,7 @@ class CalculateMetric(APIView):
 
 class CalculateGitMetric(APIView):
     def get(self, request: Request, format=None):
+        targetLocation = ""
         try:
             if "classMetrics" in request.query_params:
                 classMetrics = str2bool(request.query_params["classMetrics"])
@@ -30,14 +31,18 @@ class CalculateGitMetric(APIView):
             else:
                 branch = "master"
             repository = request.query_params["repository"]
-            targetLocation = request.query_params["target"]
+            if "target" in request.query_params:
+                targetLocation = request.query_params["target"]
         except KeyError as identifier:
             print(identifier)
             raise ParseError("Wrong Input parameter! Check Documentation")
         
         
         gitHandler = GitHandler()
-        metrics = gitHandler.getObject(repositoryUrl=repository, objectLocation=targetLocation, branch=branch, classMetrics=classMetrics)
+        if targetLocation != "":
+            metrics = gitHandler.getObject(repositoryUrl=repository, objectLocation=targetLocation, branch=branch, classMetrics=classMetrics)
+        else:
+            metrics = gitHandler.getObjects(repositoryUrl=repository, branch=branch, classMetrics=classMetrics)
         return(Response(metrics))
 
 def str2bool(v: str) -> bool:

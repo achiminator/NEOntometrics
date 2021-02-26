@@ -23,14 +23,48 @@ class GitHandler:
         """
         logger = logging.getLogger(__name__)
         #Creates a folder for the git-Repository based on the hash of the repository URL.
-        #internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))#
-        internalOntologyUrl = "ontologies/" + str(-8901500850878917509)
+        internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))#
         if(path.exists(internalOntologyUrl) == False):
             Git.clone_repository(repositoryUrl, internalOntologyUrl, checkout_branch=branch)
             logger.debug("Repository cloned at "+ internalOntologyUrl)       
         repo = Git.Repository(internalOntologyUrl)
         metrics = self.getOntologyMetrics(objectLocation, classMetrics, internalOntologyUrl, repositoryUrl, branch, repo)
-        # rmtree(internalOntologyUrl, ignore_errors=True)
+        rmtree(internalOntologyUrl, ignore_errors=True)
+        
+        return(metrics)
+
+    def getObjects(self, repositoryUrl: str,  branch="master", classMetrics=False) -> dict:
+        """Analysis all ontology files in a git Repository
+
+        Args:
+            repositoryUrl (string): URL to remote Repository
+            objectLocation (string): relative path to targeted ontology file in Repository
+            branch (str, optional): selected branch. Defaults to "master".
+            classMetrics (bool, optional): Enables the calculation of Class Metrics (Computational Expensive). Defaults to False.
+
+        Returns:
+            dict: Evolutional Ontology Metrics
+        """
+        logger = logging.getLogger(__name__)
+        #Creates a folder for the git-Repository based on the hash of the repository URL.
+        internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))
+        #internalOntologyUrl = "ontologies/" + "-8901500850878917509"
+        if(path.exists(internalOntologyUrl) == False):
+            Git.clone_repository(repositoryUrl, internalOntologyUrl, checkout_branch=branch)
+            logger.debug("Repository cloned at "+ internalOntologyUrl)       
+        repo = Git.Repository(internalOntologyUrl)
+        index = repo.index
+        index.read()
+        metrics = []
+        for item in index:
+            if(item.path.endswith((".ttl", ".owl", ".rdf"))):
+                logger.debug("Analyse Ontology: "+item.path)
+                print("Analyse Ontology: "+item.path)
+                metrics.append(self.getOntologyMetrics(item.path, classMetrics, internalOntologyUrl, repositoryUrl, branch, repo))
+        
+        #for()    
+        #metrics = self.getOntologyMetrics(objectLocation, classMetrics, internalOntologyUrl, repositoryUrl, branch, repo)
+        rmtree(internalOntologyUrl, ignore_errors=True)
         
         return(metrics)
 
@@ -70,6 +104,7 @@ class GitHandler:
                     formerObj = self.getFittingObject(objectLocation, commit.tree)
                     returnObject = {}
                     # Commit-Metadata
+                    returnObject["Ontology"] = objectLocation
                     returnObject["CommitTime"] = datetime.fromtimestamp(commit.commit_time)
                     returnObject["CommitMessage"] = commit.message
                     returnObject["AuthorName"] = commit.author.name
