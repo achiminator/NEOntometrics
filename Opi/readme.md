@@ -1,7 +1,7 @@
 # Ontology Programming Interface *(Opi*)
 
 ## Requirements
-OPI is build on the OWL-API and Apache Tomcat. To get the application up and running, install the necessary dependencies using maven.
+OPI is build on the OWL-API and Apache Tomcat. To get the application up and running, install the necessary dependencies using maven. Please be aware that Docker is using a `.war` file. If you'd like to push a new version of OPI to your Docker Service Orchestration, please also export the `.war` file to the Opi-Root as stated in the Dockerfile.
 
 ## Using OPI
 To evaluate an ontology from a web source, one can use a get request on the endpoint http://opi.informatik.uni-rostock.de/api with the parameter `?url` pointing to the ontological resource. The full request should look like the following example for a query to the friend of a friend ontology:
