@@ -1,9 +1,19 @@
 import requests as requestsLib
 import xmltodict
 class OpiHandler:
+    """Class for querying the Ontology Programming Interface (OPI)"""
     def opiUrlRequest(urlToOntology: str, classMetrics=False) -> dict:
+        """Make a URL to an OPI server and return a dict with the Ontology-Data .
+
+        Args:
+            urlToOntology (str): http-URL to OntologyFile
+            classMetrics (bool, optional): indicates whether the service shall compute individual Metrics for every class (Computational expensive). Defaults to False.
+
+        Returns:
+            dict: Ontology-Metrics
+        """
         OntoMetricsEndPoint = "http://opi.informatik.uni-rostock.de/api?url="
-        resp = requestsLib.get(OntoMetricsEndPoint + urlToOntology, headers = {"save": "false", "classMetrics": str(True)})
+        resp = requestsLib.get(OntoMetricsEndPoint + urlToOntology, headers = {"save": "false", "classMetrics": str(classMetrics)})
         if(resp.status_code != 200):
             print(resp.status_code)
         else:
@@ -13,6 +23,15 @@ class OpiHandler:
             return xmlDict
     
     def opiOntologyRequest(ontologyString: str, classMetrics=False) -> dict:
+        """Make a URL to an OPI server and return a dict with the Ontology-Data .
+
+        Args:
+            ontologyString (str): Ontology-Data
+            classMetrics (bool, optional): indicates whether the service shall compute individual Metrics for every class (Computational expensive). Defaults to False.
+
+        Returns:
+            dict: Ontology-Metrics
+        """
         OntoMetricsEndPoint = "http://opi.informatik.uni-rostock.de/api"#
         resp = requestsLib.post(url=OntoMetricsEndPoint, data=ontologyString, headers = {"save": "false", "classMetrics": str(classMetrics)})
         if (resp.status_code != 200):
@@ -29,8 +48,6 @@ class OpiHandler:
                     element.pop("@iri")
                     tmpClassList.append(element)
             xmlDict["OntologyMetrics"]["BaseMetrics"].pop("ClassMetrics")
-            xmlDict["OntologyMetrics"]["BaseMetrics"].update({"Classmetrics": tmpClassList})
-            
-            
+            xmlDict["OntologyMetrics"]["BaseMetrics"].update({"Classmetrics": tmpClassList})  
             return xmlDict
     

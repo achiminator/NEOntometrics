@@ -15,7 +15,9 @@ public class DLExpressivityMetric extends BaseMetric {
 	@Override
 	public String getValue() {
 		// MLIC new implemented
-		return (new DLExpressivity(ontology).getValue());
+	    DLExpressivity expr = new DLExpressivity(ontology);
+	    System.out.println(expr.recomputeMetric());
+		return (expr.getValue());
 	}
 
 	@Override
