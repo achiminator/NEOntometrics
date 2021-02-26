@@ -22,7 +22,7 @@ class CalculateGitMetric(APIView):
     def get(self, request: Request, format=None):
         try:
             if "classMetrics" in request.query_params:
-                classMetrics = bool(request.query_params["classMetrics"])
+                classMetrics = str2bool(request.query_params["classMetrics"])
             else:
                 classMetrics = False
             if "branch" in request.query_params:
@@ -34,8 +34,29 @@ class CalculateGitMetric(APIView):
         except KeyError as identifier:
             print(identifier)
             raise ParseError("Wrong Input parameter! Check Documentation")
-            
+        
         
         gitHandler = GitHandler()
         metrics = gitHandler.getObject(repositoryUrl=repository, objectLocation=targetLocation, branch=branch, classMetrics=classMetrics)
         return(Response(metrics))
+
+def str2bool(v: str) -> bool:
+    """Converts a String to a bool value
+
+    Args:
+        v (str): Input Value
+
+    Raises:
+        argparse.ArgumentTypeError: No Boolean Value detected
+
+    Returns:
+        bool: Boolean value
+    """
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')

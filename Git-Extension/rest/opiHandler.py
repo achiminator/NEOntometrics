@@ -47,7 +47,7 @@ class OpiHandler:
                     element["Classiri"] = element["@iri"]
                     element.pop("@iri")
                     tmpClassList.append(element)
-            xmlDict["OntologyMetrics"]["BaseMetrics"].pop("ClassMetrics")
-            xmlDict["OntologyMetrics"]["BaseMetrics"].update({"Classmetrics": tmpClassList})  
+                xmlDict["OntologyMetrics"]["BaseMetrics"].pop("ClassMetrics")
+                xmlDict["OntologyMetrics"]["BaseMetrics"].update({"Classmetrics": tmpClassList})  
             return xmlDict
     
