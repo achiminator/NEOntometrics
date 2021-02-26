@@ -9,7 +9,7 @@ from rest.opiHandler import OpiHandler
 class GitHandler:
     """Handles the Git-Based Ontology Analysis
     """
-    def getObject(self, repositoryUrl: string, objectLocation:string, branch="master", classMetrics=False) -> dict:
+    def getObject(self, repositoryUrl: str, objectLocation: str, branch="master", classMetrics=False) -> dict:
         """Analyses one ontology-file for evolutional ontology metrics
 
         Args:
@@ -21,21 +21,20 @@ class GitHandler:
         Returns:
             dict: Evolutional Ontology Metrics
         """
-            logger = logging.getLogger(__name__)
-            #Creates a folder for the git-Repository based on the hash of the repository URL.
-            #internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))#
-            internalOntologyUrl = "ontologies/" + str(-8901500850878917509)
-            if(path.exists(internalOntologyUrl) == False):
-                Git.clone_repository(repositoryUrl, internalOntologyUrl, checkout_branch=branch)
-                logger.debug("Repository cloned at "+ internalOntologyUrl)       
-            repo = Git.Repository(internalOntologyUrl)
-            
-            metrics = self.getOntologyMetrics(objectLocation, classMetrics, internalOntologyUrl, repositoryUrl, branch, repo)
-           # rmtree(internalOntologyUrl, ignore_errors=True)
-            
-            return(metrics)
+        logger = logging.getLogger(__name__)
+        #Creates a folder for the git-Repository based on the hash of the repository URL.
+        #internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))#
+        internalOntologyUrl = "ontologies/" + str(-8901500850878917509)
+        if(path.exists(internalOntologyUrl) == False):
+            Git.clone_repository(repositoryUrl, internalOntologyUrl, checkout_branch=branch)
+            logger.debug("Repository cloned at "+ internalOntologyUrl)       
+        repo = Git.Repository(internalOntologyUrl)
+        metrics = self.getOntologyMetrics(objectLocation, classMetrics, internalOntologyUrl, repositoryUrl, branch, repo)
+        # rmtree(internalOntologyUrl, ignore_errors=True)
+        
+        return(metrics)
 
-    def getOntologyMetrics(self, objectLocation: string, classMetrics: bool, internalOntologyUrl: string, remoteLocation: string, branch: string, repo: pygit2.Repository) -> dict:
+    def getOntologyMetrics(self, objectLocation: str, classMetrics: bool, internalOntologyUrl: str, remoteLocation: str, branch: str, repo: Git.Repository) -> dict:
         """Calculates Evolutional Ontology-Metrics for one ontology file and stores them into a database
 
         Args:
@@ -49,52 +48,52 @@ class GitHandler:
         Returns:
             dict: Repository with evolutional ontology-Metrics
         """        
-            #print(repo.url_str)                        
-            # Read the index of the repo for accessing the files
-            index = repo.index
-            index.read()
-            # Read the ID-representation of the requested File
-            fileId = index[objectLocation].id
-            # Access the RAW-Data of the File using its ID-representation as an identified      
-            file = repo.get(fileId)
-            opi = OpiHandler
-            formerObj= None
-            metricsDict = []
-           # returnBuilder["branch"] = branch
-            counter = 0
-            # Iterates through the Repository, finding the Commits
-            for commit in repo.walk(repo.head.target, Git.GIT_SORT_TIME | Git.GIT_SORT_REVERSE):
-                obj = self.getFittingObject(objectLocation, commit.tree)
-                if obj != None:
-                    if(formerObj != self.getFittingObject(objectLocation, commit.tree)):
-                        counter += 1
-                        formerObj = self.getFittingObject(objectLocation, commit.tree)
-                        returnObject = {}
-                        # Commit-Metadata
-                        returnObject["CommitTime"] = datetime.fromtimestamp(commit.commit_time)
-                        returnObject["CommitMessage"] = commit.message
-                        returnObject["AuthorName"] = commit.author.name
-                        returnObject["AuthorEmail"] = commit.author.email
-                        returnObject["CommitterName"] = commit.committer.name
-                        returnObject["CommiterEmail"] = commit.committer.email
-                        returnObject.update(opi.opiOntologyRequest(obj.data, classMetrics=classMetrics))    
-                        metricsDict.append(returnObject)
-            
-            # Write Metrics in Database
-            sourceModel = Source.objects.create(fileName=objectLocation, repository=remoteLocation,branch=branch)
-            for commitMetrics in metricsDict:
-                metricsModel = Metrics.objects.create(CommitTime = commitMetrics["CommitTime"], metricSource=sourceModel)                
-                modelDict = self.commit2MetricsModel(commitMetrics)
-                metricsModel.__dict__.update(modelDict)
-                metricsModel.save()
-                if(classMetrics):
-                    for classMetricsValues in commitMetrics["OntologyMetrics"]["BaseMetrics"]["Classmetrics"]:
-                        """classMetricsModel = classMetricsValues.objects.create(metric = metricsModel)
-                        classMetricsModel.__dict__.update(classMetricsValues)
-                        classMetricsModel.save()"""
-                        
-            
-            return(metricsDict)
+        #print(repo.url_str)                        
+        # Read the index of the repo for accessing the files
+        index = repo.index
+        index.read()
+        # Read the ID-representation of the requested File
+        fileId = index[objectLocation].id
+        # Access the RAW-Data of the File using its ID-representation as an identified      
+        file = repo.get(fileId)
+        opi = OpiHandler
+        formerObj= None
+        metricsDict = []
+        # returnBuilder["branch"] = branch
+        counter = 0
+        # Iterates through the Repository, finding the Commits
+        for commit in repo.walk(repo.head.target, Git.GIT_SORT_TIME | Git.GIT_SORT_REVERSE):
+            obj = self.getFittingObject(objectLocation, commit.tree)
+            if obj != None:
+                if(formerObj != self.getFittingObject(objectLocation, commit.tree)):
+                    counter += 1
+                    formerObj = self.getFittingObject(objectLocation, commit.tree)
+                    returnObject = {}
+                    # Commit-Metadata
+                    returnObject["CommitTime"] = datetime.fromtimestamp(commit.commit_time)
+                    returnObject["CommitMessage"] = commit.message
+                    returnObject["AuthorName"] = commit.author.name
+                    returnObject["AuthorEmail"] = commit.author.email
+                    returnObject["CommitterName"] = commit.committer.name
+                    returnObject["CommiterEmail"] = commit.committer.email
+                    returnObject.update(opi.opiOntologyRequest(obj.data, classMetrics=classMetrics))    
+                    metricsDict.append(returnObject)
+        
+        # Write Metrics in Database
+        sourceModel = Source.objects.create(fileName=objectLocation, repository=remoteLocation,branch=branch)
+        for commitMetrics in metricsDict:
+            metricsModel = Metrics.objects.create(CommitTime = commitMetrics["CommitTime"], metricSource=sourceModel)                
+            modelDict = self.commit2MetricsModel(commitMetrics)
+            metricsModel.__dict__.update(modelDict)
+            metricsModel.save()
+            if(classMetrics):
+                for classMetricsValues in commitMetrics["OntologyMetrics"]["BaseMetrics"]["Classmetrics"]:
+                    """classMetricsModel = classMetricsValues.objects.create(metric = metricsModel)
+                    classMetricsModel.__dict__.update(classMetricsValues)
+                    classMetricsModel.save()"""
+                    
+        
+        return(metricsDict)
 
     def commit2MetricsModel(self, commitMetrics: dict) -> dict:
         """Flattens the nested Dict-Metrics to prepare it for a database write.
