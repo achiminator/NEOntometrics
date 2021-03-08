@@ -1,14 +1,18 @@
 import pygit2 as Git
-import logging
 from rest.models import Metrics, Source, ClassMetrics
 from os import path
 from shutil import rmtree
+import logging, copy
 from datetime import datetime
 from rest.opiHandler import OpiHandler
 
 class GitHandler:
     """Handles the Git-Based Ontology Analysis
     """
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(level=logging.DEBUG)
+
+
     def getObject(self, repositoryUrl: str, objectLocation: str, branch="master", classMetrics=False) -> dict:
         """Analyses one ontology-file for evolutional ontology metrics
 
@@ -21,15 +25,16 @@ class GitHandler:
         Returns:
             dict: Evolutional Ontology Metrics
         """
-        logger = logging.getLogger(__name__)
+        
         #Creates a folder for the git-Repository based on the hash of the repository URL.
         internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))#
+        internalOntologyUrl = "ontologies/" + "-6392204388905372066"
         if(path.exists(internalOntologyUrl) == False):
             Git.clone_repository(repositoryUrl, internalOntologyUrl, checkout_branch=branch)
-            logger.debug("Repository cloned at "+ internalOntologyUrl)       
+            self.logger.debug("Repository cloned at "+ internalOntologyUrl)       
         repo = Git.Repository(internalOntologyUrl)
         metrics = self.getOntologyMetrics(objectLocation, classMetrics, internalOntologyUrl, repositoryUrl, branch, repo)
-        rmtree(internalOntologyUrl, ignore_errors=True)
+        #rmtree(internalOntologyUrl, ignore_errors=True)
         
         return(metrics)
 
@@ -45,20 +50,20 @@ class GitHandler:
         Returns:
             dict: Evolutional Ontology Metrics
         """
-        logger = logging.getLogger(__name__)
+        
         #Creates a folder for the git-Repository based on the hash of the repository URL.
         internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))
         #internalOntologyUrl = "ontologies/" + "-8901500850878917509"
         if(path.exists(internalOntologyUrl) == False):
             Git.clone_repository(repositoryUrl, internalOntologyUrl, checkout_branch=branch)
-            logger.debug("Repository cloned at "+ internalOntologyUrl)       
+            self.logger.debug("Repository cloned at "+ internalOntologyUrl)       
         repo = Git.Repository(internalOntologyUrl)
         index = repo.index
         index.read()
         metrics = []
         for item in index:
             if(item.path.endswith((".ttl", ".owl", ".rdf"))):
-                logger.debug("Analyse Ontology: "+item.path)
+                self.logger.debug("Analyse Ontology: "+item.path)
                 print("Analyse Ontology: "+item.path)
                 metrics.append(self.getOntologyMetrics(item.path, classMetrics, internalOntologyUrl, repositoryUrl, branch, repo))
         
@@ -95,15 +100,35 @@ class GitHandler:
         metricsDict = []
         # returnBuilder["branch"] = branch
         counter = 0
+        commitList = []
         # Iterates through the Repository, finding the Commits
-        for commit in repo.walk(repo.head.target, Git.GIT_SORT_TIME | Git.GIT_SORT_REVERSE):
+        for commit in repo.walk(repo.head.target, Git.GIT_SORT_TOPOLOGICAL  | Git.GIT_SORT_REVERSE):
+            
             obj = self.getFittingObject(objectLocation, commit.tree)
             if obj != None:
-                if(formerObj != self.getFittingObject(objectLocation, commit.tree)):
+                if(formerObj != obj):
+                    formerObj = obj
                     counter += 1
-                    formerObj = self.getFittingObject(objectLocation, commit.tree)
+                    commitList.append(commit)
+        commitList.sort(key=lambda commit: datetime.fromtimestamp(commit.commit_time))
+                
+        print(counter)
+        #for commit in repo.walk(repo.head.target, Git.GIT_SORT_TOPOLOGICAL  | Git.GIT_SORT_REVERSE):
+        for commit in commitList:
+            obj = self.getFittingObject(objectLocation, commit.tree)
+            if obj != None:
+                if(formerObj != obj):
+                    #if(formerObj != None):
+                        #print(obj.diff(formerObj).delta.nfiles)
+                    print("_______________________")
+                    print(obj.size)
+                    branches = repo.branches.with_commit(commit)
+                    counter += 1
+                    formerObj = obj
                     returnObject = {}
+                    formerMetrics = {}
                     # Commit-Metadata
+                    returnObject["Branches"] = (list(branches))
                     returnObject["Ontology"] = objectLocation
                     returnObject["CommitTime"] = datetime.fromtimestamp(commit.commit_time)
                     returnObject["CommitMessage"] = commit.message
@@ -111,15 +136,28 @@ class GitHandler:
                     returnObject["AuthorEmail"] = commit.author.email
                     returnObject["CommitterName"] = commit.committer.name
                     returnObject["CommiterEmail"] = commit.committer.email
-                    returnObject.update(opi.opiOntologyRequest(obj.data, classMetrics=classMetrics))    
+                    returnObject["ReadingError"] = False
+                    self.logger.debug("Date: " + str(returnObject["CommitTime"]))
+                    self.logger.debug("Commit:" + commit.message)
+                    try:
+                      #  opiMetrics = opi.opiOntologyRequest(obj.data, classMetrics=classMetrics)
+                      #  returnObject.update(opiMetrics)    
+                        self.logger.debug("Ontology Analyzed Successfully")
+                    except:
+                        # A reading Error occurs, e.g., if an ontology does not conform to a definied ontology standard and cannot be parsed
+                        self.logger.warning("Ontology not Readable")
+                        returnObject["ReadingError"] = True
+                    # Only append the new measurements if the new item contains different measurements than the item before
+                 #   if(opiMetrics != formerMetrics):
                     metricsDict.append(returnObject)
-        
+                 #       formerMetrics = copy.deepcopy(opiMetrics)
+
         # Write Metrics in Database
         sourceModel = Source.objects.create(fileName=objectLocation, repository=remoteLocation,branch=branch)
         for commitMetrics in metricsDict:
             metricsModel = Metrics.objects.create(CommitTime = commitMetrics["CommitTime"], metricSource=sourceModel)                
-            modelDict = self.commit2MetricsModel(commitMetrics)
-            metricsModel.__dict__.update(modelDict)
+        #    modelDict = self.commit2MetricsModel(commitMetrics)
+         #   metricsModel.__dict__.update(modelDict)
             metricsModel.save()
             if(classMetrics):
                 for classMetricsValues in commitMetrics["OntologyMetrics"]["BaseMetrics"]["Classmetrics"]:
@@ -127,7 +165,7 @@ class GitHandler:
                     classMetricsModel.__dict__.update(classMetricsValues)
                     classMetricsModel.save()"""
                     
-        
+        print(len(metricsDict))
         return(metricsDict)
 
     def commit2MetricsModel(self, commitMetrics: dict) -> dict:
@@ -146,15 +184,18 @@ class GitHandler:
         tmpDict["AuthorEmail"] = commitMetrics["AuthorEmail"]
         tmpDict["CommitterName"] = commitMetrics["CommitterName"]
         tmpDict["CommiterEmail"] = commitMetrics["CommiterEmail"]
-        tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Basemetrics"])
-        tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Classaxioms"])
-        tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Objectpropertyaxioms"])
-        tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Datapropertyaxioms"])
-        tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Individualaxioms"])
-        tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Annotationaxioms"])
-        tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Schemametrics"])
-        tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Knowledgebasemetrics"])
-        tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Graphmetrics"])
+        tmpDict["ReadingError"] = commitMetrics["ReadingError"]
+        a = commitMetrics["ReadingError"]
+        if not commitMetrics["ReadingError"]:
+            tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Basemetrics"])
+            tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Classaxioms"])
+            tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Objectpropertyaxioms"])
+            tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Datapropertyaxioms"])
+            tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Individualaxioms"])
+            tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Annotationaxioms"])
+            tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Schemametrics"])
+            tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Knowledgebasemetrics"])
+            tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Graphmetrics"])
         return tmpDict
     
     def getFittingObject(self, searchObj, commitTree):

@@ -32,10 +32,10 @@ class OpiHandler:
         Returns:
             dict: Ontology-Metrics
         """
-        OntoMetricsEndPoint = "http://opi.informatik.uni-rostock.de/api"#
+        OntoMetricsEndPoint = "http://opi.informatik.uni-rostock.de/api"
         resp = requestsLib.post(url=OntoMetricsEndPoint, data=ontologyString, headers = {"save": "false", "classMetrics": str(classMetrics)})
         if (resp.status_code != 200):
-            print(resp.status_code)
+            raise Exception(resp.text)
         else:
             xmlText = resp.text.replace("\n", "")
             xmlDict = xmltodict.parse(xmlText,)

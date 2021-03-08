@@ -19,6 +19,7 @@ class Metrics(models.Model):
     CommiterEmail = models.EmailField(default=None, null=True)
     CommitterName = models.TextField(max_length=150, default=None, null=True)
     # metrics = models.TextField(default=None)
+    ReadingError = models.BooleanField(default=False)
     Axioms = models.PositiveBigIntegerField(default=0)
     Logicalaxiomscount = models.PositiveBigIntegerField(default=0)
     Classcount = models.PositiveIntegerField(default=0)

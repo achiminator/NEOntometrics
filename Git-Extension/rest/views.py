@@ -43,6 +43,7 @@ class CalculateGitMetric(APIView):
             metrics = gitHandler.getObject(repositoryUrl=repository, objectLocation=targetLocation, branch=branch, classMetrics=classMetrics)
         else:
             metrics = gitHandler.getObjects(repositoryUrl=repository, branch=branch, classMetrics=classMetrics)
+            
         return(Response(metrics))
 
 def str2bool(v: str) -> bool:
