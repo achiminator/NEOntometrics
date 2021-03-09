@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from django.db import models
 
 # Create your models here.
@@ -109,3 +110,116 @@ class ClassMetrics(models.Model):
     Classinstancescount = models.PositiveSmallIntegerField(default = 0)
     Classpropertiescount = models.PositiveSmallIntegerField(default = 0)
 
+=======
+from django.db import models
+
+# Create your models here.
+
+
+class Source(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    repository = models.CharField(max_length=350)
+    fileName = models.CharField(max_length=500)
+    branch = models.CharField(max_length=150)
+
+
+class Metrics(models.Model):
+    metricSource = models.ForeignKey(Source, on_delete=models.CASCADE)
+    CommitTime = models.DateTimeField(default=None, null=True)
+    CommitMessage = models.TextField(default=None, null=True)
+    AuthorEmail = models.EmailField(default=None, null=True)
+    AuthorName = models.TextField(max_length=150, default=None, null=True)
+    CommiterEmail = models.EmailField(default=None, null=True)
+    CommitterName = models.TextField(max_length=150, default=None, null=True)
+    # metrics = models.TextField(default=None)
+    ReadingError = models.BooleanField(default=False)
+    Axioms = models.PositiveBigIntegerField(default=0)
+    Logicalaxiomscount = models.PositiveBigIntegerField(default=0)
+    Classcount = models.PositiveIntegerField(default=0)
+    Totalclassescount = models.PositiveIntegerField(default=0)
+    Objectpropertycount = models.PositiveIntegerField(default=0)
+    Totalobjectpropertiescount = models.PositiveIntegerField(default=0)
+    Datapropertycount = models.PositiveIntegerField(default=0)
+    Totaldatapropertiescount = models.PositiveIntegerField(default=0)
+    Propertiescount = models.PositiveIntegerField(default=0)
+    Individualcount = models.PositiveIntegerField(default=0)
+    Totalindividualscount = models.PositiveIntegerField(default=0)
+    DLexpressivity = models.CharField(default="",blank=True, max_length=15)
+    SubClassOfaxiomscount = models.PositiveIntegerField(default=0)
+    Equivalentclassesaxiomscount = models.PositiveIntegerField(default=0)
+    Disjointclassesaxiomscount = models.PositiveIntegerField(default=0)
+    GCICount = models.PositiveIntegerField(default=0)
+    HiddenGCICount = models.PositiveIntegerField(default=0)
+    SubObjectPropertyOfaxiomscount = models.PositiveIntegerField(default=0)
+    Equivalentobjectpropertiesaxiomscount = models.PositiveIntegerField(default=0)
+    Inverseobjectpropertiesaxiomscount = models.PositiveIntegerField(default=0)
+    Disjointobjectpropertiesaxiomscount = models.PositiveIntegerField(default=0)
+    Functionalobjectpropertiesaxiomscount = models.PositiveIntegerField(default=0)
+    Inversefunctionalobjectpropertiesaxiomscount = models.PositiveIntegerField(
+        default=0
+    )
+    Transitiveobjectpropertyaxiomscount = models.PositiveIntegerField(default=0)
+    Symmetricobjectpropertyaxiomscount = models.PositiveIntegerField(default=0)
+    Asymmetricobjectpropertyaxiomscount = models.PositiveIntegerField(default=0)
+    Reflexiveobjectpropertyaxiomscount = models.PositiveIntegerField(default=0)
+    Irreflexiveobjectpropertyaxiomscount = models.PositiveIntegerField(default=0)
+    Objectpropertydomainaxiomscount = models.PositiveIntegerField(default=0)
+    SubPropertyChainOfaxiomscount = models.PositiveIntegerField(default=0)
+    SubDataPropertyOfaxiomscount = models.PositiveIntegerField(default=0)
+    Equivalentdatapropertiesaxiomscount = models.PositiveIntegerField(default=0)
+    Disjointdatapropertiesaxiomscount = models.PositiveIntegerField(default=0)
+    Functionaldatapropertyaxiomscount = models.PositiveIntegerField(default=0)
+    Datapropertydomainaxiomscount = models.PositiveIntegerField(default=0)
+    DataPropertyrangeaxiomscount = models.PositiveIntegerField(default=0)
+    Classassertionaxiomscount = models.PositiveIntegerField(default=0)
+    Objectpropertyassertionaxiomscount = models.PositiveIntegerField(default=0)
+    Datapropertyassertionaxiomscount = models.PositiveIntegerField(default=0)
+    Negativeobjectpropertyassertionaxiomscount = models.PositiveIntegerField(
+        default=0
+    )
+    Negativedatapropertyassertionaxiomscount = models.PositiveIntegerField(default=0)
+    Sameindividualsaxiomscount = models.PositiveIntegerField(default=0)
+    Differentindividualsaxiomscount = models.PositiveIntegerField(default=0)
+    Annotationaxiomscount = models.PositiveIntegerField(default=0)
+    Annotationassertionaxiomscount = models.PositiveIntegerField(default=0)
+    Annotationpropertydomainaxiomscount = models.PositiveIntegerField(default=0)
+    Annotationpropertyrangeaxiomscount = models.PositiveIntegerField(default=0)
+    Attributerichness = models.FloatField(default=0)
+    Inheritancerichness = models.FloatField(default=0)
+    Relationshiprichness = models.FloatField(default=0)
+    Attributeclassratio = models.FloatField(default=0)
+    Equivalenceratio = models.FloatField(default=0)
+    Axiomclassratio = models.FloatField(default=0)
+    Inverserelationsratio = models.FloatField(default=0)
+    Classrelationratio = models.FloatField(default=0)
+    Averagepopulation = models.FloatField(default=0)
+    Classrichness = models.FloatField(default=0)
+    Absoluterootcardinality = models.PositiveSmallIntegerField(default=0)
+    Absoluteleafcardinality = models.PositiveSmallIntegerField(default=0)
+    Absolutesiblingcardinality = models.PositiveSmallIntegerField(default=0)
+    Absolutedepth = models.PositiveSmallIntegerField(default=0)
+    Averagedepth = models.FloatField(default=0)
+    Maximaldepth = models.PositiveSmallIntegerField(default=0)
+    Absolutebreadth = models.PositiveSmallIntegerField(default=0)
+    Averagebreadth = models.FloatField(default=0)
+    Maximalbreadth = models.PositiveSmallIntegerField(default=0)
+    Ratioofleaffanoutness = models.FloatField(default=0)
+    Ratioofsiblingfanoutness = models.FloatField(default=0)
+    Tangledness = models.FloatField(default=0)
+    Totalnumberofpaths = models.PositiveSmallIntegerField(default=0)
+    Averagenumberofpaths = models.FloatField(default=0)
+
+class ClassMetrics(models.Model):
+    metric = models.ForeignKey(Metrics, on_delete=models.CASCADE)
+    Classiri = models.CharField(default = None, null=True, max_length=400)
+    Classconnectivity = models.PositiveSmallIntegerField(default=0)
+    Classfulness = models.FloatField(default = 0)
+    Classimportance = models.FloatField(default = 0)
+    Classinheritancerichness = models.FloatField(default = 0)
+    Classreadability = models.PositiveSmallIntegerField(default = 0)
+    Classrelationshiprichness = models.PositiveSmallIntegerField(default = 0)
+    Classchildrencount = models.PositiveSmallIntegerField(default = 0)
+    Classinstancescount = models.PositiveSmallIntegerField(default = 0)
+    Classpropertiescount = models.PositiveSmallIntegerField(default = 0)
+
+>>>>>>> 62d05d48126ff5b77054d9241ccbd26e25686fef
