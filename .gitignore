@@ -1,6 +1,7 @@
 Git-Extension/docker-compose.yml
 Git-Extension/db.sqlite3
 Git-Extension/ontologies
+Git-Extension/__pycache__
 Opi/docker-compose.yml
 Opi/target/
 Opi/ontometrics.war
