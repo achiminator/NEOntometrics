@@ -3,10 +3,10 @@ from rest.git import GitHandler
 from rest.opiHandler import OpiHandler
 from django.shortcuts import render
 from rest_framework.views import APIView
-#from rest_framework.renderers import 
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.exceptions import APIException, ParseError
+import django_rq
 
 # Create your views here.
 
@@ -40,10 +40,12 @@ class CalculateGitMetric(APIView):
         
         gitHandler = GitHandler()
         if targetLocation != "":
-            metrics = gitHandler.getObject(repositoryUrl=repository, objectLocation=targetLocation, branch=branch, classMetrics=classMetrics)
+            metrics = django_rq.enqueue(gitHandler.getObject, repositoryUrl=repository, objectLocation=targetLocation, branch=branch, classMetrics=classMetrics)
+            #metrics = gitHandler.getObject(repositoryUrl=repository, objectLocation=targetLocation, branch=branch, classMetrics=classMetrics)
         else:
             metrics = gitHandler.getObjects(repositoryUrl=repository, branch=branch, classMetrics=classMetrics)
-        return(Response(metrics))
+            
+        return(Response(str(metrics)))
 
 def str2bool(v: str) -> bool:
     """Converts a String to a bool value

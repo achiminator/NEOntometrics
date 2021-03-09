@@ -15,10 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls import url, include
 from rest import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api', views.CalculateMetric.as_view()),
-    path('git', views.CalculateGitMetric.as_view())
+    path('git', views.CalculateGitMetric.as_view()),
+    path('django-rq/', include('django_rq.urls'))
 ]

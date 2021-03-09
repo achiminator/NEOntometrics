@@ -2,3 +2,9 @@ Git-Extension/docker-compose.yml
 Git-Extension/db.sqlite3
 Git-Extension/ontologies
 Opi/docker-compose.yml
+Opi/target/
+Opi/ontometrics.war
+Opi/build/
+Opi/target/
+Opi/data/
+Opi/docker-compose.yml

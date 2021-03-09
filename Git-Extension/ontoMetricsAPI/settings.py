@@ -39,8 +39,20 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest'
+    'rest',
+    'django_rq'
 ]
+
+RQ_QUEUES = {
+    'default': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+       # 'PASSWORD': 'some-password',
+        'DEFAULT_TIMEOUT': 360,
+    }
+}
+
 
 # REST_FRAMEWORK = {
 #     'DEFAULT_PARSER_CLASSES': [
