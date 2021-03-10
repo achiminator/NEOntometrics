@@ -8,4 +8,6 @@ Opi/ontometrics.war
 Opi/build/
 Opi/target/
 Opi/data/
+ontologies/
 Opi/docker-compose.yml
+.vscode
