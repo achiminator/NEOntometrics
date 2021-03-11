@@ -1,11 +1,11 @@
 import pygit2 as Git
-from rest.models import Metrics, Source, ClassMetrics
 from os import path
 from shutil import rmtree
 import logging, copy
 from datetime import datetime
 from rest.opiHandler import OpiHandler
 from django_rq import job
+from rest.DBHandler import DBHandler
 
 class GitHandler:
     """Handles the Git-Based Ontology Analysis
@@ -120,6 +120,7 @@ class GitHandler:
                     # Commit-Metadata
                     returnObject["Branches"] = (list(branches))
                     returnObject["Ontology"] = objectLocation
+                    returnObject["Repository"] = objectLocation
                     returnObject["CommitTime"] = datetime.fromtimestamp(commit.commit_time)
                     returnObject["CommitMessage"] = commit.message
                     returnObject["AuthorName"] = commit.author.name
@@ -141,50 +142,19 @@ class GitHandler:
                  
 
         # Write Metrics in Database
-        sourceModel = Source.objects.create(fileName=objectLocation, repository=remoteLocation,branch=branch)
-        for commitMetrics in metricsDict:
-            metricsModel = Metrics.objects.create(CommitTime = commitMetrics["CommitTime"], metricSource=sourceModel)                
-            modelDict = self.commit2MetricsModel(commitMetrics)
-            metricsModel.__dict__.update(modelDict)
-            metricsModel.save()
-            if(classMetrics):
-                for classMetricsValues in commitMetrics["OntologyMetrics"]["BaseMetrics"]["Classmetrics"]:
-                    classMetricsModel = classMetricsValues.objects.create(metric = metricsModel)
-                 #   classMetricsModel.__dict__.update(classMetricsValues)
-                  #  classMetricsModel.save()
-                    
+        dbhandler = DBHandler()
+        dbhandler.writeInDB(metricsDict, branch=branch, file=objectLocation, repo=remoteLocation)
+ 
         print(len(metricsDict))
         return(metricsDict)
+    # def outputWrapper(self, metricsDict: dict,) -> dict:
+    #     outputObject = {}
+    #     outputObject.update({
+    #         "Repository": repo,
+    #         "Ontology": ontology,
+    #         "Branch": branch
 
-    def commit2MetricsModel(self, commitMetrics: dict) -> dict:
-        """Flattens the nested Dict-Metrics to prepare it for a database write.
-
-        Args:
-            commitMetrics (dict): Calculated Ontology Metrics in nested structure
-
-        Returns:
-            dict: flattend Dict prepared for DB-write
-        """
-        tmpDict = {}
-        tmpDict["CommitTime"] = commitMetrics["CommitTime"]
-        tmpDict["CommitMessage"] = commitMetrics["CommitMessage"]
-        tmpDict["AuthorName"] = commitMetrics["AuthorName"]
-        tmpDict["AuthorEmail"] = commitMetrics["AuthorEmail"]
-        tmpDict["CommitterName"] = commitMetrics["CommitterName"]
-        tmpDict["CommiterEmail"] = commitMetrics["CommiterEmail"]
-        tmpDict["ReadingError"] = commitMetrics["ReadingError"]
-        a = commitMetrics["ReadingError"]
-        if not commitMetrics["ReadingError"]:
-            tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Basemetrics"])
-            tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Classaxioms"])
-            tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Objectpropertyaxioms"])
-            tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Datapropertyaxioms"])
-            tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Individualaxioms"])
-            tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Annotationaxioms"])
-            tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Schemametrics"])
-            tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Knowledgebasemetrics"])
-            tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Graphmetrics"])
-        return tmpDict
+    #     })
     
     def getFittingObject(self, searchObj, commitTree):
         """Finds specific File in git-commit-Object
