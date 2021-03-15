@@ -8,6 +8,7 @@ class Source(models.Model):
     repository = models.CharField(max_length=350)
     fileName = models.CharField(max_length=500)
     branch = models.CharField(max_length=150)
+    wholeRepositoryAnalyzed = models.BooleanField(default=False)
 
 
 class Metrics(models.Model):

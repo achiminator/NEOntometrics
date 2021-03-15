@@ -32,13 +32,13 @@ class GitHandler:
         internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))#
         internalOntologyUrl = "ontologies/" + "-6392204388905372066"
         if(path.exists(internalOntologyUrl) == False):
-            Git.clone_repository(repositoryUrl, internalOntologyUrl, checkout_branch=branch)
+            Git.clone_repository("http://"+ repositoryUrl, internalOntologyUrl, checkout_branch=branch)
             self.logger.debug("Repository cloned at "+ internalOntologyUrl)       
         repo = Git.Repository(internalOntologyUrl)
         metrics = self.getOntologyMetrics(objectLocation, classMetrics, internalOntologyUrl, repositoryUrl, branch, repo)
         #rmtree(internalOntologyUrl, ignore_errors=True)
         
-        return(metrics)
+        return(True)
     @job
     def getObjects(self, repositoryUrl: str,  branch="master", classMetrics=False) -> dict:
         """Analysis all ontology files in a git Repository
@@ -55,7 +55,7 @@ class GitHandler:
         
         #Creates a folder for the git-Repository based on the hash of the repository URL.
         internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))
-        #internalOntologyUrl = "ontologies/" + "-8901500850878917509"
+        internalOntologyUrl = "ontologies/" + "-6392204388905372066"
         if(path.exists(internalOntologyUrl) == False):
             Git.clone_repository(repositoryUrl, internalOntologyUrl, checkout_branch=branch)
             self.logger.debug("Repository cloned at "+ internalOntologyUrl)       
@@ -71,9 +71,11 @@ class GitHandler:
         
         #for()    
         #metrics = self.getOntologyMetrics(objectLocation, classMetrics, internalOntologyUrl, repositoryUrl, branch, repo)
-        rmtree(internalOntologyUrl, ignore_errors=True)
+        dbhandler = DBHandler()
+        dbhandler.setWholeRepoAnalyzed(repository=repositoryUrl)
+       # rmtree(internalOntologyUrl, ignore_errors=True)
         
-        return(metrics)
+        return(True)
 
     def getOntologyMetrics(self, objectLocation: str, classMetrics: bool, internalOntologyUrl: str, remoteLocation: str, branch: str, repo: Git.Repository) -> dict:
         """Calculates Evolutional Ontology-Metrics for one ontology file and stores them into a database

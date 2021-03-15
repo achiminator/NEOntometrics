@@ -1,6 +1,8 @@
 from urllib.parse import urlparse
 import re
 
+from pygit2 import repository
+
 class GitHelper:
     """HelperClass for Various supporting functions
     """    
@@ -27,9 +29,25 @@ class GitHelper:
             raise argparse.ArgumentTypeError('Boolean value expected.')
 
     def serializeJobId(input: str) -> str:
+        """Replaces the **/** of a string with __II__, as a slash triggers a fail of the django_rq frontend
+
+        Args:
+            input (str): URL to ontology
+
+        Returns:
+            str: URL with escaped **/** symbol
+        """
         return(input.replace("/", "__II__"))
 
     def deserializeJobId(input: str) -> str:
+        """Reverses the serializeJob-Method
+
+        Args:
+            input (str): Job-ID
+
+        Returns:
+            str: URL containing the request
+        """
         return(input.replace("__II__", "/"))
 class GitUrlParser:
     """Parses and stores the information for the Git-URL.
@@ -38,6 +56,7 @@ class GitUrlParser:
     repository =""
     url = ""
     file = ""
+    service = ""
     branch =""
     def parse(self, input: str):
         """Parses a Git-URL and saves it into Repository (git-service, including owner and repo). If a specific file is assessed,
@@ -48,11 +67,12 @@ class GitUrlParser:
 
         """
         self.url = input
+        urlParsed = urlparse(input)
         if("blob" in input):
             self.repository = input.split("blob")[0]
+            self.repository = self.repository[self.repository.index(urlParsed.netloc): -1]
             self.branch = input.split("blob")[1].split("/")[1]
             self.file = input.split("blob")[1][len(self.branch)+2:]
         else:
-            self.urlParsed = urlparse(input)
-            self.repository = re.findall("^(\/\w*\/\w*)", urlParsed.path)[0]
-        
+            self.repository =urlParsed.netloc + re.findall("^(\/\w*\/\w*)", urlParsed.path)[0]
+        self.service = urlParsed.netloc

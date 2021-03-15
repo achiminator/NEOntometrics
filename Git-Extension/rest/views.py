@@ -43,30 +43,72 @@ class CalculateGitMetric(APIView):
         except KeyError as identifier:
             print(identifier)
             raise ParseError("Wrong Input parameter! Check Documentation")
-        
         # At first check if the value is already stored in the database
         db = DBHandler()
-        metricFromDB = db.getMetricForOntology(file=url.file, repository=url.repository)
+        metricFromDB = db.getMetricForOntology(file=url.file, repository=url.repository, classMetrics=classMetrics)
         if(metricFromDB):
             logging.debug("Read Metrics from Database")
             return Response(metricFromDB)
         
         # If it is not already in the database, check the queue
-        if GitHelper.serializeJobId(url.url) in django_rq.get_queue():
-            logging.debug("Job is already in Queue")
-            return Response("In Queue!")
+        # The JobId is the ID of the task whithin the queue
+        jobId = GitHelper.serializeJobId(url.url)
+        if jobId in django_rq.get_queue().job_ids:
+            resp = self.getQueueAnswer(url, jobId)          
+            return Response(resp)
 
         logging.debug("Put job in queue")
         gitHandler = GitHandler()
         if url.file != '':
-            metrics = django_rq.enqueue(gitHandler.getObject, repositoryUrl=url.repository, objectLocation=url.file, branch=url.branch, classMetrics=classMetrics, job_id=GitHelper.serializeJobId(url.url))       
+            metrics = django_rq.enqueue(gitHandler.getObject, repositoryUrl=url.repository, objectLocation=url.file, branch=url.branch, classMetrics=classMetrics, job_id=jobId)       
         else:
-            metrics = django_rq.enqueue(gitHandler.getObjects, repositoryUrl=url.repository, branch=branch, classMetrics=classMetrics, job_id=GitHelper.serializeJobId(url.url))            
-        return(Response(GitHelper.deserializeJobId(str(metrics.id))))
+            metrics = django_rq.enqueue(gitHandler.getObjects, repositoryUrl= url.repository, classMetrics=classMetrics, job_id=jobId)            
+        return Response(self.getQueueAnswer(url, jobId))
+
+    def delete(self, request: Request, format=None):
+        targetLocation = ""
+        url = GitUrlParser()
+        try:
+            if "url" in request.query_params:
+                request.query_params["url"]
+                url.parse(request.query_params["url"])
+        except KeyError as identifier:
+            print(identifier)
+            raise ParseError("Wrong Input parameter! Check Documentation")
+        db = DBHandler()
+        metricFromDB = db.getMetricForOntology(file=url.file, repository=url.repository)
+        if (metricFromDB):
+            db.deleteMetric(file=url.file, repository=url.repository)
+        else:
+            raise ParseError("No fitting ontology in Database")
+        resp = {
+            "deleted": True,
+        }
+        resp.update(url.__dict__)
+        return(resp)
+    def getQueueAnswer(self, url: GitUrlParser, jobId: str) -> dict:
+        """Generates the response if the ontology to calculate is not yet finished
+
+        Args:
+            url (GitUrlParser): The GitUrlParser-Object containing information on the target repository/file
+            jobId (str): The Job-ID/Request URL
+
+        Returns:
+            dict: Output Dict ready for JSON-Serialization
+        """
+        logging.debug("Job" + url.url + " is already in Queue")
+        redis_conn = django_rq.get_connection()
+        job = django_rq.jobs.Job(jobId, redis_conn)
+        resp = {
+            "taskedFinished": False,
+            "queuePosition": django_rq.get_queue().get_job_position(job)}
+        resp.update(url.__dict__)
+        return resp
 
 class CalculatedMetrics(APIView):
     
     def get(self, request: Request, format=None):
+
         pass
     #     returnBuilder = {}
             
