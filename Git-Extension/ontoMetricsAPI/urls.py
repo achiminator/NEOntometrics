@@ -22,6 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api', views.CalculateMetric.as_view()),
     path('git', views.CalculateGitMetric.as_view()),
-    path('retrieve', views.CalculatedMetrics.as_view()),
     path('django-rq/', include('django_rq.urls'))
 ]

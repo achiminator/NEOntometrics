@@ -54,7 +54,7 @@ class CalculateGitMetric(APIView):
         # The JobId is the ID of the task whithin the queue
         jobId = GitHelper.serializeJobId(url.url)
         if jobId in django_rq.get_queue().job_ids:
-            resp = self.getQueueAnswer(url, jobId)          
+            resp = self.__getQueueAnswer__(url, jobId)          
             return Response(resp)
 
         logging.debug("Put job in queue")
@@ -63,7 +63,7 @@ class CalculateGitMetric(APIView):
             metrics = django_rq.enqueue(gitHandler.getObject, repositoryUrl=url.repository, objectLocation=url.file, branch=url.branch, classMetrics=classMetrics, job_id=jobId)       
         else:
             metrics = django_rq.enqueue(gitHandler.getObjects, repositoryUrl= url.repository, classMetrics=classMetrics, job_id=jobId)            
-        return Response(self.getQueueAnswer(url, jobId))
+        return Response(self.__getQueueAnswer__(url, jobId))
 
     def delete(self, request: Request, format=None):
         targetLocation = ""
@@ -86,7 +86,7 @@ class CalculateGitMetric(APIView):
         }
         resp.update(url.__dict__)
         return(resp)
-    def getQueueAnswer(self, url: GitUrlParser, jobId: str) -> dict:
+    def __getQueueAnswer__(self, url: GitUrlParser, jobId: str) -> dict:
         """Generates the response if the ontology to calculate is not yet finished
 
         Args:
@@ -99,27 +99,9 @@ class CalculateGitMetric(APIView):
         logging.debug("Job" + url.url + " is already in Queue")
         redis_conn = django_rq.get_connection()
         job = django_rq.jobs.Job(jobId, redis_conn)
+        jobPosition = django_rq.get_queue().get_job_position(job)
         resp = {
             "taskedFinished": False,
-            "queuePosition": django_rq.get_queue().get_job_position(job)}
+            "queuePosition": jobPosition if jobPosition != None else 0}
         resp.update(url.__dict__)
         return resp
-
-class CalculatedMetrics(APIView):
-    
-    def get(self, request: Request, format=None):
-
-        pass
-    #     returnBuilder = {}
-            
-    #         returnBuilder.update({"jobId": jobId})
-            
-    #         redis_conn = django_rq.get_connection()
-    #         job = django_rq.jobs.Job(jobId, redis_conn)
-            
-    #        # print(job.get_position())
-    #    #      quePosition = django_rq.get_queue().job_ids.index(jobId)
-    #         if(job.is_queued):
-    #             returnBuilder.update({"queuePosition": django_rq.get_queue().get_job_position(job)})
-    #         returnBuilder.update({})
-    #     return(Response(returnBuilder))

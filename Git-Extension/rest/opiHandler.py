@@ -2,7 +2,7 @@ import requests as requestsLib
 import xmltodict
 class OpiHandler:
     """Class for querying the Ontology Programming Interface (OPI)"""
-    def opiUrlRequest(urlToOntology: str, classMetrics=False) -> dict:
+    def opiUrlRequest(self, urlToOntology: str, classMetrics=False) -> dict:
         """Make a URL to an OPI server and return a dict with the Ontology-Data .
 
         Args:
@@ -22,7 +22,7 @@ class OpiHandler:
             xmlDict = xmltodict.parse(xmlText,)
             return xmlDict
     
-    def opiOntologyRequest(ontologyString: str, classMetrics=False) -> dict:
+    def opiOntologyRequest(self, ontologyString: str, classMetrics=False) -> dict:
         """Make a URL to an OPI server and return a dict with the Ontology-Data .
 
         Args:

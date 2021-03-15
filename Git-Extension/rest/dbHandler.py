@@ -50,7 +50,7 @@ class DBHandler:
             modelDict = self.__commit2MetricsModel__(commitMetrics)
             metricsModel.__dict__.update(modelDict)
             metricsModel.save()
-            if "OntologyMetrics" in commitMetrics:
+            if "Classmetrics" in commitMetrics["OntologyMetrics"]["BaseMetrics"]:
                 for classMetricsValues in commitMetrics["OntologyMetrics"]["BaseMetrics"]["Classmetrics"]:
                     classMetricsModel = ClassMetrics.objects.create(metric = metricsModel)
                     classMetricsModel.__dict__.update(classMetricsValues)

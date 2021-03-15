@@ -29,14 +29,13 @@ class GitHandler:
         """
         
         #Creates a folder for the git-Repository based on the hash of the repository URL.
-        internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))#
-        internalOntologyUrl = "ontologies/" + "-6392204388905372066"
+        internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))
         if(path.exists(internalOntologyUrl) == False):
             Git.clone_repository("http://"+ repositoryUrl, internalOntologyUrl, checkout_branch=branch)
             self.logger.debug("Repository cloned at "+ internalOntologyUrl)       
         repo = Git.Repository(internalOntologyUrl)
         metrics = self.getOntologyMetrics(objectLocation, classMetrics, internalOntologyUrl, repositoryUrl, branch, repo)
-        #rmtree(internalOntologyUrl, ignore_errors=True)
+      #  rmtree(internalOntologyUrl, ignore_errors=True)
         
         return(True)
     @job
@@ -55,7 +54,6 @@ class GitHandler:
         
         #Creates a folder for the git-Repository based on the hash of the repository URL.
         internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))
-        internalOntologyUrl = "ontologies/" + "-6392204388905372066"
         if(path.exists(internalOntologyUrl) == False):
             Git.clone_repository(repositoryUrl, internalOntologyUrl, checkout_branch=branch)
             self.logger.debug("Repository cloned at "+ internalOntologyUrl)       
@@ -68,13 +66,9 @@ class GitHandler:
                 self.logger.debug("Analyse Ontology: "+item.path)
                 print("Analyse Ontology: "+item.path)
                 metrics.append(self.getOntologyMetrics(item.path, classMetrics, internalOntologyUrl, repositoryUrl, branch, repo))
-        
-        #for()    
-        #metrics = self.getOntologyMetrics(objectLocation, classMetrics, internalOntologyUrl, repositoryUrl, branch, repo)
         dbhandler = DBHandler()
         dbhandler.setWholeRepoAnalyzed(repository=repositoryUrl)
-       # rmtree(internalOntologyUrl, ignore_errors=True)
-        
+        rmtree(internalOntologyUrl, ignore_errors=True)
         return(True)
 
     def getOntologyMetrics(self, objectLocation: str, classMetrics: bool, internalOntologyUrl: str, remoteLocation: str, branch: str, repo: Git.Repository) -> dict:
@@ -99,7 +93,7 @@ class GitHandler:
         fileId = index[objectLocation].id
         # Access the RAW-Data of the File using its ID-representation as an identified      
         file = repo.get(fileId)
-        opi = OpiHandler
+        opi = OpiHandler()
         formerObj= None
         metricsDict = []
         commitList = []

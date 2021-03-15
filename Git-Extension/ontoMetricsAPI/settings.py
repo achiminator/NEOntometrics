@@ -50,7 +50,7 @@ RQ_QUEUES = {
         'DB': 0,
        # 'PASSWORD': 'some-password',
         'DEFAULT_TIMEOUT': 360,
-        'ASYNC' : True
+        'ASYNC' : False
     }
 }
 
