@@ -86,7 +86,7 @@ class CalculateGitMetric(APIView):
             "deleted": True,
         }
         resp.update(url.__dict__)
-        return(resp)
+        return(Response(resp))
     def __getQueueAnswer__(self, url: GitUrlParser, jobId: str) -> dict:
         """Generates the response if the ontology to calculate is not yet finished
 
