@@ -59,6 +59,19 @@ class DBHandler:
         return sourceModel
 
     def getMetricForOntology(self, repository: str,file ="", branch = "master", classMetrics=False) -> dict:
+        """Retrieves Metric Calculation (for one ontology or whole Repo) from the database. 
+
+        Args:
+            repository (str): URL to Repository and service (e.g. github.com/ESIPFed/sweet/).
+            file (str, optional): URL to the target file within the repository (e.g. src/human.ttl). Defaults to "". If left empty, the whole repo will be analysed
+            branch (str, optional): branch to analyse. Defaults to "master".
+            classMetrics (bool, optional): If the class-metrics shall be retrieved as well. Defaults to False.
+
+        Raises:
+            Exception: Inconsistend Data in the DB
+        Returns:
+            dict: Array with the metrics. If no Metrics are found, the method returns an empty Dict {}
+        """
         if(file == ""):
             sourceData = Source.objects.filter(repository=repository, branch=branch, wholeRepositoryAnalyzed=1)
         else:
@@ -104,7 +117,13 @@ class DBHandler:
             metricsArray.append(returnDict)
         
         return metricsArray
-    def deleteMetric(self, repository, file=""):
+    def deleteMetric(self, repository: str, file=""):
+        """Deletes the metrics from the DB
+
+        Args:
+            repository (str): URL to Repository and service (e.g. github.com/ESIPFed/sweet/).
+            file (str, optional): URL to the target file within the repository (e.g. src/human.ttl). Defaults to "". If left empty, the whole repo will be deleted
+        """
         if(file == ""):
             repoMetrics = Source.objects.filter(repository = repository)
         else:

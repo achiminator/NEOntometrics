@@ -66,6 +66,7 @@ class CalculateGitMetric(APIView):
         return Response(self.__getQueueAnswer__(url, jobId))
 
     def delete(self, request: Request, format=None):
+
         targetLocation = ""
         url = GitUrlParser()
         try:
