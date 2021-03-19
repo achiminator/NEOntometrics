@@ -1,6 +1,7 @@
 import requests as requestsLib
-import xmltodict
+import xmltodict, os
 class OpiHandler:
+    OntoMetricsEndPoint = "http://{os.environ['opi']}/api"
     """Class for querying the Ontology Programming Interface (OPI)"""
     def opiUrlRequest(self, urlToOntology: str, classMetrics=False) -> dict:
         """Make a URL to an OPI server and return a dict with the Ontology-Data .
@@ -12,8 +13,8 @@ class OpiHandler:
         Returns:
             dict: Ontology-Metrics
         """
-        OntoMetricsEndPoint = "http://opi.informatik.uni-rostock.de/api?url="
-        resp = requestsLib.get(OntoMetricsEndPoint + urlToOntology, headers = {"save": "false", "classMetrics": str(classMetrics)})
+        
+        resp = requestsLib.get(self.OntoMetricsEndPoint + urlToOntology, headers = {"save": "false", "classMetrics": str(classMetrics)})
         if(resp.status_code != 200):
             print(resp.status_code)
         else:
@@ -32,8 +33,8 @@ class OpiHandler:
         Returns:
             dict: Ontology-Metrics
         """
-        OntoMetricsEndPoint = "http://opi.informatik.uni-rostock.de/api"
-        resp = requestsLib.post(url=OntoMetricsEndPoint, data=ontologyString, headers = {"save": "false", "classMetrics": str(classMetrics)})
+        
+        resp = requestsLib.post(url=self.OntoMetricsEndPoint, data=ontologyString, headers = {"save": "false", "classMetrics": str(classMetrics)})
         if (resp.status_code != 200):
             raise Exception(resp.text)
         else:

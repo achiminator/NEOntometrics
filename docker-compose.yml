@@ -1,0 +1,61 @@
+version: '3.4'
+services:
+  # Redis Image is necessary for the asyncronous scheduling in the docker application
+  redis-scheduler:
+    container_name: neonto_scheduler
+    image: redis
+    ports:
+      - '6379:6379'
+
+  # This is the main application for the git metric aggregation
+  neontometrics_api:
+    container_name: neontometrics_api
+    build: 
+      context: ./Git-Extension
+    image: neontometrics
+    # The starting of the mySQL-Database takes longer than the start up of the django webapp.
+    # Wait-for-it.sh ensures that the database is up and running before starting django.
+    command: python manage.py runserver 0.0.0.0:8000
+    #command: 'python manage.py runserver 0.0.0.0:8000' 
+    ports:
+      - '8002:8000'
+    depends_on:
+      - neontometrics_db
+    environment:
+      db_password: 'KMmsWrwRBBeQLXDO'
+      opi: "opi"
+
+  neontometrics_worker:
+    container_name: neontometrics_worker
+    image: neontometrics
+    command: python manage.py rqworker
+    depends_on:
+      - neontometrics_api
+      - neontometrics_db
+    environment:
+     db_password: 'KMmsWrwRBBeQLXDO'
+     opi: "opi"
+  
+  # the REST-Calculation Engine
+  opi:
+    container_name: opi
+    image: opi
+    build:
+      context: ./Opi
+
+
+  # The Database for metric documentation
+  neontometrics_db:
+    container_name: neontometrics_db
+    image: mariadb:latest
+    ports:
+      - '3308:3306'
+    environment:
+      MYSQL_DATABASE: "neontometrics"
+      MYSQL_USER: "neontometrics"
+      MYSQL_PASSWORD: 'KMmsWrwRBBeQLXDO'
+      MYSQL_ROOT_PASSWORD: 'KMmsWrwRBBeQLXDO'
+    volumes:
+      - neontometrics_db:/var/lib/mysql
+volumes:
+  neontometrics_db:

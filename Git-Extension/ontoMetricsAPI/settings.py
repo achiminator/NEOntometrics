@@ -1,4 +1,4 @@
-import pymysql
+import pymysql, os
 """
 Django settings for ontoMetricsAPI project.
 
@@ -45,7 +45,7 @@ INSTALLED_APPS = [
 
 RQ_QUEUES = {
     'default': {
-        'HOST': 'localhost',
+        'HOST': 'redis-scheduler' if os.name != "nt" else "localhost",
         'PORT': 6379,
         'DB': 0,
        # 'PASSWORD': 'some-password',
@@ -97,22 +97,23 @@ WSGI_APPLICATION = 'ontoMetricsAPI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
- }
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'neontometrics',
-#         'USER': 'neontometrics',
-#         'PASSWORD': 'KMmsWrwRBBeQLXDO',
-#         'HOST': 'neontometrics_db',
-#         'PORT': 3306,
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #     }
-# }
+#  }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'neontometrics',
+        'USER': 'neontometrics',
+        'PASSWORD': os.environ["db_password"],
+        # For the alignment of Docker intergration & windows development
+        'HOST': 'neontometrics_db' if os.name != "nt" else "localhost",
+        'PORT': 3306 if os.name != "nt" else 3308,
+    }
+}
 
 
 # Password validation
