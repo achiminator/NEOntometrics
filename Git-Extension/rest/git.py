@@ -106,6 +106,7 @@ class GitHandler:
                     commitList.append(commit)
         # Sorting the Commits based on TIME, not on PARENTS, thus making the list ready for further filtering                  
         commitList.sort(key=lambda commit: datetime.fromtimestamp(commit.commit_time))
+        formerObj= None
         for commit in commitList:
             obj = self.getFittingObject(objectLocation, commit.tree)
             if obj != None:

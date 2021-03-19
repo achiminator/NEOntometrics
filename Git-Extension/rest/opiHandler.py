@@ -1,7 +1,8 @@
 import requests as requestsLib
-import xmltodict, os
+from django.conf import settings
+import xmltodict
 class OpiHandler:
-    OntoMetricsEndPoint = "http://{os.environ['opi']}/api"
+    OntoMetricsEndPoint = "http://" + settings.OPI+ "/api"
     """Class for querying the Ontology Programming Interface (OPI)"""
     def opiUrlRequest(self, urlToOntology: str, classMetrics=False) -> dict:
         """Make a URL to an OPI server and return a dict with the Ontology-Data .

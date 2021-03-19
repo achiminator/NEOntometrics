@@ -74,5 +74,7 @@ class GitUrlParser:
             self.branch = input.split("blob")[1].split("/")[1]
             self.file = input.split("blob")[1][len(self.branch)+2:]
         else:
-            self.repository =urlParsed.netloc + re.findall("^(\/\w*\/\w*)", urlParsed.path)[0]
+            self.repository = self.url[self.url.index(urlParsed.netloc):]
+        if self.repository.endswith("/"):
+            self.repository = self.repository[:-1]
         self.service = urlParsed.netloc

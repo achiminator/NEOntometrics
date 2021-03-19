@@ -53,7 +53,7 @@ RQ_QUEUES = {
         'ASYNC' : False
     }
 }
-
+OPI = "opi" if os.name != "nt" else "opi.informatik.uni-rostock.de"
 
 # REST_FRAMEWORK = {
 #     'DEFAULT_PARSER_CLASSES': [
