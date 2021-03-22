@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'rest',
     'django_rq'
 ]
-
 RQ_QUEUES = {
     'default': {
         'HOST': 'redis-scheduler' if os.name != "nt" else "localhost",

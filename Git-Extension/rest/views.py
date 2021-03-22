@@ -2,10 +2,12 @@ from rest.git import GitHandler
 from rest.opiHandler import OpiHandler
 from django.shortcuts import render
 from rest_framework.views import APIView
+from ontoMetricsAPI.PlainTextParser import PlainTextParser
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.exceptions import APIException, ParseError
 import django_rq, rq, redis, logging
+from braces.views import CsrfExemptMixin
 from rest.GitHelper import GitHelper, GitUrlParser
 from rest.DBHandler import DBHandler
 # Create your views here.
@@ -24,6 +26,7 @@ class CalculateGitMetric(APIView):
     Raises:
         ParseError: Wrong Ontology Formalizations
     """     
+
     def get(self, request: Request, format=None):
         targetLocation = ""
         url = GitUrlParser()
@@ -44,6 +47,7 @@ class CalculateGitMetric(APIView):
             print(identifier)
             raise ParseError("Wrong Input parameter! Check Documentation")
         # At first check if the value is already stored in the database
+        
         db = DBHandler()
         metricFromDB = db.getMetricForOntology(file=url.file, repository=url.repository, classMetrics=classMetrics)
         if(metricFromDB):
@@ -66,7 +70,11 @@ class CalculateGitMetric(APIView):
         return Response(self.__getQueueAnswer__(url, jobId))
 
     def delete(self, request: Request, format=None):
+        """Delete a metric caluclation from the Database
 
+        Args:
+            request (Request): url containing the target repo or file
+        """
         targetLocation = ""
         url = GitUrlParser()
         try:
@@ -87,6 +95,17 @@ class CalculateGitMetric(APIView):
         }
         resp.update(url.__dict__)
         return(Response(resp))
+
+
+    parser_classes = [PlainTextParser]
+    authentication_classes = []
+    def post(self, request: Request, format=None):
+        data = request.body.decode()
+        opi = OpiHandler()
+        metric = opi.opiOntologyRequest(data, True)
+        return(Response(metric))
+
+
     def __getQueueAnswer__(self, url: GitUrlParser, jobId: str) -> dict:
         """Generates the response if the ontology to calculate is not yet finished
 
