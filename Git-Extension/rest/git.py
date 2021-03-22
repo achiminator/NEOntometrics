@@ -31,7 +31,7 @@ class GitHandler:
         #Creates a folder for the git-Repository based on the hash of the repository URL.
         internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))
         if(path.exists(internalOntologyUrl) == False):
-            Git.clone_repository("http://"+ repositoryUrl, internalOntologyUrl, checkout_branch=branch)
+            Git.clone_repository("https://"+ repositoryUrl, internalOntologyUrl, checkout_branch=branch)
             self.logger.debug("Repository cloned at "+ internalOntologyUrl)       
         repo = Git.Repository(internalOntologyUrl)
         metrics = self.getOntologyMetrics(objectLocation, classMetrics, internalOntologyUrl, repositoryUrl, branch, repo)

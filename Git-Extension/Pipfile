@@ -12,6 +12,7 @@ requests = "*"
 cryptography = "*"
 PyMySQL = "*"
 django-rq = "*"
+django-braces = "*"
 
 [dev-packages]
 
