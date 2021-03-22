@@ -1,3 +1,4 @@
+from rest_framework import response
 from rest.git import GitHandler
 from rest.opiHandler import OpiHandler
 from django.shortcuts import render
@@ -6,7 +7,7 @@ from ontoMetricsAPI.PlainTextParser import PlainTextParser
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.exceptions import APIException, ParseError
-import django_rq, rq, redis, logging
+import django_rq, rq, redis, logging, requests
 from braces.views import CsrfExemptMixin
 from rest.GitHelper import GitHelper, GitUrlParser
 from rest.DBHandler import DBHandler
@@ -35,6 +36,8 @@ class CalculateGitMetric(APIView):
             if "url" in request.query_params:
                 request.query_params["url"]
                 url.parse(request.query_params["url"])
+            else:
+                raise ParseError("Wrong Input parameter! Check Documentation")
             if "classMetrics" in request.query_params:
                 classMetrics = GitHelper.str2bool(request.query_params["classMetrics"])
             else:
@@ -46,8 +49,19 @@ class CalculateGitMetric(APIView):
         except KeyError as identifier:
             print(identifier)
             raise ParseError("Wrong Input parameter! Check Documentation")
-        # At first check if the value is already stored in the database
         
+        # Analyze a Single Ontology File
+        # If the url.repository is empty, no GIT-repository is given and the user pointed directly to a single ontology File
+        if(url.repository == ""):
+            onto = requests.get("http://" + url.file)
+            opi = OpiHandler()
+            try:
+                metrics = opi.opiOntologyRequest(onto, True)
+            except:
+                raise ParseError("No Valid Ontology is given in the URL")
+            return(Response(metrics))
+
+        # At first check if the value is already stored in the database
         db = DBHandler()
         metricFromDB = db.getMetricForOntology(file=url.file, repository=url.repository, classMetrics=classMetrics)
         if(metricFromDB):
