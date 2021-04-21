@@ -5,7 +5,7 @@ import logging, copy
 from datetime import datetime
 from rest.opiHandler import OpiHandler
 from django_rq import job
-from rest.DBHandler import DBHandler
+from rest.dbHandler import DBHandler
 
 class GitHandler:
     """Handles the Git-Based Ontology Analysis

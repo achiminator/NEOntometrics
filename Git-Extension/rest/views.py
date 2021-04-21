@@ -1,4 +1,4 @@
-from rest_framework import response
+from rest_framework.renderers import TemplateHTMLRenderer
 from rest.git import GitHandler
 from rest.opiHandler import OpiHandler
 from django.shortcuts import render
@@ -7,11 +7,16 @@ from ontoMetricsAPI.PlainTextParser import PlainTextParser
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.exceptions import APIException, ParseError
-import django_rq, rq, redis, logging, requests
+import django_rq, rq, redis, logging, requests, django
 from braces.views import CsrfExemptMixin
 from rest.GitHelper import GitHelper, GitUrlParser
-from rest.DBHandler import DBHandler
+from rest.dbHandler import DBHandler
 # Create your views here.
+
+class index(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    def get(self, request):
+        return Response(template_name="index.html")
 
 class CalculateMetric(APIView):
     def get(self, request, format=None):
@@ -27,8 +32,19 @@ class CalculateGitMetric(APIView):
     Raises:
         ParseError: Wrong Ontology Formalizations
     """     
-
     def get(self, request: Request, format=None):
+        """Requests Ontology Metrics for a given URL (see: https://github.com/Uni-Rostock-Win/NEOntometrics/tree/master/Git-Extension).
+
+
+        Args:
+            request (Request): Contains the optional bool "ClassMetrics"-Value & the mandatory "url" value. 
+
+        Raises:
+            ParseError: Wrong input parameter delivered
+
+        Returns:
+            [type]: Ontology Metrics based on the given request (e.g. just single ontology, git-based history of an ontology or whole for all ontologies in git-repository)
+        """
         targetLocation = ""
         url = GitUrlParser()
         

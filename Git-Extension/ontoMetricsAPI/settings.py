@@ -49,7 +49,7 @@ RQ_QUEUES = {
         'DB': 0,
        # 'PASSWORD': 'some-password',
         'DEFAULT_TIMEOUT': 360,
-        'ASYNC' : True
+        'ASYNC' : False
     }
 }
 OPI = "opi:8080" if os.name != "nt" else "opi.informatik.uni-rostock.de"
@@ -77,7 +77,7 @@ ROOT_URLCONF = 'ontoMetricsAPI.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -110,7 +110,7 @@ DATABASES = {
         'PASSWORD': os.environ["db_password"],
         # For the alignment of Docker intergration & windows development
         'HOST': 'neontometrics_db' if os.name != "nt" else "localhost",
-        'PORT': 3306 if os.name != "nt" else 3308,
+        'PORT': 3306 if os.name != "nt" else 3316,
     }
 }
 

@@ -19,6 +19,7 @@ from django.conf.urls import url, include
 from rest import views
 
 urlpatterns = [
+    path('', views.index.as_view()),
     path('admin/', admin.site.urls),
     path('api', views.CalculateMetric.as_view()),
     path('git', views.CalculateGitMetric.as_view()),

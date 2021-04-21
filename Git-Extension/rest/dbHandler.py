@@ -127,7 +127,7 @@ class DBHandler:
         if(file == ""):
             repoMetrics = Source.objects.filter(repository = repository)
         else:
-            repoMetrics = Source.objects.filter(repository = repository, file=file)
+            repoMetrics = Source.objects.filter(repository = repository, fileName=file)
         repoMetrics.delete()
     def setWholeRepoAnalyzed(self, repository: str):
         """Marks that all files in a repository are analyzed
