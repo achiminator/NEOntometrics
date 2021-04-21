@@ -4,7 +4,8 @@ from collections import OrderedDict
 import logging
 
 class DBHandler:
-
+    """Handles the Database connections, especially prepares the metrics for writing into the database.
+    """
     def __commit2MetricsModel__(self, commitMetrics: dict) -> dict:
             """Flattens the nested Dict-Metrics to prepare it for a database write.
 

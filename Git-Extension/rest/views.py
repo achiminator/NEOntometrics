@@ -14,6 +14,10 @@ from rest.dbHandler import DBHandler
 # Create your views here.
 
 class index(APIView):
+    """Landing Page for REST-Service
+    Returns:
+        Response: HTML-Template "index.html"
+    """
     renderer_classes = [TemplateHTMLRenderer]
     def get(self, request):
         return Response(template_name="index.html")
