@@ -1,4 +1,4 @@
-import pymysql, os
+import pymysql, os, logging.config
 """
 Django settings for ontoMetricsAPI project.
 
@@ -24,7 +24,31 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '+d9$bcwd(^4o2862x$-xe6kl0$sqcbtkkib+6@2zv*!ysnz)2o'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+
+logging.config.dictConfig({
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
+            # exact format is not important, this is the minimum information
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'console',
+        },
+    },
+    'loggers': {
+    # root logger
+        '': {
+            'level': 'WARNING',
+            'handlers': ['console'],
+        },
+    },
+})
 
 ALLOWED_HOSTS = ["*"]
 
