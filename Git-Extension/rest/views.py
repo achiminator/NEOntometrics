@@ -92,7 +92,7 @@ class CalculateGitMetric(APIView):
             return Response(resp)
         elif jobId in django_rq.get_queue().failed_job_registry:
             job = django_rq.get_queue().fetch_job(jobId)
-            if "status code: 404" in job.exc_info:
+            if ("status code: 404" in job.exc_info) or ("KeyError: \"reference" in job.exc_info):
                 return Response( {
                     "status": 400,
                     "url": GitHelper.deserializeJobId(jobId),

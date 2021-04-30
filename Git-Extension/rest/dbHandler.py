@@ -139,10 +139,11 @@ class DBHandler:
             file (str, optional): URL to the target file within the repository (e.g. src/human.ttl). Defaults to "". If left empty, the whole repo will be deleted
         """
         if(file == ""):
-            repoMetrics = Source.objects.filter(repository = repository)
+            Source.objects.filter(repository = repository).delete()
         else:
-            repoMetrics = Source.objects.filter(repository = repository, fileName=file)
-        repoMetrics.delete()
+            Source.objects.filter(repository = repository, fileName=file).delete()
+            Source.objects.filter(repository = repository).update(wholeRepositoryAnalyzed=False)
+
     def setWholeRepoAnalyzed(self, repository: str):
         """Marks that all files in a repository are analyzed
 
