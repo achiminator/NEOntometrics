@@ -55,18 +55,13 @@ class CalculateGitMetric(APIView):
         
         try:
             if "url" in request.query_params:
-                request.query_params["url"]
                 url.parse(request.query_params["url"])
             else:
                 raise ParseError("Wrong Input parameter! Check Documentation")
-            if "classMetrics" in request.query_params:
-                classMetrics = GitHelper.str2bool(request.query_params["classMetrics"])
-            else:
-                classMetrics = False
-            if "branch" in request.query_params:
-                branch = request.query_params["branch"]
-            else:
-                branch = "master"
+            classMetrics = GitHelper.str2bool(request.query_params["classMetrics"]) if "classMetrics" in request.query_params else False
+            hideId = GitHelper.str2bool(request.query_params["hideId"]) if "hideId" in request.query_params else True
+            
+            branch = request.query_params["branch"] if "branch" in request.query_params else "master"
         except KeyError as identifier:
             print(identifier)
             raise ParseError("Wrong Input parameter! Check Documentation")
@@ -84,7 +79,7 @@ class CalculateGitMetric(APIView):
 
         # At first check if the value is already stored in the database
         db = DBHandler()
-        metricFromDB = db.getMetricForOntology(file=url.file, repository=url.repository, classMetrics=classMetrics)
+        metricFromDB = db.getMetricForOntology(file=url.file, repository=url.repository, classMetrics=classMetrics, hideId=hideId)
         if(metricFromDB):
             logging.debug("Read Metrics from Database")
             return Response(metricFromDB)

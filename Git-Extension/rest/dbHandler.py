@@ -63,7 +63,7 @@ class DBHandler:
                         classMetricsModel.save()
         return sourceModel
 
-    def getMetricForOntology(self, repository: str,file ="", branch = "master", classMetrics=False) -> dict:
+    def getMetricForOntology(self, repository: str,file ="", branch = "master", classMetrics=False, hideId=True) -> dict:
         """Retrieves Metric Calculation (for one ontology or whole Repo) from the database. 
 
         Args:
@@ -71,6 +71,7 @@ class DBHandler:
             file (str, optional): URL to the target file within the repository (e.g. src/human.ttl). Defaults to "". If left empty, the whole repo will be analysed
             branch (str, optional): branch to analyse. Defaults to "master".
             classMetrics (bool, optional): If the class-metrics shall be retrieved as well. Defaults to False.
+            hideId(bool, optional): Hides the ID of the Database Entry for further identification
 
         Raises:
             Exception: Inconsistend Data in the DB
@@ -94,7 +95,7 @@ class DBHandler:
             metricsData = Metrics.objects.filter(metricSource=SourceRepo)
             queryMetaData = sourceData.values()[iterator]
             iterator += 1
-            queryMetaData.pop("id")
+            if hideId: queryMetaData.pop("id")
             returnDict.update(queryMetaData)
             metricsDataToDict =[]
             for commitMetrics in metricsData.values():
@@ -116,7 +117,9 @@ class DBHandler:
                 if(classMetrics):
                     classMetricList = []
                     for classMetric in ClassMetrics.objects.filter(metric=commitMetrics["id"]).values(): 
-                        classMetric.pop("id")
+                        if hideId:
+                            classMetric.pop("metric_id")
+                            classMetric.pop("id")
                         classMetricList.append(classMetric)
                         
                         # If no Classmetrics where found but were requested, return 0 (and trigger new calculation)
