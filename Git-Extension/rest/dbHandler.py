@@ -45,6 +45,13 @@ class DBHandler:
             repo (str): Repository URL
             wholeRepo(bool): Stores if the whole repository was analyzed or not
         """
+
+        # At first, check if these elements already exits. If yes, delete them.
+        results =  Source.objects.filter(fileName=file, repository=repo,branch=branch)
+        if(len(results) > 0):
+             Source.objects.delete(fileName=file, repository=repo,branch=branch)
+
+        
         sourceModel = Source.objects.create(fileName=file, repository=repo,branch=branch, wholeRepositoryAnalyzed= wholeRepo)
         for commitMetrics in metricsDict:
             metricsModel = Metrics.objects.create(CommitTime = commitMetrics["CommitTime"], metricSource=sourceModel)                
@@ -112,6 +119,10 @@ class DBHandler:
                     for classMetric in ClassMetrics.objects.filter(metric=commitMetrics["id"]).values(): 
                         classMetric.pop("id")
                         classMetricList.append(classMetric)
+                        
+                        # If no Classmetrics where found but were requested, return 0 (and trigger new calculation)
+                    if(len(classMetricList) < 1):
+                        return None
                     data.update({"Classmetrics": classMetricList})
                 metricsDataToDict.append(data)
             returnDict.update({"metrics": metricsDataToDict})

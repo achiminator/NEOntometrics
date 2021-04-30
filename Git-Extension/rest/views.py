@@ -98,7 +98,8 @@ class CalculateGitMetric(APIView):
         logging.debug("Put job in queue")
         gitHandler = GitHandler()
         if url.file != '':
-            metrics = django_rq.enqueue(gitHandler.getObject, repositoryUrl=url.repository, objectLocation=url.file, branch=url.branch, classMetrics=classMetrics, job_id=jobId)       
+            metrics = django_rq.enqueue(gitHandler.getObject, repositoryUrl=url.repository, objectLocation=url.file, branch=url.branch, classMetrics=classMetrics, job_id=jobId)
+        # If no file is given, analyze the whole REPO
         else:
             metrics = django_rq.enqueue(gitHandler.getObjects, repositoryUrl= url.repository, classMetrics=classMetrics, job_id=jobId)            
         return Response(self.__getQueueAnswer__(url, jobId))
@@ -155,7 +156,7 @@ class CalculateGitMetric(APIView):
         job = django_rq.jobs.Job(jobId, redis_conn)
         jobPosition = django_rq.get_queue().get_job_position(job)
         resp = {
-            "taskedFinished": False,
+            "taskFinished": False,
             "queuePosition": jobPosition if jobPosition != None else 0}
         resp.update(url.__dict__)
         return resp

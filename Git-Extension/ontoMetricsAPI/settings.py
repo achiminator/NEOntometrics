@@ -73,7 +73,7 @@ RQ_QUEUES = {
         'DB': 0,
        # 'PASSWORD': 'some-password',
         'DEFAULT_TIMEOUT': 360,
-        'ASYNC' : False
+        'ASYNC' : True
     }
 }
 OPI = "opi:8080" if os.name != "nt" else "opi.informatik.uni-rostock.de"

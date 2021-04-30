@@ -64,7 +64,7 @@ class GitHandler:
         for item in index:
             if(item.path.endswith((".ttl", ".owl", ".rdf"))):
                 self.logger.debug("Analyse Ontology: "+item.path)
-                print("Analyse Ontology: "+item.path)
+                logging.debug("Analyse Ontology: "+item.path)
                 metrics.append(self.getOntologyMetrics(item.path, classMetrics, internalOntologyUrl, repositoryUrl, branch, repo))
         dbhandler = DBHandler()
         dbhandler.setWholeRepoAnalyzed(repository=repositoryUrl)
@@ -141,8 +141,6 @@ class GitHandler:
         # Write Metrics in Database
         dbhandler = DBHandler()
         dbhandler.writeInDB(metricsDict, branch=branch, file=objectLocation, repo=remoteLocation)
- 
-        print(len(metricsDict))
         return(metricsDict)
     # def outputWrapper(self, metricsDict: dict,) -> dict:
     #     outputObject = {}
