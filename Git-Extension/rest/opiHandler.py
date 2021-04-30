@@ -25,7 +25,7 @@ class OpiHandler:
             xmlDict = xmltodict.parse(xmlText,)
             return xmlDict
     
-    def opiOntologyRequest(self, ontologyString: str, classMetrics=False) -> dict:
+    def opiOntologyRequest(self, ontologyString: str, classMetrics=True) -> dict:
         """Make a URL to an OPI server and return a dict with the Ontology-Data .
 
         Args:

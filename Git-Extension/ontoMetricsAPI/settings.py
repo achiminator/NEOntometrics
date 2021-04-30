@@ -72,11 +72,12 @@ RQ_QUEUES = {
         'PORT': 6379,
         'DB': 0,
        # 'PASSWORD': 'some-password',
-        'DEFAULT_TIMEOUT': 360,
+        'DEFAULT_TIMEOUT': 3600,
         'ASYNC' : True
     }
 }
-OPI = "opi:8080" if os.name != "nt" else "opi.informatik.uni-rostock.de"
+dockerCheck = os.environ.get("inDocker", False)
+OPI = "opi:8080" if dockerCheck else "opi.informatik.uni-rostock.de"
 
 # REST_FRAMEWORK = {
 #     'DEFAULT_PARSER_CLASSES': [

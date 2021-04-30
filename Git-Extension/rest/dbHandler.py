@@ -47,10 +47,7 @@ class DBHandler:
         """
 
         # At first, check if these elements already exits. If yes, delete them.
-        results =  Source.objects.filter(fileName=file, repository=repo,branch=branch)
-        if(len(results) > 0):
-             Source.objects.delete(fileName=file, repository=repo,branch=branch)
-
+        results =  Source.objects.filter(fileName=file, repository=repo,branch=branch).delete()
         
         sourceModel = Source.objects.create(fileName=file, repository=repo,branch=branch, wholeRepositoryAnalyzed= wholeRepo)
         for commitMetrics in metricsDict:
@@ -90,11 +87,13 @@ class DBHandler:
         elif len(sourceData.values())  == 0:
             return {}
         metricsArray = []
+        iterator = 0
         for SourceRepo in sourceData:
             returnDict =  OrderedDict()
             metricsDict = OrderedDict()
             metricsData = Metrics.objects.filter(metricSource=SourceRepo)
-            queryMetaData = sourceData.values()[0]
+            queryMetaData = sourceData.values()[iterator]
+            iterator += 1
             queryMetaData.pop("id")
             returnDict.update(queryMetaData)
             metricsDataToDict =[]

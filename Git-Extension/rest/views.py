@@ -1,3 +1,4 @@
+from rest.models import ClassMetrics
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest.git import GitHandler
 from rest.opiHandler import OpiHandler
@@ -94,7 +95,20 @@ class CalculateGitMetric(APIView):
         if jobId in django_rq.get_queue().job_ids:
             resp = self.__getQueueAnswer__(url, jobId)          
             return Response(resp)
-
+        elif jobId in django_rq.get_queue().failed_job_registry:
+            job = django_rq.get_queue().fetch_job(jobId)
+            if "status code: 404" in job.exc_info:
+                return Response( {
+                    "status": 400,
+                    "url": GitHelper.deserializeJobId(jobId),
+                    "info": "No valid Ontology or Git-Repository found at this URL. Check your Query!"
+                }, status=400, exception=True)
+            else:
+                return Response( {
+                    "status": 500,
+                    "url": GitHelper.deserializeJobId(jobId),
+                    "info": "internal server error"
+                })
         logging.debug("Put job in queue")
         gitHandler = GitHandler()
         if url.file != '':
@@ -160,3 +174,10 @@ class CalculateGitMetric(APIView):
             "queuePosition": jobPosition if jobPosition != None else 0}
         resp.update(url.__dict__)
         return resp
+    def __getFailedQueueAnswer__(self, jobId: str) -> dict:
+        job = django_rq.get_queue().fetch_job(jobId)
+        resp = {
+            "status": 400,
+            "url": GitHelper.deserializeJobId(jobId),
+            "info": "No valid Ontology or Git-Repository found at this URL. Check your Query!"
+        }
