@@ -1,7 +1,0 @@
-djangorestframework
-django
-xmltodict
-pygit2
-requests
-pymysql
-cryptography
