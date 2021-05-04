@@ -13,6 +13,7 @@ cryptography = "*"
 PyMySQL = "*"
 django-rq = "*"
 django-braces = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 
