@@ -23,7 +23,7 @@ services:
       - neontometrics_db
     environment:
       db_password: 'KMmsWrwRBBeQLXDO'
-      opi: "opi"
+      inDocker: "True"
 
   neontometrics_worker:
     container_name: neontometrics_worker
@@ -34,15 +34,16 @@ services:
       - neontometrics_db
     environment:
      db_password: 'KMmsWrwRBBeQLXDO'
-     opi: "opi"
+     inDocker: "True"
   
   # the REST-Calculation Engine
   opi:
     container_name: opi
     image: opi
+    environment:
+      JVM_OPTS: -Xmx12g -Xms12g -XX:MaxPermSize=1024m
     build:
       context: ./Opi
-
 
   # The Database for metric documentation
   neontometrics_db:

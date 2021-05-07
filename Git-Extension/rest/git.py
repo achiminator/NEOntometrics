@@ -133,7 +133,7 @@ class GitHandler:
                         self.logger.debug("Ontology Analyzed Successfully")
                     except:
                         # A reading Error occurs, e.g., if an ontology does not conform to a definied ontology standard and cannot be parsed
-                        self.logger.warning("Ontology not Readable")
+                        self.logger.warning("Ontology {0} not Readable ".format(obj.name))
                         returnObject["ReadingError"] = True
                     metricsDict.append(returnObject)
                  

@@ -77,8 +77,7 @@ RQ_QUEUES = {
         'ASYNC' : True
     }
 }
-dockerCheck = os.environ.get("inDocker", False)
-OPI = "opi:8080" if dockerCheck else "opi.informatik.uni-rostock.de"
+OPI = "opi:8080" if bool(os.environ.get("inDocker", False)) else "opi.informatik.uni-rostock.de"
 
 # REST_FRAMEWORK = {
 #     'DEFAULT_PARSER_CLASSES': [
