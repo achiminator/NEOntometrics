@@ -90,6 +90,7 @@ class CalculateGitMetric(APIView):
         if jobId in django_rq.get_queue().job_ids:
             resp = self.__getQueueAnswer__(url, jobId)          
             return Response(resp)
+        # If it is  not in the queue, it might be in failed? Check the failed job registry..
         elif jobId in django_rq.get_queue().failed_job_registry:
             job = django_rq.get_queue().fetch_job(jobId)
             if ("status code: 404" in job.exc_info) or ("KeyError: \"reference" in job.exc_info):
@@ -103,7 +104,7 @@ class CalculateGitMetric(APIView):
                     "status": 500,
                     "url": GitHelper.deserializeJobId(jobId),
                     "info": "internal server error"
-                })
+                }).status_code(500)
         logging.debug("Put job in queue")
         gitHandler = GitHandler()
         if url.file != '':

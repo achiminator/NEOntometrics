@@ -38,7 +38,7 @@ class OpiHandler:
         
         resp = requestsLib.post(url=self.OntoMetricsEndPoint, data=ontologyString, headers = {"save": "false", "classMetrics": str(classMetrics)})
         if (resp.status_code != 200):
-            raise Exception(resp.text)
+            raise IOError(resp.text)
         else:
             xmlText = resp.text.replace("\n", "")
             xmlDict = xmltodict.parse(xmlText,)
@@ -46,11 +46,12 @@ class OpiHandler:
             # Restructure ClassMetrics for a more flat hierachy
             if classMetrics:
                 tmpClassList =[]
-                for element in xmlDict["OntologyMetrics"]["BaseMetrics"]["ClassMetrics"]["Class"]:
-                    element["Classiri"] = element["@iri"]
-                    element.pop("@iri")
-                    tmpClassList.append(element)
-                xmlDict["OntologyMetrics"]["BaseMetrics"].pop("ClassMetrics")
-                xmlDict["OntologyMetrics"]["BaseMetrics"].update({"Classmetrics": tmpClassList})  
+                if (xmlDict["OntologyMetrics"]["BaseMetrics"]["ClassMetrics"]):
+                    for element in xmlDict["OntologyMetrics"]["BaseMetrics"]["ClassMetrics"]["Class"]:
+                        element["Classiri"] = element["@iri"]
+                        element.pop("@iri")
+                        tmpClassList.append(element)
+                    xmlDict["OntologyMetrics"]["BaseMetrics"].pop("ClassMetrics")
+                    xmlDict["OntologyMetrics"]["BaseMetrics"].update({"Classmetrics": tmpClassList})  
             return xmlDict
     

@@ -12,3 +12,5 @@ ontologies/
 Opi/docker-compose.yml
 .vscode
 Git-Extension/db.sqlite3
+Git-Extension/rest/__pycache__
+Git-Extension/ontoMetricsAPI/__pycache__

@@ -131,7 +131,7 @@ class GitHandler:
                         opiMetrics = opi.opiOntologyRequest(obj.data, classMetrics=classMetrics)
                         returnObject.update(opiMetrics)    
                         self.logger.debug("Ontology Analyzed Successfully")
-                    except:
+                    except IOError:
                         # A reading Error occurs, e.g., if an ontology does not conform to a definied ontology standard and cannot be parsed
                         self.logger.warning("Ontology {0} not Readable ".format(obj.name))
                         returnObject["ReadingError"] = True
