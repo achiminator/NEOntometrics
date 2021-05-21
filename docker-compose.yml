@@ -2,6 +2,7 @@ version: '3.4'
 services:
   # Redis Image is necessary for the asyncronous scheduling in the docker application
   redis-scheduler:
+    restart: always
     container_name: neonto_scheduler
     image: redis
     ports:
@@ -9,6 +10,7 @@ services:
 
   # This is the main application for the git metric aggregation
   neontometrics_api:
+    restart: always
     container_name: neontometrics_api
     build: 
       context: ./Git-Extension
@@ -26,6 +28,7 @@ services:
       inDocker: "True"
 
   neontometrics_worker:
+    restart: always
     container_name: neontometrics_worker
     image: neontometrics
     command: python manage.py rqworker
@@ -38,6 +41,9 @@ services:
   
   # the REST-Calculation Engine
   opi:
+    ports:
+      - '8082:8080'
+    restart: always
     container_name: opi
     image: opi
     environment:
@@ -47,6 +53,7 @@ services:
 
   # The Database for metric documentation
   neontometrics_db:
+    restart: always
     container_name: neontometrics_db
     image: mariadb:latest
     ports:
