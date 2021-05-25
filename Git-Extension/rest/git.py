@@ -5,6 +5,7 @@ import logging, copy
 from datetime import datetime
 from rest.opiHandler import OpiHandler
 from django_rq import job
+from django.conf import settings
 from rest.dbHandler import DBHandler
 
 class GitHandler:
@@ -125,16 +126,25 @@ class GitHandler:
                     returnObject["CommitterName"] = commit.committer.name
                     returnObject["CommiterEmail"] = commit.committer.email
                     returnObject["ReadingError"] = False
+                    returnObject["Size"] = obj.size
                     self.logger.debug("Date: " + str(returnObject["CommitTime"]))
                     self.logger.debug("Commit:" + commit.message)
-                    try:
-                        opiMetrics = opi.opiOntologyRequest(obj.data, classMetrics=classMetrics)
-                        returnObject.update(opiMetrics)    
-                        self.logger.debug("Ontology Analyzed Successfully")
-                    except IOError:
-                        # A reading Error occurs, e.g., if an ontology does not conform to a definied ontology standard and cannot be parsed
-                        self.logger.warning("Ontology {0} not Readable ".format(obj.name))
-                        returnObject["ReadingError"] = True
+                    if (obj.size > settings.CLASSMETRICSLIMIT and classMetrics):
+                        classMetrics = False
+                        returnObject["ReadingError"] = "Ontology Exceeds "+ str(settings.CLASSMETRICSLIMIT) + "b. ClassMetrics deactivated"
+                        self.logger.warning(obj.name + " to large - ClassMetrics Deativated")
+                    if(obj.size > settings.ONTOLOGYLIMIT):
+                        returnObject["ReadingError"] = "Ontology Exceeds "+ str(settings.ONTOLOGYLIMIT) + "b. Analysis deactivated"
+                        self.logger.error(returnObject["readingError"])
+                    else:
+                        try:
+                            opiMetrics = opi.opiOntologyRequest(obj.data, classMetrics=classMetrics)
+                            returnObject.update(opiMetrics)    
+                            self.logger.debug("Ontology Analyzed Successfully")
+                        except IOError:
+                            # A reading Error occurs, e.g., if an ontology does not conform to a definied ontology standard and cannot be parsed
+                            self.logger.warning("Ontology {0} not Readable ".format(obj.name))
+                            returnObject["ReadingError"] = "Ontology not Readable"
                     metricsDict.append(returnObject)
                  
 

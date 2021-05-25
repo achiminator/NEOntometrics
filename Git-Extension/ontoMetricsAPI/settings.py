@@ -73,11 +73,17 @@ RQ_QUEUES = {
         'PORT': 6379,
         'DB': 0,
        # 'PASSWORD': 'some-password',
-        'DEFAULT_TIMEOUT': 3600,
-        'ASYNC' : True
+        'DEFAULT_TIMEOUT': 72000,
+        'ASYNC' : True if bool(os.environ.get("inDocker", False)) else False
     }
 }
-OPI = "opi:8080" if bool(os.environ.get("inDocker", False)) else "opi.informatik.uni-rostock.de"
+
+# The URL of the OPI (Ontology Programming Interface)
+OPI = "opi:8080" if bool(os.environ.get("inDocker", False)) else "localhost:8082"
+
+# Size-Limits for analysis. If An ontology is larger than 1mb, deactivate ClassMetrics. If Larger than 30mb, do not calculate at all.
+ONTOLOGYLIMIT = 31457280
+CLASSMETRICSLIMIT = 1048576 
 
 # REST_FRAMEWORK = {
 #     'DEFAULT_PARSER_CLASSES': [
