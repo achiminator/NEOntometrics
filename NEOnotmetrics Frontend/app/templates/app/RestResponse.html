@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% load static %}
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="{% static 'assets/img/favicon.ico' %}"/>
+        <!-- Font Awesome icons (free version)-->
+        <script src="{% static 'js/fontawesome/all.js' %}" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+        <title>OntoMetrics - Metric Calculation</title>
+    </head>
+  <body>
+<!--Navigation bar-->
+        <header id="nav-placeholder">
+        </header>
+<!--end of Navigation bar-->
+<div class="container" style="padding-top:150px; padding-bottom:50px; padding-left:50px" >
+      <br>
+      <h1>Ontology Metric Calculation</h1>
+      <br>
+      <textarea id="result" rows="50" cols="70" style="width: 80%; background-color: #DCDCDC; color: red;">
+      </textarea>
+</div>
+<div id="nav-footer"></div>
+  </body>
+  <script>
+      $(document).ready(function(){
+        $("#nav-placeholder").load("/head");
+        $("#nav-footer").load("/foot");
+        var JsonObj = localStorage.getItem("Metrics");
+        var obj=JSON.parse(JsonObj);
+        var str = JSON.stringify(obj, undefined, 4);
+        document.getElementById('result').innerHTML = str;
+
+     });
+  </script>
+
+<script type="text/javascript">
+
+</script>
+</html>
+
+        
+          
