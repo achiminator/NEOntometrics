@@ -135,7 +135,7 @@ class GitHandler:
                         self.logger.warning(obj.name + " to large - ClassMetrics Deativated")
                     if(obj.size > settings.ONTOLOGYLIMIT):
                         returnObject["ReadingError"] = "Ontology Exceeds "+ str(settings.ONTOLOGYLIMIT) + "b. Analysis deactivated"
-                        self.logger.error(returnObject["readingError"])
+                        self.logger.error(returnObject["ReadingError"])
                     else:
                         try:
                             opiMetrics = opi.opiOntologyRequest(obj.data, classMetrics=classMetrics)
