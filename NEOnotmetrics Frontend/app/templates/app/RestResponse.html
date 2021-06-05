@@ -28,8 +28,56 @@
       <br>
       <h1>Ontology Metric Calculation</h1>
       <br>
-      <textarea id="result" rows="50" cols="70" style="width: 80%; background-color: #DCDCDC; color: red;">
-      </textarea>
+
+    <h4>Basic information: </h4>
+      <table border="1">
+      <tr>
+         <th>Commit Time：</th>
+         <td id="ct"></td>
+      </tr>
+      <tr>
+         <th>Commit Message: </th>
+         <td id="cm"></td>
+      </tr>
+      <tr>
+         <th>Author Email: </th>
+         <td id="ae"></td>
+      </tr>
+      <tr>
+         <th>Author Name：</th>
+         <td id="an"></td>
+      </tr>
+      <tr>
+         <th>Commiter Email：</th>
+         <td id="ce"></td>
+      </tr>
+      <tr>
+         <th>Committer Name：</th>
+         <td id="cn"></td>
+      </tr>
+      </table>
+
+      <!--<textarea>-->
+      <h4>OntologyMetrics information: </h4>
+      <h4>Base Metrics: </h4>
+      <p id="result1"></p>
+      <h4>Class Axioms: </h4>
+      <p id="result2"></p>
+      <h4>Object property axioms: </h4>
+      <p id="result3"></p>
+      <h4>Data Property Axioms: </h4>
+      <p id="result4"></p>
+      <h4>Individual Axioms: </h4>
+      <p id="result5"></p>
+      <h4>Annotation Axioms: </h4>
+      <p id="result6"></p>
+      <h4>Schema metrics: </h4>
+      <p id="result7"></p>
+      <h4>Knowledge base metrics: </h4>
+      <p id="result8"></p>
+      <h4>Graph metrics: </h4>
+      <p id="result9"></p>
+
 </div>
 <div id="nav-footer"></div>
   </body>
@@ -39,9 +87,88 @@
         $("#nav-footer").load("/foot");
         var JsonObj = localStorage.getItem("Metrics");
         var obj=JSON.parse(JsonObj);
-        var str = JSON.stringify(obj, undefined, 4);
-        document.getElementById('result').innerHTML = str;
 
+        var ct,cm,ae,an,ce,cn = "";
+        var ct1,cm1,ae1,an1,ce1,cn1 = "";
+        var obj1,obj2,obj3,obj4,obj5,obj6,obj7,obj8,obj9="";
+        var str1,str2,str3,str4,str5,str6,str7,str8,str9="";
+
+        ct = JsonObj.CommitTime;
+        ct1 = JSON.stringify(ct,undefined, 4);
+        document.getElementById("ct").innerHTML = ct1;
+
+        cm = JsonObj.CommitMessage;
+        cm1 = JSON.stringify(cm,undefined, 4);
+        document.getElementById("cm").innerHTML = cm1;
+
+        ae = JsonObj.AuthorEmail;
+        ae1 = JSON.stringify(ae,undefined, 4);
+        document.getElementById("ae").innerHTML = ae1;
+
+        an = JsonObj.AuthorName;
+        an1 = JSON.stringify(an,undefined, 4);
+        document.getElementById("an").innerHTML = an1;
+
+        ce = JsonObj.CommiterEmail;
+        ce1 = JSON.stringify(ce,undefined, 4);
+        document.getElementById("ce").innerHTML = ce1;
+
+        cn = JsonObj.CommitterName;
+        cn1 = JSON.stringify(cn,undefined, 4);
+        document.getElementById("cn").innerHTML = cn1;
+
+
+        obj1 = JsonObj.OntologyMetrics.BaseMetrics;
+        str1 = JSON.stringify(obj1,undefined, 4);
+        str1 = str1.substr(1);
+        str1 = str1.substring(0, str1.length-1);
+        document.getElementById("result1").innerHTML = str1;
+
+        obj2 = JsonObj.OntologyMetrics.ClassAxioms;
+        str2 = JSON.stringify(obj2, undefined, 4);
+        str2 = str2.substr(1);
+        str2 = str2.substring(0, str2.length-1);
+        document.getElementById("result2").innerHTML = str2;
+
+        obj3 = JsonObj.OntologyMetrics.Objectpropertyaxioms;
+        str3 = JSON.stringify(obj3, undefined, 4);
+        str3 = str3.substr(1);
+        str3 = str3.substring(0, str3.length-1);
+        document.getElementById("result3").innerHTML = str3;
+
+        obj4 = JsonObj.OntologyMetrics.DataPropertyAxioms;
+        str4 = JSON.stringify(obj4, undefined, 4);
+        //str4 = str4.substr(1);
+        //str4 = str4.substring(0, str4.length-1);
+        document.getElementById("result4").innerHTML = str4;
+        obj5 = JsonObj.OntologyMetrics.IndividualAxioms;
+        str5 = JSON.stringify(obj5, undefined, 4);
+        //str5 = str5.substr(1);
+        //str5 = str5.substring(0, str5.length-1);
+        document.getElementById("result5").innerHTML = str5;
+        obj6 = JsonObj.OntologyMetrics.AnnotationAxioms;
+        str6 = JSON.stringify(obj6, undefined, 4);
+        //str6 = str6.substr(1);
+        //str6 = str6.substring(0, str6.length-1);
+        document.getElementById("result6").innerHTML = str6;
+
+        obj7 = JsonObj.OntologyMetrics.Schemametrics;
+        str7 = JSON.stringify(obj7, undefined, 4);
+        str7 = str7.substr(1);
+        str7 = str7.substring(0, str7.length-1);
+        document.getElementById("result7").innerHTML = str7;
+
+        obj8 = JsonObj.OntologyMetrics.Knowledgebasemetrics;
+        str8 = JSON.stringify(obj8, undefined, 4);
+        str8 = str8.substr(1);
+        str8 = str8.substring(0, str8.length-1);
+        document.getElementById("result8").innerHTML = str8;
+
+        obj9 = JsonObj.OntologyMetrics.Graphmetrics;
+        str9 = JSON.stringify(obj9, undefined, 4);
+        str9 = str9.substr(1);
+        str9 = str9.substring(0, str9.length-1);
+        document.getElementById("result9").innerHTML = str9;
      });
   </script>
 
