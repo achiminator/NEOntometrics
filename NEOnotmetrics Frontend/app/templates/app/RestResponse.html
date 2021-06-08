@@ -29,12 +29,32 @@
       <h1>Ontology Metric Calculation</h1>
       <br>
 
-     <h4>Basic information: </h4>
+      <h4>Basic Information: </h4>
       <table border="1">
+      <tr>
+         <th>created：</th>
+         <td id="created"></td>
+      </tr>
+      <tr>
+         <th>repository：</th>
+         <td id="repository"></td>
+      </tr>
       <tr>
          <th>file Name：</th>
          <td id="fm"></td>
       </tr>
+      <tr>
+         <th>branch：</th>
+         <td id="branch"></td>
+      </tr>
+      <tr>
+         <th>whole Repository Analyzed：</th>
+         <td id="wra"></td>
+      </tr>
+      </table>
+
+      <h4>Metrics Information: </h4>
+      <table border="1">
       <tr>
          <th>Commit Time：</th>
          <td id="ct"></td>
@@ -61,18 +81,17 @@
       </tr>
       </table>
 
-      <h4>OntologyMetrics information: </h4>
-      <h4>Base Metrics: </h4>
+      <h4>OntologyMetrics Information: </h4>
+      <h4>Base Metrics(diese Form ist besser?): </h4>
       <p id="result1"></p>
 
-      <h4>Class Axioms: </h4>
+      <h4>Class Axioms(diese Form ist besser?): </h4>
       <table border="1">
       <tr>
          <th>DLexpressivity：</th>
          <td id="dlexpressivity"></td>
       </tr>
       </table>
-
 
 
 </div>
@@ -85,8 +104,21 @@
         var JsonObj = localStorage.getItem("Metrics");
         var obj=JSON.parse(JsonObj);
 
+        var creat,repos,fm,bra,wra = "";
+        var ct,cm,ae,an,ce,cn = "";
+        var obj1,obj2="";
+        var str1="";
+
+        creat = obj[0].created;
+        document.getElementById("created").innerHTML = creat;
+        repos = obj[0].repository;
+        document.getElementById("repository").innerHTML = repos;
         fm = obj[0].fileName;
         document.getElementById("fm").innerHTML = fm;
+        bra = obj[0].branch;
+        document.getElementById("branch").innerHTML = bra;
+        wra = obj[0].wholeRepositoryAnalyzed;
+        document.getElementById("wra").innerHTML = wra;
 
         ct = obj[0].metrics[0].CommitTime;
         document.getElementById("ct").innerHTML = ct;
@@ -104,8 +136,7 @@
         document.getElementById("ce").innerHTML = ce;
 
         cn = obj[0].metrics[0].CommitterName;
-        cn1 = JSON.stringify(cn,undefined, 4);
-        document.getElementById("cn").innerHTML = cn1;
+        document.getElementById("cn").innerHTML = cn;
 
         obj1 = obj[0].metrics[0].OntologyMetrics.BaseMetrics;
         str1 = JSON.stringify(obj1,undefined, 4);
