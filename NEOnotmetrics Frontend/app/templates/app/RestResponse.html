@@ -85,35 +85,35 @@
         var JsonObj = localStorage.getItem("Metrics");
         var obj=JSON.parse(JsonObj);
 
-        fm = obj.fileName;
+        fm = obj[0].fileName;
         document.getElementById("fm").innerHTML = fm;
 
-        ct = obj.metrics[0].CommitTime;
+        ct = obj[0].metrics[0].CommitTime;
         document.getElementById("ct").innerHTML = ct;
 
-        cm = obj.metrics[0].CommitMessage;
+        cm = obj[0].metrics[0].CommitMessage;
         document.getElementById("cm").innerHTML = cm;
 
-        ae = obj.metrics[0].AuthorEmail;
+        ae = obj[0].metrics[0].AuthorEmail;
         document.getElementById("ae").innerHTML = ae;
 
-        an = obj.metrics[0].AuthorName;
+        an = obj[0].metrics[0].AuthorName;
         document.getElementById("an").innerHTML = an;
 
-        ce = obj.metrics[0].CommiterEmail;
+        ce = obj[0].metrics[0].CommiterEmail;
         document.getElementById("ce").innerHTML = ce;
 
-        cn = obj.metrics[0].CommitterName;
+        cn = obj[0].metrics[0].CommitterName;
         cn1 = JSON.stringify(cn,undefined, 4);
         document.getElementById("cn").innerHTML = cn1;
 
-        obj1 = obj.metrics[0].OntologyMetrics.BaseMetrics;
+        obj1 = obj[0].metrics[0].OntologyMetrics.BaseMetrics;
         str1 = JSON.stringify(obj1,undefined, 4);
         str1 = str1.substr(1);
         str1 = str1.substring(0, str1.length-1);
         document.getElementById("result1").innerHTML = str1;
 
-        obj2 =obj.metrics[0].OntologyMetrics.ClassAxioms.DLexpressivity;
+        obj2 =obj[0].metrics[0].OntologyMetrics.ClassAxioms.DLexpressivity;
         document.getElementById("dlexpressivity").innerHTML = obj2;
 
      });
