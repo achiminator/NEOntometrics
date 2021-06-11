@@ -3,8 +3,8 @@ package de.edu.rostock.ontologymetrics.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.BaseMetric;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.OntologyMetric;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.basemetric.BaseMetric;
 
 public class ServletModel {
 

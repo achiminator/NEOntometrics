@@ -326,8 +326,15 @@ public class OntologyUtility {
 	java.util.Collections.sort(result);
 	return result;
     }
-
+/**
+ * Prepares a given string for XML-represenation
+ * Delete all invalid signs
+ * 
+ * @param text input text for parsing
+ * @return XML-valid representation
+ */
     public static String CleanInvalidChars(String text) {
+	
 	String cleanText = text;
 	cleanText = cleanText.replace("#", "");
 	cleanText = cleanText.replace(".", "");

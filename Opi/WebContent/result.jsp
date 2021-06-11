@@ -2,7 +2,7 @@
 	import="de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility"%>
 <%@ page import="org.semanticweb.owlapi.model.IRI"%>
 <%@ page
-	import="de.edu.rostock.ontologymetrics.owlapi.ontology.metric.basemetric.schemaknowledgebasemetric.classmetrics.ClassMetrics"%>
+	import="de.edu.rostock.ontologymetrics.owlapi.ontology.metric.ClassMetrics"%>
 <%@ page
 	import="de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyMetrics"%>
 <%@ page import="java.util.*"%>

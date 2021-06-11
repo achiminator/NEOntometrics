@@ -35,8 +35,8 @@ import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyMetricManager;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyMetricManagerImpl;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyMetrics;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
+import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.ClassMetrics;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.OntologyMetric;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.basemetric.schemaknowledgebasemetric.classmetrics.ClassMetrics;
 
 @Path("")
 public class ApiController {

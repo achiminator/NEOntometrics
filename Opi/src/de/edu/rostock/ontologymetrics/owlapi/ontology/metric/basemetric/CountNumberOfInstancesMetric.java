@@ -5,6 +5,8 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.search.EntitySearcher;
 
+import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.BaseMetric;
+
 public class CountNumberOfInstancesMetric extends BaseMetric {
 
 	public CountNumberOfInstancesMetric(OWLOntology pOntology) {
