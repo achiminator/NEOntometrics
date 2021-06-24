@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
     {% load static %}
@@ -17,7 +18,97 @@
         <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
-        <title>OntoMetrics - Metric Calculation</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+.dropbtn {
+  background-color: #04AA6D;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {background-color: #ddd;}
+
+.dropdown:hover .dropdown-content {display: block;}
+
+.dropdown:hover .dropbtn {background-color: #3e8e41;}
+</style>
+
+
+         <title>OntoMetrics - Metric Calculation</title>
+         <script type="text/javascript">
+
+          $(function () {
+         $('#id1').on("click", function () {
+              $('#table1').toggle();
+          });});
+          $(function () {
+         $('#id2').on("click", function () {
+              $('#table2').toggle();
+          });});
+          $(function () {
+         $('#id3').on("click", function () {
+              $('#table3').toggle();
+          });});
+          $(function () {
+         $('#id4').on("click", function () {
+              $('#table4').toggle();
+          });});
+          $(function () {
+         $('#id5').on("click", function () {
+              $('#table5').toggle();
+          });});
+          $(function () {
+         $('#id6').on("click", function () {
+              $('#table6').toggle();
+          });});
+          $(function () {
+         $('#id7').on("click", function () {
+              $('#table7').toggle();
+          });});
+          $(function () {
+         $('#id8').on("click", function () {
+              $('#table8').toggle();
+          });});
+          $(function () {
+         $('#id9').on("click", function () {
+              $('#table9').toggle();
+          });});
+          $(function () {
+         $('#id10').on("click", function () {
+              $('#table10').toggle();
+          });});
+          $(function () {
+         $('#id11').on("click", function () {
+              $('#table11').toggle();
+          });});
+
+        </script>
+
+
     </head>
   <body>
 <!--Navigation bar-->
@@ -389,6 +480,18 @@
       </tr>
       </table>
 
+    <p>Chose the Style of your metric:</p>
+
+<div class="dropdown">
+  <button class="dropbtn">Figurestyle</button>
+  <div class="dropdown-content">
+    <a href="window.open(Visualizations.html)">line</a>
+    <a href="Visualizations.chooseGrafik(Json, bar)">bar</a>
+    <a href="Visualizations.chooseGrafik(Json, circle)">circle</a>
+  </div>
+</div>
+
+
 </div>
 <div id="nav-footer"></div>
   </body>
@@ -580,6 +683,7 @@
         document.getElementById("obj909").innerHTML = obj909;
 
      });
+
   </script>
 
 <script type="text/javascript">

@@ -17,3 +17,5 @@ def header(request):
 def footer(request):
 	return render(request,'app/footer.html')
 
+def Visualizations(request):
+	return render(request, 'app/Visualizations.html')
