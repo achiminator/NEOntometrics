@@ -1,5 +1,8 @@
 from django.shortcuts import render
 
+
+
+
 # Create your views here.
 
 def index(request):
@@ -13,3 +16,4 @@ def header(request):
 
 def footer(request):
 	return render(request,'app/footer.html')
+
