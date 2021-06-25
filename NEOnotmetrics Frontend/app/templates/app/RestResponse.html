@@ -17,7 +17,57 @@
         <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
-        <title>OntoMetrics - Metric Calculation</title>
+         <title>OntoMetrics - Metric Calculation</title>
+         <script type="text/javascript">
+
+          $(function () {
+         $('#id1').on("click", function () {
+              $('#table1').toggle();
+          });});
+          $(function () {
+         $('#id2').on("click", function () {
+              $('#table2').toggle();
+          });});
+          $(function () {
+         $('#id3').on("click", function () {
+              $('#table3').toggle();
+          });});
+          $(function () {
+         $('#id4').on("click", function () {
+              $('#table4').toggle();
+          });});
+          $(function () {
+         $('#id5').on("click", function () {
+              $('#table5').toggle();
+          });});
+          $(function () {
+         $('#id6').on("click", function () {
+              $('#table6').toggle();
+          });});
+          $(function () {
+         $('#id7').on("click", function () {
+              $('#table7').toggle();
+          });});
+          $(function () {
+         $('#id8').on("click", function () {
+              $('#table8').toggle();
+          });});
+          $(function () {
+         $('#id9').on("click", function () {
+              $('#table9').toggle();
+          });});
+          $(function () {
+         $('#id10').on("click", function () {
+              $('#table10').toggle();
+          });});
+          $(function () {
+         $('#id11').on("click", function () {
+              $('#table11').toggle();
+          });});
+
+        </script>
+
+
     </head>
   <body>
 <!--Navigation bar-->
@@ -28,8 +78,367 @@
       <br>
       <h1>Ontology Metric Calculation</h1>
       <br>
-      <textarea id="result" rows="50" cols="70" style="width: 80%; background-color: #DCDCDC; color: red;">
-      </textarea>
+
+      <h4>Basic Information: </h4>
+      <div id="id1">Hide/Show</div>
+      <table border="1" id="table1" style="display:block;">
+      <tr>
+         <th>created：</th>
+         <td id="created"></td>
+      </tr>
+      <tr>
+         <th>repository：</th>
+         <td id="repository"></td>
+      </tr>
+      <tr>
+         <th>file Name：</th>
+         <td id="fm"></td>
+      </tr>
+      <tr>
+         <th>branch：</th>
+         <td id="branch"></td>
+      </tr>
+      <tr>
+         <th>whole Repository Analyzed：</th>
+         <td id="wra"></td>
+      </tr>
+      </table>
+
+      <h4>Metrics Information: </h4>
+      <div id="id2">Hide/Show</div>
+      <table border="1" id="table2" style="display:block;">
+      <tr>
+         <th>Commit Time：</th>
+         <td id="ct"></td>
+      </tr>
+      <tr>
+         <th>Commit Message: </th>
+         <td id="cm"></td>
+      </tr>
+      <tr>
+         <th>Author Email: </th>
+         <td id="ae"></td>
+      </tr>
+      <tr>
+         <th>Author Name：</th>
+         <td id="an"></td>
+      </tr>
+      <tr>
+         <th>Commiter Email：</th>
+         <td id="ce"></td>
+      </tr>
+      <tr>
+         <th>Committer Name：</th>
+         <td id="cn"></td>
+      </tr>
+      </table>
+
+    <h4>Ontology Metrics Information: </h4>
+      <h4>Base Metrics: </h4>
+      <div id="id3">Hide/Show</div>
+      <table border="1" id="table3" style="display:block;">
+      <tr>
+         <th>Reading Error：</th>
+         <td id="obj101"></td>
+      </tr>
+      <tr>
+         <th>Axioms：</th>
+         <td id="obj102"></td>
+      </tr>
+      <tr>
+         <th>Logical Axioms Count：</th>
+         <td id="obj103"></td>
+      </tr>
+      <tr>
+         <th>Class Count：</th>
+         <td id="obj104"></td>
+      </tr>
+      <tr>
+         <th>Total Classes Count：</th>
+         <td id="obj105"></td>
+      </tr>
+      <tr>
+         <th>Object Property Count：</th>
+         <td id="obj106"></td>
+      </tr>
+      <tr>
+         <th>Total Object Properties Count：</th>
+         <td id="obj107"></td>
+      </tr>
+      <tr>
+         <th>Data Property Count：</th>
+         <td id="obj108"></td>
+      </tr>
+      <tr>
+         <th>Total Data Properties Count：</th>
+         <td id="obj109"></td>
+      </tr>
+      <tr>
+         <th>Properties Count：</th>
+         <td id="obj110"></td>
+      </tr>
+      <tr>
+         <th>Individual Count：</th>
+         <td id="obj111"></td>
+      </tr>
+      </table>
+
+      <h4>Class Axioms: </h4>
+      <div id="id4">Hide/Show</div>
+      <table border="1" id="table4" style="display:block;">
+      <tr>
+         <th>DLexpressivity：</th>
+         <td id="obj201"></td>
+      </tr>
+      <tr>
+         <th>Sub Class Of Axioms Count：</th>
+         <td id="obj202"></td>
+      </tr>
+      <tr>
+         <th>Equivalent Classes Axioms Count：</th>
+         <td id="obj203"></td>
+      </tr>
+      <tr>
+         <th>Disjoint Classes Axioms Count：</th>
+         <td id="obj204"></td>
+      </tr>
+      </table>
+
+      <h4>Object Property Axioms: </h4>
+      <div id="id5">Hide/Show</div>
+      <table border="1" id="table5" style="display:block;">
+      <tr>
+         <th>Hidden GCI Count：</th>
+         <td id="obj301"></td>
+      </tr>
+      <tr>
+         <th>Sub Object Property Of Axioms Count：</th>
+         <td id="obj302"></td>
+      </tr>
+      <tr>
+         <th>Equivalent Object Properties Axioms Count：</th>
+         <td id="obj303"></td>
+      </tr>
+      <tr>
+         <th>Inverse Object Properties Axioms Count：</th>
+         <td id="obj304"></td>
+      </tr>
+      <tr>
+         <th>Disjoint Object Properties Axioms Count：</th>
+         <td id="obj305"></td>
+      </tr>
+      <tr>
+         <th>Functional Object Properties Axioms Count：</th>
+         <td id="obj306"></td>
+      </tr>
+      <tr>
+         <th>Inverse Functional Object Properties Axioms Count：</th>
+         <td id="obj307"></td>
+      </tr>
+      <tr>
+         <th>Transitive Object Property Axioms Count：</th>
+         <td id="obj308"></td>
+      </tr>
+      <tr>
+         <th>Symmetric Object Property Axioms Count：</th>
+         <td id="obj309"></td>
+      </tr>
+      <tr>
+         <th>Asymmetric Object Property Axioms Count：</th>
+         <td id="obj310"></td>
+      </tr>
+      <tr>
+         <th>Reflexive Object Property Axioms Count：</th>
+         <td id="obj311"></td>
+      </tr>
+      <tr>
+         <th>Irreflexive Object Property Axioms Count：</th>
+         <td id="obj312"></td>
+      </tr>
+      <tr>
+         <th>Object Property Domain Axioms Count：</th>
+         <td id="obj313"></td>
+      </tr>
+      <tr>
+         <th>Sub Property Chain Of Axioms Count：</th>
+         <td id="obj314"></td>
+      </tr>
+      </table>
+
+      <h4>Data Property Axioms: </h4>
+      <div id="id6">Hide/Show</div>
+      <table border="1" id="table6" style="display:block;">
+      <tr>
+         <th>Equivalent Data Properties Axioms Count：</th>
+         <td id="obj401"></td>
+      </tr>
+      <tr>
+         <th>Disjoint Data Properties Axioms Count：</th>
+         <td id="obj402"></td>
+      </tr>
+      <tr>
+         <th>Functional Data Properties Axioms Count：</th>
+         <td id="obj403"></td>
+      </tr>
+      <tr>
+         <th>Data Property Domain Axioms Count：</th>
+         <td id="obj404"></td>
+      </tr>
+      <tr>
+         <th>Data Property Range Axioms Count：</th>
+         <td id="obj405"></td>
+      </tr>
+      </table>
+
+      <h4>Individual Axioms: </h4>
+      <div id="id7">Hide/Show</div>
+      <table border="1" id="table7" style="display:block;">
+      <tr>
+         <th>Object Property Assertion Axioms Count：</th>
+         <td id="obj501"></td>
+      </tr>
+      <tr>
+         <th>Data Property Assertion Axioms Count：</th>
+         <td id="obj502"></td>
+      </tr>
+      <tr>
+         <th>Negative Object Property Assertion Axioms Count：</th>
+         <td id="obj503"></td>
+      </tr>
+      <tr>
+         <th>Negative Data Property Assertion Axioms Count：</th>
+         <td id="obj504"></td>
+      </tr>
+      <tr>
+         <th>Same Individuals Axioms Count：</th>
+         <td id="obj505"></td>
+      </tr>
+      <tr>
+         <th>Different Individuals Axioms Count：</th>
+         <td id="obj506"></td>
+      </tr>
+      <tr>
+         <th>Annotation Axioms Count：</th>
+         <td id="obj507"></td>
+      </tr>
+      </table>
+
+      <h4>Annotation Axioms: </h4>
+      <div id="id8">Hide/Show</div>
+      <table border="1" id="table8" style="display:block;">
+      <tr>
+         <th>Annotation Property Domain Axioms Count：</th>
+         <td id="obj601"></td>
+      </tr>
+      <tr>
+         <th>Annotation Property Range Axioms Count：</th>
+         <td id="obj602"></td>
+      </tr>
+      <tr>
+         <th>Attribute Richness：</th>
+         <td id="obj603"></td>
+      </tr>
+      <tr>
+         <th>Inheritance Richness：</th>
+         <td id="obj604"></td>
+      </tr>
+      </table>
+
+      <h4>Schema Metrics: </h4>
+      <div id="id9">Hide/Show</div>
+      <table border="1" id="table9" style="display:block;">
+      <tr>
+         <th>Attribute Class Rratio：</th>
+         <td id="obj701"></td>
+      </tr>
+      <tr>
+         <th>Equivalence Ratio：</th>
+         <td id="obj702"></td>
+      </tr>
+      <tr>
+         <th>Axiom Class Ratio：</th>
+         <td id="obj703"></td>
+      </tr>
+      <tr>
+         <th>Inverse Relations Ratio：</th>
+         <td id="obj704"></td>
+      </tr>
+      <tr>
+         <th>Class Relation Ratio：</th>
+         <td id="obj705"></td>
+      </tr>
+      <tr>
+         <th>Average Population：</th>
+         <td id="obj706"></td>
+      </tr>
+      <tr>
+         <th>Class Richness：</th>
+         <td id="obj707"></td>
+      </tr>
+      <tr>
+         <th>Absolute Root Cardinality：</th>
+         <td id="obj708"></td>
+      </tr>
+      <tr>
+         <th>Absolute Leaf Cardinality：</th>
+         <td id="obj709"></td>
+      </tr>
+      </table>
+
+      <h4>Knowledge Base Metrics: </h4>
+      <div id="id10">Hide/Show</div>
+      <table border="1" id="table10" style="display:block;">
+      <tr>
+         <th>Absolute Sibling Cardinality：</th>
+         <td id="obj801"></td>
+      </tr>
+      <tr>
+         <th>Absolute Depth：</th>
+         <td id="obj802"></td>
+      </tr>
+      </table>
+
+      <h4>Graph Metrics: </h4>
+      <div id="id11">Hide/Show</div>
+      <table border="1" id="table11" style="display:block;">
+      <tr>
+         <th>Maximal Depth：</th>
+         <td id="obj901"></td>
+      </tr>
+      <tr>
+         <th>Absolute Breadth：</th>
+         <td id="obj902"></td>
+      </tr>
+      <tr>
+         <th>Average Breadth：</th>
+         <td id="obj903"></td>
+      </tr>
+      <tr>
+         <th>Maximal Breadth：</th>
+         <td id="obj904"></td>
+      </tr>
+       <tr>
+         <th>Ratio Of Leaf Fanoutness：</th>
+         <td id="obj905"></td>
+      </tr>
+      <tr>
+         <th>Ratio Of Sibling Fanoutness：</th>
+         <td id="obj906"></td>
+      </tr>
+      <tr>
+         <th>Tangledness：</th>
+         <td id="obj907"></td>
+      </tr>
+      <tr>
+         <th>Total Number Of Paths：</th>
+         <td id="obj908"></td>
+      </tr>
+      <tr>
+         <th>Average Number Of Paths：</th>
+         <td id="obj909"></td>
+      </tr>
+      </table>
+
 </div>
 <div id="nav-footer"></div>
   </body>
@@ -39,8 +448,186 @@
         $("#nav-footer").load("/foot");
         var JsonObj = localStorage.getItem("Metrics");
         var obj=JSON.parse(JsonObj);
-        var str = JSON.stringify(obj, undefined, 4);
-        document.getElementById('result').innerHTML = str;
+
+        var creat,repos,fm,bra,wra = "";
+        var ct,cm,ae,an,ce,cn = "";
+        var obj101,obj102,obj103,obj104,obj105,obj106,obj107,obj108,obj109,obj110,obj111 = "";
+        var obj201,obj202,obj203,obj204 = "";
+        var obj301,obj302,obj303,obj304,obj305,obj306,obj307,obj308,obj309,obj310,obj311,obj312,obj313,obj314 = "";
+        var obj401,obj402,obj403,obj404,obj405 = "";
+        var obj501,obj502,obj503,obj504,obj505,obj506,obj507 = "";
+        var obj601,obj602,obj603,obj604 = "";
+        var obj701,obj702,obj703,obj704,obj705,obj706,obj707,obj708,obj709 = "";
+        var obj801,obj802 = "";
+        var obj901,obj902,obj903,obj904,obj905,obj906,obj907,obj908,obj909 = "";
+
+        creat = obj[0].created;
+        document.getElementById("created").innerHTML = creat;
+        repos = obj[0].repository;
+        document.getElementById("repository").innerHTML = repos;
+        fm = obj[0].fileName;
+        document.getElementById("fm").innerHTML = fm;
+        bra = obj[0].branch;
+        document.getElementById("branch").innerHTML = bra;
+        wra = obj[0].wholeRepositoryAnalyzed;
+        document.getElementById("wra").innerHTML = wra;
+
+        ct = obj[0].metrics[0].CommitTime;
+        document.getElementById("ct").innerHTML = ct;
+
+        cm = obj[0].metrics[0].CommitMessage;
+        document.getElementById("cm").innerHTML = cm;
+
+        ae = obj[0].metrics[0].AuthorEmail;
+        document.getElementById("ae").innerHTML = ae;
+
+        an = obj[0].metrics[0].AuthorName;
+        document.getElementById("an").innerHTML = an;
+
+        ce = obj[0].metrics[0].CommiterEmail;
+        document.getElementById("ce").innerHTML = ce;
+
+        cn = obj[0].metrics[0].CommitterName;
+        document.getElementById("cn").innerHTML = cn;
+
+        obj101 = obj[0].metrics[0].OntologyMetrics.BaseMetrics.ReadingError;
+        document.getElementById("obj101").innerHTML = obj101;
+        obj102 = obj[0].metrics[0].OntologyMetrics.BaseMetrics.Axioms;
+        document.getElementById("obj102").innerHTML = obj102;
+        obj103 = obj[0].metrics[0].OntologyMetrics.BaseMetrics.Logicalaxiomscount;
+        document.getElementById("obj103").innerHTML = obj103;
+        obj104 = obj[0].metrics[0].OntologyMetrics.BaseMetrics.Classcount;
+        document.getElementById("obj104").innerHTML = obj104;
+        obj105 = obj[0].metrics[0].OntologyMetrics.BaseMetrics.Totalclassescount;
+        document.getElementById("obj105").innerHTML = obj105;
+        obj106 = obj[0].metrics[0].OntologyMetrics.BaseMetrics.Objectpropertycount;
+        document.getElementById("obj106").innerHTML = obj106;
+        obj107 = obj[0].metrics[0].OntologyMetrics.BaseMetrics.Totalobjectpropertiescount;
+        document.getElementById("obj107").innerHTML = obj107;
+        obj108 = obj[0].metrics[0].OntologyMetrics.BaseMetrics.Datapropertycount;
+        document.getElementById("obj108").innerHTML = obj108;
+        obj109 = obj[0].metrics[0].OntologyMetrics.BaseMetrics.Totaldatapropertiescount;
+        document.getElementById("obj109").innerHTML = obj109;
+        obj110 = obj[0].metrics[0].OntologyMetrics.BaseMetrics.Propertiescount;
+        document.getElementById("obj110").innerHTML = obj110;
+        obj111 = obj[0].metrics[0].OntologyMetrics.BaseMetrics.Individualcount;
+        document.getElementById("obj111").innerHTML = obj111;
+
+        obj201 = obj[0].metrics[0].OntologyMetrics.ClassAxioms.DLexpressivity;
+        document.getElementById("obj201").innerHTML = obj201;
+        obj202 = obj[0].metrics[0].OntologyMetrics.ClassAxioms.SubClassOfaxiomscount;
+        document.getElementById("obj202").innerHTML = obj202;
+        obj203 = obj[0].metrics[0].OntologyMetrics.ClassAxioms.Equivalentclassesaxiomscount;
+        document.getElementById("obj203").innerHTML = obj203;
+        obj204 = obj[0].metrics[0].OntologyMetrics.ClassAxioms.Disjointclassesaxiomscount;
+        document.getElementById("obj204").innerHTML = obj204;
+
+        obj301 = obj[0].metrics[0].OntologyMetrics.Objectpropertyaxioms.HiddenGCICount;
+        document.getElementById("obj301").innerHTML = obj301;
+        obj302 = obj[0].metrics[0].OntologyMetrics.Objectpropertyaxioms.SubObjectPropertyOfaxiomscount;
+        document.getElementById("obj302").innerHTML = obj302;
+        obj303 = obj[0].metrics[0].OntologyMetrics.Objectpropertyaxioms.Equivalentobjectpropertiesaxiomscount;
+        document.getElementById("obj303").innerHTML = obj303;
+        obj304 = obj[0].metrics[0].OntologyMetrics.Objectpropertyaxioms.Inverseobjectpropertiesaxiomscount;
+        document.getElementById("obj304").innerHTML = obj304;
+        obj305 = obj[0].metrics[0].OntologyMetrics.Objectpropertyaxioms.Disjointobjectpropertiesaxiomscount;
+        document.getElementById("obj305").innerHTML = obj305;
+        obj306 = obj[0].metrics[0].OntologyMetrics.Objectpropertyaxioms.Functionalobjectpropertiesaxiomscount;
+        document.getElementById("obj306").innerHTML = obj306;
+        obj307 = obj[0].metrics[0].OntologyMetrics.Objectpropertyaxioms.Inversefunctionalobjectpropertiesaxiomscount;
+        document.getElementById("obj307").innerHTML = obj307;
+        obj308 = obj[0].metrics[0].OntologyMetrics.Objectpropertyaxioms.Transitiveobjectpropertyaxiomscount;
+        document.getElementById("obj308").innerHTML = obj308;
+        obj309 = obj[0].metrics[0].OntologyMetrics.Objectpropertyaxioms.Symmetricobjectpropertyaxiomscount;
+        document.getElementById("obj309").innerHTML = obj309;
+        obj310 = obj[0].metrics[0].OntologyMetrics.Objectpropertyaxioms.Asymmetricobjectpropertyaxiomscount;
+        document.getElementById("obj310").innerHTML = obj310;
+        obj311 = obj[0].metrics[0].OntologyMetrics.Objectpropertyaxioms.Reflexiveobjectpropertyaxiomscount;
+        document.getElementById("obj311").innerHTML = obj311;
+        obj312 = obj[0].metrics[0].OntologyMetrics.Objectpropertyaxioms.Irreflexiveobjectpropertyaxiomscount;
+        document.getElementById("obj312").innerHTML = obj312;
+        obj313 = obj[0].metrics[0].OntologyMetrics.Objectpropertyaxioms.Objectpropertydomainaxiomscount;
+        document.getElementById("obj313").innerHTML = obj313;
+        obj314 = obj[0].metrics[0].OntologyMetrics.Objectpropertyaxioms.SubPropertyChainOfaxiomscount;
+        document.getElementById("obj314").innerHTML = obj314;
+
+        obj401 = obj[0].metrics[0].OntologyMetrics.Datapropertyaxioms.Equivalentdatapropertiesaxiomscount;
+        document.getElementById("obj401").innerHTML = obj401;
+        obj402 = obj[0].metrics[0].OntologyMetrics.Datapropertyaxioms.Disjointdatapropertiesaxiomscount;
+        document.getElementById("obj402").innerHTML = obj402;
+        obj403 = obj[0].metrics[0].OntologyMetrics.Datapropertyaxioms.Functionaldatapropertyaxiomscount;
+        document.getElementById("obj403").innerHTML = obj403;
+        obj404 = obj[0].metrics[0].OntologyMetrics.Datapropertyaxioms.Datapropertydomainaxiomscount;
+        document.getElementById("obj404").innerHTML = obj404;
+        obj405 = obj[0].metrics[0].OntologyMetrics.Datapropertyaxioms.DataPropertyrangeaxiomscount;
+        document.getElementById("obj405").innerHTML = obj405;
+
+        obj501 = obj[0].metrics[0].OntologyMetrics.Individualaxioms.Objectpropertyassertionaxiomscount;
+        document.getElementById("obj501").innerHTML = obj501;
+        obj502 = obj[0].metrics[0].OntologyMetrics.Individualaxioms.Datapropertyassertionaxiomscount;
+        document.getElementById("obj502").innerHTML = obj502;
+        obj503 = obj[0].metrics[0].OntologyMetrics.Individualaxioms.Negativeobjectpropertyassertionaxiomscount;
+        document.getElementById("obj503").innerHTML = obj503;
+        obj504 = obj[0].metrics[0].OntologyMetrics.Individualaxioms.Negativedatapropertyassertionaxiomscount;
+        document.getElementById("obj504").innerHTML = obj504;
+        obj505 = obj[0].metrics[0].OntologyMetrics.Individualaxioms.Sameindividualsaxiomscount;
+        document.getElementById("obj505").innerHTML = obj505;
+        obj506 = obj[0].metrics[0].OntologyMetrics.Individualaxioms.Differentindividualsaxiomscount;
+        document.getElementById("obj506").innerHTML = obj506;
+        obj507 = obj[0].metrics[0].OntologyMetrics.Individualaxioms.Annotationaxiomscount;
+        document.getElementById("obj507").innerHTML = obj507;
+
+        obj601 = obj[0].metrics[0].OntologyMetrics.Annotationaxioms.Annotationpropertydomainaxiomscount;
+        document.getElementById("obj601").innerHTML = obj601;
+        obj602 = obj[0].metrics[0].OntologyMetrics.Annotationaxioms.Annotationpropertyrangeaxiomscount;
+        document.getElementById("obj602").innerHTML = obj602;
+        obj603 = obj[0].metrics[0].OntologyMetrics.Annotationaxioms.Attributerichness;
+        document.getElementById("obj603").innerHTML = obj603;
+        obj604 = obj[0].metrics[0].OntologyMetrics.Annotationaxioms.Inheritancerichness;
+        document.getElementById("obj604").innerHTML = obj604;
+
+        obj701 = obj[0].metrics[0].OntologyMetrics.Schemametrics.Attributeclassratio;
+        document.getElementById("obj701").innerHTML = obj701;
+        obj702 = obj[0].metrics[0].OntologyMetrics.Schemametrics.Equivalenceratio;
+        document.getElementById("obj702").innerHTML = obj702;
+        obj703 = obj[0].metrics[0].OntologyMetrics.Schemametrics.Axiomclassratio;
+        document.getElementById("obj703").innerHTML = obj703;
+        obj704 = obj[0].metrics[0].OntologyMetrics.Schemametrics.Inverserelationsratio;
+        document.getElementById("obj704").innerHTML = obj704;
+        obj705 = obj[0].metrics[0].OntologyMetrics.Schemametrics.Classrelationratio;
+        document.getElementById("obj705").innerHTML = obj705;
+        obj706 = obj[0].metrics[0].OntologyMetrics.Schemametrics.Averagepopulation;
+        document.getElementById("obj706").innerHTML = obj706;
+        obj707 = obj[0].metrics[0].OntologyMetrics.Schemametrics.Classrichness;
+        document.getElementById("obj707").innerHTML = obj707;
+        obj708 = obj[0].metrics[0].OntologyMetrics.Schemametrics.Absoluterootcardinality;
+        document.getElementById("obj708").innerHTML = obj708;
+        obj709 = obj[0].metrics[0].OntologyMetrics.Schemametrics.Absoluteleafcardinality;
+        document.getElementById("obj709").innerHTML = obj709;
+
+        obj801 = obj[0].metrics[0].OntologyMetrics.Knowledgebasemetrics.Absolutesiblingcardinality;
+        document.getElementById("obj801").innerHTML = obj801;
+        obj802 = obj[0].metrics[0].OntologyMetrics.Knowledgebasemetrics.Absolutedepth;
+        document.getElementById("obj802").innerHTML = obj802;
+
+        obj901 = obj[0].metrics[0].OntologyMetrics.Graphmetrics.Maximaldepth;
+        document.getElementById("obj901").innerHTML = obj901;
+        obj902 = obj[0].metrics[0].OntologyMetrics.Graphmetrics.Absolutebreadth;
+        document.getElementById("obj902").innerHTML = obj902;
+        obj903 = obj[0].metrics[0].OntologyMetrics.Graphmetrics.Averagebreadth;
+        document.getElementById("obj903").innerHTML = obj903;
+        obj904 = obj[0].metrics[0].OntologyMetrics.Graphmetrics.Maximalbreadth;
+        document.getElementById("obj904").innerHTML = obj904;
+        obj905 = obj[0].metrics[0].OntologyMetrics.Graphmetrics.Ratioofleaffanoutness;
+        document.getElementById("obj905").innerHTML = obj905;
+        obj906 = obj[0].metrics[0].OntologyMetrics.Graphmetrics.Ratioofsiblingfanoutness;
+        document.getElementById("obj906").innerHTML = obj906;
+        obj907 = obj[0].metrics[0].OntologyMetrics.Graphmetrics.Tangledness;
+        document.getElementById("obj907").innerHTML = obj907;
+        obj908 = obj[0].metrics[0].OntologyMetrics.Graphmetrics.Totalnumberofpaths;
+        document.getElementById("obj908").innerHTML = obj908;
+        obj909 = obj[0].metrics[0].OntologyMetrics.Graphmetrics.Averagenumberofpaths;
+        document.getElementById("obj909").innerHTML = obj909;
 
      });
   </script>
