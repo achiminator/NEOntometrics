@@ -1,7 +1,7 @@
 package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
@@ -29,7 +29,7 @@ public class GraphMetric {
     private double averageNumberOfPaths;
 
     public Map<String, Object> getAllMetrics(OWLOntology ontology, GraphParser parser, GraphParser parserI) {
-	Map<String, Object> returnObject = new HashMap<>();
+	Map<String, Object> returnObject = new LinkedHashMap<>();
 	returnObject.put("Absoluterootcardinality", absoluteRootCardinality);
 	returnObject.put("Absoluteleafcardinality", absoluteLeafCardinality);
 	returnObject.put("Absolutesiblingcardinality", absoluteSibblingCardinality);
@@ -48,7 +48,7 @@ public class GraphMetric {
     }
 
     public Map<String, Object> calculateAllMetrics(OWLOntology ontology, GraphParser parser, GraphParser parserI) {
-	Map<String, Object> returnObject = new HashMap<>();
+	Map<String, Object> returnObject = new LinkedHashMap<>();
 	returnObject.put("Absoluterootcardinality", absoluteRootCardinalityMetric(parser));
 	returnObject.put("Absoluteleafcardinality", absoluteLeafCardinalityMetric(parser));
 	returnObject.put("Absolutesiblingcardinality", absoluteSiblingCardinalityMetric(parser));

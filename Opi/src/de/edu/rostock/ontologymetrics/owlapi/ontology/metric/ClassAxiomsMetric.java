@@ -1,6 +1,7 @@
 package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.semanticweb.owlapi.metrics.GCICount;
@@ -31,7 +32,7 @@ public class ClassAxiomsMetric {
         private int GCICount;
         private int hiddenGCIcount;
     public Map<String, Object> getAllMetrics(OWLOntology ontology) {
-  	Map<String, Object> returnObject = new HashMap<>();
+  	Map<String, Object> returnObject = new LinkedHashMap<>();
   	returnObject.put("SubClassOfaxiomscount", subClassOfAxiomsCount);
   	returnObject.put("Equivalentclassesaxiomscount", equivalentClassesAxiomsCount);
   	returnObject.put("Disjointclassesaxiomscount", disjointClassesAxiomsCount);
@@ -40,7 +41,7 @@ public class ClassAxiomsMetric {
 	return returnObject;
     }
     public Map<String, Object> calculateAllMetrics(OWLOntology ontology) {
-	Map<String, Object> returnObject = new HashMap<>();
+	Map<String, Object> returnObject = new LinkedHashMap<>();
 	returnObject.put("SubClassOfaxiomscount", countSubClassOfAxiomsMetric(ontology));
 	returnObject.put("Equivalentclassesaxiomscount", countEquivalentClassesAxiomsMetric(ontology));
 	returnObject.put("Disjointclassesaxiomscount", countDisjointClassesAxiomsMetric(ontology));

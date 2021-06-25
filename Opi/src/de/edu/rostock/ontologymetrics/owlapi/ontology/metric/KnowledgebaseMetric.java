@@ -1,6 +1,6 @@
 package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.semanticweb.owlapi.model.OWLClass;
@@ -30,14 +30,14 @@ public class KnowledgebaseMetric extends OntologyMetric {
     }
 
     public Map<String, Object> getAllMetrics() {
-	Map<String, Object> returnObject = new HashMap<>();
+	Map<String, Object> returnObject = new LinkedHashMap<>();
 	returnObject.put("Averagepopulation", averagePopulationMetric);
 	returnObject.put("Classrichness", classRichnessMetric);
 	return returnObject;
     }
 
     public Map<String, Object> calculateAllMetrics(OWLOntology ontology) {
-	Map<String, Object> returnObject = new HashMap<>();
+	Map<String, Object> returnObject = new LinkedHashMap<>();
 	returnObject.put("Averagepopulation", averagePopulationMetric());
 	returnObject.put("Classrichness", classRichnessMetric(ontology));
 	return returnObject;

@@ -1,7 +1,7 @@
 package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -66,6 +66,7 @@ public class ClassMetrics extends OntologyMetric {
     private int classRelationshipRichness;
     private int classInstancesCount;
     private int classPropertiesCount;
+    private IRI iri;
 
     private KnowledgebaseMetric knowledgebaseMetric;
     private BaseMetric baseMetric;
@@ -75,15 +76,21 @@ public class ClassMetrics extends OntologyMetric {
 	this.knowledgebaseMetric = knowledgebaseMetric;
 	this.baseMetric = baseMetric;
     }
-
-    public Map<String, Object> getAllMetrics(OWLOntology ontology, IRI iri) {
-	Map<String, Object> returnObject = new HashMap<>();
+    /**
+     * Get all classMetrics for a specific IRI
+     * @param ontology were the class can be found
+     * @param iri
+     * @return
+     */
+    public Map<String, Object> getAllMetrics() {
+	Map<String, Object> returnObject = new LinkedHashMap<>();
+	returnObject.put("iri", iri);
 	returnObject.put("Classconnectivity", classConnectivity);
 	returnObject.put("Classfulness", classFullness);
-	returnObject.put("classimportance", classImportance);
+	returnObject.put("Classimportance", classImportance);
+	returnObject.put("Classinheritancerichness", classInheritanceRichness);
+	returnObject.put("Classreadability", classReadability);
 	returnObject.put("Classchildrencount", classChildrenCount);
-	returnObject.put("classinheritancerichness", classInheritanceRichness);
-	returnObject.put("classreadability", classReadability);
 	returnObject.put("Classrelationshiprichness", classRelationshipRichness);
 	returnObject.put("Classinstancescount", classInstancesCount);
 	returnObject.put("Classpropertiescount", classPropertiesCount);
@@ -92,14 +99,16 @@ public class ClassMetrics extends OntologyMetric {
     }
 
     public Map<String, Object> calculateAllMetrics(OWLOntology ontology, IRI iri) {
-	Map<String, Object> returnObject = new HashMap<>();
+	this.iri = iri;
+	Map<String, Object> returnObject = new LinkedHashMap<>();
+	returnObject.put("iri", iri);
 	returnObject.put("Classconnectivity", classConnectivityMetric(ontology, iri));
 	returnObject.put("Classfulness", classFulnessMetric(ontology, iri));
-	returnObject.put("classimportance", classImportanceMetric(ontology, iri));
-	returnObject.put("Classchildrencount", countClassChildrenMetric(ontology, iri));
-	returnObject.put("classinheritancerichness", classInheritenceRichnessMetric(ontology, iri));
-	returnObject.put("classreadability", classReadabilityMetric(ontology, iri));
+	returnObject.put("Classimportance", classImportanceMetric(ontology, iri));
+	returnObject.put("Classinheritancerichness", classInheritenceRichnessMetric(ontology, iri));
+	returnObject.put("Classreadability", classReadabilityMetric(ontology, iri));
 	returnObject.put("Classrelationshiprichness", classRelationshipRichnessMetric(ontology, iri));
+	returnObject.put("Classchildrencount", countClassChildrenMetric(ontology, iri));
 	returnObject.put("Classinstancescount", countClassInstancesMetric(ontology, iri));
 	returnObject.put("Classpropertiescount", countClassPropertiesMetric(ontology, iri));
 

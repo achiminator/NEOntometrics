@@ -257,7 +257,7 @@ public class OntologyMetricManagerImpl  {
 	file2.createNewFile();
 
 	lontology = loadOntologyFromFile(file);
-
+	this.ontology = lontology;
 	// write ontology to database
 	db.writeFile2Database(file, lontology);
 
@@ -266,11 +266,6 @@ public class OntologyMetricManagerImpl  {
 	return lontology;
     }
 
-    public Map<String, Object> calculateMetrics(OWLOntology ontology) {
-	OntologyMetricsImpl ontoMetric = new OntologyMetricsImpl(ontology);
-	return ontoMetric.getAllMetrics();
-	
-    }
     
     public OWLOntology getOntology() {
 	return ontology;

@@ -1,6 +1,6 @@
 package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.semanticweb.owlapi.model.AxiomType;
@@ -19,7 +19,7 @@ public class IndividualAxiomsMetric  {
     private int differentIndividualAxiomsCount;
 
     public Map<String, Object> getAllMetrics(OWLOntology ontology) {
-	Map<String, Object> returnObject = new HashMap<>();
+	Map<String, Object> returnObject = new LinkedHashMap<>();
 	returnObject.put("Classassertionaxiomscount", classAssertionAxiomsCount);
 	returnObject.put("Objectpropertyassertionaxiomscount", objectPropertyAssertionAxiomsCount);
 	returnObject.put("Datapropertyassertionaxiomscount", dataPropertyAssertionAxiomsCount);
@@ -31,7 +31,7 @@ public class IndividualAxiomsMetric  {
 	return returnObject;
     }
     public Map<String, Object> calculateAllMetrics(OWLOntology ontology) {
-	Map<String, Object> returnObject = new HashMap<>();
+	Map<String, Object> returnObject = new LinkedHashMap<>();
 	returnObject.put("Classassertionaxiomscount", countClassAssertionAxiomsMetric(ontology));
 	returnObject.put("Objectpropertyassertionaxiomscount", countObjectPropertyAssertionAxiomsMetric(ontology));
 	returnObject.put("Datapropertyassertionaxiomscount", countDataPropertyAssertionAxiomsMetric(ontology));

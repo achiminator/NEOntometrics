@@ -2,6 +2,7 @@ package de.edu.rostock.ontologymetrics.api;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,23 +19,17 @@ import javax.ws.rs.core.Response;
 
 //xml
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLOntology;
-
 import org.xembly.Directives;
 import org.xembly.ImpossibleModificationException;
 import org.xembly.Xembler;
-
 import de.edu.rostock.ontologymetrics.api.error.InvalidOntologyException;
 import de.edu.rostock.ontologymetrics.api.error.WrongURIException;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyMetricManagerImpl;
+import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyMetricsImpl;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.ClassMetrics;
-import javassist.ClassMap;
 
 @Path("")
 public class ApiController {
@@ -49,36 +44,33 @@ public class ApiController {
     @Produces(MediaType.APPLICATION_XML)
     public Response getBaseMetricFromURL(@DefaultValue("http://127.0.0.1") @QueryParam("url") URL urlInput,
 	    @DefaultValue("true") @HeaderParam("save") boolean db, @HeaderParam("classmetrics") boolean classMetrics)
-	    throws ParserConfigurationException, ImpossibleModificationException, MalformedURLException {
+	    throws Exception {
+	
 
 	if (urlInput.sameFile(new URL("http://127.0.0.1")))
 	    throw new WrongURIException();
 	IRI url = IRI.create(urlInput);
 	myLogger.debug("Get-URL: "
 		+ url.toString());
-	setDbSave(db);
 	OntologyUtility.setTimestamp();
-
 	OntologyMetricManagerImpl manager = new OntologyMetricManagerImpl();
-
 	OWLOntology ontology = manager.loadOntologyFromIRI(url);
 	if (ontology == null)
 	    throw new WrongURIException();
-	Directives xmlDirectives = new Directives().add("OntologyMetrics");
-	Map<String, Object> map = manager.calculateMetrics(ontology);
-	xmlDirectives.append(map2XML(map));
-	if (classMetrics)
-	    xmlDirectives = classMetrics2XML(manager, xmlDirectives);
-	Xembler xml = new Xembler(xmlDirectives);
-	String xmlString = xml.xml();
-	return Response.ok(xmlString).header("saved", db).build();
+	
+	
+	
+	
+	return calculateMetrics(db, classMetrics, manager);
     }
+
+
 
     @POST
     @Produces(MediaType.APPLICATION_XML)
     public Response getBaseMetricFromOntology(String request, @DefaultValue("true") @HeaderParam("save") boolean db,
 	    @DefaultValue("false") @HeaderParam("classmetrics") boolean classMetrics)
-	    throws ImpossibleModificationException {
+	    throws Exception {
 	OntologyMetricManagerImpl manager = new OntologyMetricManagerImpl();
 	myLogger.info("Get-from-Post");
 	setDbSave(db);
@@ -93,18 +85,11 @@ public class ApiController {
 	}
 	myLogger.debug("Ontology loaded");
 	OntologyUtility.setTimestamp();
-	Directives xmlDirectives = new Directives().add("OntologyMetrics");
-
-	// xmlDirectives = metrics2xml(manager.getMetrics(), xmlDirectives);
-	manager.calculateMetrics(ontology);
-//	if (classMetrics)
-//	    xmlDirectives = classMetrics2XML(manager, xmlDirectives);
-	Xembler xml = new Xembler(xmlDirectives);
-	String xmlString = xml.xml();
-
-	return Response.ok(xmlString).header("saved", db).build();
+	
+	return calculateMetrics(db, classMetrics, manager);
     }
 
+    @SuppressWarnings("unchecked")
     protected Directives map2XML(Map<String, Object> map) {
 	Directives directives = new Directives();
 	for (String key : map.keySet()) {
@@ -119,6 +104,7 @@ public class ApiController {
 			+ ":"
 			+ map.get(key));
 	    }
+	    directives.push();
 	    directives.up();
 
 	}
@@ -126,21 +112,35 @@ public class ApiController {
 	return directives;
     }
 
-    protected Directives classMetrics2XML(OntologyMetricManagerImpl manager, Directives xmlBuilder) {
+    protected Directives classMetrics2XML(List<Map<String, Object>> classMetrics, Directives xmlBuilder) {
 	myLogger.debug("Calculate Class Metrics");
-	
+	xmlBuilder.pop();
 	xmlBuilder.add("ClassMetrics");
-	Set<OWLClass> om = manager.getOntology().getClassesInSignature();
-	OWLOntology ontology = manager.getOntology();
-	for (OWLClass owlClass : om) {
+	for (Map<String, Object> classMetric :classMetrics) {
 	    xmlBuilder.add("Class");
-	    xmlBuilder.attr("iri", owlClass.getIRI());
-	    // xmlBuilder.(owlClass.getIRI());
-	    xmlBuilder.add(classMetrics.getAllMetrics(ontology, owlClass.getIRI()))
+	    xmlBuilder.attr("iri", classMetric.get("iri"));
+	    classMetric.remove("iri");
+	    
+	    xmlBuilder.add(classMetric);
 	    xmlBuilder.up();
 	}
 	xmlBuilder.up();
 	return xmlBuilder;
+    }
+    protected Response calculateMetrics(boolean db, boolean classMetrics, OntologyMetricManagerImpl manager)
+	    throws Exception, ImpossibleModificationException {
+	setDbSave(db);
+	OntologyMetricsImpl ontoMetricsEnginge = new OntologyMetricsImpl(manager.getOntology());
+	Directives xmlDirectives = new Directives().add("OntologyMetrics");
+	Map<String, Object> map = ontoMetricsEnginge.getAllMetrics();
+	xmlDirectives.append(map2XML(map));
+	
+	if (classMetrics)
+	    xmlDirectives = classMetrics2XML(ontoMetricsEnginge.getClassMetrics(), xmlDirectives);
+	
+	Xembler xml = new Xembler(xmlDirectives);
+	String xmlString = xml.xml();
+	return Response.ok(xmlString).header("saved", db).build();
     }
 
 //    protected String sentenceToWord(String input) {

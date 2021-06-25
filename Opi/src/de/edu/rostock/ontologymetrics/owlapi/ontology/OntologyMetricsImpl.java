@@ -2,11 +2,14 @@ package de.edu.rostock.ontologymetrics.owlapi.ontology;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
@@ -20,7 +23,6 @@ import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.GraphMetric;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.IndividualAxiomsMetric;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.KnowledgebaseMetric;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.ObjectPropertyAxiomsMetric;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.OntologyMetric;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.SchemaMetrics;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.basemetric.graphbasemetric.GraphParser;
 
@@ -34,7 +36,15 @@ public class OntologyMetricsImpl {
     private OWLOntology ontology;
     protected GraphParser parser;
     protected GraphParser parserI;
-
+    protected BaseMetric baseMetric;;
+    protected ClassAxiomsMetric classAxiomsMetric;
+    protected DataPropertyAxiomsMetric dataPropertyAxiomsMetric;
+    protected IndividualAxiomsMetric individualAxiomsMetric;
+    protected ObjectPropertyAxiomsMetric objectPropertyAxiomsMetric;
+    protected AnnotationAxiomsMetric annotationAxiomsMetric;
+    protected GraphMetric graphMetric = new GraphMetric();
+    protected SchemaMetrics schemaMetric;
+    protected KnowledgebaseMetric knowledgebaseMetric;
     private IRI iri;
 
     public OntologyMetricsImpl(OWLOntology pOntology) {
@@ -56,6 +66,14 @@ public class OntologyMetricsImpl {
 	}
 	ontology = pOntology;
 	iri = null;
+	baseMetric = new BaseMetric();
+	classAxiomsMetric = new ClassAxiomsMetric();
+	dataPropertyAxiomsMetric = new DataPropertyAxiomsMetric();
+	individualAxiomsMetric = new IndividualAxiomsMetric();
+	objectPropertyAxiomsMetric = new ObjectPropertyAxiomsMetric();
+	annotationAxiomsMetric = new AnnotationAxiomsMetric();
+	graphMetric = new GraphMetric();
+
     }
 
     /*
@@ -92,34 +110,36 @@ public class OntologyMetricsImpl {
      * metrics
      */
     public Map<String, Object> getAllMetrics() {
-	BaseMetric baseMetric = new BaseMetric();
-	ClassAxiomsMetric classAxiomsMetric = new ClassAxiomsMetric();
-	DataPropertyAxiomsMetric dataPropertyAxiomsMetric = new DataPropertyAxiomsMetric();
-	IndividualAxiomsMetric individualAxiomsMetric = new IndividualAxiomsMetric();
-	ObjectPropertyAxiomsMetric objectPropertyAxiomsMetric = new ObjectPropertyAxiomsMetric();
-	AnnotationAxiomsMetric annotationAxiomsMetric = new AnnotationAxiomsMetric();
-	GraphMetric graphMetric = new GraphMetric();
 
-	Map<String, Object> resultSet = new HashMap<String, Object>();
+	Map<String, Object> resultSet = new LinkedHashMap<String, Object>();
 
-	resultSet.put("BaseMetrics", baseMetric.calculateAllMetrics(ontology));
+	resultSet.put("Basemetrics", baseMetric.calculateAllMetrics(ontology));
 	resultSet.put("Classaxioms", classAxiomsMetric.calculateAllMetrics(ontology));
+	resultSet.put("Objectpropertyaxioms", objectPropertyAxiomsMetric.calculateAllMetrics(ontology));
 	resultSet.put("Datapropertyaxioms", dataPropertyAxiomsMetric.calculateAllMetrics(ontology));
 	resultSet.put("Individualaxioms", individualAxiomsMetric.calculateAllMetrics(ontology));
 	resultSet.put("Annotationaxioms", annotationAxiomsMetric.calculateAllMetrics(ontology));
-	resultSet.put("Graphmetrics", graphMetric.calculateAllMetrics(ontology, parser, parserI));
-	resultSet.put("Objectpropertyaxioms", objectPropertyAxiomsMetric.calculateAllMetrics(ontology));
-	SchemaMetrics schemaMetric = new SchemaMetrics(baseMetric, classAxiomsMetric);
-	KnowledgebaseMetric knowledgebaseMetric = new KnowledgebaseMetric(baseMetric);
-	resultSet.put("SchemaMetrics", schemaMetric.calculateAllMetrics(ontology, parserI));
+	schemaMetric = new SchemaMetrics(baseMetric, classAxiomsMetric);
+	knowledgebaseMetric = new KnowledgebaseMetric(baseMetric);
+	resultSet.put("Schemametrics", schemaMetric.calculateAllMetrics(ontology, parserI));
 	resultSet.put("Knowledgebasemetrics", knowledgebaseMetric.calculateAllMetrics(ontology));
-	Map<String, Object> wrapResult = new HashMap<String, Object>();
+	resultSet.put("Graphmetrics", graphMetric.calculateAllMetrics(ontology, parser, parserI));
+
+	Map<String, Object> wrapResult = new LinkedHashMap<String, Object>();
 	wrapResult.put("BaseMetrics", resultSet);
 	return wrapResult;
     }
 
-    public Map<String, Object> getClassMetric(IRI iri) {
-	ClassMetrics classMetrics = new ClassMetrics();
-	classMetrics.calculateAllMetrics(ontology, iri)
+    public List<Map<String, Object>> getClassMetrics() throws Exception {
+	if (schemaMetric == null || knowledgebaseMetric == null)
+	    throw new Exception("Schema and KnowledgebaseMetrics must be run first");
+	ClassMetrics classMetrics = new ClassMetrics(knowledgebaseMetric, baseMetric);
+
+	List<Map<String, Object>> ClassMetricsList = new ArrayList<Map<String, Object>>();
+	Set<OWLClass> om = ontology.getClassesInSignature();
+	for (OWLClass owlClass : om) {
+	    ClassMetricsList.add(classMetrics.calculateAllMetrics(ontology, owlClass.getIRI()));
+	}
+	return ClassMetricsList;
     }
 }

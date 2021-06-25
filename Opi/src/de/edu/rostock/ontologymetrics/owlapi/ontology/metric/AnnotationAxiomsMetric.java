@@ -1,6 +1,6 @@
 package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.semanticweb.owlapi.model.AxiomType;
@@ -14,16 +14,16 @@ public class AnnotationAxiomsMetric {
     private int annotationPropertyRangeAxiomsCount;
 
     public Map<String, Object> getAllMetrics(OWLOntology ontology) {
-	Map<String, Object> returnObject = new HashMap<>();
+	Map<String, Object> returnObject = new LinkedHashMap<>();
 	returnObject.put("Annotationaxiomscount", annotationAxiomsCount);
-	returnObject.put("Annotationassertionaxioms count", annotationAssertionAxiomsCount);
-	returnObject.put("Annotationpropertydomain axioms count", annotationPropertyDomainAxiomsCount);
-	returnObject.put("Annotationpropertyrange axioms count", annotationPropertyRangeAxiomsCount);
+	returnObject.put("Annotationassertionaxiomscount", annotationAssertionAxiomsCount);
+	returnObject.put("Annotationpropertydomainaxiomscount", annotationPropertyDomainAxiomsCount);
+	returnObject.put("Annotationpropertyrangeaxiomscount", annotationPropertyRangeAxiomsCount);
 	return returnObject;
     }
 
     public Map<String, Object> calculateAllMetrics(OWLOntology ontology) {
-	Map<String, Object> returnObject = new HashMap<>();
+	Map<String, Object> returnObject = new LinkedHashMap<>();
 	returnObject.put("Annotationaxiomscount", countAnnotationAxiomsMetric(ontology));
 	returnObject.put("Annotationassertionaxiomscount", countAnnotationAssertionAxiomsMetric(ontology));
 	returnObject.put("Annotationpropertydomainaxiomscount", countAnnotationPropertyDomainAxiomsMetric(ontology));
