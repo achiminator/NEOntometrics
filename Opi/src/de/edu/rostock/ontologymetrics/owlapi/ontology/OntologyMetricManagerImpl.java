@@ -22,8 +22,6 @@ import org.semanticweb.owlapi.model.OWLOntologyLoaderConfiguration;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.UnloadableImportException;
 
-import de.edu.rostock.ontologymetrics.owlapi.db.DBHandler;
-
 public class OntologyMetricManagerImpl  {
 
     // ALL | DEBUG | INFO | WARN | ERROR | FATAL | OFF:
@@ -31,8 +29,7 @@ public class OntologyMetricManagerImpl  {
     protected OWLOntologyManager manager;
     
     private OWLOntology ontology;
-    DBHandler db;
-    
+
 
     public OntologyMetricManagerImpl() {
 	manager = OWLManager.createOWLOntologyManager();
@@ -41,7 +38,7 @@ public class OntologyMetricManagerImpl  {
 	
 	OntologyUtility.initMessages(); // reset Messages
 	OntologyUtility.initImports(); // reset Import-Count
-	db = new DBHandler();
+
     }
 
     public OWLOntology loadOntologyFromIRI(IRI pIRI){
@@ -120,9 +117,6 @@ public class OntologyMetricManagerImpl  {
 			    + file.getAbsolutePath());
 		    file.deleteOnExit();
 		    FileUtils.copyURLToFile(url, file);
-
-		    // write ontology to database
-		    db.writeFile2Database(file, ontology);
 
 		    file.delete();
 		} catch (MalformedURLException e1) {
@@ -258,8 +252,6 @@ public class OntologyMetricManagerImpl  {
 
 	lontology = loadOntologyFromFile(file);
 	this.ontology = lontology;
-	// write ontology to database
-	db.writeFile2Database(file, lontology);
 
 	myLogger.debug("loadOntologyFromText successfully done");
 
