@@ -6,6 +6,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
@@ -36,15 +41,16 @@ public class OntologyMetricsImpl {
     private OWLOntology ontology;
     protected GraphParser parser;
     protected GraphParser parserI;
-    protected BaseMetric baseMetric;;
-    protected ClassAxiomsMetric classAxiomsMetric;
-    protected DataPropertyAxiomsMetric dataPropertyAxiomsMetric;
-    protected IndividualAxiomsMetric individualAxiomsMetric;
-    protected ObjectPropertyAxiomsMetric objectPropertyAxiomsMetric;
-    protected AnnotationAxiomsMetric annotationAxiomsMetric;
-    protected GraphMetric graphMetric = new GraphMetric();
-    protected SchemaMetrics schemaMetric;
-    protected KnowledgebaseMetric knowledgebaseMetric;
+
+    protected Future<BaseMetric> baseMetric;;
+    protected Future<ClassAxiomsMetric> classAxiomsMetric;
+    protected Future<DataPropertyAxiomsMetric> dataPropertyAxiomsMetric;
+    protected Future<IndividualAxiomsMetric> individualAxiomsMetric;
+    protected Future<ObjectPropertyAxiomsMetric> objectPropertyAxiomsMetric;
+    protected Future<AnnotationAxiomsMetric> annotationAxiomsMetric;
+    protected Future<GraphMetric> graphMetric;
+    protected Future<SchemaMetrics> schemaMetric;
+    protected Future<KnowledgebaseMetric> knowledgebaseMetric;
     private IRI iri;
 
     public OntologyMetricsImpl(OWLOntology pOntology) {
@@ -66,13 +72,6 @@ public class OntologyMetricsImpl {
 	}
 	ontology = pOntology;
 	iri = null;
-	baseMetric = new BaseMetric();
-	classAxiomsMetric = new ClassAxiomsMetric();
-	dataPropertyAxiomsMetric = new DataPropertyAxiomsMetric();
-	individualAxiomsMetric = new IndividualAxiomsMetric();
-	objectPropertyAxiomsMetric = new ObjectPropertyAxiomsMetric();
-	annotationAxiomsMetric = new AnnotationAxiomsMetric();
-	graphMetric = new GraphMetric();
 
     }
 
@@ -109,22 +108,31 @@ public class OntologyMetricsImpl {
     /*
      * metrics
      */
-    public Map<String, Object> getAllMetrics() {
+    public Map<String, Object> getAllMetrics() throws InterruptedException, ExecutionException {
 
 	Map<String, Object> resultSet = new LinkedHashMap<String, Object>();
 
-	resultSet.put("Basemetrics", baseMetric.calculateAllMetrics(ontology));
-	resultSet.put("Classaxioms", classAxiomsMetric.calculateAllMetrics(ontology));
-	resultSet.put("Objectpropertyaxioms", objectPropertyAxiomsMetric.calculateAllMetrics(ontology));
-	resultSet.put("Datapropertyaxioms", dataPropertyAxiomsMetric.calculateAllMetrics(ontology));
-	resultSet.put("Individualaxioms", individualAxiomsMetric.calculateAllMetrics(ontology));
-	resultSet.put("Annotationaxioms", annotationAxiomsMetric.calculateAllMetrics(ontology));
-	schemaMetric = new SchemaMetrics(baseMetric, classAxiomsMetric);
-	knowledgebaseMetric = new KnowledgebaseMetric(baseMetric);
-	resultSet.put("Schemametrics", schemaMetric.calculateAllMetrics(ontology, parserI));
-	resultSet.put("Knowledgebasemetrics", knowledgebaseMetric.calculateAllMetrics(ontology));
-	resultSet.put("Graphmetrics", graphMetric.calculateAllMetrics(ontology, parser, parserI));
-
+	ExecutorService service = Executors.newWorkStealingPool();
+	baseMetric = service.submit(new BaseMetric(ontology));
+	classAxiomsMetric = service.submit(new ClassAxiomsMetric(ontology));
+	objectPropertyAxiomsMetric = service.submit(new ObjectPropertyAxiomsMetric(ontology));
+	dataPropertyAxiomsMetric = service.submit(new DataPropertyAxiomsMetric(ontology));
+	individualAxiomsMetric = service.submit(new IndividualAxiomsMetric(ontology));
+	annotationAxiomsMetric = service.submit(new AnnotationAxiomsMetric(ontology));
+	schemaMetric = service.submit(new SchemaMetrics(baseMetric.get(), classAxiomsMetric.get(), parserI, ontology));
+	knowledgebaseMetric = service.submit(new KnowledgebaseMetric(baseMetric.get(), ontology));
+	graphMetric = service.submit(new GraphMetric(parser, parserI));
+	resultSet.put("Basemetrics", baseMetric.get().getAllMetrics());
+	// resultSet.put("Basemetrics", baseMetric.calculateAllMetrics(ontology));
+	resultSet.put("Classaxioms", classAxiomsMetric.get().getAllMetrics());
+	resultSet.put("Objectpropertyaxioms", objectPropertyAxiomsMetric.get().getAllMetrics());
+	resultSet.put("Datapropertyaxioms", dataPropertyAxiomsMetric.get().getAllMetrics());
+	resultSet.put("Individualaxioms", individualAxiomsMetric.get().getAllMetrics());
+	resultSet.put("Annotationaxioms", annotationAxiomsMetric.get().getAllMetrics());
+	resultSet.put("Schemametrics", schemaMetric.get().getAllMetrics());
+	resultSet.put("Knowledgebasemetrics", knowledgebaseMetric.get().getAllMetrics());
+	resultSet.put("Graphmetrics", graphMetric.get().getAllMetrics());
+	service.shutdown();
 	Map<String, Object> wrapResult = new LinkedHashMap<String, Object>();
 	wrapResult.put("BaseMetrics", resultSet);
 	return wrapResult;
@@ -133,13 +141,21 @@ public class OntologyMetricsImpl {
     public List<Map<String, Object>> getClassMetrics() throws Exception {
 	if (schemaMetric == null || knowledgebaseMetric == null)
 	    throw new Exception("Schema and KnowledgebaseMetrics must be run first");
-	ClassMetrics classMetrics = new ClassMetrics(knowledgebaseMetric, baseMetric);
+	ExecutorService service = Executors.newWorkStealingPool();
 
 	List<Map<String, Object>> ClassMetricsList = new ArrayList<Map<String, Object>>();
+	List<Future<ClassMetrics>> tmpList = new ArrayList<>();
 	Set<OWLClass> om = ontology.getClassesInSignature();
 	for (OWLClass owlClass : om) {
-	    ClassMetricsList.add(classMetrics.calculateAllMetrics(ontology, owlClass.getIRI()));
+	    tmpList.add(service.submit(
+		    new ClassMetrics(knowledgebaseMetric.get(), baseMetric.get(), ontology, owlClass.getIRI())));
+	}
+	service.shutdown();
+	service.awaitTermination(2, TimeUnit.HOURS);
+	for (Future<ClassMetrics> future : tmpList) {
+	    ClassMetricsList.add(future.get().getAllMetrics());
 	}
 	return ClassMetricsList;
+
     }
 }

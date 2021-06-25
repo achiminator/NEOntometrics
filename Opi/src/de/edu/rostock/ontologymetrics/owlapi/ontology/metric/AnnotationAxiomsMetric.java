@@ -2,18 +2,22 @@ package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLOntology;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
 
-public class AnnotationAxiomsMetric {
+public class AnnotationAxiomsMetric implements Callable<AnnotationAxiomsMetric> {
     private int annotationAxiomsCount;
     private int annotationAssertionAxiomsCount;
     private int annotationPropertyDomainAxiomsCount;
     private int annotationPropertyRangeAxiomsCount;
-
-    public Map<String, Object> getAllMetrics(OWLOntology ontology) {
+    private OWLOntology ontology;
+    public AnnotationAxiomsMetric(OWLOntology ontology) {
+	this.ontology = ontology;
+    }
+    public Map<String, Object> getAllMetrics() {
 	Map<String, Object> returnObject = new LinkedHashMap<>();
 	returnObject.put("Annotationaxiomscount", annotationAxiomsCount);
 	returnObject.put("Annotationassertionaxiomscount", annotationAssertionAxiomsCount);
@@ -22,13 +26,13 @@ public class AnnotationAxiomsMetric {
 	return returnObject;
     }
 
-    public Map<String, Object> calculateAllMetrics(OWLOntology ontology) {
-	Map<String, Object> returnObject = new LinkedHashMap<>();
-	returnObject.put("Annotationaxiomscount", countAnnotationAxiomsMetric(ontology));
-	returnObject.put("Annotationassertionaxiomscount", countAnnotationAssertionAxiomsMetric(ontology));
-	returnObject.put("Annotationpropertydomainaxiomscount", countAnnotationPropertyDomainAxiomsMetric(ontology));
-	returnObject.put("Annotationpropertyrangeaxiomscount", countAnnotationPropertyRangeAxiomsMetric(ontology));
-	return returnObject;
+    public AnnotationAxiomsMetric call() {
+
+	countAnnotationAxiomsMetric(ontology);
+	countAnnotationAssertionAxiomsMetric(ontology);
+	countAnnotationPropertyDomainAxiomsMetric(ontology);
+	countAnnotationPropertyRangeAxiomsMetric(ontology);
+	return this;
     }
 
     public int countAnnotationAxiomsMetric(OWLOntology ontology) {

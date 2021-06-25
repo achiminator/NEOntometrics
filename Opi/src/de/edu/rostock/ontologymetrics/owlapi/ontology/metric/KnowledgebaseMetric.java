@@ -2,6 +2,7 @@ package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -9,7 +10,7 @@ import org.semanticweb.owlapi.search.EntitySearcher;
 
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
 
-public class KnowledgebaseMetric extends OntologyMetric {
+public class KnowledgebaseMetric implements Callable<KnowledgebaseMetric> {
 
     public double getAveragePopulationMetric() {
 	return averagePopulationMetric;
@@ -23,10 +24,12 @@ public class KnowledgebaseMetric extends OntologyMetric {
 
     private double averagePopulationMetric;
     private double classRichnessMetric;
+    OWLOntology ontology;
 
-    public KnowledgebaseMetric(BaseMetric baseMetrics) {
+    public KnowledgebaseMetric(BaseMetric baseMetrics, OWLOntology ontology) {
 	super();
 	this.baseMetrics = baseMetrics;
+	this.ontology = ontology;
     }
 
     public Map<String, Object> getAllMetrics() {
@@ -36,11 +39,10 @@ public class KnowledgebaseMetric extends OntologyMetric {
 	return returnObject;
     }
 
-    public Map<String, Object> calculateAllMetrics(OWLOntology ontology) {
-	Map<String, Object> returnObject = new LinkedHashMap<>();
-	returnObject.put("Averagepopulation", averagePopulationMetric());
-	returnObject.put("Classrichness", classRichnessMetric(ontology));
-	return returnObject;
+    public KnowledgebaseMetric call() {
+	averagePopulationMetric();
+	classRichnessMetric(ontology);
+	return this;
     }
 
 //    public String cohesionMetric(Map<String, Object> metrics) {
@@ -61,10 +63,6 @@ public class KnowledgebaseMetric extends OntologyMetric {
 
 	int countTotalClasses = baseMetrics.getTotalClassesCount();
 
-	myLogger.debug("countTotalIndividuals: "
-		+ countTotalIndividuals);
-	myLogger.debug("countTotalClasses: "
-		+ countTotalClasses);
 
 	// avoid a division by zero
 	if (countTotalClasses == 0) {

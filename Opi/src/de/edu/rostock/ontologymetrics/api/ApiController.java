@@ -38,7 +38,7 @@ public class ApiController {
     @GET
     @Produces(MediaType.APPLICATION_XML)
     public Response getBaseMetricFromURL(@DefaultValue("http://127.0.0.1") @QueryParam("url") URL urlInput,
-	     @HeaderParam("classmetrics") boolean classMetrics)
+	     @DefaultValue("false") @HeaderParam("classmetrics") boolean classMetrics)
 	    throws Exception {
 	if (urlInput.sameFile(new URL("http://127.0.0.1")))
 	    throw new WrongURIException();

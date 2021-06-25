@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
 
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -12,7 +13,7 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.basemetric.graphbasemetric.GraphParser;
 
-public class GraphMetric {
+public class GraphMetric implements Callable<GraphMetric> {
     private int absoluteRootCardinality;
     private int absoluteLeafCardinality;
     private int absoluteSibblingCardinality;
@@ -28,7 +29,10 @@ public class GraphMetric {
     private int totalNumberOfPaths;
     private double averageNumberOfPaths;
 
-    public Map<String, Object> getAllMetrics(OWLOntology ontology, GraphParser parser, GraphParser parserI) {
+    private GraphParser parser;
+    private GraphParser parserI;
+
+    public Map<String, Object> getAllMetrics() {
 	Map<String, Object> returnObject = new LinkedHashMap<>();
 	returnObject.put("Absoluterootcardinality", absoluteRootCardinality);
 	returnObject.put("Absoluteleafcardinality", absoluteLeafCardinality);
@@ -47,29 +51,34 @@ public class GraphMetric {
 	return returnObject;
     }
 
-    public Map<String, Object> calculateAllMetrics(OWLOntology ontology, GraphParser parser, GraphParser parserI) {
-	Map<String, Object> returnObject = new LinkedHashMap<>();
-	returnObject.put("Absoluterootcardinality", absoluteRootCardinalityMetric(parser));
-	returnObject.put("Absoluteleafcardinality", absoluteLeafCardinalityMetric(parser));
-	returnObject.put("Absolutesiblingcardinality", absoluteSiblingCardinalityMetric(parser));
-	returnObject.put("Absolutedepth", absoluteDepthMetric(parserI));
-	returnObject.put("Averagedepth", averageDepthMetric(parserI));
-	returnObject.put("Maximaldepth", maximalDepthMetric(parserI));
-	returnObject.put("Absolutebreadth", absoluteBreadthMetric(parserI));
-	returnObject.put("Averagebreadth", averageBreadthMetric(parserI));
-	returnObject.put("Maximalbreadth", maximalBreadthMetric(parserI));
-	returnObject.put("Ratioofleaffanoutness", ratioOfLeafFanOutnessMetric(parser, parserI));
-	returnObject.put("Ratioofsiblingfanoutness", ratioOfSiblingFanOutnessMetric(parser, parserI));
-	returnObject.put("Tangledness", tanglednessMetric(parserI));
-	returnObject.put("Totalnumberofpaths", totalNumberOfPathsMetric(parserI));
-	returnObject.put("Averagenumberofpaths", averageNumberOfPathsMetric(parserI));
+    public GraphMetric call() {
+
+	absoluteRootCardinalityMetric(parser);
+	absoluteLeafCardinalityMetric(parser);
+	absoluteSiblingCardinalityMetric(parser);
+	absoluteDepthMetric(parserI);
+	averageDepthMetric(parserI);
+	maximalDepthMetric(parserI);
+	absoluteBreadthMetric(parserI);
+	averageBreadthMetric(parserI);
+	maximalBreadthMetric(parserI);
+	ratioOfLeafFanOutnessMetric(parser, parserI);
+	ratioOfSiblingFanOutnessMetric(parser, parserI);
+	tanglednessMetric(parserI);
+	totalNumberOfPathsMetric(parserI);
+	averageNumberOfPathsMetric(parserI);
 	/*
 	 * to implement
 	 *
 	 * graphMetrics.add(getDensityMetric()); graphMetrics.add(getLogicalAdaquacy());
 	 * graphMetrics.add(getModularityMetric());
 	 */
-	return returnObject;
+	return this;
+    }
+
+    public GraphMetric(GraphParser parser, GraphParser parserI) {
+	this.parser = parser;
+	this.parserI = parserI;
     }
 
     public int absoluteRootCardinalityMetric(GraphParser parser) {
@@ -182,8 +191,9 @@ public class GraphMetric {
     }
 
     public double tanglednessMetric(GraphParser parserI) {
-	tangledgness =  OntologyUtility.roundByGlobNK((double) parserI.getTangledClasses().size() / (double) parserI.getNoClasses());
-	return tangledgness;  
+	tangledgness = OntologyUtility
+		.roundByGlobNK((double) parserI.getTangledClasses().size() / (double) parserI.getNoClasses());
+	return tangledgness;
 
     }
 

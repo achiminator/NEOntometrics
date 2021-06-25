@@ -2,15 +2,18 @@ package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
+
 import org.semanticweb.owlapi.metrics.AxiomCount;
 import org.semanticweb.owlapi.metrics.DLExpressivity;
 import org.semanticweb.owlapi.metrics.LogicalAxiomCount;
 import org.semanticweb.owlapi.model.OWLOntology;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
 
-public class BaseMetric {
+public class BaseMetric implements Callable<BaseMetric>{
 
-    public BaseMetric() {
+    public BaseMetric(OWLOntology ontology) {
+	this.ontology = ontology;
     }
 
     public int getAxioms() {
@@ -67,16 +70,17 @@ public class BaseMetric {
     private int logicalAxiomsCount;
     private int individualCount;
     private int totalIndividualCount;
+    private OWLOntology ontology;
     private String dlExpressivity;
 
-    public Map<String, Object> getAllMetrics(OWLOntology ontology) {
+    public Map<String, Object> getAllMetrics() {
 	Map<String, Object> returnObject = new LinkedHashMap<>();
 	returnObject.put("Axioms", axioms);
 	returnObject.put("Logicalaxiomscount", logicalAxiomsCount);
 	returnObject.put("Classcount", classCount);
 	returnObject.put("Totalclassescount", totalClassesCount);
 	returnObject.put("Objectpropertycount", objectPropertyCount);
-	returnObject.put("Totalobjectproperties count", totalObjectPropertyCount);
+	returnObject.put("Totalobjectpropertiescount", totalObjectPropertyCount);
 	returnObject.put("Datapropertycount", dataPropertyCount);
 	returnObject.put("Totaldatapropertiescount", totalDataPropertyCount);
 	returnObject.put("Propertiescount",(int) returnObject.get("Totaldatapropertiescount") +  (int) returnObject.get("Totalobjectpropertiescount"));
@@ -86,21 +90,19 @@ public class BaseMetric {
 	return (returnObject);
     }
 
-    public Map<String, Object> calculateAllMetrics(OWLOntology ontology) {
-	Map<String, Object> returnObject = new LinkedHashMap<>();
-	returnObject.put("Axioms", calculateCountAxiomsMetric(ontology));
-	returnObject.put("Logicalaxiomscount", calculateCountLogicalAxiomsMetric(ontology));
-	returnObject.put("Classcount", calculateCountClasses(ontology));
-	returnObject.put("Totalclassescount", calculateCountTotalClasses(ontology));
-	returnObject.put("Objectpropertycount", calculateCountObjectProperties(ontology));
-	returnObject.put("Totalobjectpropertiescount", calculateCountTotalObjectProperties(ontology));
-	returnObject.put("Datapropertycount", calculateCountDataProperties(ontology));
-	returnObject.put("Totaldatapropertiescount", calculateCountTotalDataProperties(ontology));
-	returnObject.put("Propertiescount",(int) returnObject.get("Totaldatapropertiescount") +  (int) returnObject.get("Totalobjectpropertiescount"));
-	returnObject.put("Individualcount", calculateCountIndividuals(ontology));
-	returnObject.put("Totalindividualscount", calculateCountTotalIndividuals(ontology));
-	returnObject.put("DLexpressivity", calculateDLExpressivity(ontology));
-	return (returnObject);
+    public BaseMetric call() {
+	calculateCountAxiomsMetric(ontology);
+	calculateCountLogicalAxiomsMetric(ontology);
+	calculateCountClasses(ontology);
+	calculateCountTotalClasses(ontology);
+	calculateCountObjectProperties(ontology);
+	calculateCountTotalObjectProperties(ontology);
+	calculateCountDataProperties(ontology);
+	calculateCountTotalDataProperties(ontology);
+	calculateCountIndividuals(ontology);
+	calculateCountTotalIndividuals(ontology);
+	calculateDLExpressivity(ontology);
+	return (this);
     }
 
     public int calculateCountAxiomsMetric(OWLOntology ontology) {

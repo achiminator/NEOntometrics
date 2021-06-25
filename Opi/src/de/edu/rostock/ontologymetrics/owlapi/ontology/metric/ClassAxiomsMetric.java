@@ -1,8 +1,8 @@
 package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.semanticweb.owlapi.metrics.GCICount;
 import org.semanticweb.owlapi.metrics.HiddenGCICount;
@@ -10,7 +10,12 @@ import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLOntology;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
 
-public class ClassAxiomsMetric {
+public class ClassAxiomsMetric implements Callable<ClassAxiomsMetric>{
+    
+    	private OWLOntology ontology;
+    	public ClassAxiomsMetric(OWLOntology ontology) {
+    	    this.ontology = ontology;
+    	}
         private int subClassOfAxiomsCount;
         public int getSubClassOfAxiomsCount() {
 	    return subClassOfAxiomsCount;
@@ -31,7 +36,7 @@ public class ClassAxiomsMetric {
         private int disjointClassesAxiomsCount;
         private int GCICount;
         private int hiddenGCIcount;
-    public Map<String, Object> getAllMetrics(OWLOntology ontology) {
+    public Map<String, Object> getAllMetrics() {
   	Map<String, Object> returnObject = new LinkedHashMap<>();
   	returnObject.put("SubClassOfaxiomscount", subClassOfAxiomsCount);
   	returnObject.put("Equivalentclassesaxiomscount", equivalentClassesAxiomsCount);
@@ -40,14 +45,14 @@ public class ClassAxiomsMetric {
   	returnObject.put("HiddenGCICount", hiddenGCIcount);
 	return returnObject;
     }
-    public Map<String, Object> calculateAllMetrics(OWLOntology ontology) {
-	Map<String, Object> returnObject = new LinkedHashMap<>();
-	returnObject.put("SubClassOfaxiomscount", countSubClassOfAxiomsMetric(ontology));
-	returnObject.put("Equivalentclassesaxiomscount", countEquivalentClassesAxiomsMetric(ontology));
-	returnObject.put("Disjointclassesaxiomscount", countDisjointClassesAxiomsMetric(ontology));
-	returnObject.put("GCICount", countGCIMetric(ontology));
-	returnObject.put("HiddenGCICount", countHiddenGCIMetric(ontology));
-	return returnObject;
+    public ClassAxiomsMetric call() {
+	
+	countSubClassOfAxiomsMetric(ontology);
+	countEquivalentClassesAxiomsMetric(ontology);
+	countDisjointClassesAxiomsMetric(ontology);
+	countGCIMetric(ontology);
+	countHiddenGCIMetric(ontology);
+	return this;
     }
     public int countSubClassOfAxiomsMetric(OWLOntology ontology) {
 	subClassOfAxiomsCount = ontology.getAxiomCount(AxiomType.SUBCLASS_OF, OntologyUtility.ImportClosures(true));

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
@@ -19,7 +20,7 @@ import com.google.common.collect.Multimap;
 
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
 
-public class ClassMetrics extends OntologyMetric {
+public class ClassMetrics implements Callable<ClassMetrics> {
 
     public int getClassConnectivity() {
 	return classConnectivity;
@@ -70,11 +71,13 @@ public class ClassMetrics extends OntologyMetric {
 
     private KnowledgebaseMetric knowledgebaseMetric;
     private BaseMetric baseMetric;
+    private OWLOntology ontology;
 
-    public ClassMetrics(KnowledgebaseMetric knowledgebaseMetric, BaseMetric baseMetric) {
-	super();
+    public ClassMetrics(KnowledgebaseMetric knowledgebaseMetric, BaseMetric baseMetric, OWLOntology ontology, IRI iri) {
+	this.ontology = ontology;
 	this.knowledgebaseMetric = knowledgebaseMetric;
 	this.baseMetric = baseMetric;
+	this.iri = iri;
     }
     /**
      * Get all classMetrics for a specific IRI
@@ -98,21 +101,19 @@ public class ClassMetrics extends OntologyMetric {
 	return returnObject;
     }
 
-    public Map<String, Object> calculateAllMetrics(OWLOntology ontology, IRI iri) {
-	this.iri = iri;
-	Map<String, Object> returnObject = new LinkedHashMap<>();
-	returnObject.put("iri", iri);
-	returnObject.put("Classconnectivity", classConnectivityMetric(ontology, iri));
-	returnObject.put("Classfulness", classFulnessMetric(ontology, iri));
-	returnObject.put("Classimportance", classImportanceMetric(ontology, iri));
-	returnObject.put("Classinheritancerichness", classInheritenceRichnessMetric(ontology, iri));
-	returnObject.put("Classreadability", classReadabilityMetric(ontology, iri));
-	returnObject.put("Classrelationshiprichness", classRelationshipRichnessMetric(ontology, iri));
-	returnObject.put("Classchildrencount", countClassChildrenMetric(ontology, iri));
-	returnObject.put("Classinstancescount", countClassInstancesMetric(ontology, iri));
-	returnObject.put("Classpropertiescount", countClassPropertiesMetric(ontology, iri));
+    public ClassMetrics call() {
+	
+	classConnectivityMetric(ontology, iri);
+	classFulnessMetric(ontology, iri);
+	classImportanceMetric(ontology, iri);
+	classInheritenceRichnessMetric(ontology, iri);
+	classReadabilityMetric(ontology, iri);
+	classRelationshipRichnessMetric(ontology, iri);
+	countClassChildrenMetric(ontology, iri);
+	countClassInstancesMetric(ontology, iri);
+	countClassPropertiesMetric(ontology, iri);
 
-	return returnObject;
+	return this;
     }
 
     protected int countTotalInstancesOf(OWLClass cls, OWLOntology ontology) {

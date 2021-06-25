@@ -2,13 +2,14 @@ package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
 
-public class DataPropertyAxiomsMetric {
+public class DataPropertyAxiomsMetric implements Callable<DataPropertyAxiomsMetric> {
 
     private int subDataPropertyOfAxiomsCount;
     private int equivalentDataPropertyAxiomsCount;
@@ -16,7 +17,12 @@ public class DataPropertyAxiomsMetric {
     private int functionalDataPropertyAxiomsCount;
     private int dataPropertyDomainAxiomsMetric;
     private int dataPropertyRangeAxiomsMetric;
-    public Map<String, Object> getAllMetrics(OWLOntology ontology) {
+    private OWLOntology ontology;
+    public DataPropertyAxiomsMetric(OWLOntology ontology) {
+	this.ontology = ontology;
+    }
+    
+    public Map<String, Object> getAllMetrics() {
 	Map<String, Object> returnObject = new LinkedHashMap<>();
 	returnObject.put("SubDataPropertyOfaxiomscount", subDataPropertyOfAxiomsCount);
 	returnObject.put("Equivalentdatapropertiesaxiomscount", equivalentDataPropertyAxiomsCount);
@@ -26,15 +32,15 @@ public class DataPropertyAxiomsMetric {
 	returnObject.put("DataPropertyrangeaxiomscount", dataPropertyRangeAxiomsMetric);
 	return returnObject;
     }
-    public Map<String, Object> calculateAllMetrics(OWLOntology ontology) {
-	Map<String, Object> returnObject = new LinkedHashMap<>();
-	returnObject.put("SubDataPropertyOfaxiomscount", countSubDataPropertyOfAxiomsMetric(ontology));
-	returnObject.put("Equivalentdatapropertiesaxiomscount", countEquivalentDataPropertyAxiomsMetric(ontology));
-	returnObject.put("Disjointdatapropertiesaxiomscount", countDisjointDataPropertyAxiomsMetric(ontology));
-	returnObject.put("Functionaldatapropertyaxiomscount", countFunctionalDataPropertyAxiomsMetric(ontology));
-	returnObject.put("Datapropertydomainaxiomscount", countDataPropertyDomainAxiomsMetric(ontology));
-	returnObject.put("DataPropertyrangeaxiomscount", countDataPropertyRangeAxiomsMetric(ontology));
-	return returnObject;
+    public DataPropertyAxiomsMetric call() {
+	
+	countSubDataPropertyOfAxiomsMetric(ontology);
+	countEquivalentDataPropertyAxiomsMetric(ontology);
+	countDisjointDataPropertyAxiomsMetric(ontology);
+	countFunctionalDataPropertyAxiomsMetric(ontology);
+	countDataPropertyDomainAxiomsMetric(ontology);
+	countDataPropertyRangeAxiomsMetric(ontology);
+	return this;
     }
 
     public int countSubDataPropertyOfAxiomsMetric(OWLOntology ontology) {

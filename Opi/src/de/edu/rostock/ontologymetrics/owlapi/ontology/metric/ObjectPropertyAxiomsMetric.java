@@ -2,13 +2,14 @@ package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
 
-public class ObjectPropertyAxiomsMetric {
+public class ObjectPropertyAxiomsMetric implements Callable<ObjectPropertyAxiomsMetric> {
     private int subObjectPropertyOfAxiomsCount;
     private int equivalentObjectPropertyAxiomsCount;
     private int inverseObjectPropertyAxiomsCount;
@@ -23,7 +24,10 @@ public class ObjectPropertyAxiomsMetric {
     private int objectPropertyDomainAxiomsCount;
     private int objectPropertyRangeAxiomsCount;
     private int subPropertyChainOfAxiomsCount;
-
+    private OWLOntology ontology;
+    public ObjectPropertyAxiomsMetric(OWLOntology ontology) {
+	this.ontology = ontology;
+    }
     public int getSubObjectPropertyOfAxiomsCount() {
 	return subObjectPropertyOfAxiomsCount;
     }
@@ -80,7 +84,7 @@ public class ObjectPropertyAxiomsMetric {
 	return subPropertyChainOfAxiomsCount;
     }
 
-    public Map<String, Object> getAllMetrics(OWLOntology ontology) {
+    public Map<String, Object> getAllMetrics() {
 	Map<String, Object> returnObject = new LinkedHashMap<>();
 	returnObject.put("SubObjectPropertyOfaxiomscount", subObjectPropertyOfAxiomsCount);
 	returnObject.put("Equivalentobjectpropertiesaxiomscount", equivalentObjectPropertyAxiomsCount);
@@ -100,27 +104,24 @@ public class ObjectPropertyAxiomsMetric {
 	return returnObject;
     }
 
-    public Map<String, Object> calculateAllMetrics(OWLOntology ontology) {
-	Map<String, Object> returnObject = new LinkedHashMap<>();
-	returnObject.put("SubObjectPropertyOfaxiomscount", countSubObjectPropertyAxioms(ontology));
-	returnObject.put("Equivalentobjectpropertiesaxiomscount", countEquivalentObjectPropertyAxioms(ontology));
-	returnObject.put("Inverseobjectpropertiesaxiomscount", countInverseObjectPropertyAxiomsMetric(ontology));
-	returnObject.put("Disjointobjectpropertiesaxiomscount", countDisjointObjectPropertyAxiomsMetric(ontology));
-	returnObject.put("Functionalobjectpropertiesaxiomscount", countFunctionalObjectPropertyAxiomsMetric(ontology));
-	returnObject.put("Inversefunctionalobjectpropertiesaxiomscount",
-		countInverseFunctionalObjectPropertiesAxiomsMetric(ontology));
-	returnObject.put("Transitiveobjectpropertyaxiomscount", countTransitiveObjectPropertyAxiomsMetric(ontology));
-	returnObject.put("Symmetricobjectpropertyaxiomscount", countSymmetricObjectPropertyAxiomsMetric(ontology));
-	returnObject.put("Asymmetricobjectpropertyaxiomscount",
-		countAsymmetricObjectPropertyAxiomsMetric(ontology));
-	returnObject.put("Reflexiveobjectpropertyaxiomscount", countReflexiveObjectPropertyAxiomsMetric(ontology));
-	returnObject.put("Irreflexiveobjectpropertyaxiomscount",
-		countIrreflexiveObjectPropertyAxiomsMetric(ontology));
-	returnObject.put("Objectpropertydomainaxiomscount", countObjectPropertyDomainAxiomsMetric(ontology));
-	returnObject.put("Objectpropertyrangeaxiomscount", countObjectPropertyRangeAxiomsMetric(ontology));
-	returnObject.put("SubPropertyChainOfaxiomscount", countSubPropertyChainOfAxiomsMetric(ontology));
+    public ObjectPropertyAxiomsMetric call() {
 
-	return returnObject;
+	countSubObjectPropertyAxioms(ontology);
+	countEquivalentObjectPropertyAxioms(ontology);
+	countInverseObjectPropertyAxiomsMetric(ontology);
+	countDisjointObjectPropertyAxiomsMetric(ontology);
+	countFunctionalObjectPropertyAxiomsMetric(ontology);
+	countInverseFunctionalObjectPropertiesAxiomsMetric(ontology);
+	countTransitiveObjectPropertyAxiomsMetric(ontology);
+	countSymmetricObjectPropertyAxiomsMetric(ontology);
+	countAsymmetricObjectPropertyAxiomsMetric(ontology);
+	countReflexiveObjectPropertyAxiomsMetric(ontology);
+	countIrreflexiveObjectPropertyAxiomsMetric(ontology);
+	countObjectPropertyDomainAxiomsMetric(ontology);
+	countObjectPropertyRangeAxiomsMetric(ontology);
+	countSubPropertyChainOfAxiomsMetric(ontology);
+
+	return this;
     }
 
     public int countSubObjectPropertyAxioms(OWLOntology ontology) {
