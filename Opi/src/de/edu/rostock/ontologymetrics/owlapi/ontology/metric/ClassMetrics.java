@@ -93,8 +93,8 @@ public class ClassMetrics implements Callable<ClassMetrics> {
 	returnObject.put("Classimportance", classImportance);
 	returnObject.put("Classinheritancerichness", classInheritanceRichness);
 	returnObject.put("Classreadability", classReadability);
-	returnObject.put("Classchildrencount", classChildrenCount);
 	returnObject.put("Classrelationshiprichness", classRelationshipRichness);
+	returnObject.put("Classchildrencount", classChildrenCount);
 	returnObject.put("Classinstancescount", classInstancesCount);
 	returnObject.put("Classpropertiescount", classPropertiesCount);
 
