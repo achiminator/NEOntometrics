@@ -13,26 +13,49 @@ import org.semanticweb.owlapi.search.EntitySearcher;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.basemetric.graphbasemetric.GraphParser;
 
-
 public class SchemaMetrics extends OntologyMetric {
-    Map<String, Object> metrics;
 
-    public SchemaMetrics(Map<String, Object> metrics) {
-	this.metrics = metrics;
+    private double attributeRichness;
+    private double inheritanceRichness;
+    private double relationshipRichness;
+    private double attributeClassRatio;
+    private double equivalenceRatio;
+    private double axiomClassRatio;
+    private double inverseRelationsRatio;
+    private double classRelationRatio;
+
+    private BaseMetric baseMetric;
+    private ClassAxiomsMetric classAxiomsMetric;
+
+    public SchemaMetrics(BaseMetric baseMetric, ClassAxiomsMetric classAxiomsMetric) {
+	this.baseMetric = baseMetric;
+	this.classAxiomsMetric = classAxiomsMetric;
     }
 
-    public Map<String, Object> getAllMetrics(OWLOntology ontology, GraphParser parser, GraphParser parserI) {
+    public Map<String, Object> getAllMetrics() {
 	Map<String, Object> returnObject = new HashMap<>();
-	returnObject.put("Attribute richness", attributeRichnessMetric(ontology, parserI));
-	returnObject.put("Inheritance richness", schemaInheritenceRichnessMetric(metrics));
-	returnObject.put("Relationship richness", schemaRelationshipRichnessMetric(metrics, ontology));
-	returnObject.put("Attribute class ratio", attributeClassRatio(metrics, ontology));
-	returnObject.put("Attribute class ratio", attributeClassRatio(metrics, ontology));
-	returnObject.put("Equivalence ratio", equivalenceRatioMetric(metrics, ontology));
-	returnObject.put("Axiom/class ratio", axiomClassRatioMetric(metrics));
-	returnObject.put("Inverse relations ratio", inverseRelationsRatioMetric(ontology));
-	returnObject.put("Class/relation ratio", classRelationsRatioMetric(metrics, ontology));
+	returnObject.put("Attributerichness", attributeRichness);
+	returnObject.put("Inheritancerichness", inheritanceRichness);
+	returnObject.put("Relationshiprichness", relationshipRichness);
+	returnObject.put("Attributeclassratio", attributeClassRatio);
+	returnObject.put("Equivalenceratio", equivalenceRatio);
+	returnObject.put("Axiomclassratio", axiomClassRatio);
+	returnObject.put("Inverserelationsratio", inverseRelationsRatio);
+	returnObject.put("Classrelationratio", classRelationRatio);
 
+	return returnObject;
+    }
+    public Map<String, Object> calculateAllMetrics(OWLOntology ontology, GraphParser parserI) {
+	Map<String, Object> returnObject = new HashMap<>();
+	returnObject.put("Attributerichness", attributeRichnessMetric(ontology, parserI));
+	returnObject.put("Inheritancerichness", schemaInheritenceRichnessMetric());
+	returnObject.put("Relationshiprichness", schemaRelationshipRichnessMetric( ontology));
+	returnObject.put("Attributeclassratio", attributeClassRatio(ontology));
+	returnObject.put("Equivalenceratio", equivalenceRatioMetric(ontology));
+	returnObject.put("Axiomclassratio", axiomClassRatioMetric());
+	returnObject.put("Inverserelationsratio", inverseRelationsRatioMetric(ontology));
+	returnObject.put("Classrelationratio", classRelationsRatioMetric(ontology));
+	
 	return returnObject;
     }
 
@@ -51,8 +74,8 @@ public class SchemaMetrics extends OntologyMetric {
 		    + "/"
 		    + classes);
 	}
-
-	return OntologyUtility.roundByGlobNK(ret);
+	attributeRichness = OntologyUtility.roundByGlobNK(ret);
+	return attributeRichness;
     }
 
     /**
@@ -61,9 +84,9 @@ public class SchemaMetrics extends OntologyMetric {
      * 
      * @return Metric Value
      */
-    public double schemaInheritenceRichnessMetric(Map<String, Object> metrics) {
-	double countSubClasses = (double) metrics.get("SubClassOf axioms count");
-	double countClasses = (double) metrics.get("Total classes count");
+    public double schemaInheritenceRichnessMetric() {
+	int countSubClasses = classAxiomsMetric.getSubClassOfAxiomsCount();
+	int countClasses = baseMetric.getTotalClassesCount();
 
 	// avoid a division by zero
 	if (countClasses == 0) {
@@ -76,39 +99,38 @@ public class SchemaMetrics extends OntologyMetric {
 	    myLogger.debug("countSubClasses / countClasses: "
 		    + countSubClasses / countClasses);
 	    double ret = countSubClasses / countClasses;
-	    return OntologyUtility.roundByGlobNK(ret);
+	    inheritanceRichness = OntologyUtility.roundByGlobNK(ret);
+	    return inheritanceRichness;
 	}
     }
 
     // TODO: Replace things here by local variants
-    public double schemaRelationshipRichnessMetric(Map<String, Object> metrics, OWLOntology ontology) {
-	double inheritedRelationships = (double) metrics.get("SubClassOf axioms count");
-	double objectPropertyCount = ontology.getObjectPropertiesInSignature(OntologyUtility.ImportClosures(true))
-		.size();
-	double equivalentClasses = ontology.getAxiomCount(AxiomType.EQUIVALENT_CLASSES,
+    public double schemaRelationshipRichnessMetric(OWLOntology ontology) {
+	int inheritedRelationships = classAxiomsMetric.getSubClassOfAxiomsCount();
+	int objectPropertyCount = ontology.getObjectPropertiesInSignature(OntologyUtility.ImportClosures(true)).size();
+	int equivalentClasses = ontology.getAxiomCount(AxiomType.EQUIVALENT_CLASSES,
 		OntologyUtility.ImportClosures(true));
-	double disjointClasses = ontology.getAxiomCount(AxiomType.DISJOINT_CLASSES,
-		OntologyUtility.ImportClosures(true));
+	int disjointClasses = ontology.getAxiomCount(AxiomType.DISJOINT_CLASSES, OntologyUtility.ImportClosures(true));
 
-	double nonInheritedRelationships = objectPropertyCount + equivalentClasses + disjointClasses;// + classAssertion
-												     // + sameIndividual
-												     // +
-												     // differentIndividual;
+	int nonInheritedRelationships = objectPropertyCount + equivalentClasses + disjointClasses;// + classAssertion
+												  // + sameIndividual
+												  // +
+												  // differentIndividual;
 
 	// nonInheritedRelationships= countRelationships;
 	// avoid a division by zero
 	if (nonInheritedRelationships + inheritedRelationships == 0) {
-	    return 0.0;
+	    relationshipRichness = 0.0;
 	} else {
-	    return OntologyUtility
+	    relationshipRichness = OntologyUtility
 		    .roundByGlobNK(nonInheritedRelationships / (nonInheritedRelationships + inheritedRelationships));
 	}
+	return relationshipRichness;
     }
 
-    public double attributeClassRatio(Map<String, Object> metrics, OWLOntology ontology) {
-	double classCount = (double) metrics.get("Total classes count");
-	double classesWithAttributes = 0;
-	double result = 0;
+    public double attributeClassRatio(OWLOntology ontology) {
+	int classCount = baseMetric.getTotalClassesCount();
+	int classesWithAttributes = 0;
 
 	myLogger.debug("classes: "
 		+ classCount);
@@ -126,74 +148,76 @@ public class SchemaMetrics extends OntologyMetric {
 	    }
 	}
 	if (classCount == 0) {
-	    return 0.0;
-	}
-
-	result = classesWithAttributes / classCount;
+	    attributeClassRatio = 0.0;
+	} else
+	    attributeClassRatio = OntologyUtility.roundByGlobNK(classesWithAttributes / classCount);
 
 	myLogger.debug("result: "
-		+ result);
-	return OntologyUtility.roundByGlobNK(result);
+		+ attributeClassRatio);
+	return attributeClassRatio;
     }
 
-    public double equivalenceRatioMetric(Map<String, Object> metrics, OWLOntology ontology) {
-	double classes = (double) metrics.get("Total classes count");
+    public double equivalenceRatioMetric( OWLOntology ontology) {
+	int classes = baseMetric.getTotalClassesCount();
 	// MLIC: changed getAxiomCount with boolean is deprecated
 	// float sameClasses = ontology.getAxiomCount(AxiomType.EQUIVALENT_CLASSES,
 	// true);
-	double sameClasses = ontology.getAxiomCount(AxiomType.EQUIVALENT_CLASSES, OntologyUtility.ImportClosures(true));
+	int sameClasses = ontology.getAxiomCount(AxiomType.EQUIVALENT_CLASSES, OntologyUtility.ImportClosures(true));
 
 	if (classes == 0) {
-	    return 0.0;
+	    equivalenceRatio = 0.0;
 	} else {
-	    return OntologyUtility.roundByGlobNK(sameClasses / classes);
+	    equivalenceRatio = OntologyUtility.roundByGlobNK(sameClasses / classes);
 	}
+	return equivalenceRatio;
     }
 
-    public double axiomClassRatioMetric(Map<String, Object> metrics) {
-	double axioms = (double) metrics.get("Axioms");
-	double classes = (double) metrics.get("Total Classes count");
+    public double axiomClassRatioMetric() {
+	int axioms = baseMetric.getAxioms();
+	int classes = baseMetric.getTotalClassesCount();
 	if (classes == 0) {
-	    return 0.0;
+	    axiomClassRatio = 0.0;
 	} else {
-	    return OntologyUtility.roundByGlobNK(axioms / classes);
+	    axiomClassRatio = OntologyUtility.roundByGlobNK(axioms / classes);
 	}
+	return axiomClassRatio;
     }
 
     public double inverseRelationsRatioMetric(OWLOntology ontology) {
-	double objectpropertycount = ontology.getObjectPropertiesInSignature(OntologyUtility.ImportClosures(true))
-		.size();
-	double inverseobjectproperties = ontology.getAxiomCount(AxiomType.INVERSE_OBJECT_PROPERTIES,
+	int objectpropertycount = ontology.getObjectPropertiesInSignature(OntologyUtility.ImportClosures(true)).size();
+	int inverseobjectproperties = ontology.getAxiomCount(AxiomType.INVERSE_OBJECT_PROPERTIES,
 		OntologyUtility.ImportClosures(true));
-	double inversefunctionalproperties = ontology.getAxiomCount(AxiomType.INVERSE_FUNCTIONAL_OBJECT_PROPERTY,
+	int inversefunctionalproperties = ontology.getAxiomCount(AxiomType.INVERSE_FUNCTIONAL_OBJECT_PROPERTY,
 		OntologyUtility.ImportClosures(true));
-	double functionaldatapropertycount = ontology.getAxiomCount(AxiomType.FUNCTIONAL_DATA_PROPERTY,
+	int functionaldatapropertycount = ontology.getAxiomCount(AxiomType.FUNCTIONAL_DATA_PROPERTY,
 		OntologyUtility.ImportClosures(true));
 	if (objectpropertycount + functionaldatapropertycount == 0) {
-	    return 0.0;
+	    inverseRelationsRatio = 0.0;
 	} else {
-	    return OntologyUtility.roundByGlobNK((inverseobjectproperties + inversefunctionalproperties)
-		    / (objectpropertycount + functionaldatapropertycount));
+	    inverseRelationsRatio = OntologyUtility
+		    .roundByGlobNK((inverseobjectproperties + inversefunctionalproperties)
+			    / (objectpropertycount + functionaldatapropertycount));
 	}
+	return inverseRelationsRatio;
     }
 
-    public double classRelationsRatioMetric(Map<String, Object> metrics, OWLOntology ontology) {
-	double classes = (double) metrics.get("Total classes count");
-	double subClasses = (double) metrics.get("SubClassOf axioms count");
-	double objectPropertyCount = ontology.getObjectPropertiesInSignature(OntologyUtility.ImportClosures(true))
-		.size();
-	double equivalentClasses = ontology.getAxiomCount(AxiomType.EQUIVALENT_CLASSES,
+    public double classRelationsRatioMetric(OWLOntology ontology) {
+	int classes = baseMetric.getTotalClassesCount();
+	int subClasses = classAxiomsMetric.getSubClassOfAxiomsCount();
+	int objectPropertyCount = ontology.getObjectPropertiesInSignature(OntologyUtility.ImportClosures(true)).size();
+	int equivalentClasses = ontology.getAxiomCount(AxiomType.EQUIVALENT_CLASSES,
 		OntologyUtility.ImportClosures(true));
-	double disjointClasses = ontology.getAxiomCount(AxiomType.DISJOINT_CLASSES,
-		OntologyUtility.ImportClosures(true));
-	double relations = objectPropertyCount + equivalentClasses + disjointClasses + subClasses;// + classAssertion +
-												  // sameIndividual +
-												  // differentIndividual;
+	int disjointClasses = ontology.getAxiomCount(AxiomType.DISJOINT_CLASSES, OntologyUtility.ImportClosures(true));
+	int relations = objectPropertyCount + equivalentClasses + disjointClasses + subClasses;// + classAssertion +
+											       // sameIndividual +
+											       // differentIndividual;
 	// relations=countRelationships;
 	if (relations == 0) {
-	    return 0.0;
+	    classRelationRatio = 0.0;
 	} else {
-	    return OntologyUtility.roundByGlobNK(classes / relations);
+	    classRelationRatio = OntologyUtility.roundByGlobNK(classes / relations);
 	}
+	return classRelationRatio;
     }
+
 }

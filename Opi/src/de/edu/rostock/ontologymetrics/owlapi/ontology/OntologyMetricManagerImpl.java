@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -23,12 +24,13 @@ import org.semanticweb.owlapi.model.UnloadableImportException;
 
 import de.edu.rostock.ontologymetrics.owlapi.db.DBHandler;
 
-public class OntologyMetricManagerImpl implements OntologyMetricManager {
+public class OntologyMetricManagerImpl  {
 
     // ALL | DEBUG | INFO | WARN | ERROR | FATAL | OFF:
     private Logger myLogger = Logger.getLogger(this.getClass());
     protected OWLOntologyManager manager;
-    protected OntologyMetrics metrics;
+    
+    private OWLOntology ontology;
     DBHandler db;
     
 
@@ -36,7 +38,7 @@ public class OntologyMetricManagerImpl implements OntologyMetricManager {
 	manager = OWLManager.createOWLOntologyManager();
 	myLogger.debug("manager created: "
 		+ manager.toString());
-	metrics = new OntologyMetricsImpl(null);
+	
 	OntologyUtility.initMessages(); // reset Messages
 	OntologyUtility.initImports(); // reset Import-Count
 	db = new DBHandler();
@@ -47,7 +49,7 @@ public class OntologyMetricManagerImpl implements OntologyMetricManager {
 	myLogger.debug("pIRI: "
 		+ pIRI.toString());
 
-	OWLOntology ontology = null;
+	
 	Boolean Loadfailure = true;
 
 	// for escape imports with failures
@@ -61,6 +63,7 @@ public class OntologyMetricManagerImpl implements OntologyMetricManager {
 	    while (Loadfailure) {
 		try {
 		    ontology = manager.loadOntologyFromOntologyDocument(source, config);
+		    //OntologyMetricsImpl ontoMetric = new OntologyMetricsImpl(ontology);
 		    // no more failures
 		    Loadfailure = false;
 		} catch (UnloadableImportException e) {
@@ -93,8 +96,6 @@ public class OntologyMetricManagerImpl implements OntologyMetricManager {
 		}
 	    }
 	    if (ontology != null) {
-		metrics.setOntology(ontology);
-		metrics.setIRI((IRI) null);
 
 		myLogger.info("Ontology Loaded...");
 		myLogger.info("Document IRI: "
@@ -139,7 +140,13 @@ public class OntologyMetricManagerImpl implements OntologyMetricManager {
 	myLogger.info("loadOntologyFromIRI - successfully done");
 	return ontology;
     }
-
+    /***
+     * Takes a File and parses it into an Ontology. Also calculate
+     * 
+     * @param file an Ontological Representation
+     * @return {@link OWLOntology}
+     * @throws OWLOntologyCreationException
+     */
     public OWLOntology loadOntologyFromFile(File file) throws OWLOntologyCreationException {
 	myLogger.info("loadOntologyFromFile - Start");
 	myLogger.debug("file: "
@@ -193,7 +200,6 @@ public class OntologyMetricManagerImpl implements OntologyMetricManager {
 		}
 	    }
 	    if (ontology != null) {
-		metrics.setOntology(ontology);
 
 		myLogger.info("Ontology Loaded...");
 		myLogger.info("Ontology : "
@@ -206,6 +212,15 @@ public class OntologyMetricManagerImpl implements OntologyMetricManager {
 	return ontology;
     }
 
+    /***
+     * Creates a tmp file out of a String representation of an ontology utilizing
+     * the {@link loadOntologyFromFile} function. Also responsible for saving it
+     * into the database if allowed by End-User
+     * 
+     * @param text Textual representation of the Ontology
+     * @return {@link OWLOntology}
+     * @throws {@link OWLOntologyCreationException, IOException}
+     */
     public OWLOntology loadOntologyFromText(String text) throws IOException, OWLOntologyCreationException {
 	myLogger.debug("loadOntologyFromText - Start");
 	/**
@@ -251,28 +266,30 @@ public class OntologyMetricManagerImpl implements OntologyMetricManager {
 	return lontology;
     }
 
-
-
-    // getter $ setter
-
+    public Map<String, Object> calculateMetrics(OWLOntology ontology) {
+	OntologyMetricsImpl ontoMetric = new OntologyMetricsImpl(ontology);
+	return ontoMetric.getAllMetrics();
+	
+    }
+    
     public OWLOntology getOntology() {
-	return metrics.getOntology();
+	return ontology;
     }
 
-    public OntologyMetrics getMetrics() {
-	return metrics;
-    }
-
-    public String getNamespace() {
-	myLogger.debug("metrics.getIRI: "
-		+ metrics.getIRI());
-
-	if (metrics.getIRI() != null) {
-	    myLogger.debug("metrics.getIRI.getNamespace: "
-		    + metrics.getIRI().getNamespace());
-	    return metrics.getIRI().getNamespace();
-	} else {
-	    return null;
-	}
-    }
+    /***
+     * 
+     * @return Namespace IRI of Ontology
+     */
+//    public String getNamespace() {
+//	myLogger.debug("metrics.getIRI: "
+//		+ metrics.getIRI());
+//
+//	if (metrics.getIRI() != null) {
+//	    myLogger.debug("metrics.getIRI.getNamespace: "
+//		    + metrics.getIRI().getNamespace());
+//	    return metrics.getIRI().getNamespace();
+//	} else {
+//	    return null;
+//	}
+//    }
 }

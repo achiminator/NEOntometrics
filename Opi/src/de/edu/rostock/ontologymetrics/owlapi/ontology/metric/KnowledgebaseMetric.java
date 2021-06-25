@@ -8,39 +8,58 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.search.EntitySearcher;
 
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.basemetric.graphbasemetric.GraphParser;
 
 public class KnowledgebaseMetric extends OntologyMetric {
 
-    Map<String, Object> metrics;
-
-    public KnowledgebaseMetric(Map<String, Object> metrics) {
-	this.metrics = metrics;
+    public double getAveragePopulationMetric() {
+	return averagePopulationMetric;
     }
 
-    public Map<String, Object> getAllMetrics(OWLOntology ontology, GraphParser parser, GraphParser parserI) {
+    public double getClassRichnessMetric() {
+	return classRichnessMetric;
+    }
+
+    private BaseMetric baseMetrics;
+
+    private double averagePopulationMetric;
+    private double classRichnessMetric;
+
+    public KnowledgebaseMetric(BaseMetric baseMetrics) {
+	super();
+	this.baseMetrics = baseMetrics;
+    }
+
+    public Map<String, Object> getAllMetrics() {
 	Map<String, Object> returnObject = new HashMap<>();
-	returnObject.put("Average population", metrics);
-	returnObject.put("Class richness", classRichnessMetric(ontology, metrics));
+	returnObject.put("Averagepopulation", averagePopulationMetric);
+	returnObject.put("Classrichness", classRichnessMetric);
 	return returnObject;
     }
 
-    public String cohesionMetric(Map<String, Object> metrics) {
-	double avg_depth = (double) metrics.get("Average depth");
-	int roots = (int) metrics.get("Absolute root cardinality");
-	int leaves = (int) metrics.get("Absolute leaf cardinality");
-
-	return "NoR: "
-		+ roots
-		+ " - NoL: "
-		+ leaves
-		+ " - ADIT-LN: "
-		+ OntologyUtility.roundByGlobNK(avg_depth);
+    public Map<String, Object> calculateAllMetrics(OWLOntology ontology) {
+	Map<String, Object> returnObject = new HashMap<>();
+	returnObject.put("Averagepopulation", averagePopulationMetric());
+	returnObject.put("Classrichness", classRichnessMetric(ontology));
+	return returnObject;
     }
 
-    public double averagePopulationMetric(Map<String, Object> metrics) {
-	int countTotalIndividuals = (int) metrics.get("Total individuals count");
-	int countTotalClasses = (int) metrics.get("Total classes count");
+//    public String cohesionMetric(Map<String, Object> metrics) {
+//	double avg_depth = (double) metrics.get("Average depth");
+//	int roots = (int) metrics.get("Absolute root cardinality");
+//	int leaves = (int) metrics.get("Absolute leaf cardinality");
+//
+//	return "NoR: "
+//		+ roots
+//		+ " - NoL: "
+//		+ leaves
+//		+ " - ADIT-LN: "
+//		+ OntologyUtility.roundByGlobNK(avg_depth);
+//    }
+
+    public double averagePopulationMetric() {
+	int countTotalIndividuals = baseMetrics.getTotalIndividualCount();
+
+	int countTotalClasses = baseMetrics.getTotalClassesCount();
 
 	myLogger.debug("countTotalIndividuals: "
 		+ countTotalIndividuals);
@@ -49,26 +68,30 @@ public class KnowledgebaseMetric extends OntologyMetric {
 
 	// avoid a division by zero
 	if (countTotalClasses == 0) {
-	    return 0.0;
+	    averagePopulationMetric = 0.0;
 	} else {
-	    return OntologyUtility.roundByGlobNK(countTotalIndividuals / countTotalClasses);
+	    averagePopulationMetric = OntologyUtility.roundByGlobNK(countTotalIndividuals / countTotalClasses);
 	}
+	return averagePopulationMetric;
     }
-    public double classRichnessMetric(OWLOntology ontology, Map<String, Object> metric) {
+
+    public double classRichnessMetric(OWLOntology ontology) {
 	double countClassHasIndividual = 0.0;
-	int totalClasses = (int) metrics.get("Total classes count");
+	int totalClasses = baseMetrics.getTotalClassesCount();
 	double countTotalClasses = totalClasses;
 
 	// avoid a division by zero
 	if (countTotalClasses == 0) {
-		return 0.0;
+	    return 0.0;
 	} else {
-		for (OWLClass owlClass : ontology.getClassesInSignature(OntologyUtility.ImportClosures(true))) {
-			if (!EntitySearcher.getIndividuals(owlClass, ontology).isEmpty()) {
-				countClassHasIndividual++;
-			}
-		}	
-		return OntologyUtility.roundByGlobNK((double) countClassHasIndividual / (double) countTotalClasses);
+	    for (OWLClass owlClass : ontology.getClassesInSignature(OntologyUtility.ImportClosures(true))) {
+		if (!EntitySearcher.getIndividuals(owlClass, ontology).isEmpty()) {
+		    countClassHasIndividual++;
+		}
+	    }
+	    classRichnessMetric = OntologyUtility
+		    .roundByGlobNK((double) countClassHasIndividual / (double) countTotalClasses);
 	}
+	return classRichnessMetric;
     }
 }

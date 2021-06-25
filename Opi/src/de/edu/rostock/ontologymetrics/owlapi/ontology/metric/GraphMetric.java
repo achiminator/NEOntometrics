@@ -12,23 +12,57 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.basemetric.graphbasemetric.GraphParser;
 
-class GraphMetric {
+public class GraphMetric {
+    private int absoluteRootCardinality;
+    private int absoluteLeafCardinality;
+    private int absoluteSibblingCardinality;
+    private int absoluteDepth;
+    private double averageDepth;
+    private int maximalDepth;
+    private int absoluteBreadth;
+    private int maximalBreadth;
+    private double averageBreadth;
+    private double ratioOfLeafFanOutness;
+    private double ratioOfSiblingFanOutness;
+    private double tangledgness;
+    private int totalNumberOfPaths;
+    private double averageNumberOfPaths;
+
     public Map<String, Object> getAllMetrics(OWLOntology ontology, GraphParser parser, GraphParser parserI) {
 	Map<String, Object> returnObject = new HashMap<>();
-	returnObject.put("Absolute root cardinality", absoluteRootCardinalityMetric(parser));
-	returnObject.put("Absolute leaf cardinality", absoluteLeafCardinalityMetric(parser));
-	returnObject.put("Absolute sibling cardinality", absoluteSiblingCardinalityMetric(parser));
-	returnObject.put("Absolute depth", absoluteDepthMetric(parserI));
-	returnObject.put("Average depth", averageDepthMetric(parserI));
-	returnObject.put("Maximal depth", maximalDepthMetric(parserI));
-	returnObject.put("Absolute breadth", absoluteBreadthMetric(parserI));
-	returnObject.put("Average breadth", averageBreadthMetric(parserI));
-	returnObject.put("Maximal breadth", maximalBreadthMetric(parserI));
-	returnObject.put("Ratio of leaf fan-outness", ratioOfLeafFanOutnessMetric(parser, parserI));
-	returnObject.put("Ratio of sibling fan-outness", ratioOfSiblingFanOutnessMetric(parser, parserI));
+	returnObject.put("Absoluterootcardinality", absoluteRootCardinality);
+	returnObject.put("Absoluteleafcardinality", absoluteLeafCardinality);
+	returnObject.put("Absolutesiblingcardinality", absoluteSibblingCardinality);
+	returnObject.put("Absolutedepth", absoluteDepth);
+	returnObject.put("Averagedepth", averageDepth);
+	returnObject.put("Maximaldepth", maximalDepth);
+	returnObject.put("Absolutebreadth", absoluteBreadth);
+	returnObject.put("Averagebreadth", averageBreadth);
+	returnObject.put("Maximalbreadth", maximalBreadth);
+	returnObject.put("Ratioofleaffanoutness", ratioOfLeafFanOutness);
+	returnObject.put("Ratioofsiblingfanoutness", ratioOfSiblingFanOutness);
+	returnObject.put("Tangledness", tangledgness);
+	returnObject.put("Totalnumberofpaths", totalNumberOfPaths);
+	returnObject.put("Averagenumberofpaths", averageNumberOfPaths);
+	return returnObject;
+    }
+
+    public Map<String, Object> calculateAllMetrics(OWLOntology ontology, GraphParser parser, GraphParser parserI) {
+	Map<String, Object> returnObject = new HashMap<>();
+	returnObject.put("Absoluterootcardinality", absoluteRootCardinalityMetric(parser));
+	returnObject.put("Absoluteleafcardinality", absoluteLeafCardinalityMetric(parser));
+	returnObject.put("Absolutesiblingcardinality", absoluteSiblingCardinalityMetric(parser));
+	returnObject.put("Absolutedepth", absoluteDepthMetric(parserI));
+	returnObject.put("Averagedepth", averageDepthMetric(parserI));
+	returnObject.put("Maximaldepth", maximalDepthMetric(parserI));
+	returnObject.put("Absolutebreadth", absoluteBreadthMetric(parserI));
+	returnObject.put("Averagebreadth", averageBreadthMetric(parserI));
+	returnObject.put("Maximalbreadth", maximalBreadthMetric(parserI));
+	returnObject.put("Ratioofleaffanoutness", ratioOfLeafFanOutnessMetric(parser, parserI));
+	returnObject.put("Ratioofsiblingfanoutness", ratioOfSiblingFanOutnessMetric(parser, parserI));
 	returnObject.put("Tangledness", tanglednessMetric(parserI));
-	returnObject.put("Total number of paths", totalNumberOfPathsMetric(parserI));
-	returnObject.put("Averagenumber of paths", averageNumberOfPathsMetric(parserI));
+	returnObject.put("Totalnumberofpaths", totalNumberOfPathsMetric(parserI));
+	returnObject.put("Averagenumberofpaths", averageNumberOfPathsMetric(parserI));
 	/*
 	 * to implement
 	 *
@@ -39,15 +73,18 @@ class GraphMetric {
     }
 
     public int absoluteRootCardinalityMetric(GraphParser parser) {
-	return parser.getRoots().size(); // with imports
+	absoluteRootCardinality = parser.getRoots().size();
+	return absoluteRootCardinality; // with imports
     }
 
     public int absoluteLeafCardinalityMetric(GraphParser parser) {
-	return parser.getLeaveClasses().size();
+	absoluteLeafCardinality = parser.getLeaveClasses().size();
+	return absoluteLeafCardinality;
     }
 
     public int absoluteSiblingCardinalityMetric(GraphParser parser) {
-	return parser.getSibs().size();
+	absoluteSibblingCardinality = parser.getSibs().size();
+	return absoluteSibblingCardinality;
     }
 
     public int absoluteDepthMetric(GraphParser parserI) {
@@ -58,7 +95,7 @@ class GraphMetric {
 	while (i.hasNext()) {
 	    n += i.next().size() + 1;
 	}
-
+	absoluteDepth = n;
 	return n;
 	// return parserI.getPathsAll().size();
     }
@@ -69,7 +106,8 @@ class GraphMetric {
 	Iterator<ArrayList<OWLClass>> i = parserI.getPathsAll().iterator(); // BL 08.09.2016 use allpaths
 	while (i.hasNext())
 	    n += i.next().size() + 1;
-	return OntologyUtility.roundByGlobNK((double) n / (double) parserI.getPathsAll().size());
+	averageDepth = OntologyUtility.roundByGlobNK((double) n / (double) parserI.getPathsAll().size());
+	return averageDepth;
 
     }
 
@@ -83,6 +121,7 @@ class GraphMetric {
 	    if (n < next)
 		n = next;
 	}
+	maximalDepth = n;
 	return n;
     }
 
@@ -92,6 +131,7 @@ class GraphMetric {
 	while (i.hasNext()) {
 	    n += i.next().size();
 	}
+	absoluteBreadth = n;
 	return n;
     }
 
@@ -100,7 +140,8 @@ class GraphMetric {
 	Iterator<TreeSet<OWLClass>> i = parserI.getLevels().iterator();
 	while (i.hasNext())
 	    n += i.next().size();
-	return OntologyUtility.roundByGlobNK((double) n / (double) parserI.getLevels().size());
+	averageBreadth = OntologyUtility.roundByGlobNK((double) n / (double) parserI.getLevels().size());
+	return averageBreadth;
 
     }
 
@@ -113,6 +154,7 @@ class GraphMetric {
 	    if (n < next)
 		n = next;
 	}
+	maximalBreadth = n;
 	return n;
     }
 
@@ -121,9 +163,11 @@ class GraphMetric {
 	double noclassesImp = (double) parserI.getNoClasses(); // with imports
 
 	if (noclassesImp > 0.0)
-	    return OntologyUtility.roundByGlobNK(leaves / noclassesImp);
+	    ratioOfLeafFanOutness = OntologyUtility.roundByGlobNK(leaves / noclassesImp);
 	else
-	    return 0.0;
+	    ratioOfLeafFanOutness = 0.0;
+	return ratioOfLeafFanOutness;
+
     }
 
     public double ratioOfSiblingFanOutnessMetric(GraphParser parser, GraphParser parserI) {
@@ -131,26 +175,31 @@ class GraphMetric {
 	double noclassesImp = (double) parserI.getNoClasses(); // with imports
 
 	if (noclassesImp > 0.0)
-	    return OntologyUtility.roundByGlobNK(sibs / noclassesImp);
+	    ratioOfSiblingFanOutness = OntologyUtility.roundByGlobNK(sibs / noclassesImp);
 	else
-	    return 0.0;
+	    ratioOfSiblingFanOutness = 0.0;
+	return ratioOfSiblingFanOutness;
     }
 
     public double tanglednessMetric(GraphParser parserI) {
-	return OntologyUtility
-		.roundByGlobNK((double) parserI.getTangledClasses().size() / (double) parserI.getNoClasses()); // with
-													       // imports
+	tangledgness =  OntologyUtility.roundByGlobNK((double) parserI.getTangledClasses().size() / (double) parserI.getNoClasses());
+	return tangledgness;  
+
     }
+
     public int totalNumberOfPathsMetric(GraphParser parserI) {
-	return parserI.getPathsAll().size(); //with imports
+	totalNumberOfPaths = parserI.getPathsAll().size();
+	return totalNumberOfPaths; // with imports
     }
+
     public double averageNumberOfPathsMetric(GraphParser parserI) {
 	int gen = parserI.getGenerations().size();
- 	int pathsAll = parserI.getPathsAll().size();
- 
+	int pathsAll = parserI.getPathsAll().size();
+
 	if (gen > 0)
-		return OntologyUtility.roundByGlobNK((double)pathsAll / (double)gen);
+	    averageNumberOfPaths = OntologyUtility.roundByGlobNK((double) pathsAll / (double) gen);
 	else
-		return 0.0;
+	    averageNumberOfPaths = 0.0;
+	return averageNumberOfPaths;
     }
 }

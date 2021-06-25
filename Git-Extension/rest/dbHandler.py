@@ -106,14 +106,14 @@ class DBHandler:
                 data.update({"OntologyMetrics":
                 {
                 "BaseMetrics":   OrderedDict(list(commitMetrics.items())[9:20]),
-                "ClassAxioms":   OrderedDict(list(commitMetrics.items())[21:25]),
-                "Objectpropertyaxioms":   OrderedDict(list(commitMetrics.items())[26:40]),
-                "Datapropertyaxioms":   OrderedDict(list(commitMetrics.items())[41:46]),
-                "Individualaxioms":   OrderedDict(list(commitMetrics.items())[47:54]),
-                "Annotationaxioms":   OrderedDict(list(commitMetrics.items())[55:59]),
-                "Schemametrics":   OrderedDict(list(commitMetrics.items())[60:69]),
+                "ClassAxioms":   OrderedDict(list(commitMetrics.items())[20:25]),
+                "Objectpropertyaxioms":   OrderedDict(list(commitMetrics.items())[25:40]),
+                "Datapropertyaxioms":   OrderedDict(list(commitMetrics.items())[40:46]),
+                "Individualaxioms":   OrderedDict(list(commitMetrics.items())[46:54]),
+                "Annotationaxioms":   OrderedDict(list(commitMetrics.items())[54:59]),
+                "Schemametrics":   OrderedDict(list(commitMetrics.items())[59:69]),
                 "Knowledgebasemetrics":   OrderedDict(list(commitMetrics.items())[69:71]),
-                "Graphmetrics":   OrderedDict(list(commitMetrics.items())[72:86]),
+                "Graphmetrics":   OrderedDict(list(commitMetrics.items())[71:86]),
                 }})                
                 if(classMetrics):
                     classMetricList = []

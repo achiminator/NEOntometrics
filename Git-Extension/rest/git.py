@@ -152,14 +152,7 @@ class GitHandler:
         dbhandler = DBHandler()
         dbhandler.writeInDB(metricsDict, branch=branch, file=objectLocation, repo=remoteLocation)
         return(metricsDict)
-    # def outputWrapper(self, metricsDict: dict,) -> dict:
-    #     outputObject = {}
-    #     outputObject.update({
-    #         "Repository": repo,
-    #         "Ontology": ontology,
-    #         "Branch": branch
 
-    #     })
     
     def getFittingObject(self, searchObj, commitTree):
         """Finds specific File in git-commit-Object

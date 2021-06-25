@@ -7,28 +7,49 @@ import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLOntology;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
 
+public class AnnotationAxiomsMetric {
+    private int annotationAxiomsCount;
+    private int annotationAssertionAxiomsCount;
+    private int annotationPropertyDomainAxiomsCount;
+    private int annotationPropertyRangeAxiomsCount;
 
-public abstract class AnnotationAxiomsMetric {
     public Map<String, Object> getAllMetrics(OWLOntology ontology) {
 	Map<String, Object> returnObject = new HashMap<>();
-	returnObject.put("Annotation axioms count", countAnnotationAxiomsMetric(ontology));
-	returnObject.put("Annotation assertion axioms count", countAnnotationAssertionAxiomsMetric(ontology));
-	returnObject.put("Annotation property domain axioms count", countAnnotationPropertyDomainAxiomsMetric(ontology));
-	returnObject.put("Annotation property range axioms count", countAnnotationPropertyRangeAxiomsMetric(ontology));
+	returnObject.put("Annotationaxiomscount", annotationAxiomsCount);
+	returnObject.put("Annotationassertionaxioms count", annotationAssertionAxiomsCount);
+	returnObject.put("Annotationpropertydomain axioms count", annotationPropertyDomainAxiomsCount);
+	returnObject.put("Annotationpropertyrange axioms count", annotationPropertyRangeAxiomsCount);
 	return returnObject;
     }
-    
+
+    public Map<String, Object> calculateAllMetrics(OWLOntology ontology) {
+	Map<String, Object> returnObject = new HashMap<>();
+	returnObject.put("Annotationaxiomscount", countAnnotationAxiomsMetric(ontology));
+	returnObject.put("Annotationassertionaxiomscount", countAnnotationAssertionAxiomsMetric(ontology));
+	returnObject.put("Annotationpropertydomainaxiomscount", countAnnotationPropertyDomainAxiomsMetric(ontology));
+	returnObject.put("Annotationpropertyrangeaxiomscount", countAnnotationPropertyRangeAxiomsMetric(ontology));
+	return returnObject;
+    }
+
     public int countAnnotationAxiomsMetric(OWLOntology ontology) {
-	return ontology.getAnnotations().size();
+	annotationAxiomsCount = ontology.getAnnotations().size();
+	return annotationAxiomsCount;
     }
 
     public int countAnnotationAssertionAxiomsMetric(OWLOntology ontology) {
-	return ontology.getAxiomCount(AxiomType.ANNOTATION_ASSERTION);
+	annotationAssertionAxiomsCount = ontology.getAxiomCount(AxiomType.ANNOTATION_ASSERTION);
+	return annotationAssertionAxiomsCount;
     }
+
     public int countAnnotationPropertyDomainAxiomsMetric(OWLOntology ontology) {
-	return ontology.getAxiomCount(AxiomType.ANNOTATION_PROPERTY_DOMAIN, OntologyUtility.ImportClosures(true));
+	annotationPropertyDomainAxiomsCount = ontology.getAxiomCount(AxiomType.ANNOTATION_PROPERTY_DOMAIN,
+		OntologyUtility.ImportClosures(true));
+	return annotationPropertyDomainAxiomsCount;
     }
+
     public int countAnnotationPropertyRangeAxiomsMetric(OWLOntology ontology) {
-	return ontology.getAxiomCount(AxiomType.ANNOTATION_PROPERTY_RANGE, OntologyUtility.ImportClosures(true));
+	annotationPropertyRangeAxiomsCount = ontology.getAxiomCount(AxiomType.ANNOTATION_PROPERTY_RANGE,
+		OntologyUtility.ImportClosures(true));
+	return annotationPropertyRangeAxiomsCount;
     }
 }

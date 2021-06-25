@@ -19,19 +19,89 @@ import com.google.common.collect.Multimap;
 
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
 
-public abstract class ClassMetrics extends OntologyMetric {
+public class ClassMetrics extends OntologyMetric {
 
-    public Map<String, Object> getAllMetrics(OWLOntology ontology, IRI iri, Map<String, Object> metrics) {
+    public int getClassConnectivity() {
+	return classConnectivity;
+    }
+
+    public double getClassFullness() {
+	return classFullness;
+    }
+
+    public double getClassImportance() {
+	return classImportance;
+    }
+
+    public int getClassChildrenCount() {
+	return classChildrenCount;
+    }
+
+    public double getClassInheritanceRichness() {
+	return classInheritanceRichness;
+    }
+
+    public int getClassReadability() {
+	return classReadability;
+    }
+
+    public int getClassRelationshipRichness() {
+	return classRelationshipRichness;
+    }
+
+    public int getClassInstancesCount() {
+	return classInstancesCount;
+    }
+
+    public int getClassPropertiesCount() {
+	return classPropertiesCount;
+    }
+
+    private int classConnectivity;
+    private double classFullness;
+    private double classImportance;
+    private int classChildrenCount;
+    private double classInheritanceRichness;
+    private int classReadability;
+    private int classRelationshipRichness;
+    private int classInstancesCount;
+    private int classPropertiesCount;
+
+    private KnowledgebaseMetric knowledgebaseMetric;
+    private BaseMetric baseMetric;
+
+    public ClassMetrics(KnowledgebaseMetric knowledgebaseMetric, BaseMetric baseMetric) {
+	super();
+	this.knowledgebaseMetric = knowledgebaseMetric;
+	this.baseMetric = baseMetric;
+    }
+
+    public Map<String, Object> getAllMetrics(OWLOntology ontology, IRI iri) {
 	Map<String, Object> returnObject = new HashMap<>();
-	returnObject.put("Class connectivity", classConnectivityMetric(ontology, iri));
-	returnObject.put("Class fulness", classFulnessMetric(ontology, iri, metrics));
-	returnObject.put("class importance", classImportanceMetric(ontology, iri, metrics));
-	returnObject.put("Class children count", countClassChildrenMetric(ontology, iri));
-	returnObject.put("class inheritance richness", classInheritenceRichnessMetric(ontology, iri, metrics));
-	returnObject.put("class readability", classReadabilityMetric(ontology, iri));
-	returnObject.put("Class relationship richness", classRelationshipRichnessMetric(ontology, iri));
-	returnObject.put("Class instances count", countClassInstancesMetric(ontology, iri));
-	returnObject.put("Class properties count", countClassPropertiesMetric(ontology, iri));
+	returnObject.put("Classconnectivity", classConnectivity);
+	returnObject.put("Classfulness", classFullness);
+	returnObject.put("classimportance", classImportance);
+	returnObject.put("Classchildrencount", classChildrenCount);
+	returnObject.put("classinheritancerichness", classInheritanceRichness);
+	returnObject.put("classreadability", classReadability);
+	returnObject.put("Classrelationshiprichness", classRelationshipRichness);
+	returnObject.put("Classinstancescount", classInstancesCount);
+	returnObject.put("Classpropertiescount", classPropertiesCount);
+
+	return returnObject;
+    }
+
+    public Map<String, Object> calculateAllMetrics(OWLOntology ontology, IRI iri) {
+	Map<String, Object> returnObject = new HashMap<>();
+	returnObject.put("Classconnectivity", classConnectivityMetric(ontology, iri));
+	returnObject.put("Classfulness", classFulnessMetric(ontology, iri));
+	returnObject.put("classimportance", classImportanceMetric(ontology, iri));
+	returnObject.put("Classchildrencount", countClassChildrenMetric(ontology, iri));
+	returnObject.put("classinheritancerichness", classInheritenceRichnessMetric(ontology, iri));
+	returnObject.put("classreadability", classReadabilityMetric(ontology, iri));
+	returnObject.put("Classrelationshiprichness", classRelationshipRichnessMetric(ontology, iri));
+	returnObject.put("Classinstancescount", countClassInstancesMetric(ontology, iri));
+	returnObject.put("Classpropertiescount", countClassPropertiesMetric(ontology, iri));
 
 	return returnObject;
     }
@@ -69,10 +139,11 @@ public abstract class ClassMetrics extends OntologyMetric {
 		}
 	    }
 	}
+	classConnectivity = noInheritances;
 	return noInheritances;
     }
 
-    public double classFulnessMetric(OWLOntology ontology, IRI iri, Map<String, Object> metrics) {
+    public double classFulnessMetric(OWLOntology ontology, IRI iri) {
 	Integer numberOfSubClasses = countClassChildrenMetric(ontology, iri);
 	Integer classInstances = countClassInstancesMetric(ontology, iri);
 	double actualNumberOfInstances = 0.0;
@@ -80,28 +151,30 @@ public abstract class ClassMetrics extends OntologyMetric {
 	if (numberOfSubClasses > 0)
 	    actualNumberOfInstances = ((double) classInstances / (double) numberOfSubClasses);
 
-	double expectedNumberOfInstances = (double) metrics.get("Average population");
+	double expectedNumberOfInstances = knowledgebaseMetric.getAveragePopulationMetric();
 
 	// avoid a division by zero
 	if (expectedNumberOfInstances > 0) {
-	    return 0.0;
+	    classFullness = 0.0;
 	} else {
-	    return OntologyUtility.roundByGlobNK((actualNumberOfInstances / expectedNumberOfInstances));
+	    classFullness = OntologyUtility.roundByGlobNK((actualNumberOfInstances / expectedNumberOfInstances));
 	}
+	return classFullness;
 
     }
 
-    public double classImportanceMetric(OWLOntology ontology, IRI iri, Map<String, Object> metrics) {
-	int countTotalInstances = (int) metrics.get("Total individuals count");
+    public double classImportanceMetric(OWLOntology ontology, IRI iri) {
+	int countTotalInstances = baseMetric.getTotalIndividualCount();
 	OWLClass cls = OntologyUtility.getClass(ontology, iri);
 	int countInstances = countTotalInstancesOf(cls, ontology);
 
 	// avoid a division by zero
 	if (countTotalInstances == 0)
-	    return 0.0;
+	    classImportance = 0.0;
 	else
-	    return OntologyUtility.roundByGlobNK((double) countInstances / (double) countTotalInstances);
+	    classImportance = OntologyUtility.roundByGlobNK((double) countInstances / (double) countTotalInstances);
 
+	return classImportance;
     }
 
     public int countClassChildrenMetric(OWLOntology ontology, IRI iri) {
@@ -118,22 +191,23 @@ public abstract class ClassMetrics extends OntologyMetric {
 		}
 	    }
 	}
-
+	classChildrenCount = subClasses;
 	return subClasses;
 
     }
 
-    public double classInheritenceRichnessMetric(OWLOntology ontology, IRI iri, Map<String, Object> metrics) {
+    public double classInheritenceRichnessMetric(OWLOntology ontology, IRI iri) {
 
-	int countClasses = (int) metrics.get("Total classes count");
+	int countClasses = baseMetric.getTotalClassesCount();
 	int countSubClasses = (int) countClassChildrenMetric(ontology, iri);
 
 	// avoid a division by zero
 	if (countSubClasses == 0) {
-	    return 0.0;
+	    classInheritanceRichness = 0.0;
 	} else {
-	    return OntologyUtility.roundByGlobNK((double) countClasses / (double) countSubClasses);
+	    classInheritanceRichness = OntologyUtility.roundByGlobNK((double) countClasses / (double) countSubClasses);
 	}
+	return classInheritanceRichness;
     }
 
     public int classReadabilityMetric(OWLOntology ontology, IRI iri) {
@@ -148,6 +222,7 @@ public abstract class ClassMetrics extends OntologyMetric {
 		}
 	    }
 	}
+	classReadability = countAnnotations;
 	return countAnnotations;
     }
 
@@ -180,7 +255,7 @@ public abstract class ClassMetrics extends OntologyMetric {
 		}
 	    }
 	}
-
+	classInstancesCount = instances;
 	return instances;
     }
 
@@ -202,7 +277,7 @@ public abstract class ClassMetrics extends OntologyMetric {
 		}
 	    }
 	}
-
+	classPropertiesCount = properties;
 	return properties;
     }
 }
