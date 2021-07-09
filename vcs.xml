@@ -10,4 +10,14 @@
     </option>
     <option name="cloneParentDir" value="C:\Users\Patrick\PycharmProjects" />
   </component>
+  <component name="Vcs.Log.App.Settings">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Subject" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+      </list>
+    </option>
+  </component>
 </application>
