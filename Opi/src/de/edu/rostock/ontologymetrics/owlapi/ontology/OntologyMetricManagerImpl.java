@@ -51,6 +51,8 @@ public class OntologyMetricManagerImpl  {
 
 	// for escape imports with failures
 	OWLOntologyLoaderConfiguration config = new OWLOntologyLoaderConfiguration();
+	config = config.setFollowRedirects(true);
+	
 
 	if (pIRI != null) {
 	    // for re-execute without unloadable imports

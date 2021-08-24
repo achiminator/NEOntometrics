@@ -59,9 +59,9 @@ public class KnowledgebaseMetric implements Callable<KnowledgebaseMetric> {
 //    }
 
     public double averagePopulationMetric() {
-	int countTotalIndividuals = baseMetrics.getTotalIndividualCount();
+	int countTotalIndividuals = baseMetrics.getClassCount();
 
-	int countTotalClasses = baseMetrics.getTotalClassesCount();
+	int countTotalClasses = baseMetrics.getClassCount();
 
 
 	// avoid a division by zero
@@ -75,7 +75,7 @@ public class KnowledgebaseMetric implements Callable<KnowledgebaseMetric> {
 
     public double classRichnessMetric(OWLOntology ontology) {
 	double countClassHasIndividual = 0.0;
-	int totalClasses = baseMetrics.getTotalClassesCount();
+	int totalClasses = baseMetrics.getClassCount();
 	double countTotalClasses = totalClasses;
 
 	// avoid a division by zero

@@ -113,12 +113,12 @@ public class OntologyMetricsImpl {
 	Map<String, Object> resultSet = new LinkedHashMap<String, Object>();
 
 	ExecutorService service = Executors.newWorkStealingPool();
-	baseMetric = service.submit(new BaseMetric(ontology));
-	classAxiomsMetric = service.submit(new ClassAxiomsMetric(ontology));
-	objectPropertyAxiomsMetric = service.submit(new ObjectPropertyAxiomsMetric(ontology));
-	dataPropertyAxiomsMetric = service.submit(new DataPropertyAxiomsMetric(ontology));
-	individualAxiomsMetric = service.submit(new IndividualAxiomsMetric(ontology));
-	annotationAxiomsMetric = service.submit(new AnnotationAxiomsMetric(ontology));
+	baseMetric = service.submit(new BaseMetric(ontology, true));
+	classAxiomsMetric = service.submit(new ClassAxiomsMetric(ontology,true));
+	objectPropertyAxiomsMetric = service.submit(new ObjectPropertyAxiomsMetric(ontology,true));
+	dataPropertyAxiomsMetric = service.submit(new DataPropertyAxiomsMetric(ontology,true));
+	individualAxiomsMetric = service.submit(new IndividualAxiomsMetric(ontology,true));
+	annotationAxiomsMetric = service.submit(new AnnotationAxiomsMetric(ontology, true));
 	schemaMetric = service.submit(new SchemaMetrics(baseMetric.get(), classAxiomsMetric.get(), parserI, ontology));
 	knowledgebaseMetric = service.submit(new KnowledgebaseMetric(baseMetric.get(), ontology));
 	graphMetric = service.submit(new GraphMetric(parser, parserI));

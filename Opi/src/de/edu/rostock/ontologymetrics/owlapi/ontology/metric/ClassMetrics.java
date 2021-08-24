@@ -174,7 +174,7 @@ public class ClassMetrics implements Callable<ClassMetrics> {
     }
 
     public double classImportanceMetric(OWLOntology ontology, IRI iri) {
-	int countTotalInstances = baseMetric.getTotalIndividualCount();
+	int countTotalInstances = baseMetric.getIndividualCount();
 	OWLClass cls = OntologyUtility.getClass(ontology, iri);
 	int countInstances = countTotalInstancesOf(cls, ontology);
 
@@ -208,7 +208,7 @@ public class ClassMetrics implements Callable<ClassMetrics> {
 
     public double classInheritenceRichnessMetric(OWLOntology ontology, IRI iri) {
 
-	int countClasses = baseMetric.getTotalClassesCount();
+	int countClasses = baseMetric.getIndividualCount();
 	int countSubClasses = (int) countClassChildrenMetric(ontology, iri);
 
 	// avoid a division by zero

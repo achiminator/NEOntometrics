@@ -18,9 +18,11 @@ public class IndividualAxiomsMetric implements Callable<IndividualAxiomsMetric> 
     private int sameIndividualAxiomsCount;
     private int differentIndividualAxiomsCount;
     private OWLOntology ontology;
+    private boolean withImports;
 
-    public IndividualAxiomsMetric(OWLOntology ontology) {
+    public IndividualAxiomsMetric(OWLOntology ontology, boolean withImports) {
 	this.ontology = ontology;
+	this.withImports = withImports;
     }
 
     public Map<String, Object> getAllMetrics() {
@@ -38,57 +40,57 @@ public class IndividualAxiomsMetric implements Callable<IndividualAxiomsMetric> 
 
     public IndividualAxiomsMetric call() {
 
-	countClassAssertionAxiomsMetric(ontology);
-	countObjectPropertyAssertionAxiomsMetric(ontology);
-	countDataPropertyAssertionAxiomsMetric(ontology);
-	countNegativeObjectPropertyAssertionAxiomsMetric(ontology);
-	countNegativeDataPropertyAssertionAxiomsMetric(ontology);
-	countSameIndividualsAxiomsMetric(ontology);
-	countDifferentIndividualsAxiomsMetric(ontology);
+	countClassAssertionAxiomsMetric(ontology,withImports);
+	countObjectPropertyAssertionAxiomsMetric(ontology,withImports);
+	countDataPropertyAssertionAxiomsMetric(ontology,withImports);
+	countNegativeObjectPropertyAssertionAxiomsMetric(ontology,withImports);
+	countNegativeDataPropertyAssertionAxiomsMetric(ontology,withImports);
+	countSameIndividualsAxiomsMetric(ontology,withImports);
+	countDifferentIndividualsAxiomsMetric(ontology,withImports);
 
 	return this;
     }
 
-    public int countClassAssertionAxiomsMetric(OWLOntology ontology) {
+    public int countClassAssertionAxiomsMetric(OWLOntology ontology, boolean withImports) {
 	classAssertionAxiomsCount = ontology.getAxiomCount(AxiomType.CLASS_ASSERTION,
-		OntologyUtility.ImportClosures(true));
+		OntologyUtility.ImportClosures(withImports));
 	return classAssertionAxiomsCount;
     }
 
-    public int countObjectPropertyAssertionAxiomsMetric(OWLOntology ontology) {
+    public int countObjectPropertyAssertionAxiomsMetric(OWLOntology ontology, boolean withImports) {
 	objectPropertyAssertionAxiomsCount = ontology
-		.getAxioms(AxiomType.OBJECT_PROPERTY_ASSERTION, OntologyUtility.ImportClosures(true)).size();
+		.getAxioms(AxiomType.OBJECT_PROPERTY_ASSERTION, OntologyUtility.ImportClosures(withImports)).size();
 	return objectPropertyAssertionAxiomsCount;
     }
 
-    public int countDataPropertyAssertionAxiomsMetric(OWLOntology ontology) {
+    public int countDataPropertyAssertionAxiomsMetric(OWLOntology ontology, boolean withImports) {
 	dataPropertyAssertionAxiomsCount = ontology.getAxiomCount(AxiomType.DATA_PROPERTY_ASSERTION,
-		OntologyUtility.ImportClosures(true));
+		OntologyUtility.ImportClosures(withImports));
 	return dataPropertyAssertionAxiomsCount;
     }
 
-    public int countNegativeObjectPropertyAssertionAxiomsMetric(OWLOntology ontology) {
+    public int countNegativeObjectPropertyAssertionAxiomsMetric(OWLOntology ontology, boolean withImports) {
 	negativeObjectPropertyAssertionAxiomsCount = ontology
-		.getAxiomCount(AxiomType.NEGATIVE_OBJECT_PROPERTY_ASSERTION, OntologyUtility.ImportClosures(true));
+		.getAxiomCount(AxiomType.NEGATIVE_OBJECT_PROPERTY_ASSERTION, OntologyUtility.ImportClosures(withImports));
 	return negativeObjectPropertyAssertionAxiomsCount;
     }
 
-    public int countNegativeDataPropertyAssertionAxiomsMetric(OWLOntology ontology) {
+    public int countNegativeDataPropertyAssertionAxiomsMetric(OWLOntology ontology, boolean withImports) {
 	negativeDataPropertyAssertionAxiomsCount = ontology.getAxiomCount(AxiomType.NEGATIVE_DATA_PROPERTY_ASSERTION,
-		OntologyUtility.ImportClosures(true));
+		OntologyUtility.ImportClosures(withImports));
 	return negativeDataPropertyAssertionAxiomsCount;
     }
 
-    public int countSameIndividualsAxiomsMetric(OWLOntology ontology) {
+    public int countSameIndividualsAxiomsMetric(OWLOntology ontolog, boolean withImportsy) {
 	sameIndividualAxiomsCount = ontology.getAxiomCount(AxiomType.SAME_INDIVIDUAL,
-		OntologyUtility.ImportClosures(true));
+		OntologyUtility.ImportClosures(withImports));
 	return sameIndividualAxiomsCount;
 
     }
 
-    public int countDifferentIndividualsAxiomsMetric(OWLOntology ontology) {
+    public int countDifferentIndividualsAxiomsMetric(OWLOntology ontology, boolean withImports) {
 	differentIndividualAxiomsCount = ontology.getAxiomCount(AxiomType.DIFFERENT_INDIVIDUALS,
-		OntologyUtility.ImportClosures(true));
+		OntologyUtility.ImportClosures(withImports));
 	return differentIndividualAxiomsCount;
     }
 }

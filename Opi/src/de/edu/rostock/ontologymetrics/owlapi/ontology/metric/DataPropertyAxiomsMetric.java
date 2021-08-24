@@ -11,6 +11,7 @@ import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
 
 public class DataPropertyAxiomsMetric implements Callable<DataPropertyAxiomsMetric> {
 
+    private boolean withImports;
     private int subDataPropertyOfAxiomsCount;
     private int equivalentDataPropertyAxiomsCount;
     private int disjointDataPropertyAxiomsCount;
@@ -18,8 +19,9 @@ public class DataPropertyAxiomsMetric implements Callable<DataPropertyAxiomsMetr
     private int dataPropertyDomainAxiomsMetric;
     private int dataPropertyRangeAxiomsMetric;
     private OWLOntology ontology;
-    public DataPropertyAxiomsMetric(OWLOntology ontology) {
+    public DataPropertyAxiomsMetric(OWLOntology ontology, boolean withImports) {
 	this.ontology = ontology;
+	this.withImports = withImports;
     }
     
     public Map<String, Object> getAllMetrics() {
@@ -34,41 +36,41 @@ public class DataPropertyAxiomsMetric implements Callable<DataPropertyAxiomsMetr
     }
     public DataPropertyAxiomsMetric call() {
 	
-	countSubDataPropertyOfAxiomsMetric(ontology);
-	countEquivalentDataPropertyAxiomsMetric(ontology);
-	countDisjointDataPropertyAxiomsMetric(ontology);
-	countFunctionalDataPropertyAxiomsMetric(ontology);
-	countDataPropertyDomainAxiomsMetric(ontology);
-	countDataPropertyRangeAxiomsMetric(ontology);
+	countSubDataPropertyOfAxiomsMetric(ontology, withImports);
+	countEquivalentDataPropertyAxiomsMetric(ontology, withImports);
+	countDisjointDataPropertyAxiomsMetric(ontology,withImports);
+	countFunctionalDataPropertyAxiomsMetric(ontology,withImports);
+	countDataPropertyDomainAxiomsMetric(ontology,withImports);
+	countDataPropertyRangeAxiomsMetric(ontology,withImports);
 	return this;
     }
 
-    public int countSubDataPropertyOfAxiomsMetric(OWLOntology ontology) {
-	subDataPropertyOfAxiomsCount = ontology.getAxiomCount(AxiomType.SUB_DATA_PROPERTY, OntologyUtility.ImportClosures(true));
+    public int countSubDataPropertyOfAxiomsMetric(OWLOntology ontology, boolean withImports) {
+	subDataPropertyOfAxiomsCount = ontology.getAxiomCount(AxiomType.SUB_DATA_PROPERTY, OntologyUtility.ImportClosures(withImports));
 	return subDataPropertyOfAxiomsCount;
     }
 
-    public int countEquivalentDataPropertyAxiomsMetric(OWLOntology ontology) {
-	equivalentDataPropertyAxiomsCount = ontology.getAxiomCount(AxiomType.EQUIVALENT_DATA_PROPERTIES, OntologyUtility.ImportClosures(true));
+    public int countEquivalentDataPropertyAxiomsMetric(OWLOntology ontology, boolean withImports) {
+	equivalentDataPropertyAxiomsCount = ontology.getAxiomCount(AxiomType.EQUIVALENT_DATA_PROPERTIES, OntologyUtility.ImportClosures(withImports));
 	return equivalentDataPropertyAxiomsCount;
     }
 
-    public int countDisjointDataPropertyAxiomsMetric(OWLOntology ontology) {
-	disjointDataPropertyAxiomsCount = ontology.getAxiomCount(AxiomType.DISJOINT_DATA_PROPERTIES, OntologyUtility.ImportClosures(true));
+    public int countDisjointDataPropertyAxiomsMetric(OWLOntology ontology, boolean withImports) {
+	disjointDataPropertyAxiomsCount = ontology.getAxiomCount(AxiomType.DISJOINT_DATA_PROPERTIES, OntologyUtility.ImportClosures(withImports));
 	return disjointDataPropertyAxiomsCount;
     }
 
-    public int countFunctionalDataPropertyAxiomsMetric(OWLOntology ontology) {
-	functionalDataPropertyAxiomsCount = ontology.getAxiomCount(AxiomType.FUNCTIONAL_DATA_PROPERTY, OntologyUtility.ImportClosures(true));
+    public int countFunctionalDataPropertyAxiomsMetric(OWLOntology ontology, boolean withImports) {
+	functionalDataPropertyAxiomsCount = ontology.getAxiomCount(AxiomType.FUNCTIONAL_DATA_PROPERTY, OntologyUtility.ImportClosures(withImports));
 	return functionalDataPropertyAxiomsCount;
     }
 
-    public int countDataPropertyDomainAxiomsMetric(OWLOntology ontology) {
-	dataPropertyDomainAxiomsMetric = ontology.getAxiomCount(AxiomType.DATA_PROPERTY_DOMAIN, OntologyUtility.ImportClosures(true));
+    public int countDataPropertyDomainAxiomsMetric(OWLOntology ontology, boolean withImports) {
+	dataPropertyDomainAxiomsMetric = ontology.getAxiomCount(AxiomType.DATA_PROPERTY_DOMAIN, OntologyUtility.ImportClosures(withImports));
 	return dataPropertyDomainAxiomsMetric;
     }
-    public int countDataPropertyRangeAxiomsMetric(OWLOntology ontology) {
-	dataPropertyRangeAxiomsMetric = ontology.getAxiomCount(AxiomType.DATA_PROPERTY_RANGE, OntologyUtility.ImportClosures(true));
+    public int countDataPropertyRangeAxiomsMetric(OWLOntology ontology, boolean withImports) {
+	dataPropertyRangeAxiomsMetric = ontology.getAxiomCount(AxiomType.DATA_PROPERTY_RANGE, OntologyUtility.ImportClosures(withImports));
 	return dataPropertyRangeAxiomsMetric;
     }
 }

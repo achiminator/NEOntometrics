@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.sourceforge.owlapi</groupId>
 	<artifactId>owlapi-distribution</artifactId>
-	<version>4.2.3</version>
+	<version>4.5.4</version>
 
 	<repositories>
 		<repository>

@@ -89,7 +89,7 @@ public class SchemaMetrics implements Callable<SchemaMetrics> {
      */
     public double schemaInheritenceRichnessMetric() {
 	int countSubClasses = classAxiomsMetric.getSubClassOfAxiomsCount();
-	int countClasses = baseMetric.getTotalClassesCount();
+	int countClasses = baseMetric.getClassCount();
 
 	// avoid a division by zero
 	if (countClasses == 0) {
@@ -126,7 +126,7 @@ public class SchemaMetrics implements Callable<SchemaMetrics> {
     }
 
     public double attributeClassRatio(OWLOntology ontology) {
-	int classCount = baseMetric.getTotalClassesCount();
+	int classCount = baseMetric.getClassCount();
 	int classesWithAttributes = 0;
 	// new
 	// for (OWLClass cls : ontology.getClassesInSignature(true)) {
@@ -148,7 +148,7 @@ public class SchemaMetrics implements Callable<SchemaMetrics> {
     }
 
     public double equivalenceRatioMetric(OWLOntology ontology) {
-	int classes = baseMetric.getTotalClassesCount();
+	int classes = baseMetric.getClassCount();
 	// MLIC: changed getAxiomCount with boolean is deprecated
 	// float sameClasses = ontology.getAxiomCount(AxiomType.EQUIVALENT_CLASSES,
 	// true);
@@ -164,7 +164,7 @@ public class SchemaMetrics implements Callable<SchemaMetrics> {
 
     public double axiomClassRatioMetric() {
 	int axioms = baseMetric.getAxioms();
-	int classes = baseMetric.getTotalClassesCount();
+	int classes = baseMetric.getClassCount();
 	if (classes == 0) {
 	    axiomClassRatio = 0.0;
 	} else {
@@ -192,7 +192,7 @@ public class SchemaMetrics implements Callable<SchemaMetrics> {
     }
 
     public double classRelationsRatioMetric(OWLOntology ontology) {
-	int classes = baseMetric.getTotalClassesCount();
+	int classes = baseMetric.getClassCount();
 	int subClasses = classAxiomsMetric.getSubClassOfAxiomsCount();
 	int objectPropertyCount = ontology.getObjectPropertiesInSignature(OntologyUtility.ImportClosures(true)).size();
 	int equivalentClasses = ontology.getAxiomCount(AxiomType.EQUIVALENT_CLASSES,
