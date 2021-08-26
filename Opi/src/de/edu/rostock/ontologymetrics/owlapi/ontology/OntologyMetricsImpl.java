@@ -1,7 +1,7 @@
 package de.edu.rostock.ontologymetrics.owlapi.ontology;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,11 +13,11 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.util.InferredOntologyGenerator;
+import org.semanticweb.HermiT.Configuration;
+import org.semanticweb.HermiT.Reasoner;
 
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.AnnotationAxiomsMetric;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.BaseMetric;
@@ -30,6 +30,7 @@ import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.KnowledgebaseMetric
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.ObjectPropertyAxiomsMetric;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.SchemaMetrics;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.basemetric.graphbasemetric.GraphParser;
+import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 /**
  * This class represents the implementation of the interface
@@ -41,6 +42,7 @@ public class OntologyMetricsImpl {
     private OWLOntology ontology;
     protected GraphParser parser;
     protected GraphParser parserI;
+    
 
     protected Future<BaseMetric> baseMetric;;
     protected Future<ClassAxiomsMetric> classAxiomsMetric;
@@ -110,18 +112,30 @@ public class OntologyMetricsImpl {
      */
     public Map<String, Object> getAllMetrics() throws InterruptedException, ExecutionException {
 
-	Map<String, Object> resultSet = new LinkedHashMap<String, Object>();
 
+
+	OWLReasoner reasoner = new Reasoner(new Configuration(), ontology);
+	//reasoner.get
+	InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner);
+	iog.fillOntology(new OWLDataFactoryImpl(),  ontology);
+	Map<String, Object> resultSet = execMetricCalculation(true);
+	Map<String, Object> wrapResult = new LinkedHashMap<String, Object>();
+	wrapResult.put("BaseMetrics", resultSet);
+	return wrapResult;
+    }
+
+    protected Map<String, Object> execMetricCalculation(boolean imports) throws InterruptedException, ExecutionException {
+	Map<String, Object> resultSet = new LinkedHashMap<String, Object>();
 	ExecutorService service = Executors.newWorkStealingPool();
-	baseMetric = service.submit(new BaseMetric(ontology, true));
-	classAxiomsMetric = service.submit(new ClassAxiomsMetric(ontology,true));
-	objectPropertyAxiomsMetric = service.submit(new ObjectPropertyAxiomsMetric(ontology,true));
-	dataPropertyAxiomsMetric = service.submit(new DataPropertyAxiomsMetric(ontology,true));
-	individualAxiomsMetric = service.submit(new IndividualAxiomsMetric(ontology,true));
-	annotationAxiomsMetric = service.submit(new AnnotationAxiomsMetric(ontology, true));
+	baseMetric = service.submit(new BaseMetric(ontology, imports));
+	classAxiomsMetric = service.submit(new ClassAxiomsMetric(ontology,imports));
+	objectPropertyAxiomsMetric = service.submit(new ObjectPropertyAxiomsMetric(ontology,imports));
+	dataPropertyAxiomsMetric = service.submit(new DataPropertyAxiomsMetric(ontology,imports));
+	individualAxiomsMetric = service.submit(new IndividualAxiomsMetric(ontology,imports));
+	annotationAxiomsMetric = service.submit(new AnnotationAxiomsMetric(ontology, imports));
 	schemaMetric = service.submit(new SchemaMetrics(baseMetric.get(), classAxiomsMetric.get(), parserI, ontology));
 	knowledgebaseMetric = service.submit(new KnowledgebaseMetric(baseMetric.get(), ontology));
-	graphMetric = service.submit(new GraphMetric(parser, parserI));
+	graphMetric = service.submit(new GraphMetric(ontology, parser, parserI, imports));
 	resultSet.put("Basemetrics", baseMetric.get().getAllMetrics());
 	// resultSet.put("Basemetrics", baseMetric.calculateAllMetrics(ontology));
 	resultSet.put("Classaxioms", classAxiomsMetric.get().getAllMetrics());
@@ -133,9 +147,7 @@ public class OntologyMetricsImpl {
 	resultSet.put("Knowledgebasemetrics", knowledgebaseMetric.get().getAllMetrics());
 	resultSet.put("Graphmetrics", graphMetric.get().getAllMetrics());
 	service.shutdown();
-	Map<String, Object> wrapResult = new LinkedHashMap<String, Object>();
-	wrapResult.put("BaseMetrics", resultSet);
-	return wrapResult;
+	return resultSet;
     }
 
     public List<Map<String, Object>> getClassMetrics() throws Exception {

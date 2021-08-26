@@ -2,12 +2,23 @@ package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.semanticweb.owlapi.model.AxiomType;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
+import org.semanticweb.owlapi.search.EntitySearcher;
 
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
+import uk.ac.manchester.cs.owl.owlapi.OWLClassAssertionAxiomImpl;
 
 public class ObjectPropertyAxiomsMetric implements Callable<ObjectPropertyAxiomsMetric> {
     private int subObjectPropertyOfAxiomsCount;
@@ -26,10 +37,14 @@ public class ObjectPropertyAxiomsMetric implements Callable<ObjectPropertyAxioms
     private int subPropertyChainOfAxiomsCount;
     private OWLOntology ontology;
     private boolean withImports;
+    private int classRelations;
+    private int classesWithRelations;
+
     public ObjectPropertyAxiomsMetric(OWLOntology ontology, boolean withImports) {
 	this.ontology = ontology;
 	this.withImports = withImports;
     }
+
     public int getSubObjectPropertyOfAxiomsCount() {
 	return subObjectPropertyOfAxiomsCount;
     }
@@ -102,12 +117,13 @@ public class ObjectPropertyAxiomsMetric implements Callable<ObjectPropertyAxioms
 	returnObject.put("Objectpropertydomainaxiomscount", objectPropertyDomainAxiomsCount);
 	returnObject.put("Objectpropertyrangeaxiomscount", objectPropertyRangeAxiomsCount);
 	returnObject.put("SubPropertyChainOfaxiomscount", subPropertyChainOfAxiomsCount);
-
+	returnObject.put("Classobjectproperties", classRelations);
+	returnObject.put("Classeswithobjectproperties", classesWithRelations);
 	return returnObject;
     }
 
     public ObjectPropertyAxiomsMetric call() {
-
+	objectPropertyByClass(withImports);
 	countSubObjectPropertyAxioms(ontology, withImports);
 	countEquivalentObjectPropertyAxioms(ontology, withImports);
 	countInverseObjectPropertyAxiomsMetric(ontology, withImports);
@@ -124,6 +140,26 @@ public class ObjectPropertyAxiomsMetric implements Callable<ObjectPropertyAxioms
 	countSubPropertyChainOfAxiomsMetric(ontology, withImports);
 
 	return this;
+    }
+/**
+ * Calculates the number of Classes with Object Properties
+ * @param withImports
+ */
+    public void objectPropertyByClass(boolean withImports) {
+	Set<OWLClass> classes = ontology.getClassesInSignature();
+	for (OWLClass owlClass : classes) {
+	    boolean classhasObjectProperty = false;
+	    for (OWLSubClassOfAxiom classExpr : ontology.getSubClassAxiomsForSubClass(owlClass)) {
+		for (OWLEntity entity : classExpr.getSignature()) {
+		    if(entity.isOWLObjectProperty()) {
+			classhasObjectProperty = true;
+			classRelations++;
+		    }
+		}
+	    }
+	    if(classhasObjectProperty)
+		classesWithRelations++;
+	}
     }
 
     public int countSubObjectPropertyAxioms(OWLOntology ontology, boolean withImports) {
@@ -157,8 +193,8 @@ public class ObjectPropertyAxiomsMetric implements Callable<ObjectPropertyAxioms
     }
 
     public int countInverseFunctionalObjectPropertiesAxiomsMetric(OWLOntology ontology, boolean withImports) {
-	inverseFunctionalObjectPropertyAxiomsCount = ontology
-		.getAxiomCount(AxiomType.INVERSE_FUNCTIONAL_OBJECT_PROPERTY, OntologyUtility.ImportClosures(withImports));
+	inverseFunctionalObjectPropertyAxiomsCount = ontology.getAxiomCount(
+		AxiomType.INVERSE_FUNCTIONAL_OBJECT_PROPERTY, OntologyUtility.ImportClosures(withImports));
 	return inverseFunctionalObjectPropertyAxiomsCount;
     }
 
