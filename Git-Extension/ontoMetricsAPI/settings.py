@@ -82,8 +82,8 @@ RQ_QUEUES = {
 OPI = "opi:8080" if bool(os.environ.get("inDocker", False)) else "localhost:8082"
 
 # Size-Limits for analysis. If An ontology is larger than 1mb, deactivate ClassMetrics. If Larger than 30mb, do not calculate at all.
-ONTOLOGYLIMIT = 31457280
-CLASSMETRICSLIMIT = 1048576 
+ONTOLOGYLIMIT = 31457280000
+CLASSMETRICSLIMIT = 1048576000 
 
 # REST_FRAMEWORK = {
 #     'DEFAULT_PARSER_CLASSES': [
