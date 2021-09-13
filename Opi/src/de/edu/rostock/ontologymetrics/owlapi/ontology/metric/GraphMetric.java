@@ -4,6 +4,8 @@ import java.security.IdentityScope;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +29,7 @@ import org.semanticweb.owlapi.search.EntitySearcher;
 
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.basemetric.graphbasemetric.GraphParser;
+import uk.ac.manchester.cs.owl.owlapi.OWLClassImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 public class GraphMetric implements Callable<GraphMetric> {
@@ -41,7 +44,7 @@ public class GraphMetric implements Callable<GraphMetric> {
     private double averageBreadth;
     private double ratioOfLeafFanOutness;
     private double ratioOfSiblingFanOutness;
-    private int classesWithMoreThanOneDirectAncestor;
+    private int sumOfclassesWithMoreThanOneDirectAncestor;
     private int numberOfPathLenth;
     private double tangledgness;
     private int totalNumberOfPaths;
@@ -51,7 +54,10 @@ public class GraphMetric implements Callable<GraphMetric> {
     private GraphParser parserI;
     private boolean withImports;
     private OWLOntology ontology;
-    private int sumOfPaths = 1;
+    private int sumOfPaths;
+    private int sumOfDirectAncestorClasses;
+    private int sumOfDirectAncestorOfLeafClasses;
+    private Object sumOfDirectAncestorWithMoreThanOneDirectAncestor;
 
     public Map<String, Object> getAllMetrics() {
 	Map<String, Object> returnObject = new LinkedHashMap<>();
@@ -63,7 +69,13 @@ public class GraphMetric implements Callable<GraphMetric> {
 	returnObject.put("Maximaldepth", maximalDepth);
 	returnObject.put("Absolutebreadth", absoluteBreadth);
 	returnObject.put("Averagebreadth", averageBreadth);
-	returnObject.put("ClassesWithMoreThanOneAncestor", classesWithMoreThanOneDirectAncestor);
+	returnObject.put("ClassesWithMoreThanOneAncestor", sumOfclassesWithMoreThanOneDirectAncestor);
+	returnObject.put("SumOfDirectAncestorClasses", sumOfDirectAncestorClasses);
+	returnObject.put("SumOfDirectAncestorClasses", sumOfDirectAncestorClasses);
+	returnObject.put("SumOfDirectAncestorOfLeafClasses", sumOfDirectAncestorOfLeafClasses);
+	returnObject.put("sumOfDirectAncestorWithMoreThanOneDirectAncestor",
+		sumOfDirectAncestorWithMoreThanOneDirectAncestor);
+
 	returnObject.put("Numberofpaths", numberOfPathLenth);
 	returnObject.put("Sumofpaths", sumOfPaths);
 	returnObject.put("Maximalbreadth", maximalBreadth);
@@ -72,7 +84,6 @@ public class GraphMetric implements Callable<GraphMetric> {
 	returnObject.put("Tangledness", tangledgness);
 	returnObject.put("Totalnumberofpaths", totalNumberOfPaths);
 	returnObject.put("Averagenumberofpaths", averageNumberOfPaths);
-
 
 	return returnObject;
     }
@@ -88,7 +99,7 @@ public class GraphMetric implements Callable<GraphMetric> {
 	// calculateNumberOfPaths(withImports);
 	averageBreadthMetric(withImports);
 	maximalBreadthMetric(withImports);
-	classesWithMoreThanOneDirectAncestor(withImports);
+
 //	ratioOfLeafFanOutnessMetric(parser, withImports);
 //	ratioOfSiblingFanOutnessMetric(parser, withImports);
 	tanglednessMetric(withImports);
@@ -113,8 +124,8 @@ public class GraphMetric implements Callable<GraphMetric> {
     /**
      * Calculates such Metrics that need an iteration over the classes of the
      * Metrics. They are all from different categories, though the boundling should
-     * save computational resources. This includes:
-     * leafcardinalty, rootcardinality, pathlengths, Annotation/Class
+     * save computational resources. This includes: leafcardinalty, rootcardinality,
+     * pathlengths, Annotation/Class
      * 
      * @param withImports
      */
@@ -147,6 +158,13 @@ public class GraphMetric implements Callable<GraphMetric> {
 		    leafClasses.add(next);
 	    }
 	}
+	Set<OWLClass> classesWithMoreThanOneDirectAncestor = getClassesWithAncestors(ontologyClasses, 2);
+	sumOfclassesWithMoreThanOneDirectAncestor = classesWithMoreThanOneDirectAncestor.size();
+	sumOfDirectAncestorOfLeafClasses = getAncestorClasses(leafClasses, 1).size();
+	sumOfDirectAncestorClasses = getAncestorClasses(ontologyClasses, 1).size();
+	sumOfDirectAncestorWithMoreThanOneDirectAncestor = getAncestorClasses(classesWithMoreThanOneDirectAncestor, 1)
+		.size();
+
 	absoluteLeafCardinality = leafClasses.size();
 	absoluteRootCardinality = upperClasses.size();
 
@@ -157,13 +175,21 @@ public class GraphMetric implements Callable<GraphMetric> {
 	}
     }
 
+    /**
+     * Recursive method for calculatingthe number of Paths from the bottom of an
+     * ontology to the top (owl:Thing)
+     * 
+     * @param owlClass The class where the search starts upwards
+     * @param counter  of paths
+     */
     protected void findPathsToTop(OWLClass owlClass, int counter) {
-	sumOfPaths++;
+	
 	Collection<OWLClassExpression> superClassesExprOfLeaf = EntitySearcher.getSuperClasses(owlClass, ontology);
 	for (OWLClassExpression superClassExprOfLeaf : superClassesExprOfLeaf) {
 	    if (!superClassExprOfLeaf.isClassExpressionLiteral())
 		continue;
 	    for (OWLClass superClassOfLeaf : superClassExprOfLeaf.getClassesInSignature()) {
+		sumOfPaths++;
 		if (superClassOfLeaf.isOWLThing() && superClassExprOfLeaf.getClassesInSignature().size() == 1)
 		    numberOfPathLenth += 1;
 		else
@@ -180,35 +206,69 @@ public class GraphMetric implements Callable<GraphMetric> {
 	    absoluteSibblingCardinality = parser.getSibs().size();
 	return absoluteSibblingCardinality;
     }
-
-    public int classesWithMoreThanOneDirectAncestor(boolean withImports) {
-	Set<OWLClass> ontologyClasses;
-	Set<OWLClass> results = new TreeSet<OWLClass>();
-	ontologyClasses = ontology.getClassesInSignature(OntologyUtility.ImportClosures(withImports));
+/**
+ * Gets the AncestorClasses of a given set of OWLClasses
+ * @param ontologyClasses Set of ontology classes that are searched
+ * @param minAmountOfAncestors A class must have at least ... ancestors to be included
+ * @return Found Ancestors
+ */
+    protected List<OWLClass> getAncestorClasses(Set<OWLClass> ontologyClasses, int minAmountOfAncestors) {
 	Iterator<OWLClass> i = ontologyClasses.iterator();
+
+	List<OWLClass> ancestorClasses = new LinkedList<OWLClass>();
 	OWLClass next;
 	while (i.hasNext()) {
 	    next = i.next();
 	    Set<OWLClass> superClasses = new TreeSet<OWLClass>();
 	    for (OWLClassExpression owlExpression : EntitySearcher.getSuperClasses(next, ontology)) {
-		superClasses.addAll(owlExpression.getClassesInSignature());
+		if (owlExpression instanceof OWLClassImpl)
+		    superClasses.add(owlExpression.asOWLClass());
+
 	    }
-	    OWLDataFactory df = new OWLDataFactoryImpl();
-	    superClasses.remove(df.getOWLThing());
-	    if (superClasses.size() > 1)
-		results.add(next);
+	    if (superClasses.size() >= minAmountOfAncestors)
+		ancestorClasses.addAll(superClasses);
+
 	}
-	this.classesWithMoreThanOneDirectAncestor = results.size();
-	return results.size();
+	return ancestorClasses;
+    }
+
+    /**
+     * Gets the classes that have ancestors
+     * 
+     * @param ontologyClasses      Set of OntologyClasses that are searched.
+     * @param minAmountOfAncestors Filters the minimum of ancestors to be included.
+     *                             E.g., 2, then a class must have at least two
+     *                             ancestors to be included
+     * @return Set of Classes that have at least minAmountOfAncestors
+     */
+    protected Set<OWLClass> getClassesWithAncestors(Set<OWLClass> ontologyClasses, int minAmountOfAncestors) {
+	Iterator<OWLClass> i = ontologyClasses.iterator();
+	Set<OWLClass> results = new TreeSet<OWLClass>();
+	OWLClass next;
+	while (i.hasNext()) {
+	    next = i.next();
+	    Set<OWLClass> superClasses = new TreeSet<OWLClass>();
+	    for (OWLClassExpression owlExpression : EntitySearcher.getSuperClasses(next, ontology)) {
+		if (owlExpression instanceof OWLClassImpl)
+		    superClasses.add(owlExpression.asOWLClass());
+
+	    }
+	    if (superClasses.size() >= minAmountOfAncestors)
+		results.add(next);
+
+	}
+	return results;
     }
 
     public int calculateNumberOfPaths(boolean withImports) {
 	OWLDataFactory df = new OWLDataFactoryImpl();
 	numberOfPathLenth = numberofPaths(df.getOWLThing(), absoluteBreadth);
+absoluteDepth = 234;
 	return numberOfPathLenth;
     }
 
     private int numberofPaths(OWLClass owlClass, int foundGraphEnds) {
+	//absoluteDepth++;
 	Collection<OWLClassExpression> subClassExpressions = EntitySearcher.getSubClasses(owlClass, ontology);
 	Set<OWLClass> subclasses = new TreeSet<OWLClass>();
 	for (OWLClassExpression owlClassExpression : subClassExpressions) {
@@ -317,28 +377,6 @@ public class GraphMetric implements Callable<GraphMetric> {
 	return n;
     }
 
-//    public double ratioOfLeafFanOutnessMetric(GraphParser parser, GraphParser parserI) {
-//	double leaves = (double) parser.getLeaveClasses().size();
-//	double noclassesImp = (double) parserI.getNoClasses(); // with imports
-//
-//	if (noclassesImp > 0.0)
-//	    ratioOfLeafFanOutness = OntologyUtility.roundByGlobNK(leaves / noclassesImp);
-//	else
-//	    ratioOfLeafFanOutness = 0.0;
-//	return ratioOfLeafFanOutness;
-//
-//    }
-//
-//    public double ratioOfSiblingFanOutnessMetric(GraphParser parser, GraphParser parserI) {
-//	double sibs = (double) parser.getSibs().size();
-//	double noclassesImp = (double) parserI.getNoClasses(); // with imports
-//
-//	if (noclassesImp > 0.0)
-//	    ratioOfSiblingFanOutness = OntologyUtility.roundByGlobNK(sibs / noclassesImp);
-//	else
-//	    ratioOfSiblingFanOutness = 0.0;
-//	return ratioOfSiblingFanOutness;
-//    }
 
     public double tanglednessMetric(boolean withImports) {
 	if (withImports)

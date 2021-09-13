@@ -155,6 +155,7 @@ public class ObjectPropertyAxiomsMetric implements Callable<ObjectPropertyAxioms
 			classhasObjectProperty = true;
 			classRelations++;
 		    }
+		    
 		}
 	    }
 	    if(classhasObjectProperty)

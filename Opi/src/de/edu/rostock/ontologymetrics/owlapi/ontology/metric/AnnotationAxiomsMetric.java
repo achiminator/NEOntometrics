@@ -5,10 +5,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLAnonymousIndividual;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
@@ -83,16 +83,19 @@ public class AnnotationAxiomsMetric implements Callable<AnnotationAxiomsMetric> 
 	Set<OWLAnnotationAssertionAxiom> annotationAxioms = ontology.getAxioms(AxiomType.ANNOTATION_ASSERTION,
 		OntologyUtility.ImportClosures(withImports));
 	for (OWLAnnotationAssertionAxiom owlAnnotationAssertionAxiom : annotationAxioms) {
-	    Set<OWLEntity> entities = ontology.getEntitiesInSignature((IRI) owlAnnotationAssertionAxiom.getSubject());
-	    for (OWLEntity entity : entities) {
-		if (entity.isOWLClass())
-		    classAnnoation++;
-		else if (entity.isOWLDatatype())
-		    datatypeAnnotation++;
-		else if (entity.isOWLDataProperty())
-		    dataPropertyAnnotation++;
-		else if (entity.isOWLObjectProperty())
-		    objectPropertyAnnotation++;
+	    if (!(owlAnnotationAssertionAxiom.getSubject() instanceof OWLAnonymousIndividual)) {
+		Set<OWLEntity> entities = ontology
+			.getEntitiesInSignature((IRI) owlAnnotationAssertionAxiom.getSubject());
+		for (OWLEntity entity : entities) {
+		    if (entity.isOWLClass())
+			classAnnoation++;
+		    else if (entity.isOWLDatatype())
+			datatypeAnnotation++;
+		    else if (entity.isOWLDataProperty())
+			dataPropertyAnnotation++;
+		    else if (entity.isOWLObjectProperty())
+			objectPropertyAnnotation++;
+		}
 	    }
 	}
     }

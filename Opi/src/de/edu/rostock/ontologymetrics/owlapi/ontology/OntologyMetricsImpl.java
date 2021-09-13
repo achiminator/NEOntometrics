@@ -113,9 +113,9 @@ public class OntologyMetricsImpl {
     public Map<String, Object> getAllMetrics() throws InterruptedException, ExecutionException {
 
 
-
-	OWLReasoner reasoner = new Reasoner(new Configuration(), ontology);
-	//reasoner.get
+	Configuration config = new Configuration();
+	config.ignoreUnsupportedDatatypes = true;
+	OWLReasoner reasoner = new Reasoner(config, ontology);
 	InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner);
 	iog.fillOntology(new OWLDataFactoryImpl(),  ontology);
 	Map<String, Object> resultSet = execMetricCalculation(true);
