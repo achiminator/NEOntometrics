@@ -1,201 +1,150 @@
 package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.semanticweb.owlapi.metrics.AxiomCount;
 import org.semanticweb.owlapi.metrics.DLExpressivity;
 import org.semanticweb.owlapi.metrics.LogicalAxiomCount;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.search.EntitySearcher;
+import org.semanticweb.owlapi.util.OWLClassExpressionCollector;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
 
-public class BaseMetric implements Callable<BaseMetric> {
-    private boolean imports;
-
-    /**
-     * Constructor of BaseMetrics Calculation
-     * 
-     * @param ontology OWLOntology object
-     * @param imports  decide whether imports are considered or not
-     */
+public class BaseMetric extends MetricCalculations implements Callable<BaseMetric> {
     public BaseMetric(OWLOntology ontology, boolean imports) {
-	this.ontology = ontology;
-	this.imports = imports;
-    }
-
-    public int getAxioms() {
-	return axioms;
-    }
-
-    public int getClassCount() {
-	return classCount;
-    }
-
-    public int getObjectPropertyCount() {
-	return objectPropertyCount;
-    }
-
-    public int getDataPropertyCount() {
-	return dataPropertyCount;
-    }
-
-    public int getLogicalAxiomsCount() {
-	return logicalAxiomsCount;
-    }
-
-    public int getIndividualCount() {
-	return individualCount;
-    }
-
-    public String getDlExpressivity() {
-	return dlExpressivity;
-    }
-
-    private int axioms;
-    private int classCount;
-    private int objectPropertyCount;
-    private int dataPropertyCount;
-    private int logicalAxiomsCount;
-    private int individualCount;
-    private OWLOntology ontology;
-    private String dlExpressivity;
-
-    public Map<String, Object> getAllMetrics() {
-	Map<String, Object> returnObject = new LinkedHashMap<>();
-	returnObject.put("Axioms", axioms);
-	returnObject.put("Logicalaxiomscount", logicalAxiomsCount);
-	returnObject.put("Classcount", classCount);
-	returnObject.put("Objectpropertycount", objectPropertyCount);
-	returnObject.put("Datapropertycount", dataPropertyCount);
-	returnObject.put("Propertiescount", countProperties());
-	returnObject.put("Individualcount", individualCount);
-	returnObject.put("DLexpressivity", dlExpressivity);
-	return (returnObject);
+	super(ontology, imports);
     }
 
     public BaseMetric call() {
-	calculateCountAxiomsMetric(ontology, imports);
-	calculateCountLogicalAxiomsMetric(ontology, imports);
-	calculateCountClasses(ontology, imports);
-	calculateCountObjectProperties(ontology, imports);
-	calculateCountDataProperties(ontology, imports);
-	calculateCountIndividuals(ontology, imports);
-	calculateDLExpressivity(ontology);
+	calculateCountAxiomsMetric();
+	calculateCountLogicalAxiomsMetric();
+	calculateCountClasses();
+	calculateCountObjectProperties();
+	calculateCountDataProperties();
+	calculateCountIndividuals();
+	calculateDLExpressivity();
+	calculateAnonymousClasses();
 	return (this);
     }
 
     /**
      * calculates the Number of Axioms
      * 
-     * @param ontology
-     * @param withImports States if with Imports or without
-     * @return Number of Axioms
      */
-    public int calculateCountAxiomsMetric(OWLOntology ontology, boolean withImports) {
+    public void calculateCountAxiomsMetric() {
 
-	if (withImports) {
+	if (imports) {
 	    AxiomCount ax = new AxiomCount(ontology);
 	    ax.setImportsClosureUsed(true);
-	    this.axioms = ax.getValue();
+	    this.returnObject.put("Axioms", ax.getValue());
+
 	} else
-	    this.axioms = new AxiomCount(ontology).getValue();
-	return (axioms);
+	    this.returnObject.put("Axioms", new AxiomCount(ontology).getValue());
     }
 
     /**
      * Calculates the number of Classes
      * 
-     * @param ontology
-     * @param withImports Either with Imports or without
-     * @return Number of Classes
+     * 
      */
-    public int calculateCountClasses(OWLOntology ontology, boolean withImports) {
-	if (withImports)
-	    this.classCount = ontology.getClassesInSignature(OntologyUtility.ImportClosures(true)).size();
-	else
-	    this.classCount = ontology.getClassesInSignature().size();
-	return (this.classCount);
+    public void calculateCountClasses() {
+	this.returnObject.put("Classcount",
+		ontology.getClassesInSignature(OntologyUtility.ImportClosures(imports)).size());
+    }
+
+    /**
+     * Calculates the number of Anonymous classes out of Class Expressions in an
+     * Ontology. *
+     */
+    public void calculateAnonymousClasses() {
+	int anonClassCounter = 0;
+	OWLClassExpressionCollector collector = new OWLClassExpressionCollector();
+	Set<OWLClassExpression> expressions = collector.visit(ontology);
+	for (OWLClassExpression expression : expressions) {
+	    if (expression.isAnonymous())
+		anonClassCounter++;
+	}
+	this.returnObject.put("Annonymousclasses", anonClassCounter);
+    }
+
+    public void calculateClassesWith() {
+	int classesWithIndividuals = 0;
+	int classesWithSubClasses = 0;
+
+	Set<OWLClass> classes = ontology.getClassesInSignature(OntologyUtility.ImportClosures(imports));
+	for (OWLClass owlClass : classes) {
+	    if (owlClass.getIndividualsInSignature().size() > 0)
+		classesWithIndividuals++;
+	    if (EntitySearcher.getSubClasses(owlClass, ontology).size() > 0)
+		classesWithSubClasses++;
+
+	}
+	this.returnObject.put("Classeswithindividuals", classesWithIndividuals);
+	this.returnObject.put("Classeswithsubclassess", classesWithSubClasses);
     }
 
     /**
      * Calculates the number of Object Properties
      * 
-     * @param ontology
-     * @param withImports Either with imports or without
-     * @return Object Property Axioms
      */
-    public int calculateCountObjectProperties(OWLOntology ontology, boolean withImports) {
-	if (withImports)
-	    this.objectPropertyCount = ontology.getObjectPropertiesInSignature(OntologyUtility.ImportClosures(true))
-		    .size();
-	else
-	    this.objectPropertyCount = ontology.getObjectPropertiesInSignature().size();
-	return this.objectPropertyCount;
+    public void calculateCountObjectProperties() {
+	this.returnObject.put("Objectpropertycount",
+		ontology.getObjectPropertiesInSignature(OntologyUtility.ImportClosures(imports)).size());
     }
 
     /***
      * Counts the number of Data Properties
      * 
-     * @param ontology
-     * @param withImports
-     * @return
      */
-    public int calculateCountDataProperties(OWLOntology ontology, boolean withImports) {
-	if (withImports)
-	    this.dataPropertyCount = ontology.getDataPropertiesInSignature(OntologyUtility.ImportClosures(true)).size();
-	else
-	    this.dataPropertyCount = ontology.getDataPropertiesInSignature().size();
-	return (this.dataPropertyCount);
+    public void calculateCountDataProperties() {
+	this.returnObject.put("Datapropertycount",
+		ontology.getDataPropertiesInSignature(OntologyUtility.ImportClosures(imports)).size());
+
     }
 
     /***
-     * Counts the number of logical Axioms (Without annoations)
-     * 
-     * @param ontology
-     * @param withImports
-     * @return
+     * Counts the number of logical Axioms (Without annoations) *
      */
-    public int calculateCountLogicalAxiomsMetric(OWLOntology ontology, boolean withImports) {
-	if (withImports) {
-	    LogicalAxiomCount lg = new LogicalAxiomCount(ontology);
-	    lg.setImportsClosureUsed(true);
-	    this.logicalAxiomsCount = lg.getValue();
-	} else
-	    this.logicalAxiomsCount = new LogicalAxiomCount(ontology).getValue();
-	return this.logicalAxiomsCount;
+    public void calculateCountLogicalAxiomsMetric() {
+
+	LogicalAxiomCount lg = new LogicalAxiomCount(ontology);
+	lg.setImportsClosureUsed(imports);
+	this.returnObject.put("Logicalaxiomscount", lg.getValue());
+
     }
 
     /**
      * Count the number of individuals (Instances)
      * 
-     * @param ontology
-     * @param withImports
-     * @return
      */
-    public int calculateCountIndividuals(OWLOntology ontology, boolean withImports) {
-	if (withImports)
-	    this.individualCount = ontology.getIndividualsInSignature(OntologyUtility.ImportClosures(true)).size();
-	else
-	    this.individualCount = ontology.getIndividualsInSignature().size();
-
-	return this.individualCount;
+    public void calculateCountIndividuals() {
+	this.returnObject.put("Individualcount",
+		ontology.getIndividualsInSignature(OntologyUtility.ImportClosures(imports)).size());
     }
 
     /**
      * Counts the overall number of properties
      * 
-     * @return dataproperties + objectproperties
+     * adds dataproperties + objectproperties
      */
-    public int countProperties() {
-	return (dataPropertyCount + objectPropertyCount);
+    public void countProperties() {
+	returnObject.put("Propertiescount",
+		(int) returnObject.get("Datapropertycount") + (int) returnObject.get("Objectpropertycount"));
     }
 
-    public String calculateDLExpressivity(OWLOntology ontology) {
+    /**
+     * Calculates the Description Logic Expressivity of the Ontology (e.g., SHOIN,
+     * ALC)
+     * 
+     * @param ontology
+     */
+    public void calculateDLExpressivity() {
 	DLExpressivity expr = new DLExpressivity(ontology);
 	System.out.println(expr.recomputeMetric());
-	dlExpressivity = expr.getValue();
-	return (dlExpressivity);
+	this.returnObject.put("DLExpressivity", expr.getValue());
     }
 
 }

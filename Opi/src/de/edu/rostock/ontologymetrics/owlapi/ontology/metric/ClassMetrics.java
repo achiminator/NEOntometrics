@@ -70,10 +70,10 @@ public class ClassMetrics implements Callable<ClassMetrics> {
     private IRI iri;
 
     private KnowledgebaseMetric knowledgebaseMetric;
-    private BaseMetric baseMetric;
+    private MetricCalculations baseMetric;
     private OWLOntology ontology;
 
-    public ClassMetrics(KnowledgebaseMetric knowledgebaseMetric, BaseMetric baseMetric, OWLOntology ontology, IRI iri) {
+    public ClassMetrics(KnowledgebaseMetric knowledgebaseMetric, MetricCalculations baseMetric, OWLOntology ontology, IRI iri) {
 	this.ontology = ontology;
 	this.knowledgebaseMetric = knowledgebaseMetric;
 	this.baseMetric = baseMetric;

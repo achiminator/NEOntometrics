@@ -43,8 +43,7 @@ public class OntologyMetricsImpl {
     protected GraphParser parser;
     protected GraphParser parserI;
     
-
-    protected Future<BaseMetric> baseMetric;;
+    protected Future<BaseMetric> baseMetric;
     protected Future<ClassAxiomsMetric> classAxiomsMetric;
     protected Future<DataPropertyAxiomsMetric> dataPropertyAxiomsMetric;
     protected Future<IndividualAxiomsMetric> individualAxiomsMetric;
@@ -120,7 +119,7 @@ public class OntologyMetricsImpl {
 	iog.fillOntology(new OWLDataFactoryImpl(),  ontology);
 	Map<String, Object> resultSet = execMetricCalculation(true);
 	Map<String, Object> wrapResult = new LinkedHashMap<String, Object>();
-	wrapResult.put("BaseMetrics", resultSet);
+	wrapResult.put("GeneralOntologyMetrics", resultSet);
 	return wrapResult;
     }
 
@@ -133,19 +132,22 @@ public class OntologyMetricsImpl {
 	dataPropertyAxiomsMetric = service.submit(new DataPropertyAxiomsMetric(ontology,imports));
 	individualAxiomsMetric = service.submit(new IndividualAxiomsMetric(ontology,imports));
 	annotationAxiomsMetric = service.submit(new AnnotationAxiomsMetric(ontology, imports));
-	schemaMetric = service.submit(new SchemaMetrics(baseMetric.get(), classAxiomsMetric.get(), parserI, ontology));
-	knowledgebaseMetric = service.submit(new KnowledgebaseMetric(baseMetric.get(), ontology));
+	resultSet.putAll(classAxiomsMetric.get().getAllMetrics());
+	resultSet.putAll(objectPropertyAxiomsMetric.get().getReturnObject());
+	resultSet.putAll(dataPropertyAxiomsMetric.get().getReturnObject());
+	resultSet.putAll(individualAxiomsMetric.get().getReturnObject());
+	resultSet.putAll(annotationAxiomsMetric.get().getReturnObject());
+	resultSet.putAll(baseMetric.get().getReturnObject());
+	//The following metric calculations now need some of the previous ones. As the previous calculations are stored in the 
+	schemaMetric = service.submit(new SchemaMetrics(resultSet, parserI, imports, ontology));
+	knowledgebaseMetric = service.submit(new KnowledgebaseMetric(resultSet, ontology, imports));
 	graphMetric = service.submit(new GraphMetric(ontology, parser, parserI, imports));
-	resultSet.put("Basemetrics", baseMetric.get().getAllMetrics());
+	
 	// resultSet.put("Basemetrics", baseMetric.calculateAllMetrics(ontology));
-	resultSet.put("Classaxioms", classAxiomsMetric.get().getAllMetrics());
-	resultSet.put("Objectpropertyaxioms", objectPropertyAxiomsMetric.get().getAllMetrics());
-	resultSet.put("Datapropertyaxioms", dataPropertyAxiomsMetric.get().getAllMetrics());
-	resultSet.put("Individualaxioms", individualAxiomsMetric.get().getAllMetrics());
-	resultSet.put("Annotationaxioms", annotationAxiomsMetric.get().getAllMetrics());
-	resultSet.put("Schemametrics", schemaMetric.get().getAllMetrics());
-	resultSet.put("Knowledgebasemetrics", knowledgebaseMetric.get().getAllMetrics());
-	resultSet.put("Graphmetrics", graphMetric.get().getAllMetrics());
+
+	resultSet.putAll(schemaMetric.get().getReturnObject());
+	resultSet.putAll(knowledgebaseMetric.get().getReturnObject());
+	resultSet.putAll(graphMetric.get().getReturnObject());
 	service.shutdown();
 	return resultSet;
     }
