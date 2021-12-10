@@ -30,7 +30,7 @@ public class GraphParser {
     private Set<OWLClass> relatedClasses = new TreeSet<OWLClass>();
     private int noRelations = 0;
     private Set<Integer> relationsPerClass = new TreeSet<Integer>();
-    private int noClasses = 0;
+    private int noClasses = 0; 
     private Set<OWLClass> leaveClasses = new TreeSet<OWLClass>();
     private ArrayList<Set<OWLClass>> leaves = new ArrayList<Set<OWLClass>>();
     private int noInheritances = 0;

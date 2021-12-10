@@ -43,7 +43,6 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 
     public GraphMetric call() {
 
-	iterativeMetrics(true);
 	absoluteSiblingCardinalityMetric();
 	absoluteDepthMetric();
 	averageDepthMetric();
@@ -72,85 +71,6 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	super(ontology, withImports);
 	this.parser = parser;
 	this.parserI = parserI;
-    }
-
-    /**
-     * Calculates such Metrics that need an iteration over the classes of the
-     * Metrics. They are all from different categories, though the boundling should
-     * save computational resources. This includes: leafcardinalty, rootcardinality,
-     * pathlengths, Annotation/Class
-     * 
-     * @param withImports
-     */
-    public void iterativeMetrics(boolean withImports) {
-	Set<OWLClass> ontologyClasses; // All unique Ontology Classes of the given ontology
-	Set<OWLClass> leafClasses = new TreeSet<OWLClass>(); // Container for all leaf Classes of this ontology (Such
-							     // without other subclasses)
-	Set<OWLClass> upperClasses = new TreeSet<OWLClass>(); // Container for the opposite, for classes (such that have
-							      // leaves)
-	ontologyClasses = ontology.getClassesInSignature(OntologyUtility.ImportClosures(withImports));
-	Iterator<OWLClass> i = ontologyClasses.iterator();
-	{
-	    OWLClass next;
-	    // Identify the upper and leaf classes in this ontology
-	    while (i.hasNext()) {
-		next = i.next();
-		if (next.isBuiltIn())
-		    continue;
-		Collection<OWLClassExpression> subClassExpr = EntitySearcher.getSubClasses(next, ontology);
-		boolean hasSubClass = false;
-		for (OWLClassExpression owlClassExpression : subClassExpr) {
-		    // For this calculation, consider only Real Classes in the subclass tree, not
-		    // statements like "isEncded exactly 1 owl:thing"
-		    if (owlClassExpression.isClassExpressionLiteral()) {
-			hasSubClass = true;
-			upperClasses.add(next);
-		    }
-		}
-		if (!hasSubClass)
-		    leafClasses.add(next);
-	    }
-	}
-	Set<OWLClass> classesWithMoreThanOneDirectAncestor = getClassesWithAncestors(ontologyClasses, 2);
-	returnObject.put("ClassesWithMoreThanOneAncestor", classesWithMoreThanOneDirectAncestor.size());
-	returnObject.put("SumOfDirectAncestorOfLeafClasses", getAncestorClasses(leafClasses, 1).size());
-	returnObject.put("SumOfDirectAncestorClasses", getAncestorClasses(ontologyClasses, 1).size());
-	returnObject.put("sumOfDirectAncestorWithMoreThanOneDirectAncestor",
-		getAncestorClasses(classesWithMoreThanOneDirectAncestor, 1).size());
-
-	returnObject.put("Absoluteleafcardinality", leafClasses.size());
-	returnObject.put("Absoluterootcardinality", upperClasses.size());
-
-	// Now calculate the number of Paths from the leaf classes to OWL-Thing
-	numberOfPathLenth = 0;
-	for (OWLClass owlClass : leafClasses) {
-	    findPathsToTop(owlClass, 0);
-	}
-	returnObject.put("NumberOfPathLength2", numberOfPathLenth);
-    }
-
-    /**
-     * Recursive method for calculating the number of Paths from the bottom of an
-     * ontology to the top (owl:Thing)
-     * 
-     * @param owlClass The class where the search starts upwards
-     * @param counter  of paths
-     */
-    protected void findPathsToTop(OWLClass owlClass, int counter) {
-
-	Collection<OWLClassExpression> superClassesExprOfLeaf = EntitySearcher.getSuperClasses(owlClass, ontology);
-	for (OWLClassExpression superClassExprOfLeaf : superClassesExprOfLeaf) {
-	    if (!superClassExprOfLeaf.isClassExpressionLiteral())
-		continue;
-	    for (OWLClass superClassOfLeaf : superClassExprOfLeaf.getClassesInSignature()) {
-		sumOfPaths++;
-		if (superClassOfLeaf.isOWLThing() || superClassExprOfLeaf.getClassesInSignature().size() < 1)
-		    numberOfPathLenth += 1;
-		else
-		    findPathsToTop(superClassOfLeaf, counter);
-	    }
-
-	}
     }
 
     public void absoluteSiblingCardinalityMetric() {
@@ -219,6 +139,14 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	return results;
     }
 
+    /**
+     * Calculates such Metrics that need an iteration over the classes of the
+     * Metrics. They are all from different categories, though the boundling should
+     * save computational resources. This includes: leafcardinalty, rootcardinality,
+     * pathlengths, Annotation/Class
+     * 
+     * @param withImports
+     */
     public void calculateNumberOfPaths() {
 
 	// At first, get the root class. A root class is a class that does not have any
@@ -233,26 +161,24 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 
 	// Iterate over all classes
 	for (OWLClass owlClass : owlClasses) {
-	    if (owlClass.isBuiltIn())
-		// We are only interested in the classes that are part of the reasoned or
-		// asserted knowledge. Built-in classes like owl:Thing are disregarded
-		continue;
 
 	    // If a thing does not have superclasses, then it is a root class
 	    Collection<OWLClassExpression> superClassesofOwlClass = EntitySearcher.getSuperClasses(owlClass, ontology);
 	    if (superClassesofOwlClass.size() < 1)
 		rootClasses.add(owlClass);
-
 	    Collection<OWLClassExpression> subClassExpr = EntitySearcher.getSubClasses(owlClass, ontology);
 	    Collection<OWLClass> subClasses = classExpr2classes(subClassExpr);
 	    if (subClasses.size() < 1)
 		// If a classes does not have any subclasses, it is a leaf class. As owl-Thing
 		// is always on top, we do not count it as a root class.
 		leafClasses.add(owlClass);
-	    else
+	    else {
 		// if a class has at least one subclass, it is a upper class
-		upperClasses.add(owlClass);
-
+		if (!owlClass.isBuiltIn())
+		    // We are only interested in the classes that are part of the reasoned or
+		    // asserted knowledge. Built-in classes like owl:Thing are disregarded
+		    upperClasses.add(owlClass);
+	    }
 	}
 
 	// Afterwards, do the Path calculation algorithm starting from every root class
@@ -292,21 +218,32 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	return classes;
     }
 
+    /**
+     * Recursive method for calculating the number of Paths from the top of an
+     * ontology to the bottom
+     * 
+     * @param owlClass The class where the search starts downwards
+     */
     private void numberofPaths(OWLClass owlClass) {
-	//
+	totalDepth++;
 	Collection<OWLClassExpression> subClassExpressions = EntitySearcher.getSubClasses(owlClass, ontology);
 	Set<OWLClass> subclasses = new TreeSet<OWLClass>();
 	for (OWLClassExpression owlClassExpression : subClassExpressions) {
 	    subclasses.addAll(owlClassExpression.getClassesInSignature());
-	    totalDepth++;
+	    
 	}
-	totalDepth++;
+	
 
 	// If a class has no further subclasses, we found a new path to a leaf class
-	if (subclasses.size() == 0)
+	if (subclasses.size() == 0) {
 	    sumOfPathToLeafClasses++;
+	    
+	    
+	}
+	    
 	else {
 	    for (OWLClass subclass : subclasses) {
+		totalDepth++;
 		this.numberofPaths(subclass);
 	    }
 	}
