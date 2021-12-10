@@ -15,258 +15,255 @@ import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.OWLClass;
 
 public class GraphParser {
-	private Set<OWLClass> roots = new TreeSet<OWLClass>();
-	private ArrayList<ArrayList<OWLClass>> paths = new ArrayList<ArrayList<OWLClass>>();
-	private ArrayList<ArrayList<OWLClass>> pathsAll = new ArrayList<ArrayList<OWLClass>>();
-	private ArrayList<Set<OWLClass>> generations = new ArrayList<Set<OWLClass>>();
-	private Set<OWLClass> tangledClasses = new TreeSet<OWLClass>();
-	private ArrayList<TreeSet<OWLClass>> sibs = new ArrayList<TreeSet<OWLClass>>();
-	private Set<OWLClass> instancedClasses = new TreeSet<OWLClass>();
-	private int noInstances = 0;
-	private Set<Integer> instancesPerClass = new TreeSet<Integer>();
-	private Set<OWLClass> attributedClasses = new TreeSet<OWLClass>();
-	private int noAttributes = 0;
-	private Set<Integer> attributesPerClass = new TreeSet<Integer>();
-	private Set<OWLClass> relatedClasses = new TreeSet<OWLClass>();
-	private int noRelations = 0;
-	private Set<Integer> relationsPerClass = new TreeSet<Integer>();
-	private int noClasses = 0;
-	private Set<OWLClass> leaveClasses = new TreeSet<OWLClass>();
-	private ArrayList<Set<OWLClass>> leaves = new ArrayList<Set<OWLClass>>();
-	private int noInheritances = 0;
-	private Set<OWLClass> passed = new TreeSet<OWLClass>();
-	private Set<OWLClass> things = new TreeSet<OWLClass>();
-	private ArrayList<TreeSet<OWLClass>> levels = new ArrayList<TreeSet<OWLClass>>();
+    private Set<OWLClass> roots = new TreeSet<OWLClass>();
+    private ArrayList<ArrayList<OWLClass>> paths = new ArrayList<ArrayList<OWLClass>>();
+    private ArrayList<ArrayList<OWLClass>> pathsAll = new ArrayList<ArrayList<OWLClass>>();
+    private ArrayList<Set<OWLClass>> generations = new ArrayList<Set<OWLClass>>();
+    private Set<OWLClass> tangledClasses = new TreeSet<OWLClass>();
+    private ArrayList<TreeSet<OWLClass>> sibs = new ArrayList<TreeSet<OWLClass>>();
+    private Set<OWLClass> instancedClasses = new TreeSet<OWLClass>();
+    private int noInstances = 0;
+    private Set<Integer> instancesPerClass = new TreeSet<Integer>();
+    private Set<OWLClass> attributedClasses = new TreeSet<OWLClass>();
+    private int noAttributes = 0;
+    private Set<Integer> attributesPerClass = new TreeSet<Integer>();
+    private Set<OWLClass> relatedClasses = new TreeSet<OWLClass>();
+    private int noRelations = 0;
+    private Set<Integer> relationsPerClass = new TreeSet<Integer>();
+    private int noClasses = 0;
+    private Set<OWLClass> leaveClasses = new TreeSet<OWLClass>();
+    private ArrayList<Set<OWLClass>> leaves = new ArrayList<Set<OWLClass>>();
+    private int noInheritances = 0;
+    private Set<OWLClass> passed = new TreeSet<OWLClass>();
+    private Set<OWLClass> things = new TreeSet<OWLClass>();
+    private ArrayList<TreeSet<OWLClass>> levels = new ArrayList<TreeSet<OWLClass>>();
 
-	private String OntologyID = "";
-	private String OntologyVersionID = "";
-	private boolean I = false;
+    private String OntologyID = "";
+    private String OntologyVersionID = "";
+    
+    Logger myLogger = Logger.getLogger(this.getClass());
 
-	Logger myLogger = Logger.getLogger(this.getClass());
+    public GraphParser(OWLOntology ontology, boolean imports) {
+	if (ontology == null)
+	    return;
+	if (ontology.getOntologyID().getOntologyIRI() != null)
+	    OntologyID = ontology.getOntologyID().getOntologyIRI().toString();
+	if (ontology.getOntologyID().getVersionIRI() != null)
+	    OntologyVersionID = ontology.getOntologyID().getVersionIRI().toString();
 
-	public GraphParser(OWLOntology o, boolean imports) {
-		if (o == null)
-			return;
-		if (o.getOntologyID().getOntologyIRI() != null)
-			OntologyID = o.getOntologyID().getOntologyIRI().toString();
-		if (o.getOntologyID().getVersionIRI() != null)
-			OntologyVersionID = o.getOntologyID().getVersionIRI().toString();
+	Set<OWLClass> classes;
 
-		I = imports;
-		Set<OWLClass> set;
+	// analyze with or without import closures
 
-		// analyze with or without import closures
-		if (I)
-			set = o.getClassesInSignature(OntologyUtility.ImportClosures(true));
-		else
-			set = o.getClassesInSignature();
+	classes = ontology.getClassesInSignature(OntologyUtility.ImportClosures(imports));
 
-		noClasses = set.size();
+	noClasses = classes.size();
 
-		Iterator<OWLClass> i = set.iterator();
-		OWLClass next;
-		while (i.hasNext()) {
-			next = i.next();
+	Iterator<OWLClass> i = classes.iterator();
+	OWLClass next;
+	while (i.hasNext()) {
+	    next = i.next();
 
-			// roots
-			if (EntitySearcher.getSuperClasses(next, o).size() < 1)
-				roots.add(next);
+	    // identify the classes that do not have ancestors (Thus are root classes)
+	    if (EntitySearcher.getSuperClasses(next, ontology).size() < 1)
+		roots.add(next);
 
-			// thing class
-			if (next.isOWLThing()) {
-				things.add(next);
-			}
+	    // identify thing classes
+	    if (next.isOWLThing()) {
+		things.add(next);
+	    }
+	}
+
+	// root level
+	levels.add((TreeSet<OWLClass>) roots);
+
+	if (roots.size() > 0)
+	    pathing(new ArrayList<OWLClass>(), roots, ontology);
+    }
+
+    private void pathing(ArrayList<OWLClass> path, Set<OWLClass> siblings, OWLOntology o) {
+	Iterator<OWLClass> i = siblings.iterator();
+	OWLClass nextClass;
+	while (i.hasNext()) {
+	    nextClass = i.next();
+
+	    pathsAll.add(path);
+
+	    Set<OWLClass> gen;
+	    // generations
+	    if (generations.size() <= path.size()) {
+		gen = new TreeSet<OWLClass>();
+		gen.add(nextClass);
+		generations.add(gen);
+	    } else {
+		gen = generations.get(path.size());
+		if (!gen.contains(nextClass)) {
+		    gen.add(nextClass);
+		    generations.set(path.size(), gen);
+		}
+	    }
+
+	    // childs (are siblings)
+	    TreeSet<OWLClass> childs = new TreeSet<OWLClass>();
+	    Iterator<OWLClassExpression> classLevels = EntitySearcher.getSubClasses(nextClass, o).iterator();
+
+	    while (classLevels.hasNext()) {
+		childs.add(classLevels.next().asOWLClass());
+	    }
+
+	    if (!childs.isEmpty()) {
+		levels.add(childs);
+	    }
+
+	    if (!passed.contains(nextClass)) {
+		sibs.add(childs);
+		noInheritances += childs.size();
+		passed.add(nextClass);
+	    }
+
+	    // paths to leaves
+	    ArrayList<OWLClass> newpath = (ArrayList<OWLClass>) path.clone(); // BL 2016-09-08 de-referencing the
+									      // current path
+
+	    boolean pathEnd = false;
+	    if (path.contains(nextClass)) {
+		pathEnd = true;
+	    } else {
+		newpath.add(nextClass);
+		if (childs.size() < 1) {
+		    pathEnd = true;
+		    if (!leaveClasses.contains(nextClass))
+			leaveClasses.add(nextClass);
+		}
+	    }
+
+	    if (pathEnd) {
+		paths.add(newpath);
+		if (!leaveClasses.isEmpty()) {
+		    leaves.add(leaveClasses);
 		}
 
-		// root level
-		levels.add((TreeSet<OWLClass>) roots);
+	    } else {
+		pathing(newpath, childs, o);
+	    }
 
-		if (roots.size() > 0)
-			pathing(new ArrayList<OWLClass>(), roots, o);
+	    // tangledness
+	    if (EntitySearcher.getSuperClasses(nextClass, o).size() > 1 && !tangledClasses.contains(nextClass))
+		tangledClasses.add(nextClass);
+
+	    // instances
+	    if (EntitySearcher.getIndividuals(nextClass, o).size() > 0 && !instancedClasses.contains(nextClass)) {
+		instancedClasses.add(nextClass);
+		noInstances += EntitySearcher.getIndividuals(nextClass, o).size();
+		instancesPerClass.add(new Integer(EntitySearcher.getIndividuals(nextClass, o).size()));
+	    }
+
+	    // attributes (Data Properties)
+	    if (nextClass.getDataPropertiesInSignature().size() > 0 && !attributedClasses.contains(nextClass)) {
+		attributedClasses.add(nextClass);
+		noAttributes += nextClass.getDataPropertiesInSignature().size();
+		attributesPerClass.add(new Integer(nextClass.getDataPropertiesInSignature().size()));
+
+	    }
+
+	    // relations (Object Properties)
+	    if (nextClass.getObjectPropertiesInSignature().size() > 0 && !relatedClasses.contains(nextClass)) {
+		relatedClasses.add(nextClass);
+		noRelations += nextClass.getObjectPropertiesInSignature().size();
+		relationsPerClass.add(new Integer(nextClass.getObjectPropertiesInSignature().size()));
+	    }
 	}
+    }
 
-	private void pathing(ArrayList<OWLClass> path, Set<OWLClass> siblings, OWLOntology o) {
-		Iterator<OWLClass> i = siblings.iterator();
-		OWLClass nextClass;
-		while (i.hasNext()) {
-			nextClass = i.next();
+    public Set<OWLClass> getRoots() {
+	return roots;
+    }
 
-			pathsAll.add(path);
+    public Set<OWLClass> getThingClasses() {
+	return things;
+    }
 
-			Set<OWLClass> gen;
-			// generations
-			if (generations.size() <= path.size()) {
-				gen = new TreeSet<OWLClass>();
-				gen.add(nextClass);
-				generations.add(gen);
-			} else {
-				gen = generations.get(path.size());
-				if (!gen.contains(nextClass)) {
-					gen.add(nextClass);
-					generations.set(path.size(), gen);
-				}
-			}
+    public ArrayList<ArrayList<OWLClass>> getPaths() {
+	return paths;
+    }
 
-			// childs (are siblings)
-			TreeSet<OWLClass> childs = new TreeSet<OWLClass>();
-			Iterator<OWLClassExpression> classLevels = EntitySearcher.getSubClasses(nextClass, o).iterator();
+    public ArrayList<ArrayList<OWLClass>> getPathsAll() {
+	return pathsAll;
+    }
 
-			while (classLevels.hasNext()) {
-				childs.add(classLevels.next().asOWLClass());
-			}
+    public ArrayList<Set<OWLClass>> getGenerations() {
+	return generations;
+    }
 
-			if (!childs.isEmpty()) {
-				levels.add(childs);
-			}
+    public ArrayList<Set<OWLClass>> getLeaves() {
+	return leaves;
+    }
 
-			if (!passed.contains(nextClass)) {
-				sibs.add(childs);
-				noInheritances += childs.size();
-				passed.add(nextClass);
-			}
+    public Set<OWLClass> getTangledClasses() {
+	return tangledClasses;
+    }
 
-			// paths to leaves
-			ArrayList<OWLClass> newpath = (ArrayList<OWLClass>) path.clone(); //BL 2016-09-08 de-referencing the current path
-			
-			boolean pathEnd = false;
-			if (path.contains(nextClass)) {
-				pathEnd = true;
-			} else {
-				newpath.add(nextClass);
-				if (childs.size() < 1) {
-					pathEnd = true;
-					if (!leaveClasses.contains(nextClass))
-						leaveClasses.add(nextClass);
-				}
-			}
+    public ArrayList<TreeSet<OWLClass>> getSibs() {
+	return sibs;
+    }
 
-			if (pathEnd) {
-				paths.add(newpath);
-				if (!leaveClasses.isEmpty()) {
-					leaves.add(leaveClasses);
-				}
+    public ArrayList<TreeSet<OWLClass>> getLevels() {
+	return levels;
+    }
 
-			} else {
-				pathing(newpath, childs, o);
-			}
+    public Set<OWLClass> getInstancedClasses() {
+	return instancedClasses;
+    }
 
-			// tangledness
-			if (EntitySearcher.getSuperClasses(nextClass, o).size() > 1 && !tangledClasses.contains(nextClass))
-				tangledClasses.add(nextClass);
+    public int getNoInstances() {
+	return noInstances;
+    }
 
-			// instances
-			if (EntitySearcher.getIndividuals(nextClass, o).size() > 0 && !instancedClasses.contains(nextClass)) {
-				instancedClasses.add(nextClass);
-				noInstances += EntitySearcher.getIndividuals(nextClass, o).size();
-				instancesPerClass.add(new Integer(EntitySearcher.getIndividuals(nextClass, o).size()));
-			}
+    public Set<Integer> getInstancesPerClass() {
+	return instancesPerClass;
+    }
 
-			// attributes (Data Properties)
-			if (nextClass.getDataPropertiesInSignature().size() > 0 && !attributedClasses.contains(nextClass)) {
-				attributedClasses.add(nextClass);
-				noAttributes += nextClass.getDataPropertiesInSignature().size();
-				attributesPerClass.add(new Integer(nextClass.getDataPropertiesInSignature().size()));
+    public Set<OWLClass> getAttributedClasses() {
+	return attributedClasses;
+    }
 
-			}
+    public int getNoAttributes() {
+	return noAttributes;
+    }
 
-			// relations (Object Properties)
-			if (nextClass.getObjectPropertiesInSignature().size() > 0 && !relatedClasses.contains(nextClass)) {
-				relatedClasses.add(nextClass);
-				noRelations += nextClass.getObjectPropertiesInSignature().size();
-				relationsPerClass.add(new Integer(nextClass.getObjectPropertiesInSignature().size()));
-			}
-		}
-	}
+    public Set<Integer> getAttributesPerClass() {
+	return attributesPerClass;
+    }
 
-	public Set<OWLClass> getRoots() {
-		return roots;
-	}
+    public Set<OWLClass> getRelatedClasses() {
+	return relatedClasses;
+    }
 
-	public Set<OWLClass> getThingClasses() {
-		return things;
-	}
+    public int getNoRelations() {
+	return noRelations;
+    }
 
-	public ArrayList<ArrayList<OWLClass>> getPaths() {
-		return paths;
-	}
+    public Set<Integer> getRelationsPerClass() {
+	return relationsPerClass;
+    }
 
-	public ArrayList<ArrayList<OWLClass>> getPathsAll() {
-		return pathsAll;
-	}
+    public int getNoClasses() {
+	return noClasses;
+    }
 
-	public ArrayList<Set<OWLClass>> getGenerations() {
-		return generations;
-	}
+    public Set<OWLClass> getLeaveClasses() {
+	return leaveClasses;
+    }
 
-	public ArrayList<Set<OWLClass>> getLeaves() {
-		return leaves;
-	}
+    public int getNoInheritances() {
+	return noInheritances;
+    }
 
-	public Set<OWLClass> getTangledClasses() {
-		return tangledClasses;
-	}
+    public String getOntologyID() {
+	return OntologyID;
+    }
 
-	public ArrayList<TreeSet<OWLClass>> getSibs() {
-		return sibs;
-	}
-
-	public ArrayList<TreeSet<OWLClass>> getLevels() {
-		return levels;
-	}
-
-	public Set<OWLClass> getInstancedClasses() {
-		return instancedClasses;
-	}
-
-	public int getNoInstances() {
-		return noInstances;
-	}
-
-	public Set<Integer> getInstancesPerClass() {
-		return instancesPerClass;
-	}
-
-	public Set<OWLClass> getAttributedClasses() {
-		return attributedClasses;
-	}
-
-	public int getNoAttributes() {
-		return noAttributes;
-	}
-
-	public Set<Integer> getAttributesPerClass() {
-		return attributesPerClass;
-	}
-
-	public Set<OWLClass> getRelatedClasses() {
-		return relatedClasses;
-	}
-
-	public int getNoRelations() {
-		return noRelations;
-	}
-
-	public Set<Integer> getRelationsPerClass() {
-		return relationsPerClass;
-	}
-
-	public int getNoClasses() {
-		return noClasses;
-	}
-
-	public Set<OWLClass> getLeaveClasses() {
-		return leaveClasses;
-	}
-
-	public int getNoInheritances() {
-		return noInheritances;
-	}
-
-	public String getOntologyID() {
-		return OntologyID;
-	}
-
-	public String getOntologyVersionID() {
-		return OntologyVersionID;
-	}
+    public String getOntologyVersionID() {
+	return OntologyVersionID;
+    }
 }

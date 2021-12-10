@@ -30,7 +30,8 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
     private GraphParser parserI;
     private boolean withImports;
     private int sumOfPaths = 0;
-
+    private int sumOfPathToLeafClasses = 0;
+    private int totalDepth = 0;
 //    public Map<String, Object> getAllMetrics() {
 //	
 
@@ -48,7 +49,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	averageDepthMetric();
 	maximalDepthMetric();
 	absoluteBreadthMetric();
-	// calculateNumberOfPaths(withImports);
+
 	averageBreadthMetric();
 	maximalBreadthMetric();
 
@@ -57,6 +58,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	tanglednessMetric();
 	totalNumberOfPathsMetric();
 	averageNumberOfPathsMetric();
+	calculateNumberOfPaths();
 	/*
 	 * to implement
 	 *
@@ -124,6 +126,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	for (OWLClass owlClass : leafClasses) {
 	    findPathsToTop(owlClass, 0);
 	}
+	returnObject.put("NumberOfPathLength2", numberOfPathLenth);
     }
 
     /**
@@ -141,7 +144,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 		continue;
 	    for (OWLClass superClassOfLeaf : superClassExprOfLeaf.getClassesInSignature()) {
 		sumOfPaths++;
-		if (superClassOfLeaf.isOWLThing() && superClassExprOfLeaf.getClassesInSignature().size() == 1)
+		if (superClassOfLeaf.isOWLThing() || superClassExprOfLeaf.getClassesInSignature().size() < 1)
 		    numberOfPathLenth += 1;
 		else
 		    findPathsToTop(superClassOfLeaf, counter);
@@ -217,29 +220,96 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
     }
 
     public void calculateNumberOfPaths() {
-	OWLDataFactory df = new OWLDataFactoryImpl();
-	numberOfPathLenth = numberofPaths(df.getOWLThing(), absoluteBreadth);
-	returnObject.put("Numberofpaths", numberOfPathLenth);
-	returnObject.put("Sumofpaths", sumOfPaths);
 
+	// At first, get the root class. A root class is a class that does not have any
+	// ancestors/Superclasses. At the same time, we can also identify the leaf and
+	// rootclasses.
+	Set<OWLClass> leafClasses = new TreeSet<OWLClass>(); // Container for all leaf Classes of this ontology (Such
+							     // without other subclasses)
+	Set<OWLClass> upperClasses = new TreeSet<OWLClass>(); // Container for the opposite, for classes (such that have
+							      // leaves)
+	Set<OWLClass> rootClasses = new TreeSet<OWLClass>();
+	Set<OWLClass> owlClasses = ontology.getClassesInSignature(OntologyUtility.ImportClosures(withImports));
+
+	// Iterate over all classes
+	for (OWLClass owlClass : owlClasses) {
+	    if (owlClass.isBuiltIn())
+		// We are only interested in the classes that are part of the reasoned or
+		// asserted knowledge. Built-in classes like owl:Thing are disregarded
+		continue;
+
+	    // If a thing does not have superclasses, then it is a root class
+	    Collection<OWLClassExpression> superClassesofOwlClass = EntitySearcher.getSuperClasses(owlClass, ontology);
+	    if (superClassesofOwlClass.size() < 1)
+		rootClasses.add(owlClass);
+
+	    Collection<OWLClassExpression> subClassExpr = EntitySearcher.getSubClasses(owlClass, ontology);
+	    Collection<OWLClass> subClasses = classExpr2classes(subClassExpr);
+	    if (subClasses.size() < 1)
+		// If a classes does not have any subclasses, it is a leaf class. As owl-Thing
+		// is always on top, we do not count it as a root class.
+		leafClasses.add(owlClass);
+	    else
+		// if a class has at least one subclass, it is a upper class
+		upperClasses.add(owlClass);
+
+	}
+
+	// Afterwards, do the Path calculation algorithm starting from every root class
+	for (
+
+	OWLClass owlClass : rootClasses) {
+	    numberofPaths(owlClass);
+	}
+
+	returnObject.put("PathsToLeafClasses", sumOfPathToLeafClasses);
+	returnObject.put("Sumofpaths", sumOfPaths);
+	returnObject.put("Totaldepth", totalDepth);
+	returnObject.put("Absoluteleafcardinality2", leafClasses.size());
+	returnObject.put("Absoluterootcardinality2", upperClasses.size());
+	Set<OWLClass> classesWithMoreThanOneDirectAncestor = getClassesWithAncestors(owlClasses, 2);
+	returnObject.put("ClassesWithMoreThanOneAncestor2", classesWithMoreThanOneDirectAncestor.size());
+	returnObject.put("SumOfDirectAncestorOfLeafClasses2", getAncestorClasses(leafClasses, 1).size());
+	returnObject.put("SumOfDirectAncestorClasses2", getAncestorClasses(owlClasses, 1).size());
+	returnObject.put("sumOfDirectAncestorWithMoreThanOneDirectAncestor2",
+		getAncestorClasses(classesWithMoreThanOneDirectAncestor, 1).size());
     }
 
-    private int numberofPaths(OWLClass owlClass, int foundGraphEnds) {
-	// absoluteDepth++;
+    /**
+     * A little helper class that extracts full Classes out of a Collection of
+     * OWLClassExpressions. This is helpful if one wants to consider only Real
+     * Classes in the subclass tree, not statements like "isEncded exactly 1
+     * owl:thing"
+     * 
+     * @param classExpressions A Collection of Class Expressions.
+     * @return the set of classes.
+     */
+    private Collection<OWLClass> classExpr2classes(Collection<OWLClassExpression> classExpressions) {
+	Set<OWLClass> classes = new TreeSet<OWLClass>();
+	for (OWLClassExpression classExpression : classExpressions) {
+	    classes.addAll(classExpression.getClassesInSignature());
+	}
+	return classes;
+    }
+
+    private void numberofPaths(OWLClass owlClass) {
+	//
 	Collection<OWLClassExpression> subClassExpressions = EntitySearcher.getSubClasses(owlClass, ontology);
 	Set<OWLClass> subclasses = new TreeSet<OWLClass>();
 	for (OWLClassExpression owlClassExpression : subClassExpressions) {
 	    subclasses.addAll(owlClassExpression.getClassesInSignature());
+	    totalDepth++;
 	}
+	totalDepth++;
+
+	// If a class has no further subclasses, we found a new path to a leaf class
 	if (subclasses.size() == 0)
-	    foundGraphEnds++;
+	    sumOfPathToLeafClasses++;
 	else {
 	    for (OWLClass subclass : subclasses) {
-		this.numberofPaths(subclass, foundGraphEnds);
+		this.numberofPaths(subclass);
 	    }
 	}
-	return foundGraphEnds;
-
     }
 
     public void absoluteDepthMetric() {
