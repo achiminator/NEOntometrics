@@ -1,14 +1,21 @@
 package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.semanticweb.owlapi.metrics.AxiomCount;
 import org.semanticweb.owlapi.metrics.DLExpressivity;
 import org.semanticweb.owlapi.metrics.LogicalAxiomCount;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.search.EntitySearcher;
 import org.semanticweb.owlapi.util.OWLClassExpressionCollector;
@@ -27,6 +34,7 @@ public class BaseMetric extends MetricCalculations implements Callable<BaseMetri
 	calculateCountDataProperties();
 	calculateCountIndividuals();
 	calculateDLExpressivity();
+	calculateClassesWith();
 	calculateAnonymousClasses();
 	return (this);
     }
@@ -78,18 +86,32 @@ public class BaseMetric extends MetricCalculations implements Callable<BaseMetri
 	int superClassesOfCLassesWithMultipleInheritance = 0;
 	int maxSubClasses = 0;
 	int superClassCount = 0;
-
+	Map<IRI, List<OWLClass>> objectPropertyToClassMapping = new LinkedHashMap<IRI, List<OWLClass>>();
 	Set<OWLClass> classes = ontology.getClassesInSignature(OntologyUtility.ImportClosures(imports));
 	for (OWLClass owlClass : classes) {
 	    if (owlClass.getIndividualsInSignature().size() > 0)
 		classesWithIndividuals++;
-	    Collection<OWLClass> subClasses = OntologyUtility
-		    .classExpr2classes(EntitySearcher.getSubClasses(owlClass, ontology));
+
+	    // This part is responsible for finding how much classes share relations with
+	    // each other. Relations are mostly modeled using anonymous superclasses. An
+	    // example is the modeling of relations in Protege. There, you mostly create
+	    // relations with the "SubClassOf" (thus superclasses) field. The relations in
+	    // these anonomous superclasses are crawled by the next entry
+	    Collection<OWLClassExpression> superClassExpr = EntitySearcher.getSuperClasses(owlClass, ontology);
+	    Collection<OWLObjectProperty> oProperties = OntologyUtility.classExpr2ObjectProperties(superClassExpr);
+	    // At first we inverse the direction "classes HAVE relations" to the opposite
+	    // "relations HAVE classes"
+	    for (OWLObjectProperty oProperty : oProperties) {
+		if (!objectPropertyToClassMapping.containsKey(oProperty.getIRI()))
+		    objectPropertyToClassMapping.put(oProperty.getIRI(), new ArrayList<OWLClass>());
+		objectPropertyToClassMapping.get(oProperty.getIRI()).add(owlClass);
+	    }
+	    Collection<OWLClassExpression> subClassExpr = EntitySearcher.getSubClasses(owlClass, ontology);
+	    Collection<OWLClass> subClasses = OntologyUtility.classExpr2classes(subClassExpr);
 	    if (subClasses.size() > 0) {
 		classesWithSubClasses++;
 		if (subClasses.size() > maxSubClasses)
 		    maxSubClasses = subClasses.size();
-
 	    }
 	    Collection<OWLClass> superClasses = OntologyUtility
 		    .classExpr2classes(EntitySearcher.getSuperClasses(owlClass, ontology));
@@ -100,6 +122,18 @@ public class BaseMetric extends MetricCalculations implements Callable<BaseMetri
 	    }
 
 	}
+	// ** First finish the "classes with shared Relation calculation**
+	// This "Set" element will later on contain all classes that share a relation
+	// with other elements.
+	Set<OWLClass> classesWithSharedRelations = new HashSet<OWLClass>();
+	for (List<OWLClass> classesWithGivenRelation : objectPropertyToClassMapping.values()) {
+	    // If a relation is used in more than two classes, these classes share this
+	    // relation
+	    if (classesWithGivenRelation.size() >= 2)
+		classesWithSharedRelations.addAll(classesWithGivenRelation);
+	}
+	this.returnObject.put("classesThatShareARelation", classesWithSharedRelations.size());
+
 	this.returnObject.put("Superclasses", superClassCount);
 	this.returnObject.put("Classeswithindividuals", classesWithIndividuals);
 	this.returnObject.put("Classeswithsubclassess", classesWithSubClasses);

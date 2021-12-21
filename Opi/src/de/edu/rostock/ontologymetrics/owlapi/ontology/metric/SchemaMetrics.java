@@ -2,10 +2,12 @@ package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.search.EntitySearcher;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
@@ -23,20 +25,20 @@ public class SchemaMetrics extends MetricCalculations implements Callable<Schema
 
     public SchemaMetrics call() {
 
-	attributeRichnessMetric(ontology);
+	attributeRichnessMetric();
 	schemaInheritenceRichnessMetric();
-	schemaRelationshipRichnessMetric(ontology);
-	attributeClassRatio(ontology);
-	equivalenceRatioMetric(ontology);
+	schemaRelationshipRichnessMetric();
+	attributeClassRatio();
+	equivalenceRatioMetric();
 
-	inverseRelationsRatioMetric(ontology);
-	classRelationsRatioMetric(ontology);
+	inverseRelationsRatioMetric();
+	classRelationsRatioMetric();
 
 	return this;
     }
 
     // TODO: Restructure for pure read
-    public void attributeRichnessMetric(OWLOntology ontology) {
+    public void attributeRichnessMetric() {
 	double ret = 0;
 	int classes = (int) previousResults.get("Classcount");
 	int datapropertycount = ontology.getDataPropertiesInSignature(OntologyUtility.ImportClosures(true)).size();
@@ -71,7 +73,7 @@ public class SchemaMetrics extends MetricCalculations implements Callable<Schema
     }
 
     // TODO: Replace things here by local variants
-    public void schemaRelationshipRichnessMetric(OWLOntology ontology) {
+    public void schemaRelationshipRichnessMetric() {
 	int inheritedRelationships = (int) previousResults.get("SubClassOfaxiomscount");
 	int objectPropertyCount = ontology.getObjectPropertiesInSignature(OntologyUtility.ImportClosures(true)).size();
 	int equivalentClasses = ontology.getAxiomCount(AxiomType.EQUIVALENT_CLASSES,
@@ -96,7 +98,7 @@ public class SchemaMetrics extends MetricCalculations implements Callable<Schema
 
     }
 
-    public void attributeClassRatio(OWLOntology ontology) {
+    public void attributeClassRatio() {
 	int classCount = (int) previousResults.get("Classcount");
 	int classesWithAttributes = 0;
 	double attributeClassRatio = 0.0;
@@ -120,7 +122,7 @@ public class SchemaMetrics extends MetricCalculations implements Callable<Schema
 
     }
 
-    public void equivalenceRatioMetric(OWLOntology ontology) {
+    public void equivalenceRatioMetric() {
 	int classes = (int) previousResults.get("Classcount");
 	double equivalenceRatio;
 	// MLIC: changed getAxiomCount with boolean is deprecated
@@ -137,7 +139,7 @@ public class SchemaMetrics extends MetricCalculations implements Callable<Schema
 
     }
 
-    public void inverseRelationsRatioMetric(OWLOntology ontology) {
+    public void inverseRelationsRatioMetric() {
 	double inverseRelationsRatio;
 	int objectpropertycount = ontology.getObjectPropertiesInSignature(OntologyUtility.ImportClosures(true)).size();
 	int inverseobjectproperties = ontology.getAxiomCount(AxiomType.INVERSE_OBJECT_PROPERTIES,
@@ -158,7 +160,7 @@ public class SchemaMetrics extends MetricCalculations implements Callable<Schema
 
     }
 
-    public void classRelationsRatioMetric(OWLOntology ontology) {
+    public void classRelationsRatioMetric() {
 	double classRelationRatio;
 	int classes = (int) previousResults.get("Classcount");
 	int subClasses = (int) previousResults.get("SubClassOfaxiomscount");

@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.search.EntitySearcher;
@@ -335,8 +336,8 @@ public class OntologyUtility {
      * Classes in the subclass tree, not statements like "isEncded exactly 1
      * owl:thing"
      * 
-     * @param classExpressions A Collection of Class Expressions.
-     * @return the set of classes.
+     * @param classExpressions A Collection of {@link OWLClassExpression}
+     * @return the set of {@link OWLClass}.
      */
     public static Collection<OWLClass> classExpr2classes(Collection<OWLClassExpression> classExpressions) {
 	Set<OWLClass> classes = new TreeSet<OWLClass>();
@@ -344,6 +345,18 @@ public class OntologyUtility {
 	    classes.addAll(classExpression.getClassesInSignature());
 	}
 	return classes;
+    }
+    /**
+     * Extracts object Properties out of a Collection of {@link OWLClassExpression}
+     * @param classExpressions A collection of {@link OWLClassExpression}
+     * @return set of {@link OWLObjectProperty}
+     */
+    public static Collection<OWLObjectProperty> classExpr2ObjectProperties(Collection<OWLClassExpression> classExpressions){
+	Set<OWLObjectProperty> oProperties = new TreeSet<OWLObjectProperty>();
+	    for (OWLClassExpression owlClassExpression : classExpressions) {
+		oProperties.addAll(owlClassExpression.getObjectPropertiesInSignature());
+	    }
+	    return oProperties;
     }
 
     /**

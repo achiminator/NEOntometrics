@@ -25,6 +25,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
     private int sumOfPathToLeafClasses = 0;
     private int totalDepth = 0;
     private int maxDepth = 0;
+    private int minDepth = 999990;
     private LinkedHashMap<Integer, Set<OWLClass>> owlClassToDepth; // Links the classes in the ontology to a hierachy
 								   // level.
 
@@ -130,7 +131,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 							      // leaves)
 	Set<OWLClass> rootClasses = new TreeSet<OWLClass>();
 	Set<OWLClass> owlClasses = ontology.getClassesInSignature(OntologyUtility.ImportClosures(withImports));
-
+	
 	// Iterate over all classes
 	for (OWLClass owlClass : owlClasses) {
 
@@ -161,7 +162,14 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	for (OWLClass owlClass : rootClasses) {
 	    depthBreadthCalculation(owlClass, 0);
 	}
-
+	
+	int superClassesOfLeafClasses = 0;
+	for (OWLClass owlClass : leafClasses) {
+	    Collection<OWLClassExpression> superClassOfLeafClass = EntitySearcher.getSuperClasses(owlClass, ontology);
+	    superClassesOfLeafClasses += OntologyUtility.classExpr2classes(superClassOfLeafClass).size();
+	}
+	
+	returnObject.put("superClassesOfLeafClasses", superClassesOfLeafClasses);
 	returnObject.put("PathsToLeafClasses", sumOfPathToLeafClasses);
 	returnObject.put("Totaldepth", totalDepth);
 	returnObject.put("Absoluteleafcardinality2", leafClasses.size());
@@ -173,6 +181,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	returnObject.put("sumOfDirectAncestorWithMoreThanOneDirectAncestor2",
 		getAncestorClasses(classesWithMoreThanOneDirectAncestor, 1).size());
 	returnObject.put("Maxdepth", maxDepth);
+	returnObject.put("minimumDepth", minDepth);
 
     }
 
@@ -207,6 +216,8 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	    sumOfPathToLeafClasses++;
 	    if (currentDepth > this.maxDepth)
 		maxDepth = currentDepth;
+	    else if (currentDepth < minDepth)
+		minDepth = currentDepth;
 	}
 
 	else {
@@ -224,16 +235,20 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
     private void calculateBreathMetrics() {
 	int absoluteBreadth = 0;
 	int maximalBreadth = 0;
+	int minimumBreath = 500000000;
 	int counter = 0;
 	while (owlClassToDepth.containsKey(counter)) {
 	    int levelSize = owlClassToDepth.get(counter).size();
 	    if (levelSize > maximalBreadth)
 		maximalBreadth = levelSize;
+	    if (levelSize < minimumBreath && levelSize != 0)
+		minimumBreath = levelSize;
 	    absoluteBreadth += levelSize;
 	    counter++;
 	}
 	returnObject.put("Absolutebreadth2", absoluteBreadth);
 	returnObject.put("Maximalbreadth2", maximalBreadth);
+	returnObject.put("minimumBreath", minimumBreath);
     }
 
     public void tanglednessMetric() {
