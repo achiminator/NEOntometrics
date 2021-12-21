@@ -1,69 +1,40 @@
 package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.search.EntitySearcher;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.basemetric.graphbasemetric.GraphParser;
 import uk.ac.manchester.cs.owl.owlapi.OWLClassImpl;
-import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 public class GraphMetric extends MetricCalculations implements Callable<GraphMetric> {
-
-    private int absoluteBreadth;
-
-    private int numberOfPathLenth;
-
-    private double averageNumberOfPaths;
 
     private GraphParser parser;
     private GraphParser parserI;
     private boolean withImports;
-    private int sumOfPaths = 0;
+
     private int sumOfPathToLeafClasses = 0;
     private int totalDepth = 0;
-//    public Map<String, Object> getAllMetrics() {
-//	
-
-//	returnObject.put("Ratioofleaffanoutness", ratioOfLeafFanOutness);
-//	returnObject.put("Ratioofsiblingfanoutness", ratioOfSiblingFanOutness);
-
-//	return returnObject;
-//    }
+    private int maxDepth = 0;
+    private LinkedHashMap<Integer, Set<OWLClass>> owlClassToDepth; // Links the classes in the ontology to a hierachy
+								   // level.
 
     public GraphMetric call() {
 
 	absoluteSiblingCardinalityMetric();
-	absoluteDepthMetric();
-	averageDepthMetric();
-	maximalDepthMetric();
-	absoluteBreadthMetric();
 
-	averageBreadthMetric();
-	maximalBreadthMetric();
-
-//	ratioOfLeafFanOutnessMetric(parser, withImports);
-//	ratioOfSiblingFanOutnessMetric(parser, withImports);
 	tanglednessMetric();
-	totalNumberOfPathsMetric();
-	averageNumberOfPathsMetric();
 	calculateNumberOfPaths();
-	/*
-	 * to implement
-	 *
-	 * graphMetrics.add(getDensityMetric()); graphMetrics.add(getLogicalAdaquacy());
-	 * graphMetrics.add(getModularityMetric());
-	 */
+	calculateBreathMetrics();
 	return this;
     }
 
@@ -71,9 +42,10 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	super(ontology, withImports);
 	this.parser = parser;
 	this.parserI = parserI;
+
     }
 
-    public void absoluteSiblingCardinalityMetric() {
+    private void absoluteSiblingCardinalityMetric() {
 	int absoluteSibblingCardinality;
 	if (withImports)
 	    absoluteSibblingCardinality = parserI.getSibs().size();
@@ -120,7 +92,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
      *                             ancestors to be included
      * @return Set of Classes that have at least minAmountOfAncestors
      */
-    protected Set<OWLClass> getClassesWithAncestors(Set<OWLClass> ontologyClasses, int minAmountOfAncestors) {
+    private Set<OWLClass> getClassesWithAncestors(Set<OWLClass> ontologyClasses, int minAmountOfAncestors) {
 	Iterator<OWLClass> i = ontologyClasses.iterator();
 	Set<OWLClass> results = new TreeSet<OWLClass>();
 	OWLClass next;
@@ -147,7 +119,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
      * 
      * @param withImports
      */
-    public void calculateNumberOfPaths() {
+    private void calculateNumberOfPaths() {
 
 	// At first, get the root class. A root class is a class that does not have any
 	// ancestors/Superclasses. At the same time, we can also identify the leaf and
@@ -167,7 +139,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	    if (superClassesofOwlClass.size() < 1)
 		rootClasses.add(owlClass);
 	    Collection<OWLClassExpression> subClassExpr = EntitySearcher.getSubClasses(owlClass, ontology);
-	    Collection<OWLClass> subClasses = classExpr2classes(subClassExpr);
+	    Collection<OWLClass> subClasses = OntologyUtility.classExpr2classes(subClassExpr);
 	    if (subClasses.size() < 1)
 		// If a classes does not have any subclasses, it is a leaf class. As owl-Thing
 		// is always on top, we do not count it as a root class.
@@ -182,14 +154,15 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	}
 
 	// Afterwards, do the Path calculation algorithm starting from every root class
-	for (
-
-	OWLClass owlClass : rootClasses) {
-	    numberofPaths(owlClass);
+	// But before doing so, initialize the necessary variable for calculating
+	// Breadth
+	this.owlClassToDepth = new LinkedHashMap<Integer, Set<OWLClass>>();
+	this.owlClassToDepth.put(0, rootClasses);
+	for (OWLClass owlClass : rootClasses) {
+	    depthBreadthCalculation(owlClass, 0);
 	}
 
 	returnObject.put("PathsToLeafClasses", sumOfPathToLeafClasses);
-	returnObject.put("Sumofpaths", sumOfPaths);
 	returnObject.put("Totaldepth", totalDepth);
 	returnObject.put("Absoluteleafcardinality2", leafClasses.size());
 	returnObject.put("Absoluterootcardinality2", upperClasses.size());
@@ -199,141 +172,68 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	returnObject.put("SumOfDirectAncestorClasses2", getAncestorClasses(owlClasses, 1).size());
 	returnObject.put("sumOfDirectAncestorWithMoreThanOneDirectAncestor2",
 		getAncestorClasses(classesWithMoreThanOneDirectAncestor, 1).size());
+	returnObject.put("Maxdepth", maxDepth);
+
     }
 
-    /**
-     * A little helper class that extracts full Classes out of a Collection of
-     * OWLClassExpressions. This is helpful if one wants to consider only Real
-     * Classes in the subclass tree, not statements like "isEncded exactly 1
-     * owl:thing"
-     * 
-     * @param classExpressions A Collection of Class Expressions.
-     * @return the set of classes.
-     */
-    private Collection<OWLClass> classExpr2classes(Collection<OWLClassExpression> classExpressions) {
-	Set<OWLClass> classes = new TreeSet<OWLClass>();
-	for (OWLClassExpression classExpression : classExpressions) {
-	    classes.addAll(classExpression.getClassesInSignature());
-	}
-	return classes;
-    }
+
 
     /**
      * Recursive method for calculating the number of Paths from the top of an
-     * ontology to the bottom
+     * ontology to the bottom. Also calculates the Depth and Breath Metrics
      * 
-     * @param owlClass The class where the search starts downwards
+     * @param currentDepth the current leven of the ontology depth. Starts with 0 at
+     *                     the root classes. Helps the recursive function to
+     *                     calculate maxDepth.
+     * 
+     * @param owlClass     The class where the search starts downwards
      */
-    private void numberofPaths(OWLClass owlClass) {
-	totalDepth++;
+    private void depthBreadthCalculation(OWLClass owlClass, int currentDepth) {
+	totalDepth++; // Total Depth is counted per every level and every item
+
+	currentDepth++;
 	Collection<OWLClassExpression> subClassExpressions = EntitySearcher.getSubClasses(owlClass, ontology);
-	Set<OWLClass> subclasses = new TreeSet<OWLClass>();
-	for (OWLClassExpression owlClassExpression : subClassExpressions) {
-	    subclasses.addAll(owlClassExpression.getClassesInSignature());
-	    
-	}
-	
+	Set<OWLClass> subclasses = (Set<OWLClass>) OntologyUtility.classExpr2classes(subClassExpressions);
+
+	// the owlClassToDepth variable stores at which hierachy level an owlClass is
+	// found. This enables, later on, the calculation of breath-metrics.
+	if (!owlClassToDepth.containsKey(currentDepth))
+	    owlClassToDepth.put(currentDepth, subclasses);
+	else
+	    owlClassToDepth.get(currentDepth).addAll(subclasses);
 
 	// If a class has no further subclasses, we found a new path to a leaf class
 	if (subclasses.size() == 0) {
 	    sumOfPathToLeafClasses++;
-	    
-	    
+	    if (currentDepth > this.maxDepth)
+		maxDepth = currentDepth;
 	}
-	    
+
 	else {
 	    for (OWLClass subclass : subclasses) {
 		totalDepth++;
-		this.numberofPaths(subclass);
+		this.depthBreadthCalculation(subclass, currentDepth);
 	    }
 	}
     }
 
-    public void absoluteDepthMetric() {
-
-	int n = 0;
-	// Iterator<Set<OWLClass>> i = parserI.getLeaves().iterator();
-	Iterator<ArrayList<OWLClass>> i;
-	if (withImports)
-	    i = parserI.getPathsAll().iterator(); // BL 08.09.2016 all paths to all nodes ->
-	else
-	    i = parser.getPathsAll().iterator(); // BL 08.09.2016 all paths to all nodes ->
-						 // absolute depth
-
-	while (i.hasNext()) {
-	    n += i.next().size() + 1;
+    /***
+     * Calculates the number Breath Metrics on the basis on the the owlCLassToDepth
+     * variable. It is crucial to calculate the numberOfPaths method first!
+     */
+    private void calculateBreathMetrics() {
+	int absoluteBreadth = 0;
+	int maximalBreadth = 0;
+	int counter = 0;
+	while (owlClassToDepth.containsKey(counter)) {
+	    int levelSize = owlClassToDepth.get(counter).size();
+	    if (levelSize > maximalBreadth)
+		maximalBreadth = levelSize;
+	    absoluteBreadth += levelSize;
+	    counter++;
 	}
-	returnObject.put("Absolutedepth", n);
-	// return parserI.getPathsAll().size();
-    }
-
-    public void averageDepthMetric() {
-	double n = 0;
-	// Iterator<Set<OWLClass>> i = parserI.getLeaves().iterator();
-	Iterator<ArrayList<OWLClass>> i;
-	if (withImports)
-	    i = parserI.getPathsAll().iterator(); // BL 08.09.2016 use allpaths
-	else
-	    i = parser.getPathsAll().iterator(); // BL 08.09.2016 use allpaths
-
-	while (i.hasNext())
-	    n += i.next().size() + 1;
-	double averageDepth = OntologyUtility.roundByGlobNK((double) n / (double) parserI.getPathsAll().size());
-	returnObject.put("Averagedepth", averageDepth);
-
-    }
-
-    public void maximalDepthMetric() {
-	int n = 0;
-	// Iterator<Set<OWLClass>> i = parserI.getLeaves().iterator();
-	Iterator<ArrayList<OWLClass>> i;
-	if (withImports)
-	    i = parserI.getPathsAll().iterator(); // BL 08.09.2016 use allpaths
-	else
-	    i = parser.getPathsAll().iterator(); // BL 08.09.2016 use allpaths
-	int next = 0;
-	while (i.hasNext()) {
-	    next = i.next().size() + 1;
-	    if (n < next)
-		n = next;
-	}
-	returnObject.put("Maximaldepth", n);
-    }
-
-    public void absoluteBreadthMetric() {
-	int n = 0;
-	Iterator<TreeSet<OWLClass>> i;
-	if (withImports)
-	    i = parserI.getLevels().iterator();
-	else
-	    i = parser.getLevels().iterator();
-	while (i.hasNext()) {
-	    n += i.next().size();
-	}
-	returnObject.put("Absolutebreadth", n);
-
-    }
-
-    public void averageBreadthMetric() {
-	int n = 0;
-	Iterator<TreeSet<OWLClass>> i = parserI.getLevels().iterator();
-	while (i.hasNext())
-	    n += i.next().size();
-	double averageBreadth = OntologyUtility.roundByGlobNK((double) n / (double) parserI.getLevels().size());
-	returnObject.put("Averagebreadth", averageBreadth);
-
-    }
-
-    public void maximalBreadthMetric() {
-	int n = 0;
-	Iterator<TreeSet<OWLClass>> i = parserI.getLevels().iterator();
-	int next = 0;
-	while (i.hasNext()) {
-	    next = i.next().size();
-	    if (n < next)
-		n = next;
-	}
-	returnObject.put("Maximalbreadth", n);
+	returnObject.put("Absolutebreadth2", absoluteBreadth);
+	returnObject.put("Maximalbreadth2", maximalBreadth);
     }
 
     public void tanglednessMetric() {
@@ -349,24 +249,4 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 
     }
 
-    public void totalNumberOfPathsMetric() {
-	returnObject.put("Totalnumberofpaths", parserI.getPathsAll().size());
-    }
-
-    public void averageNumberOfPathsMetric() {
-	int gen;
-	int pathsAll;
-	if (withImports) {
-	    gen = parserI.getGenerations().size();
-	    pathsAll = parserI.getPathsAll().size();
-	} else {
-	    gen = parser.getGenerations().size();
-	    pathsAll = parser.getPathsAll().size();
-	}
-	if (gen > 0)
-	    averageNumberOfPaths = OntologyUtility.roundByGlobNK((double) pathsAll / (double) gen);
-	else
-	    averageNumberOfPaths = 0.0;
-	returnObject.put("Averagenumberofpaths", averageNumberOfPaths);
-    }
 }

@@ -1,18 +1,20 @@
 package de.edu.rostock.ontologymetrics.owlapi.ontology;
 
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.search.EntitySearcher;
@@ -326,15 +328,32 @@ public class OntologyUtility {
 	java.util.Collections.sort(result);
 	return result;
     }
-/**
- * Prepares a given string for XML-represenation
- * Delete all invalid signs
- * 
- * @param text input text for parsing
- * @return XML-valid representation
- */
+
+    /**
+     * A little helper class that extracts full Classes out of a Collection of
+     * OWLClassExpressions. This is helpful if one wants to consider only Real
+     * Classes in the subclass tree, not statements like "isEncded exactly 1
+     * owl:thing"
+     * 
+     * @param classExpressions A Collection of Class Expressions.
+     * @return the set of classes.
+     */
+    public static Collection<OWLClass> classExpr2classes(Collection<OWLClassExpression> classExpressions) {
+	Set<OWLClass> classes = new TreeSet<OWLClass>();
+	for (OWLClassExpression classExpression : classExpressions) {
+	    classes.addAll(classExpression.getClassesInSignature());
+	}
+	return classes;
+    }
+
+    /**
+     * Prepares a given string for XML-represenation Delete all invalid signs
+     * 
+     * @param text input text for parsing
+     * @return XML-valid representation
+     */
     public static String CleanInvalidChars(String text) {
-	
+
 	String cleanText = text;
 	cleanText = cleanText.replace("#", "");
 	cleanText = cleanText.replace(".", "");
@@ -348,7 +367,4 @@ public class OntologyUtility {
 	return INVALID_XML_CHARS.matcher(cleanText).replaceAll("");
     }
 
-
-
-  
 }

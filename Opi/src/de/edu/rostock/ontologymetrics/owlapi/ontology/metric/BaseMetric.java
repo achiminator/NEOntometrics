@@ -1,5 +1,6 @@
 package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -67,23 +68,45 @@ public class BaseMetric extends MetricCalculations implements Callable<BaseMetri
 	    if (expression.isAnonymous())
 		anonClassCounter++;
 	}
-	this.returnObject.put("Annonymousclasses", anonClassCounter);
+	this.returnObject.put("Anonymousclasses", anonClassCounter);
     }
 
     public void calculateClassesWith() {
 	int classesWithIndividuals = 0;
 	int classesWithSubClasses = 0;
+	int classesWithMultipleInheritance = 0;
+	int superClassesOfCLassesWithMultipleInheritance = 0;
+	int maxSubClasses = 0;
+	int superClassCount = 0;
 
 	Set<OWLClass> classes = ontology.getClassesInSignature(OntologyUtility.ImportClosures(imports));
 	for (OWLClass owlClass : classes) {
 	    if (owlClass.getIndividualsInSignature().size() > 0)
 		classesWithIndividuals++;
-	    if (EntitySearcher.getSubClasses(owlClass, ontology).size() > 0)
+	    Collection<OWLClass> subClasses = OntologyUtility
+		    .classExpr2classes(EntitySearcher.getSubClasses(owlClass, ontology));
+	    if (subClasses.size() > 0) {
 		classesWithSubClasses++;
+		if (subClasses.size() > maxSubClasses)
+		    maxSubClasses = subClasses.size();
+
+	    }
+	    Collection<OWLClass> superClasses = OntologyUtility
+		    .classExpr2classes(EntitySearcher.getSuperClasses(owlClass, ontology));
+	    superClassCount += superClasses.size();
+	    if (superClasses.size() > 1) {
+		classesWithMultipleInheritance++;
+		superClassesOfCLassesWithMultipleInheritance += superClasses.size();
+	    }
 
 	}
+	this.returnObject.put("Superclasses", superClassCount);
 	this.returnObject.put("Classeswithindividuals", classesWithIndividuals);
 	this.returnObject.put("Classeswithsubclassess", classesWithSubClasses);
+	this.returnObject.put("Classeswithmultipleinheritance", classesWithMultipleInheritance);
+	this.returnObject.put("Superclassesofclasseswithmultipleinheritance",
+		superClassesOfCLassesWithMultipleInheritance);
+	this.returnObject.put("Maxsubclassesofaclass", maxSubClasses);
     }
 
     /**

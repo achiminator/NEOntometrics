@@ -9,25 +9,21 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.search.EntitySearcher;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.basemetric.graphbasemetric.GraphParser;
 
 public class SchemaMetrics extends MetricCalculations implements Callable<SchemaMetrics> {
 
-    private GraphParser parserI;
-
     private Map<String, Object> previousResults;
 
-    public SchemaMetrics(Map<String, Object> previousResults, GraphParser parserI, boolean withImports,
+    public SchemaMetrics(Map<String, Object> previousResults, boolean withImports,
 	    OWLOntology ontology) {
 	super(ontology, withImports);
-	this.parserI = parserI;
 	this.previousResults = previousResults;
 
     }
 
     public SchemaMetrics call() {
 
-	attributeRichnessMetric(ontology, parserI);
+	attributeRichnessMetric(ontology);
 	schemaInheritenceRichnessMetric();
 	schemaRelationshipRichnessMetric(ontology);
 	attributeClassRatio(ontology);
@@ -40,9 +36,9 @@ public class SchemaMetrics extends MetricCalculations implements Callable<Schema
     }
 
     // TODO: Restructure for pure read
-    public void attributeRichnessMetric(OWLOntology ontology, GraphParser parserI) {
+    public void attributeRichnessMetric(OWLOntology ontology) {
 	double ret = 0;
-	float classes = parserI.getNoClasses();
+	int classes = (int) previousResults.get("Classcount");
 	int datapropertycount = ontology.getDataPropertiesInSignature(OntologyUtility.ImportClosures(true)).size();
 
 	if (classes == 0) {

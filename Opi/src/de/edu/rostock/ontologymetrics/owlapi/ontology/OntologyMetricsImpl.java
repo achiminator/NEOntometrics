@@ -139,7 +139,7 @@ public class OntologyMetricsImpl {
 	resultSet.putAll(annotationAxiomsMetric.get().getReturnObject());
 	resultSet.putAll(baseMetric.get().getReturnObject());
 	//The following metric calculations now need some of the previous ones. As the previous calculations are stored in the 
-	schemaMetric = service.submit(new SchemaMetrics(resultSet, parserI, imports, ontology));
+	schemaMetric = service.submit(new SchemaMetrics(resultSet, imports, ontology));
 	knowledgebaseMetric = service.submit(new KnowledgebaseMetric(resultSet, ontology, imports));
 	graphMetric = service.submit(new GraphMetric(ontology, parser, parserI, imports));
 	
