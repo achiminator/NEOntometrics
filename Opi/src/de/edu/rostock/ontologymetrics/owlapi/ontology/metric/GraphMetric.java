@@ -1,8 +1,11 @@
 package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
@@ -125,13 +128,23 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	// At first, get the root class. A root class is a class that does not have any
 	// ancestors/Superclasses. At the same time, we can also identify the leaf and
 	// rootclasses.
-	Set<OWLClass> leafClasses = new TreeSet<OWLClass>(); // Container for all leaf Classes of this ontology (Such
-							     // without other subclasses)
-	Set<OWLClass> upperClasses = new TreeSet<OWLClass>(); // Container for the opposite, for classes (such that have
-							      // leaves)
-	Set<OWLClass> rootClasses = new TreeSet<OWLClass>();
-	Set<OWLClass> owlClasses = ontology.getClassesInSignature(OntologyUtility.ImportClosures(withImports));
+
+	// Container for all leaf Classes of this ontology (Such without other
+	// subclasses)
+	Set<OWLClass> leafClasses = new TreeSet<OWLClass>();
+
+	// stores the relation of the leaf classes to their parents. Used to calculate
+	// Max Fanoutness of leaf classes.
+	Map<OWLClass, List<OWLClass>> parentsLeafRelation = new HashMap<OWLClass, List<OWLClass>>();
+
+	// Container for the opposite, for classes (such that have leaves)
+	Set<OWLClass> upperClasses = new TreeSet<OWLClass>();
 	
+	// Root classes are at the very top of the Ontology
+	Set<OWLClass> rootClasses = new TreeSet<OWLClass>();
+	
+	Set<OWLClass> owlClasses = ontology.getClassesInSignature(OntologyUtility.ImportClosures(withImports));
+
 	// Iterate over all classes
 	for (OWLClass owlClass : owlClasses) {
 
@@ -141,10 +154,19 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 		rootClasses.add(owlClass);
 	    Collection<OWLClassExpression> subClassExpr = EntitySearcher.getSubClasses(owlClass, ontology);
 	    Collection<OWLClass> subClasses = OntologyUtility.classExpr2classes(subClassExpr);
-	    if (subClasses.size() < 1)
+	    if (subClasses.size() < 1) {
 		// If a classes does not have any subclasses, it is a leaf class. As owl-Thing
 		// is always on top, we do not count it as a root class.
 		leafClasses.add(owlClass);
+		
+		//This section sets up the relations between the leaf classes and their parents (parents ->List<LeafClasses>)
+		Collection<OWLClass> parentsOfThisLeafClass = OntologyUtility.classExpr2classes(EntitySearcher.getSuperClasses(owlClass, ontology));
+		for (OWLClass parentOfThisLeafClass : parentsOfThisLeafClass) {
+		    if(!parentsLeafRelation.containsKey(parentOfThisLeafClass))
+			parentsLeafRelation.put(parentOfThisLeafClass, new ArrayList<OWLClass>());
+		    parentsLeafRelation.get(parentOfThisLeafClass).add(owlClass);
+		}
+	    }
 	    else {
 		// if a class has at least one subclass, it is a upper class
 		if (!owlClass.isBuiltIn())
@@ -162,13 +184,19 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	for (OWLClass owlClass : rootClasses) {
 	    depthBreadthCalculation(owlClass, 0);
 	}
-	
+	//This measurement measures what is the biggest amount of leaf classes anchored to a parent
+	int maxFanOutnessOfLeafClass = 0;
+	for (OWLClass owlClass : parentsLeafRelation.keySet()) {
+	    if(parentsLeafRelation.get(owlClass).size() > maxFanOutnessOfLeafClass)
+		maxFanOutnessOfLeafClass = parentsLeafRelation.get(owlClass).size();
+	}
+
 	int superClassesOfLeafClasses = 0;
 	for (OWLClass owlClass : leafClasses) {
 	    Collection<OWLClassExpression> superClassOfLeafClass = EntitySearcher.getSuperClasses(owlClass, ontology);
 	    superClassesOfLeafClasses += OntologyUtility.classExpr2classes(superClassOfLeafClass).size();
 	}
-	
+
 	returnObject.put("superClassesOfLeafClasses", superClassesOfLeafClasses);
 	returnObject.put("PathsToLeafClasses", sumOfPathToLeafClasses);
 	returnObject.put("Totaldepth", totalDepth);
@@ -182,10 +210,9 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 		getAncestorClasses(classesWithMoreThanOneDirectAncestor, 1).size());
 	returnObject.put("Maxdepth", maxDepth);
 	returnObject.put("minimumDepth", minDepth);
+	returnObject.put("maxFanoutnessOfLeafClasses", maxFanOutnessOfLeafClass);
 
     }
-
-
 
     /**
      * Recursive method for calculating the number of Paths from the top of an
