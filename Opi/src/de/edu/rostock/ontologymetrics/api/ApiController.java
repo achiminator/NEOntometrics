@@ -1,5 +1,6 @@
 package de.edu.rostock.ontologymetrics.api;
 
+import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -15,14 +16,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.xembly.Directives;
 import org.xembly.ImpossibleModificationException;
 import org.xembly.Xembler;
 import de.edu.rostock.ontologymetrics.api.error.InvalidOntologyException;
 import de.edu.rostock.ontologymetrics.api.error.WrongURIException;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyMetricManagerImpl;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyMetricsImpl;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
 
@@ -46,22 +48,25 @@ public class ApiController {
 	myLogger.debug("Get-URL: "
 		+ url.toString());
 	OntologyUtility.setTimestamp();
-	OntologyMetricManagerImpl manager = new OntologyMetricManagerImpl();
-	OWLOntology ontology = manager.loadOntologyFromIRI(url);
+	OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
+	OWLOntology ontology = manager.loadOntologyFromOntologyDocument(url);
 	if (ontology == null)
 	    throw new WrongURIException();
-	return calculateMetrics(classMetrics, manager);
+	return calculateMetrics(classMetrics, ontology);
     }
 
     @POST
     @Produces(MediaType.APPLICATION_XML)
     public Response getBaseMetricFromOntology(String request, 
 	    @DefaultValue("false") @HeaderParam("classmetrics") boolean classMetrics) throws Exception {
-	OntologyMetricManagerImpl manager = new OntologyMetricManagerImpl();
+	//OntologyMetricManagerImpl manager = new OntologyMetricManagerImpl();
+	
 	myLogger.info("Get-from-Post");
+	OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 	OWLOntology ontology;
 	try {
-	    ontology = manager.loadOntologyFromText(request);
+	    ontology = manager.loadOntologyFromOntologyDocument(new ByteArrayInputStream(request.getBytes()));
+	    
 	} catch (Exception e) {
 	    throw new InvalidOntologyException();
 	}
@@ -71,7 +76,7 @@ public class ApiController {
 	myLogger.debug("Ontology loaded");
 	OntologyUtility.setTimestamp();
 
-	return calculateMetrics(classMetrics, manager);
+	return calculateMetrics(classMetrics, ontology);
     }
 
     @SuppressWarnings("unchecked")
@@ -112,10 +117,10 @@ public class ApiController {
 	return xmlBuilder;
     }
 
-    protected Response calculateMetrics(boolean classMetrics, OntologyMetricManagerImpl manager)
+    protected Response calculateMetrics(boolean classMetrics, OWLOntology ontology)
 	    throws Exception, ImpossibleModificationException {
 
-	OntologyMetricsImpl ontoMetricsEnginge = new OntologyMetricsImpl(manager.getOntology());
+	OntologyMetricsImpl ontoMetricsEnginge = new OntologyMetricsImpl(ontology);
 	Directives xmlDirectives = new Directives().add("OntologyMetrics");
 	Map<String, Object> map = ontoMetricsEnginge.getAllMetrics();
 	xmlDirectives.append(map2XML(map));
