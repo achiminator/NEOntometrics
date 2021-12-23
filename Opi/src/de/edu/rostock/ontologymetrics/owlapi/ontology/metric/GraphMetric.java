@@ -48,7 +48,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	this.parserI = parserI;
 
     }
-
+// TODO: Remove 
     private void absoluteSiblingCardinalityMetric() {
 	int absoluteSibblingCardinality;
 	if (withImports)
@@ -211,7 +211,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	returnObject.put("maximalDepth", maxDepth);
 	returnObject.put("minimumDepth", minDepth);
 	returnObject.put("maxFanoutnessOfLeafClasses", maxFanOutnessOfLeafClass);
-	returnObject.put("rootClasses", rootClasses);
+	returnObject.put("rootClasses", rootClasses.size());
 
     }
 
@@ -278,7 +278,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	returnObject.put("maximalBreadth", maximalBreadth);
 	returnObject.put("minimumBreath", minimumBreath);
     }
-
+//TODO: Switch to class without parser 
     public void tanglednessMetric() {
 	double tangledgness = 0.0;
 	if (withImports)

@@ -48,10 +48,10 @@ public class BaseMetric extends MetricCalculations implements Callable<BaseMetri
 	if (imports) {
 	    AxiomCount ax = new AxiomCount(ontology);
 	    ax.setImportsClosureUsed(true);
-	    this.returnObject.put("Axioms", ax.getValue());
+	    this.returnObject.put("axioms", ax.getValue());
 
 	} else
-	    this.returnObject.put("Axioms", new AxiomCount(ontology).getValue());
+	    this.returnObject.put("axioms", new AxiomCount(ontology).getValue());
     }
 
     /**
@@ -180,16 +180,6 @@ public class BaseMetric extends MetricCalculations implements Callable<BaseMetri
     public void calculateCountIndividuals() {
 	this.returnObject.put("individuals",
 		ontology.getIndividualsInSignature(OntologyUtility.ImportClosures(imports)).size());
-    }
-
-    /**
-     * Counts the overall number of properties
-     * 
-     * adds dataproperties + objectproperties
-     */
-    public void countProperties() {
-	returnObject.put("properties",
-		(int) returnObject.get("Datapropertycount") + (int) returnObject.get("Objectpropertycount"));
     }
 
     /**

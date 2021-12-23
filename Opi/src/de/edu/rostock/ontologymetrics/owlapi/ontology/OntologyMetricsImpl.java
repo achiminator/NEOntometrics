@@ -26,11 +26,8 @@ import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.ClassMetrics;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.DataPropertyAxiomsMetric;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.GraphMetric;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.IndividualAxiomsMetric;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.KnowledgebaseMetric;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.ObjectPropertyAxiomsMetric;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.SchemaMetrics;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.basemetric.graphbasemetric.GraphParser;
-import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 /**
  * This class represents the implementation of the interface
@@ -50,8 +47,6 @@ public class OntologyMetricsImpl {
     protected Future<ObjectPropertyAxiomsMetric> objectPropertyAxiomsMetric;
     protected Future<AnnotationAxiomsMetric> annotationAxiomsMetric;
     protected Future<GraphMetric> graphMetric;
-    protected Future<SchemaMetrics> schemaMetric;
-    protected Future<KnowledgebaseMetric> knowledgebaseMetric;
     private IRI iri;
 
     public OntologyMetricsImpl(OWLOntology pOntology) {
@@ -139,30 +134,25 @@ public class OntologyMetricsImpl {
 	resultSet.putAll(annotationAxiomsMetric.get().getReturnObject());
 	resultSet.putAll(baseMetric.get().getReturnObject());
 	//The following metric calculations now need some of the previous ones. As the previous calculations are stored in the 
-	schemaMetric = service.submit(new SchemaMetrics(resultSet, imports, ontology));
-	knowledgebaseMetric = service.submit(new KnowledgebaseMetric(resultSet, ontology, imports));
+
 	graphMetric = service.submit(new GraphMetric(ontology, parser, parserI, imports));
 	
 	// resultSet.put("Basemetrics", baseMetric.calculateAllMetrics(ontology));
 
-	resultSet.putAll(schemaMetric.get().getReturnObject());
-	resultSet.putAll(knowledgebaseMetric.get().getReturnObject());
 	resultSet.putAll(graphMetric.get().getReturnObject());
 	service.shutdown();
 	return resultSet;
     }
 
     public List<Map<String, Object>> getClassMetrics() throws Exception {
-	if (schemaMetric == null || knowledgebaseMetric == null)
-	    throw new Exception("Schema and KnowledgebaseMetrics must be run first");
 	ExecutorService service = Executors.newWorkStealingPool();
 
 	List<Map<String, Object>> ClassMetricsList = new ArrayList<Map<String, Object>>();
 	List<Future<ClassMetrics>> tmpList = new ArrayList<>();
 	Set<OWLClass> om = ontology.getClassesInSignature();
 	for (OWLClass owlClass : om) {
-	    tmpList.add(service.submit(
-		    new ClassMetrics(knowledgebaseMetric.get(), baseMetric.get(), ontology, owlClass.getIRI())));
+	    //tmpList.add(service.submit(
+		    //new ClassMetrics(knowledgebaseMetric.get(), baseMetric.get(), ontology, owlClass.getIRI())));
 	}
 	service.shutdown();
 	service.awaitTermination(2, TimeUnit.HOURS);
