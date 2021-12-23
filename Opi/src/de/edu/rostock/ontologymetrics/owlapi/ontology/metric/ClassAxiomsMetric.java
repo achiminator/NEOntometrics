@@ -28,28 +28,28 @@ public class ClassAxiomsMetric extends MetricCalculations implements Callable<Cl
 	return this;
     }
 
-    public void countSubClassOfAxiomsMetric() {
+    private void countSubClassOfAxiomsMetric() {
 	int subClassOfAxiomsCount = ontology.getAxiomCount(AxiomType.SUBCLASS_OF,
 		OntologyUtility.ImportClosures(imports));
 	returnObject.put("subClassOfAxioms", subClassOfAxiomsCount);
 
     }
 
-    public void countEquivalentClassesAxiomsMetric() {
+    private void countEquivalentClassesAxiomsMetric() {
 	int equivalentClassesAxiomsCount = ontology.getAxiomCount(AxiomType.EQUIVALENT_CLASSES,
 		OntologyUtility.ImportClosures(imports));
 	returnObject.put("equivalentClassesAxioms", equivalentClassesAxiomsCount);
 
     }
 
-    public void countDisjointClassesAxiomsMetric() {
+    private void countDisjointClassesAxiomsMetric() {
 	int disjointClassesAxiomsCount = ontology.getAxiomCount(AxiomType.DISJOINT_CLASSES,
 		OntologyUtility.ImportClosures(imports));
 	returnObject.put("disjointClassesAxioms", disjointClassesAxiomsCount);
 
     }
 
-    public void countGCIMetric() {
+    private void countGCIMetric() {
 	GCICount gc = new GCICount(ontology);
 	gc.setImportsClosureUsed(imports);
 
@@ -57,7 +57,7 @@ public class ClassAxiomsMetric extends MetricCalculations implements Callable<Cl
 
     }
 
-    public void countHiddenGCIMetric() {
+    private void countHiddenGCIMetric() {
 	HiddenGCICount hgc = new HiddenGCICount(ontology);
 	hgc.setImportsClosureUsed(imports);
 	returnObject.put("HiddenGCICount", hgc.getValue());

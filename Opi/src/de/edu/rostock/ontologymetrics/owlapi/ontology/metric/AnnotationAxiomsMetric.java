@@ -40,7 +40,7 @@ public class AnnotationAxiomsMetric extends MetricCalculations implements Callab
      * @param ontology
      * @return
      */
-    public void countAnnotationAxiomsMetric() {
+    private void countAnnotationAxiomsMetric() {
 	int annotationAxiomsCount = ontology.getAnnotations().size();
 	returnObject.put("Annotationaxiomscount", annotationAxiomsCount);
     }
@@ -52,7 +52,7 @@ public class AnnotationAxiomsMetric extends MetricCalculations implements Callab
      * 
      * @param withImports
      */
-    public void iterativeAnnotationMetrics() {
+    private void iterativeAnnotationMetrics() {
 	int objectPropertyAnnotation=0;
 	int dataPropertyAnnotation=0;
 	int datatypeAnnotation = 0;
@@ -82,20 +82,20 @@ public class AnnotationAxiomsMetric extends MetricCalculations implements Callab
 	returnObject.put("datatypeAnnotations", datatypeAnnotation);
     }
 
-    public void countAnnotationAssertionAxiomsMetric() {
+    private void countAnnotationAssertionAxiomsMetric() {
 	int annotationAssertionAxiomsCount = ontology.getAxiomCount(AxiomType.ANNOTATION_ASSERTION,
 		OntologyUtility.ImportClosures(imports));
 	returnObject.put("annotationAssertionsAxioms", annotationAssertionAxiomsCount);
 	
     }
 
-    public void countAnnotationPropertyDomainAxiomsMetric() {
+    private void countAnnotationPropertyDomainAxiomsMetric() {
 	int annotationPropertyDomainAxiomsCount = ontology.getAxiomCount(AxiomType.ANNOTATION_PROPERTY_DOMAIN,
 		OntologyUtility.ImportClosures(imports));
 	returnObject.put("annotationPropertyDomainAxioms", annotationPropertyDomainAxiomsCount);
     }
 
-    public void countAnnotationPropertyRangeAxiomsMetric() {
+    private void countAnnotationPropertyRangeAxiomsMetric() {
 	int annotationPropertyRangeAxiomsCount = ontology.getAxiomCount(AxiomType.ANNOTATION_PROPERTY_RANGE,
 		OntologyUtility.ImportClosures(imports));
 	returnObject.put("annotationPropertyRangeaxioms", annotationPropertyRangeAxiomsCount);

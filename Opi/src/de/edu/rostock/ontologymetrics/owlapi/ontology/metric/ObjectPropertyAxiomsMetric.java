@@ -63,90 +63,90 @@ public class ObjectPropertyAxiomsMetric extends MetricCalculations implements Ca
 	returnObject.put("classesWithObjectProperties", classesWithRelations);
     }
 
-    public void countSubObjectPropertyAxioms() {
+    private void countSubObjectPropertyAxioms() {
 	int subObjectPropertyOfAxiomsCount = ontology.getAxiomCount(AxiomType.SUB_OBJECT_PROPERTY,
 		OntologyUtility.ImportClosures(imports));
 	returnObject.put("subObjectPropertyOfAxioms", subObjectPropertyOfAxiomsCount);
 
     }
 
-    public void countEquivalentObjectPropertyAxioms() {
+    private void countEquivalentObjectPropertyAxioms() {
 	int equivalentObjectPropertyAxiomsCount = ontology.getAxiomCount(AxiomType.EQUIVALENT_OBJECT_PROPERTIES,
 		OntologyUtility.ImportClosures(imports));
 	returnObject.put("equivalentObjectPropertyAxioms", equivalentObjectPropertyAxiomsCount);
     }
 
-    public void countInverseObjectPropertyAxiomsMetric() {
+    private void countInverseObjectPropertyAxiomsMetric() {
 	int inverseObjectPropertyAxiomsCount = ontology.getAxiomCount(AxiomType.INVERSE_OBJECT_PROPERTIES,
 		OntologyUtility.ImportClosures(imports));
 	returnObject.put("inverseObjectPropertyAxioms", inverseObjectPropertyAxiomsCount);
     }
 
-    public void countDisjointObjectPropertyAxiomsMetric() {
+    private void countDisjointObjectPropertyAxiomsMetric() {
 	int disjointObjectPropertyAxiomsCount = ontology.getAxiomCount(AxiomType.DISJOINT_OBJECT_PROPERTIES,
 		OntologyUtility.ImportClosures(imports));
 	returnObject.put("disjointObjectPropertyAxioms", disjointObjectPropertyAxiomsCount);
     }
 
-    public void countFunctionalObjectPropertyAxiomsMetric() {
+    private void countFunctionalObjectPropertyAxiomsMetric() {
 	int functionalObjectPropertiyAxiomsCount = ontology.getAxiomCount(AxiomType.FUNCTIONAL_OBJECT_PROPERTY,
 		OntologyUtility.ImportClosures(imports));
 	returnObject.put("functionalObjectPropertyAxioms", functionalObjectPropertiyAxiomsCount);
     }
 
-    public void countInverseFunctionalObjectPropertiesAxiomsMetric() {
+    private void countInverseFunctionalObjectPropertiesAxiomsMetric() {
 	int inverseFunctionalObjectPropertyAxiomsCount = ontology
 		.getAxiomCount(AxiomType.INVERSE_FUNCTIONAL_OBJECT_PROPERTY, OntologyUtility.ImportClosures(imports));
 	returnObject.put("inverseFunctionalObjectPropertyAxioms", inverseFunctionalObjectPropertyAxiomsCount);
 
     }
 
-    public void countTransitiveObjectPropertyAxiomsMetric() {
+    private void countTransitiveObjectPropertyAxiomsMetric() {
 	int transitiveObjectPropertyAxiomsCount = ontology.getAxiomCount(AxiomType.TRANSITIVE_OBJECT_PROPERTY,
 		OntologyUtility.ImportClosures(imports));
 	returnObject.put("transitiveObjectPropertyAxioms", transitiveObjectPropertyAxiomsCount);
 
     }
 
-    public void countSymmetricObjectPropertyAxiomsMetric() {
+    private void countSymmetricObjectPropertyAxiomsMetric() {
 	int symmetricObjectPropertyAxiomsCount = ontology.getAxiomCount(AxiomType.SYMMETRIC_OBJECT_PROPERTY,
 		OntologyUtility.ImportClosures(imports));
 	returnObject.put("symmetricObjectPropertyAxioms", symmetricObjectPropertyAxiomsCount);
 
     }
 
-    public void countAsymmetricObjectPropertyAxiomsMetric() {
+    private void countAsymmetricObjectPropertyAxiomsMetric() {
 	int asymmetricObjectPropertyAxiomsCount = ontology.getAxiomCount(AxiomType.ASYMMETRIC_OBJECT_PROPERTY,
 		OntologyUtility.ImportClosures(imports));
 	returnObject.put("asymmetricObjectPropertyAxioms", asymmetricObjectPropertyAxiomsCount);
     }
 
-    public void countReflexiveObjectPropertyAxiomsMetric() {
+    private void countReflexiveObjectPropertyAxiomsMetric() {
 	int reflexiveObjectPropertyAxiomsCount = ontology.getAxiomCount(AxiomType.REFLEXIVE_OBJECT_PROPERTY,
 		OntologyUtility.ImportClosures(imports));
 	returnObject.put("reflexiveObjectPropertyAxioms", reflexiveObjectPropertyAxiomsCount);
     }
 
-    public void countIrreflexiveObjectPropertyAxiomsMetric() {
+    private void countIrreflexiveObjectPropertyAxiomsMetric() {
 	int irreflexiveObjectPropertyAxiomsCount = ontology.getAxiomCount(AxiomType.IRREFLEXIVE_OBJECT_PROPERTY,
 		OntologyUtility.ImportClosures(imports));
 	returnObject.put("irreflexiveObjectPropertyAxioms", irreflexiveObjectPropertyAxiomsCount);
     }
 
-    public void countObjectPropertyDomainAxiomsMetric() {
+    private void countObjectPropertyDomainAxiomsMetric() {
 	int objectPropertyDomainAxiomsCount = ontology.getAxiomCount(AxiomType.OBJECT_PROPERTY_DOMAIN,
 		OntologyUtility.ImportClosures(imports));
 	returnObject.put("objectPropertyDomainAxioms", objectPropertyDomainAxiomsCount);
     }
 
-    public void countObjectPropertyRangeAxiomsMetric() {
+    private void countObjectPropertyRangeAxiomsMetric() {
 	int objectPropertyRangeAxiomsCount = ontology.getAxiomCount(AxiomType.OBJECT_PROPERTY_RANGE,
 		OntologyUtility.ImportClosures(imports));
 	returnObject.put("objectPropertyRangeAxioms", objectPropertyRangeAxiomsCount);
 
     }
 
-    public void countSubPropertyChainOfAxiomsMetric() {
+    private void countSubPropertyChainOfAxiomsMetric() {
 	int subPropertyChainOfAxiomsCount = ontology.getAxiomCount(AxiomType.SUB_PROPERTY_CHAIN_OF,
 		OntologyUtility.ImportClosures(imports));
 	returnObject.put("subPropertyChainOfAxioms", subPropertyChainOfAxiomsCount);
