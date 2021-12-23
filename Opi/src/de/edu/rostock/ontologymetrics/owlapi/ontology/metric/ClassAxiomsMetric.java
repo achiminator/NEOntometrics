@@ -31,21 +31,21 @@ public class ClassAxiomsMetric extends MetricCalculations implements Callable<Cl
     public void countSubClassOfAxiomsMetric() {
 	int subClassOfAxiomsCount = ontology.getAxiomCount(AxiomType.SUBCLASS_OF,
 		OntologyUtility.ImportClosures(imports));
-	returnObject.put("SubClassOfaxiomscount", subClassOfAxiomsCount);
+	returnObject.put("subClassOfAxioms", subClassOfAxiomsCount);
 
     }
 
     public void countEquivalentClassesAxiomsMetric() {
 	int equivalentClassesAxiomsCount = ontology.getAxiomCount(AxiomType.EQUIVALENT_CLASSES,
 		OntologyUtility.ImportClosures(imports));
-	returnObject.put("Equivalentclassesaxiomscount", equivalentClassesAxiomsCount);
+	returnObject.put("equivalentClassesAxioms", equivalentClassesAxiomsCount);
 
     }
 
     public void countDisjointClassesAxiomsMetric() {
 	int disjointClassesAxiomsCount = ontology.getAxiomCount(AxiomType.DISJOINT_CLASSES,
 		OntologyUtility.ImportClosures(imports));
-	returnObject.put("Disjointclassesaxiomscount", disjointClassesAxiomsCount);
+	returnObject.put("disjointClassesAxioms", disjointClassesAxiomsCount);
 
     }
 

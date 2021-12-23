@@ -55,7 +55,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	    absoluteSibblingCardinality = parserI.getSibs().size();
 	else
 	    absoluteSibblingCardinality = parser.getSibs().size();
-	returnObject.put("Absolutesiblingcardinality", absoluteSibblingCardinality);
+	returnObject.put("absoluteSiblingCardinality", absoluteSibblingCardinality);
 
     }
 
@@ -198,19 +198,20 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	}
 
 	returnObject.put("superClassesOfLeafClasses", superClassesOfLeafClasses);
-	returnObject.put("PathsToLeafClasses", sumOfPathToLeafClasses);
-	returnObject.put("Totaldepth", totalDepth);
-	returnObject.put("Absoluteleafcardinality2", leafClasses.size());
-	returnObject.put("Absoluterootcardinality2", upperClasses.size());
+	returnObject.put("pathsToLeafClasses", sumOfPathToLeafClasses);
+	returnObject.put("absoluteDepth", totalDepth);
+	returnObject.put("absoluteLeafCardinality", leafClasses.size());
+	returnObject.put("absoluteRootCardinality", upperClasses.size());
 	Set<OWLClass> classesWithMoreThanOneDirectAncestor = getClassesWithAncestors(owlClasses, 2);
-	returnObject.put("ClassesWithMoreThanOneAncestor2", classesWithMoreThanOneDirectAncestor.size());
-	returnObject.put("SumOfDirectAncestorOfLeafClasses2", getAncestorClasses(leafClasses, 1).size());
-	returnObject.put("SumOfDirectAncestorClasses2", getAncestorClasses(owlClasses, 1).size());
-	returnObject.put("sumOfDirectAncestorWithMoreThanOneDirectAncestor2",
+	returnObject.put("classesWithMoreThanOneAncestor", classesWithMoreThanOneDirectAncestor.size());
+	returnObject.put("sumOfDirectAncestorOfLeafClasses", getAncestorClasses(leafClasses, 1).size());
+	returnObject.put("sumOfDirectAncestorClasses", getAncestorClasses(owlClasses, 1).size());
+	returnObject.put("sumOfDirectAncestorsWithMoreThanOneDirectAncestor",
 		getAncestorClasses(classesWithMoreThanOneDirectAncestor, 1).size());
-	returnObject.put("Maxdepth", maxDepth);
+	returnObject.put("maximalDepth", maxDepth);
 	returnObject.put("minimumDepth", minDepth);
 	returnObject.put("maxFanoutnessOfLeafClasses", maxFanOutnessOfLeafClass);
+	returnObject.put("rootClasses", rootClasses);
 
     }
 
@@ -273,8 +274,8 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	    absoluteBreadth += levelSize;
 	    counter++;
 	}
-	returnObject.put("Absolutebreadth2", absoluteBreadth);
-	returnObject.put("Maximalbreadth2", maximalBreadth);
+	returnObject.put("absoluteBreadth", absoluteBreadth);
+	returnObject.put("maximalBreadth", maximalBreadth);
 	returnObject.put("minimumBreath", minimumBreath);
     }
 

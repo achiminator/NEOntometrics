@@ -2,12 +2,10 @@ package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.search.EntitySearcher;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
@@ -40,7 +38,7 @@ public class SchemaMetrics extends MetricCalculations implements Callable<Schema
     // TODO: Restructure for pure read
     public void attributeRichnessMetric() {
 	double ret = 0;
-	int classes = (int) previousResults.get("Classcount");
+	int classes = (int) previousResults.get("classes");
 	int datapropertycount = ontology.getDataPropertiesInSignature(OntologyUtility.ImportClosures(true)).size();
 
 	if (classes == 0) {
@@ -48,7 +46,7 @@ public class SchemaMetrics extends MetricCalculations implements Callable<Schema
 	} else {
 	    ret = (double) datapropertycount / (double) classes;
 	}
-	returnObject.put("Attributerichness", OntologyUtility.roundByGlobNK(ret));
+	returnObject.put("attributeRichness", OntologyUtility.roundByGlobNK(ret));
     }
 
     /**
@@ -59,8 +57,8 @@ public class SchemaMetrics extends MetricCalculations implements Callable<Schema
      */
     public double schemaInheritenceRichnessMetric() {
 	double inheritanceRichness;
-	int countSubClasses = (int) previousResults.get("SubClassOfaxiomscount");
-	int countClasses = (int) previousResults.get("Classcount");
+	int countSubClasses = (int) previousResults.get("subClassOfAxioms");
+	int countClasses = (int) previousResults.get("classes");
 
 	// avoid a division by zero
 	if (countClasses == 0) {
@@ -74,7 +72,7 @@ public class SchemaMetrics extends MetricCalculations implements Callable<Schema
 
     // TODO: Replace things here by local variants
     public void schemaRelationshipRichnessMetric() {
-	int inheritedRelationships = (int) previousResults.get("SubClassOfaxiomscount");
+	int inheritedRelationships = (int) previousResults.get("subClassOfAxioms");
 	int objectPropertyCount = ontology.getObjectPropertiesInSignature(OntologyUtility.ImportClosures(true)).size();
 	int equivalentClasses = ontology.getAxiomCount(AxiomType.EQUIVALENT_CLASSES,
 		OntologyUtility.ImportClosures(true));
@@ -94,12 +92,12 @@ public class SchemaMetrics extends MetricCalculations implements Callable<Schema
 		    nonInheritedRelationships / (double) (nonInheritedRelationships + inheritedRelationships));
 	}
 
-	returnObject.put("Relationshiprichness", relationshipRichness);
+	returnObject.put("relationshipRichness", relationshipRichness);
 
     }
 
     public void attributeClassRatio() {
-	int classCount = (int) previousResults.get("Classcount");
+	int classCount = (int) previousResults.get("classes");
 	int classesWithAttributes = 0;
 	double attributeClassRatio = 0.0;
 	// new
@@ -118,12 +116,12 @@ public class SchemaMetrics extends MetricCalculations implements Callable<Schema
 	    attributeClassRatio = 0.0;
 	} else
 	    attributeClassRatio = OntologyUtility.roundByGlobNK((double) classesWithAttributes / (double) classCount);
-	returnObject.put("Attributeclassratio", attributeClassRatio);
+	returnObject.put("attributeClassRatio", attributeClassRatio);
 
     }
 
     public void equivalenceRatioMetric() {
-	int classes = (int) previousResults.get("Classcount");
+	int classes = (int) previousResults.get("classes");
 	double equivalenceRatio;
 	// MLIC: changed getAxiomCount with boolean is deprecated
 	// float sameClasses = ontology.getAxiomCount(AxiomType.EQUIVALENT_CLASSES,
@@ -135,7 +133,7 @@ public class SchemaMetrics extends MetricCalculations implements Callable<Schema
 	} else {
 	    equivalenceRatio = OntologyUtility.roundByGlobNK((double) sameClasses / (double) classes);
 	}
-	returnObject.put("Equivalenceratio", equivalenceRatio);
+	returnObject.put("equivalenceRatio", equivalenceRatio);
 
     }
 
@@ -156,14 +154,14 @@ public class SchemaMetrics extends MetricCalculations implements Callable<Schema
 			    / (double) (objectpropertycount + functionaldatapropertycount));
 	}
 
-	returnObject.put("Inverserelationsratio", inverseRelationsRatio);
+	returnObject.put("inverseRelationsRatio", inverseRelationsRatio);
 
     }
 
     public void classRelationsRatioMetric() {
 	double classRelationRatio;
-	int classes = (int) previousResults.get("Classcount");
-	int subClasses = (int) previousResults.get("SubClassOfaxiomscount");
+	int classes = (int) previousResults.get("classes");
+	int subClasses = (int) previousResults.get("subClassOfaxioms");
 	int objectPropertyCount = ontology.getObjectPropertiesInSignature(OntologyUtility.ImportClosures(true)).size();
 	int equivalentClasses = ontology.getAxiomCount(AxiomType.EQUIVALENT_CLASSES,
 		OntologyUtility.ImportClosures(true));
@@ -177,7 +175,7 @@ public class SchemaMetrics extends MetricCalculations implements Callable<Schema
 	} else {
 	    classRelationRatio = OntologyUtility.roundByGlobNK((double) classes / (double) relations);
 	}
-	returnObject.put("Classrelationratio", classRelationRatio);
+	returnObject.put("classRelationRatio", classRelationRatio);
 
     }
 

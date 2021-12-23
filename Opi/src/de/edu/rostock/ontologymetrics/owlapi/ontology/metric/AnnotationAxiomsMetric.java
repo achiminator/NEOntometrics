@@ -76,28 +76,28 @@ public class AnnotationAxiomsMetric extends MetricCalculations implements Callab
 	    }
 	}
 	
-	returnObject.put("Datapropertyannotation", dataPropertyAnnotation);
-	returnObject.put("Classannotation", classAnnoation);
-	returnObject.put("Objectpropertyannotation", objectPropertyAnnotation);
-	returnObject.put("Datatypeannotation", datatypeAnnotation);
+	returnObject.put("dataPropertyAnnotations", dataPropertyAnnotation);
+	returnObject.put("classAnnotations", classAnnoation);
+	returnObject.put("objectPropertyAnnotations", objectPropertyAnnotation);
+	returnObject.put("datatypeAnnotations", datatypeAnnotation);
     }
 
     public void countAnnotationAssertionAxiomsMetric() {
 	int annotationAssertionAxiomsCount = ontology.getAxiomCount(AxiomType.ANNOTATION_ASSERTION,
 		OntologyUtility.ImportClosures(imports));
-	returnObject.put("Annotationassertionaxiomscount", annotationAssertionAxiomsCount);
+	returnObject.put("annotationAssertionsAxioms", annotationAssertionAxiomsCount);
 	
     }
 
     public void countAnnotationPropertyDomainAxiomsMetric() {
 	int annotationPropertyDomainAxiomsCount = ontology.getAxiomCount(AxiomType.ANNOTATION_PROPERTY_DOMAIN,
 		OntologyUtility.ImportClosures(imports));
-	returnObject.put("Annotationpropertydomainaxiomscount", annotationPropertyDomainAxiomsCount);
+	returnObject.put("annotationPropertyDomainAxioms", annotationPropertyDomainAxiomsCount);
     }
 
     public void countAnnotationPropertyRangeAxiomsMetric() {
 	int annotationPropertyRangeAxiomsCount = ontology.getAxiomCount(AxiomType.ANNOTATION_PROPERTY_RANGE,
 		OntologyUtility.ImportClosures(imports));
-	returnObject.put("Annotationpropertyrangeaxiomscount", annotationPropertyRangeAxiomsCount);
+	returnObject.put("annotationPropertyRangeaxioms", annotationPropertyRangeAxiomsCount);
     }
 }

@@ -43,9 +43,9 @@ public class KnowledgebaseMetric extends MetricCalculations implements Callable<
 //    }
 
     public void averagePopulationMetric() {
-	int countTotalIndividuals = (int) previousMetrics.get("Individualcount");
+	int countTotalIndividuals = (int) previousMetrics.get("individuals");
 
-	int countTotalClasses = (int) previousMetrics.get("Classcount");
+	int countTotalClasses = (int) previousMetrics.get("classes");
 	    double averagePopulationMetric; 
 	// avoid a division by zero
 	if (countTotalClasses == 0) {
@@ -53,7 +53,7 @@ public class KnowledgebaseMetric extends MetricCalculations implements Callable<
 	} else {
 	    averagePopulationMetric = OntologyUtility.roundByGlobNK(countTotalIndividuals / countTotalClasses);
 	}
-	returnObject.put("Averagepopulation", averagePopulationMetric);
+	returnObject.put("averagePopulation", averagePopulationMetric);
 	
 
     }
@@ -61,7 +61,7 @@ public class KnowledgebaseMetric extends MetricCalculations implements Callable<
     public void classRichnessMetric(OWLOntology ontology) {
 	double countClassHasIndividual = 0.0;
 	double classRichnessMetric; 
-	int totalClasses = (int) previousMetrics.get("Classcount");
+	int totalClasses = (int) previousMetrics.get("classes");
 	double countTotalClasses = totalClasses;
 
 	// avoid a division by zero
@@ -76,7 +76,7 @@ public class KnowledgebaseMetric extends MetricCalculations implements Callable<
 	    classRichnessMetric = OntologyUtility
 		    .roundByGlobNK((double) countClassHasIndividual / (double) countTotalClasses);
 	}
-	returnObject.put("Classrichness", classRichnessMetric);
+	returnObject.put("classRichness", classRichnessMetric);
 	
     }
 }
