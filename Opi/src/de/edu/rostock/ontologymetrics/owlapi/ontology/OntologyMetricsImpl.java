@@ -111,8 +111,9 @@ public class OntologyMetricsImpl {
 	config.ignoreUnsupportedDatatypes = true;
 	OWLReasoner reasoner = new Reasoner(config, ontology);
 	InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner);
-	//iog.fillOntology(new OWLDataFactoryImpl(),  ontology);
+	//iog.fillOntology(new OWLDataFactoryImpl(),  ontology);&
 	Map<String, Object> resultSet = execMetricCalculation(true);
+	resultSet.put("isConsistent", reasoner.isConsistent());
 	Map<String, Object> wrapResult = new LinkedHashMap<String, Object>();
 	wrapResult.put("GeneralOntologyMetrics", resultSet);
 	return wrapResult;
