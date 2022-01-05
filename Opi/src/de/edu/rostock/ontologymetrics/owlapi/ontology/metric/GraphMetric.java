@@ -37,6 +37,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	private int maxDepth = 0;
 	private int minDepth = 999990;
 	private LinkedHashMap<Integer, Set<OWLClass>> owlClassToDepth; // Links the classes in the ontology to a hierachy
+	private int numberOfCircles = 0;
 	// level.
 
 	public GraphMetric call() {
@@ -159,8 +160,10 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 			// If a thing does not have superclasses, then it is a root class
 			Collection<OWLClass> superClassesofOwlClass = OntologyUtility
 					.classExpr2classes(EntitySearcher.getSuperClasses(owlClass, ontology));
-			if (superClassesofOwlClass.size() < 1
-					|| superClassesofOwlClass.contains(new OWLDataFactoryImpl().getOWLThing()))
+			if ((superClassesofOwlClass.size() < 1 // add a class as a root class if it does not have any superclasses
+					|| superClassesofOwlClass.contains(new OWLDataFactoryImpl().getOWLThing())) // or if it is a subclass
+																								// of OWL:Thing
+							&& !owlClass.isOWLThing()) // And it is not owl:Thing itself!
 				rootClasses.add(owlClass);
 			Collection<OWLClassExpression> subClassExpr = EntitySearcher.getSubClasses(owlClass, ontology);
 			Collection<OWLClass> subClasses = OntologyUtility.classExpr2classes(subClassExpr);
@@ -193,7 +196,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 		this.owlClassToDepth = new LinkedHashMap<Integer, Set<OWLClass>>();
 		this.owlClassToDepth.put(0, rootClasses);
 		for (OWLClass owlClass : rootClasses) {
-			depthBreadthCalculation(owlClass, 0);
+			depthBreadthCalculation(new HashSet<OWLClass>(), owlClass, 0);
 		}
 		returnObject.put("numberOfConnectedGraphs", numberOfConnectedGraphs(rootClasses));
 
@@ -210,7 +213,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 			Collection<OWLClassExpression> superClassOfLeafClass = EntitySearcher.getSuperClasses(owlClass, ontology);
 			superClassesOfLeafClasses += OntologyUtility.classExpr2classes(superClassOfLeafClass).size();
 		}
-
+		returnObject.put("circleHierachies", numberOfCircles);
 		returnObject.put("superClassesOfLeafClasses", superClassesOfLeafClasses);
 		returnObject.put("pathsToLeafClasses", sumOfPathToLeafClasses);
 		returnObject.put("absoluteDepth", totalDepth);
@@ -247,7 +250,6 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 				relatedClassesWithRootClass.add(owlClass);
 				relatedClassesWithRootClass.addAll(getConnectedClasses(owlClass));
 			}
-			System.out.println("Wurst");
 			if (relatedClassesWithRootClass.size() < 1 || rootClass.isOWLThing())
 				continue;
 			if (!relatedClassesMapping.containsKey(1)) // If the class does not have the first element yet, add all the
@@ -281,7 +283,8 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	 * @return Set of related classes
 	 */
 	private Set<OWLClass> getConnectedClasses(OWLClass owlClass) {
-		Collection<OWLClassExpression> connectedRelationsOfSubClass = EntitySearcher.getSuperClasses(owlClass, ontology);
+		Collection<OWLClassExpression> connectedRelationsOfSubClass = EntitySearcher.getSuperClasses(owlClass,
+				ontology);
 		Set<OWLClass> connectedClasses = new HashSet<OWLClass>();
 		for (OWLClassExpression classExpr : connectedRelationsOfSubClass) {
 			connectedClasses.addAll(classExpr.getClassesInSignature());
@@ -300,7 +303,8 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	private Set<OWLClass> allSubClassesOfClass(Set<OWLClass> alreadyDetected, OWLClass rootClass) {
 		Set<OWLClass> subClasses = (Set<OWLClass>) OntologyUtility
 				.classExpr2classes(EntitySearcher.getSubClasses(rootClass, ontology));
-		if (subClasses.size() > 0)
+		if (subClasses.size() > 0 && !alreadyDetected.contains(rootClass)) // the latter is necessary to prevent the
+																			// stack overflow in cyclic relationships
 			for (OWLClass owlClass : subClasses) {
 				subClasses.addAll(allSubClassesOfClass(subClasses, owlClass));
 			}
@@ -317,8 +321,13 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	 * 
 	 * @param owlClass     The class where the search starts downwards
 	 */
-	private void depthBreadthCalculation(OWLClass owlClass, int currentDepth) {
+	private void depthBreadthCalculation(Set<OWLClass> alreadyChecked, OWLClass owlClass, int currentDepth) {
 		totalDepth++; // Total Depth is counted per every level and every item
+		if (alreadyChecked.contains(owlClass)) {
+			numberOfCircles++;
+			return;
+		}
+		alreadyChecked.add(owlClass);
 
 		currentDepth++;
 		Collection<OWLClassExpression> subClassExpressions = EntitySearcher.getSubClasses(owlClass, ontology);
@@ -343,7 +352,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 		else {
 			for (OWLClass subclass : subclasses) {
 				totalDepth++;
-				this.depthBreadthCalculation(subclass, currentDepth);
+				this.depthBreadthCalculation(alreadyChecked, subclass, currentDepth);
 			}
 		}
 	}
