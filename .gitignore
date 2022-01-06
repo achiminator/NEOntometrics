@@ -15,3 +15,4 @@ Git-Extension/db.sqlite3
 Git-Extension/rest/__pycache__/
 Git-Extension/ontoMetricsAPI/__pycache__
 
+Git-Extension/rest/migrations

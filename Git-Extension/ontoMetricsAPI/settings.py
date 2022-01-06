@@ -128,23 +128,23 @@ WSGI_APPLICATION = 'ontoMetricsAPI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-#  }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'neontometrics',
-        'USER': 'neontometrics',
-        'PASSWORD': os.environ["db_password"],
-        # For the alignment of Docker intergration & windows development
-        'HOST': 'neontometrics_db' if os.name != "nt" else "localhost",
-        'PORT': 3306 if os.name != "nt" else 3316,
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
-}
+ }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'neontometrics',
+#         'USER': 'neontometrics',
+#         'PASSWORD': os.environ["db_password"],
+#         # For the alignment of Docker intergration & windows development
+#         'HOST': 'neontometrics_db' if os.name != "nt" else "localhost",
+#         'PORT': 3306 if os.name != "nt" else 3316,
+#     }
+# }
 
 
 # Password validation
@@ -179,7 +179,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
