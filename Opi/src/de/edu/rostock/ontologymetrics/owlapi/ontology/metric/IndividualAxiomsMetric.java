@@ -27,48 +27,48 @@ public class IndividualAxiomsMetric extends MetricCalculations implements Callab
     public void countClassAssertionAxiomsMetric() {
 	int classAssertionAxiomsCount = ontology.getAxiomCount(AxiomType.CLASS_ASSERTION,
 		OntologyUtility.ImportClosures(imports));
-	returnObject.put("Classassertionaxiomscount", classAssertionAxiomsCount);
+	returnObject.put("classAssertionaxioms", classAssertionAxiomsCount);
 
     }
 
     public void countObjectPropertyAssertionAxiomsMetric() {
 	int objectPropertyAssertionAxiomsCount = ontology
 		.getAxioms(AxiomType.OBJECT_PROPERTY_ASSERTION, OntologyUtility.ImportClosures(imports)).size();
-	returnObject.put("Objectpropertyassertionaxiomscount", objectPropertyAssertionAxiomsCount);
+	returnObject.put("objectPropertyAssertionaxioms", objectPropertyAssertionAxiomsCount);
 
     }
 
     public void countDataPropertyAssertionAxiomsMetric() {
 	int dataPropertyAssertionAxiomsCount = ontology.getAxiomCount(AxiomType.DATA_PROPERTY_ASSERTION,
 		OntologyUtility.ImportClosures(imports));
-	returnObject.put("Datapropertyassertionaxiomscount", dataPropertyAssertionAxiomsCount);
+	returnObject.put("dataPropertyAssertionAxioms", dataPropertyAssertionAxiomsCount);
 
     }
 
     public void countNegativeObjectPropertyAssertionAxiomsMetric() {
 	int negativeObjectPropertyAssertionAxiomsCount = ontology
 		.getAxiomCount(AxiomType.NEGATIVE_OBJECT_PROPERTY_ASSERTION, OntologyUtility.ImportClosures(imports));
-	returnObject.put("Negativeobjectpropertyassertionaxiomscount", negativeObjectPropertyAssertionAxiomsCount);
+	returnObject.put("negativeObjectPropertyAssertionAxioms", negativeObjectPropertyAssertionAxiomsCount);
 
     }
 
     public void countNegativeDataPropertyAssertionAxiomsMetric() {
 	int negativeDataPropertyAssertionAxiomsCount = ontology
 		.getAxiomCount(AxiomType.NEGATIVE_DATA_PROPERTY_ASSERTION, OntologyUtility.ImportClosures(imports));
-	returnObject.put("Negativedatapropertyassertionaxiomscount", negativeDataPropertyAssertionAxiomsCount);
+	returnObject.put("negativeDataPropertyAssertionAxioms", negativeDataPropertyAssertionAxiomsCount);
 
     }
 
     public void countSameIndividualsAxiomsMetric() {
 	int sameIndividualAxiomsCount = ontology.getAxiomCount(AxiomType.SAME_INDIVIDUAL,
 		OntologyUtility.ImportClosures(imports));
-	returnObject.put("Sameindividualsaxiomscount", sameIndividualAxiomsCount);
+	returnObject.put("sameIndividualsAxioms", sameIndividualAxiomsCount);
 
     }
 
     public void countDifferentIndividualsAxiomsMetric() {
 	int differentIndividualAxiomsCount = ontology.getAxiomCount(AxiomType.DIFFERENT_INDIVIDUALS,
 		OntologyUtility.ImportClosures(imports));
-	returnObject.put("Differentindividualsaxiomscount", differentIndividualAxiomsCount);
+	returnObject.put("differentIndividualsAxioms", differentIndividualAxiomsCount);
     }
 }

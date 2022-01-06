@@ -48,10 +48,10 @@ public class BaseMetric extends MetricCalculations implements Callable<BaseMetri
 	if (imports) {
 	    AxiomCount ax = new AxiomCount(ontology);
 	    ax.setImportsClosureUsed(true);
-	    this.returnObject.put("Axioms", ax.getValue());
+	    this.returnObject.put("axioms", ax.getValue());
 
 	} else
-	    this.returnObject.put("Axioms", new AxiomCount(ontology).getValue());
+	    this.returnObject.put("axioms", new AxiomCount(ontology).getValue());
     }
 
     /**
@@ -60,7 +60,7 @@ public class BaseMetric extends MetricCalculations implements Callable<BaseMetri
      * 
      */
     public void calculateCountClasses() {
-	this.returnObject.put("Classcount",
+	this.returnObject.put("classes",
 		ontology.getClassesInSignature(OntologyUtility.ImportClosures(imports)).size());
     }
 
@@ -76,7 +76,7 @@ public class BaseMetric extends MetricCalculations implements Callable<BaseMetri
 	    if (expression.isAnonymous())
 		anonClassCounter++;
 	}
-	this.returnObject.put("Anonymousclasses", anonClassCounter);
+	this.returnObject.put("anonymousClasses", anonClassCounter);
     }
 
     public void calculateClassesWith() {
@@ -134,13 +134,13 @@ public class BaseMetric extends MetricCalculations implements Callable<BaseMetri
 	}
 	this.returnObject.put("classesThatShareARelation", classesWithSharedRelations.size());
 
-	this.returnObject.put("Superclasses", superClassCount);
-	this.returnObject.put("Classeswithindividuals", classesWithIndividuals);
-	this.returnObject.put("Classeswithsubclassess", classesWithSubClasses);
-	this.returnObject.put("Classeswithmultipleinheritance", classesWithMultipleInheritance);
-	this.returnObject.put("Superclassesofclasseswithmultipleinheritance",
+	this.returnObject.put("superClasses", superClassCount);
+	this.returnObject.put("classesWithIndividuals", classesWithIndividuals);
+	this.returnObject.put("classesWithSubClassess", classesWithSubClasses);
+	this.returnObject.put("classesWithMultipleInheritance", classesWithMultipleInheritance);
+	this.returnObject.put("superClassesOfClassesWithMultipleInheritance",
 		superClassesOfCLassesWithMultipleInheritance);
-	this.returnObject.put("Maxsubclassesofaclass", maxSubClasses);
+	this.returnObject.put("maxSubclassesOfAClass", maxSubClasses);
     }
 
     /**
@@ -148,7 +148,7 @@ public class BaseMetric extends MetricCalculations implements Callable<BaseMetri
      * 
      */
     public void calculateCountObjectProperties() {
-	this.returnObject.put("Objectpropertycount",
+	this.returnObject.put("objectProperties",
 		ontology.getObjectPropertiesInSignature(OntologyUtility.ImportClosures(imports)).size());
     }
 
@@ -157,7 +157,7 @@ public class BaseMetric extends MetricCalculations implements Callable<BaseMetri
      * 
      */
     public void calculateCountDataProperties() {
-	this.returnObject.put("Datapropertycount",
+	this.returnObject.put("dataProperties",
 		ontology.getDataPropertiesInSignature(OntologyUtility.ImportClosures(imports)).size());
 
     }
@@ -169,7 +169,7 @@ public class BaseMetric extends MetricCalculations implements Callable<BaseMetri
 
 	LogicalAxiomCount lg = new LogicalAxiomCount(ontology);
 	lg.setImportsClosureUsed(imports);
-	this.returnObject.put("Logicalaxiomscount", lg.getValue());
+	this.returnObject.put("logicalAxioms", lg.getValue());
 
     }
 
@@ -178,18 +178,8 @@ public class BaseMetric extends MetricCalculations implements Callable<BaseMetri
      * 
      */
     public void calculateCountIndividuals() {
-	this.returnObject.put("Individualcount",
+	this.returnObject.put("individuals",
 		ontology.getIndividualsInSignature(OntologyUtility.ImportClosures(imports)).size());
-    }
-
-    /**
-     * Counts the overall number of properties
-     * 
-     * adds dataproperties + objectproperties
-     */
-    public void countProperties() {
-	returnObject.put("Propertiescount",
-		(int) returnObject.get("Datapropertycount") + (int) returnObject.get("Objectpropertycount"));
     }
 
     /**
