@@ -66,7 +66,7 @@ class GitHandler:
             if(item.path.endswith((".ttl", ".owl", ".rdf"))):
                 self.logger.debug("Analyse Ontology: "+item.path)
                 logging.debug("Analyse Ontology: "+item.path)
-                metrics.append(self.getOntologyMetrics(item.path, classMetrics, internalOntologyUrl, repositoryUrl, branch, repo))
+                metrics.append(self.getOntologyMetrics(item.path, classMetrics, internalOntologyUrl, repositoryUrl, branch, repo))#
         dbhandler = DBHandler()
         dbhandler.setWholeRepoAnalyzed(repository=repositoryUrl)
         rmtree(internalOntologyUrl, ignore_errors=True)
@@ -146,8 +146,6 @@ class GitHandler:
                             self.logger.warning("Ontology {0} not Readable ".format(obj.name))
                             returnObject["ReadingError"] = "Ontology not Readable"
                     metricsDict.append(returnObject)
-                 
-
         # Write Metrics in Database
         dbhandler = DBHandler()
         dbhandler.writeInDB(metricsDict, branch=branch, file=objectLocation, repo=remoteLocation)

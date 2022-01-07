@@ -23,8 +23,7 @@ class DBHandler:
             tmpDict["CommitterName"] = commitMetrics["CommitterName"]
             tmpDict["CommiterEmail"] = commitMetrics["CommiterEmail"]
             tmpDict["ReadingError"] = commitMetrics["ReadingError"]
-            tmpDict["Size"] = commitMetrics["Size"]
-            a = commitMetrics["ReadingError"]
+            tmpDict["Size"] = commitMetrics["Size"] 
             if not commitMetrics["ReadingError"]:
                 tmpDict.update(commitMetrics["OntologyMetrics"]["GeneralOntologyMetrics"])
             return tmpDict
@@ -49,7 +48,7 @@ class DBHandler:
             metricsModel.__dict__.update(modelDict)
             metricsModel.save()
             if "OntologyMetrics" in commitMetrics:
-                if "Classmetrics" in commitMetrics["OntologyMetrics"]["BaseMetrics"]:
+                if "Classmetrics" in commitMetrics["OntologyMetrics"]:
                     for classMetricsValues in commitMetrics["OntologyMetrics"]["BaseMetrics"]["Classmetrics"]:
                         classMetricsModel = ClassMetrics.objects.create(metric = metricsModel)
                         classMetricsModel.__dict__.update(classMetricsValues)
@@ -94,19 +93,7 @@ class DBHandler:
             for commitMetrics in metricsData.values():
                 data = OrderedDict()
                 # This ugly piece of code stores the first items in the dict (without db's foreign/primary keys )
-                data.update(OrderedDict(list(commitMetrics.items())[2:8]))
-                data.update({"OntologyMetrics":
-                {
-                "BaseMetrics":   OrderedDict(list(commitMetrics.items())[9:20]),
-                "ClassAxioms":   OrderedDict(list(commitMetrics.items())[20:25]),
-                "Objectpropertyaxioms":   OrderedDict(list(commitMetrics.items())[25:40]),
-                "Datapropertyaxioms":   OrderedDict(list(commitMetrics.items())[40:46]),
-                "Individualaxioms":   OrderedDict(list(commitMetrics.items())[46:54]),
-                "Annotationaxioms":   OrderedDict(list(commitMetrics.items())[54:59]),
-                "Schemametrics":   OrderedDict(list(commitMetrics.items())[59:69]),
-                "Knowledgebasemetrics":   OrderedDict(list(commitMetrics.items())[69:71]),
-                "Graphmetrics":   OrderedDict(list(commitMetrics.items())[71:86]),
-                }})                
+                data.update(OrderedDict(list(commitMetrics.items())))             
                 if(classMetrics):
                     classMetricList = []
                     for classMetric in ClassMetrics.objects.filter(metric=commitMetrics["id"]).values(): 

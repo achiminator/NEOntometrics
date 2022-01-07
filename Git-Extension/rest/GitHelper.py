@@ -70,7 +70,7 @@ class GitUrlParser:
         self.url = input
         urlParsed = urlparse(input)
         # Check if an URL to a ontology file is given
-        if "rdf" in input or "ttl" in input or "owl" in input:
+        if ".rdf" in input or ".ttl" in input or ".owl" in input:
             # Check if the URL directly accesses an link
             if "blob" in input:
                 self.repository = input.split("blob")[0]
