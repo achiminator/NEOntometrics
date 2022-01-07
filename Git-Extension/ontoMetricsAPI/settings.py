@@ -134,7 +134,7 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
  }
-# DATABASES = {
+# DATABASES =pip
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
 #         'NAME': 'neontometrics',

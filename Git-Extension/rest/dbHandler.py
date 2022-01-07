@@ -26,15 +26,7 @@ class DBHandler:
             tmpDict["Size"] = commitMetrics["Size"]
             a = commitMetrics["ReadingError"]
             if not commitMetrics["ReadingError"]:
-                tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Basemetrics"])
-                tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Classaxioms"])
-                tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Objectpropertyaxioms"])
-                tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Datapropertyaxioms"])
-                tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Individualaxioms"])
-                tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Annotationaxioms"])
-                tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Schemametrics"])
-                tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Knowledgebasemetrics"])
-                tmpDict.update(commitMetrics["OntologyMetrics"]["BaseMetrics"]["Graphmetrics"])
+                tmpDict.update(commitMetrics["OntologyMetrics"]["GeneralOntologyMetrics"])
             return tmpDict
     def writeInDB(self, metricsDict: dict, branch: str, file: str, repo: str, wholeRepo=False) -> Source:
         """Writes calculated metric-Values in Database

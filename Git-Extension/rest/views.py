@@ -74,7 +74,7 @@ class CalculateGitMetric(APIView):
             try:
                 metrics = opi.opiOntologyRequest(onto, True)
             except:
-                raise ParseError("No Valid Ontology is given in the URL")
+                raise ParseErrowr("No Valid Ontology is given in the URL")
             return(Response(metrics))
 
         # At first check if the value is already stored in the database
