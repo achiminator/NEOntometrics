@@ -47,6 +47,8 @@ class ConsistencyTests(TestCase):
             self.assertIn(item, opiContent["OntologyMetrics"]["GeneralOntologyMetrics"], "an Element that is in the ontology is not in the OPI-Reponse")
         for item in opiContent["OntologyMetrics"]["GeneralOntologyMetrics"]:
             self.assertIn(item, self.ontologyImplementationStatements, "an element that is in OPI ist not in the ontology")
+  
+        
 
 # class RESTTests(TestCase):
 #     puppetSize = 0

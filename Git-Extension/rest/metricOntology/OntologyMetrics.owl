@@ -212,12 +212,6 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
     
 
 
-    <!-- http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator -->
-
-    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
-    
-
-
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
@@ -241,34 +235,6 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
         </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Annotation on Classes</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>Non logical annotations on a class (e.g., rdfs:comment)</neontometrics:MetricDescription>
-    </owl:Class>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Annotation_On_Classes -->
-
-    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Annotation_On_Classes">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Annotation_Properties"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
-                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#classAnnotations"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-    </owl:Class>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Annotation_On_Individuals -->
-
-    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Annotation_On_Individuals">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Annotation_Properties"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
-                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#individualAnnotation"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -462,7 +428,6 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                 <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#classAssertionaxioms"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <neontometrics:MetricDefinition>The individuals asserted to a Class</neontometrics:MetricDefinition>
     </owl:Class>
     
 
@@ -518,21 +483,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
             </owl:Restriction>
         </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The number of Classes that have asserted individuals</neontometrics:MetricDefinition>
-        <rdfs:label>Classes with Instances</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Classes_With_More_Than_One_Ancestor -->
-
-    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Classes_With_More_Than_One_Ancestor">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Inheritance_Related_Metrics"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
-                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#classesWithMoreThanOneAncestor"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
+        <rdfs:label>Classes with Insances</rdfs:label>
     </owl:Class>
     
 
@@ -540,7 +491,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Classes_With_Multiple_Inheritance -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Classes_With_Multiple_Inheritance">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Inheritance_Related_Metrics"/>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Basic_Metrics"/>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
@@ -603,7 +554,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Number_Of_Paths"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Total_Depth"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -778,48 +729,6 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
     
 
 
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Direct_Ancestor_Classes -->
-
-    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Direct_Ancestor_Classes">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Inheritance_Related_Metrics"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
-                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#sumOfDirectAncestorClasses"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-    </owl:Class>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Direct_Ancestor_Of_Classes_With_More_Than_One_Direct_Ancestor -->
-
-    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Direct_Ancestor_Of_Classes_With_More_Than_One_Direct_Ancestor">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Inheritance_Related_Metrics"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
-                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#sumOfDirectAncestorsWithMoreThanOneDirectAncestor"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-    </owl:Class>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Direct_Ancestors_Of_Leaf_Classes -->
-
-    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Direct_Ancestors_Of_Leaf_Classes">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Inheritance_Related_Metrics"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
-                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#sumOfDirectAncestorOfLeafClasses"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-    </owl:Class>
-    
-
-
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Disjoint_Classes -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Disjoint_Classes">
@@ -932,7 +841,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Total_Breath"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -955,7 +864,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Total_Depth"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -1220,20 +1129,6 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
     
 
 
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Individuals -->
-
-    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Individuals">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Individuals_Metrics"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
-                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#individuals"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-    </owl:Class>
-    
-
-
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Individuals_Metrics -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Individuals_Metrics">
@@ -1247,14 +1142,6 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#InferredMetric">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#MetricClassifications"/>
         <neontometrics:MetricDescription>Metric that are based on reasoning capabilities</neontometrics:MetricDescription>
-    </owl:Class>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Inheritance_Related_Metrics -->
-
-    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Inheritance_Related_Metrics">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Graph_Metrics"/>
     </owl:Class>
     
 
@@ -1501,12 +1388,6 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Number_of_Connected_Graphs">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Graph_Metrics"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
-                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numberOfConnectedGraphs"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
         <neontometrics:MetricDescription>How many graphs are in an ontology (or to say it otherwise, how many &quot;islands&quot; are within an ontology)</neontometrics:MetricDescription>
     </owl:Class>
     
@@ -1564,16 +1445,16 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom>
                             <owl:Restriction>
                                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#sum"/>
                                 <owl:allValuesFrom>
                                     <owl:Class>
-                                        <owl:unionOf rdf:parseType="Collection">
+                                        <owl:intersectionOf rdf:parseType="Collection">
                                             <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Annotation_Assertions"/>
                                             <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Annotations_On_Ontology"/>
-                                        </owl:unionOf>
+                                        </owl:intersectionOf>
                                     </owl:Class>
                                 </owl:allValuesFrom>
                             </owl:Restriction>
@@ -1599,16 +1480,16 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom>
                             <owl:Restriction>
                                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#sum"/>
                                 <owl:allValuesFrom>
                                     <owl:Class>
-                                        <owl:unionOf rdf:parseType="Collection">
+                                        <owl:intersectionOf rdf:parseType="Collection">
                                             <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Data_Property_Domain_Declarations"/>
                                             <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Object_Property_Domain_Declarations"/>
-                                        </owl:unionOf>
+                                        </owl:intersectionOf>
                                     </owl:Class>
                                 </owl:allValuesFrom>
                             </owl:Restriction>
@@ -1731,7 +1612,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                         </owl:intersectionOf>
                     </owl:Class>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Super_Classes"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -1750,11 +1631,11 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#minuend"/>
-                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Super_Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#minuend"/>
-                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Super_Classes"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#subtrahend"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
@@ -1776,7 +1657,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Class_Assertions"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -2161,7 +2042,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Class_Declarations"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -2300,7 +2181,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Leaf_Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Number_Of_Paths"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -2456,7 +2337,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Leaf_Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Super_Classes_Of_Leaf_Classes"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -2492,7 +2373,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                         </owl:allValuesFrom>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Class_Declarations"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -2515,7 +2396,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom>
                             <owl:Restriction>
                                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#sum"/>
@@ -2560,7 +2441,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Super_Classes"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -2596,7 +2477,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                         </owl:allValuesFrom>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Class_Declarations"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -2670,7 +2551,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                         </owl:allValuesFrom>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom>
                             <owl:Restriction>
                                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#sum"/>
@@ -2706,7 +2587,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Class_Declarations"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom>
                             <owl:Restriction>
                                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#sum"/>
@@ -2946,7 +2827,7 @@ Different ontologies with subjective features and particular perspective on the 
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Super_Classes"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -2969,7 +2850,7 @@ Different ontologies with subjective features and particular perspective on the 
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes_With_Multiple_Inheritance"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Super_Classes_of_Classes_With_Mulitple_Inheritance"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -3100,7 +2981,7 @@ Different ontologies with subjective features and particular perspective on the 
                         </owl:allValuesFrom>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -3123,7 +3004,7 @@ Different ontologies with subjective features and particular perspective on the 
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Leaf_Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Number_Of_Paths"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -3211,7 +3092,7 @@ Different ontologies with subjective features and particular perspective on the 
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Anonymous_Classes"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -3234,7 +3115,7 @@ Different ontologies with subjective features and particular perspective on the 
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Total_Breath"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -3256,7 +3137,7 @@ Different ontologies with subjective features and particular perspective on the 
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Total_Depth"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -3278,7 +3159,7 @@ Different ontologies with subjective features and particular perspective on the 
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Class_Declarations"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes_With_SubClasses"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -3318,7 +3199,7 @@ Different ontologies with subjective features and particular perspective on the 
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Object_Property_Class_Assertion"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -3449,7 +3330,7 @@ understood, manipulated, and exploited.</neontometrics:MetricDescription>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Consistent_Classes"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -3471,7 +3352,7 @@ understood, manipulated, and exploited.</neontometrics:MetricDescription>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Total_Depth"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Number_Of_Classes_In_Cycles"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -3550,7 +3431,7 @@ understood, manipulated, and exploited.</neontometrics:MetricDescription>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Object_Property_Class_Assertion"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Inverse_Object_Properties"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -3740,7 +3621,7 @@ ordering criteria that are assumed as quality indicators</neontometrics:MetricDe
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Number_of_Connected_Graphs"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -3795,7 +3676,7 @@ m = n_m / n_s where n_m is the cardinality of M and n_s is the cardinalty of S( 
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Leaf_Classes"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -3817,7 +3698,7 @@ m = n_m / n_s where n_m is the cardinality of M and n_s is the cardinalty of S( 
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Class_Declarations"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -3839,7 +3720,7 @@ m = n_m / n_s where n_m is the cardinality of M and n_s is the cardinalty of S( 
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Class_Declarations"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes_That_Share_A_Relation"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -3943,7 +3824,7 @@ detail, with a rich formalization of conceptual choices and motivations</neontom
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Total_Depth"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Class_Declarations"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -3966,7 +3847,7 @@ detail, with a rich formalization of conceptual choices and motivations</neontom
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Total_Depth"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Leaf_Classes"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -4105,7 +3986,7 @@ detail, with a rich formalization of conceptual choices and motivations</neontom
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Property_Count"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -4130,7 +4011,7 @@ detail, with a rich formalization of conceptual choices and motivations</neontom
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Individuals_Metrics"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -4203,7 +4084,7 @@ F = Ci(I) / Ci`(I)</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Individuals_Metrics"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Instances_of_Class"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -4228,7 +4109,7 @@ Imp(Ci) = Inst(Ci)/KB(CI)</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Class_Declarations"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -4279,7 +4160,7 @@ Imp(Ci) = Inst(Ci)/KB(CI)</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Definied_Relationships_on_Class"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Used_Relationships_on_Class"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -4305,7 +4186,7 @@ RRc = (P(Ii, Ij), Ii eCi(I))/P(Ci, Cj)</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Definied_Relationships_on_Class"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Used_Relationships_on_Class"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -4330,7 +4211,7 @@ RU(Ci) = IREL(Ci) / CREL(Ci)</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes_With_Instances"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -4372,7 +4253,7 @@ RU(Ci) = IREL(Ci) / CREL(Ci)</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Class_Declarations"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -4416,7 +4297,7 @@ RU(Ci) = IREL(Ci) / CREL(Ci)</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Class_Declarations"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Object_Property_Class_Assertion"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -4442,7 +4323,7 @@ RD = P / (H +P)</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Object_Property_Instance_Assertion"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Relation_Assertion_on_Relation"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -4477,7 +4358,7 @@ Imp(Ri) = Inst(Ri) / KB (RI)</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Class_Declarations"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Object_Property_Class_Assertion"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -4504,7 +4385,7 @@ RR = P / (SC + P)</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Class_Declarations"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -4867,7 +4748,7 @@ SD = H/C</neontometrics:MetricDefinition>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
-                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#symmetricObjectPropertyAxioms"/>
+                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#transitiveObjectPropertyAxioms"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
@@ -4984,7 +4865,7 @@ SD = H/C</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Axioms"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -5007,7 +4888,7 @@ SD = H/C</neontometrics:MetricDefinition>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/achim/ontologies/2021/9/untitled-ontology-268#numerator"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Individuals_Metrics"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -5049,6 +4930,14 @@ SD = H/C</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#HiddenGCICount -->
 
     <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#HiddenGCICount">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Tangledness -->
+
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Tangledness">
         <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
     </owl:NamedIndividual>
     
@@ -5128,6 +5017,24 @@ SD = H/C</neontometrics:MetricDefinition>
     
 
 
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#attributeClassRatio -->
+
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#attributeClassRatio"/>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#attributeRichness -->
+
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#attributeRichness"/>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#averagePopulation -->
+
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#averagePopulation"/>
+    
+
+
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#axioms -->
 
     <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#axioms"/>
@@ -5157,6 +5064,18 @@ SD = H/C</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#classObjectProperties -->
 
     <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#classObjectProperties"/>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#classRelationRatio -->
+
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#classRelationRatio"/>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#classRichness -->
+
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#classRichness"/>
     
 
 
@@ -5286,6 +5205,12 @@ SD = H/C</neontometrics:MetricDefinition>
     
 
 
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#equivalenceRatio -->
+
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#equivalenceRatio"/>
+    
+
+
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#equivalentClassesAxioms -->
 
     <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#equivalentClassesAxioms">
@@ -5329,12 +5254,6 @@ SD = H/C</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#generalAnnotationAxioms -->
 
     <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#generalAnnotationAxioms"/>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#individualAnnotation -->
-
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#individualAnnotation"/>
     
 
 
@@ -5446,12 +5365,6 @@ SD = H/C</neontometrics:MetricDefinition>
     
 
 
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#numberOfConnectedGraphs -->
-
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#numberOfConnectedGraphs"/>
-    
-
-
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#objectProperties -->
 
     <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#objectProperties">
@@ -5502,11 +5415,25 @@ SD = H/C</neontometrics:MetricDefinition>
     
 
 
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#properties -->
+
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#properties">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
+    
+
+
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#reflexiveObjectPropertyAxioms -->
 
     <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#reflexiveObjectPropertyAxioms">
         <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
     </owl:NamedIndividual>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#relationshipRichness -->
+
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#relationshipRichness"/>
     
 
 
@@ -5597,12 +5524,6 @@ SD = H/C</neontometrics:MetricDefinition>
     <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#superClassesOfLeafClasses">
         <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
     </owl:NamedIndividual>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#symmetricObjectPropertyAxioms -->
-
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#symmetricObjectPropertyAxioms"/>
     
 
 
