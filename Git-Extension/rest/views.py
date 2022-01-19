@@ -1,3 +1,4 @@
+from rest.metricOntologyHandler import OntologyHandler
 from rest.models import ClassMetrics
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest.git import GitHandler
@@ -29,6 +30,12 @@ class CalculateMetric(APIView):
         url = request.GET.get("url")
         xmlDict = opi.opiUrlRequest(url)
         return(Response(xmlDict))
+
+class MetricExplorer(APIView):
+    def get(self, request, format=None):
+        ontology = OntologyHandler();
+        explorer = ontology.getMetricExplorer()
+        return(Response(explorer))
 
 
 class CalculateGitMetric(APIView):

@@ -370,15 +370,6 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
     
 
 
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Automatic -->
-
-    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Automatic">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#CalcuationMethodology"/>
-        <owl:disjointWith rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Manual"/>
-    </owl:Class>
-    
-
-
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Axioms -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Axioms">
@@ -406,14 +397,6 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Breath_Metrics">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Graph_Metrics"/>
         <neontometrics:MetricDescription>Metrics concerned with the width of the Graph</neontometrics:MetricDescription>
-    </owl:Class>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#CalcuationMethodology -->
-
-    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#CalcuationMethodology">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#MetricClassifications"/>
     </owl:Class>
     
 
@@ -775,6 +758,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Elemental_Metrics">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Metrics"/>
+        <neontometrics:MetricDescription>The elemental Metrics are the underlying measurements on which the quality frameeworks build on.</neontometrics:MetricDescription>
     </owl:Class>
     
 
@@ -1243,14 +1227,6 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
     
 
 
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Manual -->
-
-    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Manual">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#CalcuationMethodology"/>
-    </owl:Class>
-    
-
-
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Maximum_Breath -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Maximum_Breath">
@@ -1428,7 +1404,6 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Frameworks"/>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Tools"/>
         <rdfs:seeAlso rdf:resource="http://sele.inf.um.es/ontology-metrics/index.html"/>
     </owl:Class>
     
@@ -4487,16 +4462,6 @@ SD = H/C</neontometrics:MetricDefinition>
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#SemoticSuite">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Frameworks"/>
         <rdfs:seeAlso>Burton-Jones, Andrew; Storey, Veda C.; Sugumaran, Vijayan; Ahluwalia, Punit (2005): A semiotic metrics suite for assessing the quality of ontologies. In Data &amp; Knowledge Engineering 55 (1), pp. 84–102. DOI: 10.1016/j.datak.2004.11.010.</rdfs:seeAlso>
-    </owl:Class>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#SemoticSuite_Accuracy -->
-
-    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#SemoticSuite_Accuracy">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Manual"/>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#SemoticSuite_Pragmatic_Quality"/>
-        <neontometrics:MetricDefinition>Let NS be the number of statements in ontology. Let F be the number of false statements. PU = F/NS. Requires evaluation by domain expert and/or truth maintenance system</neontometrics:MetricDefinition>
     </owl:Class>
     
 
