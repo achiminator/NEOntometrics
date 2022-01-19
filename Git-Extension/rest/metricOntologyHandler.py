@@ -1,4 +1,7 @@
-import rdflib, os, re
+from copy import copy, deepcopy
+import rdflib, os, re, treelib
+#import rest.models
+#from rest.views import MetricExplorer
 #from rest.models import Source, Metrics
 
 class OntologyHandler:
@@ -52,7 +55,16 @@ class OntologyHandler:
             ontologyImplementedMetrics.append(self.resURI2str(row["implementedAs"]))
         return ontologyImplementedMetrics
 
-    def getMetricDict(self):
+    def getMetricDict(self)->list:
+        """Build a list of available Metrics (in the form of a dict) to enable the future calculation of these metrics.
+
+        Returns:
+            list: Metric Dictionary. 
+        """
+
+        if not(hasattr(self, "metricDict")): # As the method is pretty computational expensive, first check whether the data is already available.
+            return(self.metricDict)
+
         with open("rest/metricOntology/metricQuery.sparql", "r") as f:
             query = f.read()
         qres = self.rdf.query(query)
@@ -60,12 +72,10 @@ class OntologyHandler:
         calculationDict = {}
         previousitem = None
         for line in qres:
-            if(str(line["metric"]) == "http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_PROnto"):
-                print("BAAAAAMMM!")
             if previousitem == None and not calculationDict.get("directlyUsesMetric"):
                 previousitem = line
             elif previousitem["metric"] != line["metric"]: 
-                print(self.buildLambdaFunctionFromOntology(calculationDict))
+                print(self.__buildLambdaFunctionFromOntology(calculationDict))
                 metricDict.append({
                     "framework": self.resURI2str(previousitem["framework"]),
                     "metricCategory": self.resURI2str(previousitem["metricCategory"]),
@@ -73,7 +83,7 @@ class OntologyHandler:
                     "metricDescription": str(previousitem["description"]),
                     "metricDefinition": str(previousitem["definition"]),
                     "metricInterpretation": str(previousitem["interpretation"]),
-                    "metricCalculation": self.buildLambdaFunctionFromOntology(calculationDict)
+                    "metricCalculation": self.__buildLambdaFunctionFromOntology(calculationDict)
                 })
                 calculationDict = {}
             if(line["property"] != None and line["value"] != None):
@@ -101,6 +111,7 @@ class OntologyHandler:
                         calculationDict.get(self.resURI2str(line["property"])).append(self.resURI2str(line["value"]))
 
             previousitem = line
+            tree
         metricDict.append({
             "framework": previousitem["framework"],
             "metricCategory": previousitem["metricCategory"],
@@ -110,7 +121,24 @@ class OntologyHandler:
             "metricInterpretation": previousitem["interpretation"],
             "metricCalculation": calculationDict
         })
-    def buildLambdaFunctionFromOntology(self, calculationDict: dict)->str:
+        
+        self.metricDict = metricDict
+        return metricDict
+
+    def __buildLambdaFunctionFromOntology(self, calculationDict: dict)->str:
+        """Takes the preliminary Metric calculation that is calculated in the calling method getMetricDict and 
+        builds a ready to use function for the actual calculation of these metrics based on the stored metric data
+
+        Args:
+            calculationDict (dict): Preliminary structure "calculationDict" of the getMetricDict Method
+
+        Raises:
+            IndexError: For some elements, the ontology shall not contain more than one element (e.g., directlyUsesMetric). If 
+            nevertheless, such problem occures, this method raises an error.
+
+        Returns:
+            str: A ready to use calculation function
+        """
         calculationParts = []
         calculationConnectedBy = ""
         returnString = ""       
@@ -119,7 +147,7 @@ class OntologyHandler:
         if calculationDict.get("numerator") and calculationDict.get("divisor"):
             calculationConnectedBy = "/"
             if isinstance(calculationDict["numerator"], dict):
-                calculationParts.insert(0, self.buildLambdaFunctionFromOntology(calculationDict["numerator"]))
+                calculationParts.insert(0, self.__buildLambdaFunctionFromOntology(calculationDict["numerator"]))
             else:
                 # This check here validates that the field numerator is really just used once (otherwise, the error below is thrown.)
                 # While complex decompositions of these values are still possible (e.g., the sum of two elements in the numerator),
@@ -129,7 +157,7 @@ class OntologyHandler:
                 else:
                     calculationParts.insert(0, calculationDict["numerator"][0])
             if isinstance(calculationDict["divisor"], dict):
-                calculationParts.insert(1, self.buildLambdaFunctionFromOntology(calculationDict["divisor"]))
+                calculationParts.insert(1, self.__buildLambdaFunctionFromOntology(calculationDict["divisor"]))
             else:
                 if len(calculationDict["divisor"])>1:
                     raise IndexError("The divisor of a Metric contains more than one element (More than expected) and is not declared so")
@@ -139,14 +167,14 @@ class OntologyHandler:
         elif calculationDict.get("minuend") and calculationDict.get("subtrahend"):
             calculationConnectedBy = "-"
             if isinstance(calculationDict["minuend"], dict):
-                calculationParts.insert(0,  self.buildLambdaFunctionFromOntology(calculationDict["minuend"]))
+                calculationParts.insert(0,  self.__buildLambdaFunctionFromOntology(calculationDict["minuend"]))
             else:
                 if len(calculationDict["minuend"]) >1:
                     raise IndexError("The minuend of a Metric contains more than one element (More than expected) and is not declared so")
                 else:
                     calculationParts.insert(0, calculationDict["minuend"][0])
             if isinstance(calculationDict["subtrahend"], dict):
-                calculationParts.insert(1, self.buildLambdaFunctionFromOntology(calculationDict["subtrahend"]))
+                calculationParts.insert(1, self.__buildLambdaFunctionFromOntology(calculationDict["subtrahend"]))
             else:
                 if len(calculationDict["subtrahend"]) >1:
                     raise IndexError("The subtrahend of a Metric contains more than one element (More than expected) and is not declared so")
@@ -172,8 +200,34 @@ class OntologyHandler:
         elif(calculationConnectedBy in ["/", "-"]):
             returnString = "(" + str(calculationParts[0]) + ") "+ str(calculationConnectedBy) + " (" + str(calculationParts[1]) + ")"
         return returnString
+
+    def getMetricExplorer(self)->list:
+        
+        if (not(hasattr(self, "metricDict"))): # As the method is pretty computational expensive, first check whether the data is already available.
+            pass
+        with open("rest/metricOntology/metricExplorerQuery.sparql", "r") as f:
+            query = f.read()
+        qres = self.rdf.query(query)
+        tree = treelib.Tree()
+        
+        
+        metricExplorerData = []
+        tree.create_node(identifier="thing")
+        for metricItem in qres:
+            if(tree.get_node(self.resURI2str(metricItem["item"]))==None):
+                nodeData = {
+                    "item": self.resURI2str(metricItem["item"]),
+                    "description": metricItem["description"],
+                    "definition": metricItem["definition"],
+                    "interpretation": metricItem["interpretation"],
                 
-    #     if(calculation == "")
-oh = OntologyHandler()
-# print(oh.getImplementedMetrics())
-oh.getMetricDict()
+                }                
+                tree.create_node(identifier=self.resURI2str(metricItem["item"]), parent="thing", data=nodeData)
+        tree.show()
+        for metricItem in qres:
+            if(isinstance(metricItem["superClass"], rdflib.URIRef) and tree.contains(self.resURI2str(metricItem["superClass"]))):
+                tree.move_node(self.resURI2str(metricItem["item"]),self.resURI2str(metricItem["superClass"]))
+        
+        tree.show()
+        
+        return tree.to_dict(with_data=True)
