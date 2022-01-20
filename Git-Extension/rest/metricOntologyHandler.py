@@ -8,6 +8,7 @@ class OntologyHandler:
     def __init__(self):
         self.rdf = rdflib.Graph(store="OxMemory")
         self.rdf.parse(location="rest/metricOntology/OntologyMetrics.owl", format="application/rdf+xml")
+        self.getMetricExplorer()
     @staticmethod
     def resURI2str(uriResult: str) -> str:
         """Extracts the clss names from the URI-Representation of the Sparql-Results
@@ -62,7 +63,7 @@ class OntologyHandler:
             list: Metric Dictionary. 
         """
 
-        if not(hasattr(self, "metricDict")): # As the method is pretty computational expensive, first check whether the data is already available.
+        if hasattr(self, "metricDict"): # As the method is pretty computational expensive, first check whether the data is already available.
             return(self.metricDict)
 
         with open("rest/metricOntology/metricQuery.sparql", "r") as f:
@@ -111,7 +112,7 @@ class OntologyHandler:
                         calculationDict.get(self.resURI2str(line["property"])).append(self.resURI2str(line["value"]))
 
             previousitem = line
-            tree
+            
         metricDict.append({
             "framework": previousitem["framework"],
             "metricCategory": previousitem["metricCategory"],
@@ -202,9 +203,16 @@ class OntologyHandler:
         return returnString
 
     def getMetricExplorer(self)->list:
+        """Fetches all data to display the metric explorer in the frontend.
+
+        Returns:
+            list: JSON-Tree with the relevant information.
+        """
         
         if (not(hasattr(self, "metricDict"))): # As the method is pretty computational expensive, first check whether the data is already available.
-            pass
+            self.metricDict = self.getMetricDict()
+        if hasattr(self, "tree"):
+            return self.tree.to_dict(with_data=True)
         with open("rest/metricOntology/metricExplorerQuery.sparql", "r") as f:
             query = f.read()
         qres = self.rdf.query(query)
@@ -214,20 +222,29 @@ class OntologyHandler:
         metricExplorerData = []
         tree.create_node(identifier="thing")
         for metricItem in qres:
+            implemented = False
             if(tree.get_node(self.resURI2str(metricItem["item"]))==None):
                 nodeData = {
                     "item": self.resURI2str(metricItem["item"]),
                     "description": metricItem["description"],
                     "definition": metricItem["definition"],
                     "interpretation": metricItem["interpretation"],
-                
                 }                
+                for metricDictEntry in self.metricDict:
+                    if(self.resURI2str(metricItem["item"]) == metricDictEntry["metric"]):
+                        implemented = True
+                        calculation = metricDictEntry["metricCalculation"]
+                        break
+                if(implemented == True):
+                    nodeData.update({
+                        "calculation": calculation
+                    })
                 tree.create_node(identifier=self.resURI2str(metricItem["item"]), parent="thing", data=nodeData)
         tree.show()
         for metricItem in qres:
             if(isinstance(metricItem["superClass"], rdflib.URIRef) and tree.contains(self.resURI2str(metricItem["superClass"]))):
                 tree.move_node(self.resURI2str(metricItem["item"]),self.resURI2str(metricItem["superClass"]))
-        
-        tree.show()
+        self.tree = tree
+
         
         return tree.to_dict(with_data=True)

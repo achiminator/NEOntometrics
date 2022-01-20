@@ -32,9 +32,9 @@ class CalculateMetric(APIView):
         return(Response(xmlDict))
 
 class MetricExplorer(APIView):
+    ontology = OntologyHandler()
     def get(self, request, format=None):
-        ontology = OntologyHandler();
-        explorer = ontology.getMetricExplorer()
+        explorer = self.ontology.getMetricExplorer()
         return(Response(explorer))
 
 
