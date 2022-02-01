@@ -28,6 +28,7 @@ import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.GraphMetric;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.IndividualAxiomsMetric;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.ObjectPropertyAxiomsMetric;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.basemetric.graphbasemetric.GraphParser;
+import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 /**
  * This class represents the implementation of the interface
@@ -104,16 +105,24 @@ public class OntologyMetricsImpl {
     /*
      * metrics
      */
-    public Map<String, Object> getAllMetrics() throws InterruptedException, ExecutionException {
+    public Map<String, Object> getAllMetrics(boolean reasonerCalculationSelected) throws InterruptedException, ExecutionException {
 
-
+	Map<String, Object> resultSet;
 	Configuration config = new Configuration();
 	config.ignoreUnsupportedDatatypes = true;
+	if(reasonerCalculationSelected) {
 	OWLReasoner reasoner = new Reasoner(config, ontology);
 	InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner);
-	//iog.fillOntology(new OWLDataFactoryImpl(),  ontology);&
-	Map<String, Object> resultSet = execMetricCalculation(true);
+	iog.fillOntology(new OWLDataFactoryImpl(),  ontology);
+	resultSet = execMetricCalculation(true);
 	resultSet.put("isConsistent", reasoner.isConsistent());
+	}
+	else {
+	    resultSet = execMetricCalculation(true);
+		resultSet.put("isConsistent", "Not Calculated");
+	}
+	
+	
 	Map<String, Object> wrapResult = new LinkedHashMap<String, Object>();
 	wrapResult.put("GeneralOntologyMetrics", resultSet);
 	return wrapResult;

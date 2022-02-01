@@ -40,7 +40,7 @@ public class ApiController {
     @GET
     @Produces(MediaType.APPLICATION_XML)
     public Response getBaseMetricFromURL(@DefaultValue("http://127.0.0.1") @QueryParam("url") URL urlInput,
-	     @DefaultValue("false") @HeaderParam("classmetrics") boolean classMetrics)
+	     @DefaultValue("false") @HeaderParam("classmetrics") boolean classMetrics, @DefaultValue("false") @HeaderParam("reasoner") boolean reasoner)
 	    throws Exception {
 	if (urlInput.sameFile(new URL("http://127.0.0.1")))
 	    throw new WrongURIException();
@@ -52,13 +52,13 @@ public class ApiController {
 	OWLOntology ontology = manager.loadOntologyFromOntologyDocument(url);
 	if (ontology == null)
 	    throw new WrongURIException();
-	return calculateMetrics(classMetrics, ontology);
+	return calculateMetrics(classMetrics,reasoner, ontology);
     }
 
     @POST
     @Produces(MediaType.APPLICATION_XML)
     public Response getBaseMetricFromOntology(String request, 
-	    @DefaultValue("false") @HeaderParam("classmetrics") boolean classMetrics) throws Exception {
+	    @DefaultValue("false") @HeaderParam("classmetrics") boolean classMetrics, @DefaultValue("false") @HeaderParam("reasoner") boolean reasoner) throws Exception {
 	//OntologyMetricManagerImpl manager = new OntologyMetricManagerImpl();
 	
 	myLogger.info("Get-from-Post");
@@ -76,7 +76,7 @@ public class ApiController {
 	myLogger.debug("Ontology loaded");
 	OntologyUtility.setTimestamp();
 
-	return calculateMetrics(classMetrics, ontology);
+	return calculateMetrics(classMetrics, reasoner, ontology);
     }
 
     @SuppressWarnings("unchecked")
@@ -117,12 +117,12 @@ public class ApiController {
 	return xmlBuilder;
     }
 
-    protected Response calculateMetrics(boolean classMetrics, OWLOntology ontology)
+    protected Response calculateMetrics(boolean classMetrics, boolean reasoner, OWLOntology ontology)
 	    throws Exception, ImpossibleModificationException {
 
 	OntologyMetricsImpl ontoMetricsEnginge = new OntologyMetricsImpl(ontology);
 	Directives xmlDirectives = new Directives().add("OntologyMetrics");
-	Map<String, Object> map = ontoMetricsEnginge.getAllMetrics();
+	Map<String, Object> map = ontoMetricsEnginge.getAllMetrics(reasoner);
 	xmlDirectives.append(map2XML(map));
 
 	if (classMetrics)
