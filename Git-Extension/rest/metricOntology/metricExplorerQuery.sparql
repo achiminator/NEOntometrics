@@ -3,15 +3,24 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX metric: <http://neontometrics.informatik.informatik.uni-rostock.de#>
-SELECT DISTINCT ?item ?description ?definition ?interpretation ?implementedAs ?superClass
+SELECT DISTINCT ?itemName ?description ?definition ?interpretation ?implementedAs ?superClass ?seeAlso ?implementationName
 WHERE {
 
-    ?item rdfs:subClassOf* metric:Quality_Frameworks .
+    {
+        ?itemName rdfs:subClassOf* metric:Quality_Frameworks .
+    }
+    UNION
+    {
+        ?itemName rdfs:subClassOf* metric:Elemental_Metrics .
+    }
     
-    OPTIONAL {?item rdfs:subClassOf ?superClass }
-    OPTIONAL { ?item metric:MetricDescription ?description } .
-    OPTIONAL { ?item metric:MetricDefinition ?definition } . 
-    OPTIONAL { ?item metric:metricInterpretation ?interpretation } .
-    OPTIONAL { ?item rdfs:seeAlso ?seeAlso } .
+    OPTIONAL {?itemName rdfs:subClassOf ?superClass }
+    OPTIONAL { ?itemName metric:MetricDescription ?description } .
+    OPTIONAL { ?itemName metric:MetricDefinition ?definition } . 
+    OPTIONAL { ?itemName rdfs:subClassOf _:v0 .
+    _:v0 owl:onProperty metric:implementedBy ;
+                    owl:hasValue ?implementationName }
+    OPTIONAL { ?itemName metric:metricInterpretation ?interpretation } .
+    OPTIONAL { ?itemName rdfs:seeAlso ?seeAlso }
     
 }
