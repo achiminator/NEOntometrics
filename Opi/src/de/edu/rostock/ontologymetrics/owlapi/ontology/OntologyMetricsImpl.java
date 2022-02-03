@@ -115,11 +115,11 @@ public class OntologyMetricsImpl {
 	InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner);
 	iog.fillOntology(new OWLDataFactoryImpl(),  ontology);
 	resultSet = execMetricCalculation(true);
-	resultSet.put("isConsistent", reasoner.isConsistent());
+	resultSet.put("consistencyCheckSuccessful", reasoner.isConsistent());
 	}
 	else {
 	    resultSet = execMetricCalculation(true);
-		resultSet.put("isConsistent", "Not Calculated");
+		resultSet.put("consistencyCheckSuccessful", "False");
 	}
 	
 	

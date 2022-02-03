@@ -13,10 +13,11 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
 
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLSubClassOfAxiomSetShortCut;
 import org.semanticweb.owlapi.search.EntitySearcher;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
 import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.basemetric.graphbasemetric.GraphParser;
@@ -26,8 +27,6 @@ import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 public class GraphMetric extends MetricCalculations implements Callable<GraphMetric> {
 
     private static final String False = null;
-    private GraphParser parser;
-    private GraphParser parserI;
     private boolean withImports;
 
     private int sumOfPathToLeafClasses = 0;
@@ -40,9 +39,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 
     public GraphMetric call() {
 
-	absoluteSiblingCardinalityMetric();
 
-	tanglednessMetric();
 	calculateNumberOfPaths();
 	calculateBreathMetrics();
 	return this;
@@ -50,19 +47,6 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 
     public GraphMetric(OWLOntology ontology, GraphParser parser, GraphParser parserI, boolean withImports) {
 	super(ontology, withImports);
-	this.parser = parser;
-	this.parserI = parserI;
-
-    }
-
-// TODO: Remove 
-    private void absoluteSiblingCardinalityMetric() {
-	int absoluteSibblingCardinality;
-	if (withImports)
-	    absoluteSibblingCardinality = parserI.getSibs().size();
-	else
-	    absoluteSibblingCardinality = parser.getSibs().size();
-	returnObject.put("absoluteSiblingCardinality", absoluteSibblingCardinality);
 
     }
 
@@ -149,15 +133,28 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 
 	// Root classes are at the very top of the Ontology
 	Set<OWLClass> rootClasses = new TreeSet<OWLClass>();
-
+	
+	//A Map that links the object proeprties to the connected classes.
+	Map<IRI, List<OWLClass>> objectPropertyToClassMapping = new LinkedHashMap<IRI, List<OWLClass>>();
 	Set<OWLClass> owlClasses = ontology.getClassesInSignature(OntologyUtility.ImportClosures(withImports));
-
+	
+	int maxSuperClassOfAClass = 0;
+	int superClassCount = 0;
+	int classesWithIndividuals = 0;
+	int maxSubClassOfAClass = 0;
+	
+	
 	// Iterate over all classes
 	for (OWLClass owlClass : owlClasses) {
-
+	    
 	    // If a thing does not have superclasses, then it is a root class
 	    Collection<OWLClass> superClassesofOwlClass = OntologyUtility
 		    .classExpr2classes(EntitySearcher.getSuperClasses(owlClass, ontology));
+	    superClassCount += superClassesofOwlClass.size();
+	    if(superClassesofOwlClass.size() > maxSuperClassOfAClass)
+		maxSuperClassOfAClass = superClassesofOwlClass.size();
+	    if(owlClass.getIndividualsInSignature().size() > 0)
+		classesWithIndividuals++;
 	    if ((superClassesofOwlClass.size() < 1 // add a class as a root class if it does not have any superclasses
 		    || superClassesofOwlClass.contains(new OWLDataFactoryImpl().getOWLThing())) // or if it is a
 												// subclass
@@ -166,6 +163,10 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 		rootClasses.add(owlClass);
 	    Collection<OWLClassExpression> subClassExpr = EntitySearcher.getSubClasses(owlClass, ontology);
 	    Collection<OWLClass> subClasses = OntologyUtility.classExpr2classes(subClassExpr);
+	    if(subClasses.size() > maxSubClassOfAClass) 
+		maxSubClassOfAClass = subClasses.size();
+		
+	    
 	    if (subClasses.size() < 1) {
 		// If a classes does not have any subclasses, it is a leaf class. As owl-Thing
 		// is always on top, we do not count it as a root class.
@@ -187,7 +188,37 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 		    // asserted knowledge. Built-in classes like owl:Thing are disregarded
 		    upperClasses.add(owlClass);
 	    }
+	    
+	    // This part is responsible for finding how much classes share relations with
+	    // each other. Relations are mostly modeled using anonymous superclasses. An
+	    // example is the modeling of relations in Protege. There, you mostly create
+	    // relations with the "SubClassOf" (thus superclasses) field. The relations in
+	    // these anonomous superclasses are crawled by the next entry
+	    Collection<OWLClassExpression> superClassExpr = EntitySearcher.getSuperClasses(owlClass, ontology);
+	    Collection<OWLObjectProperty> oProperties = OntologyUtility.classExpr2ObjectProperties(superClassExpr);
+	    // At first we inverse the direction "classes HAVE relations" to the opposite
+	    // "relations HAVE classes"
+	    for (OWLObjectProperty oProperty : oProperties) {
+		if (!objectPropertyToClassMapping.containsKey(oProperty.getIRI()))
+		    objectPropertyToClassMapping.put(oProperty.getIRI(), new ArrayList<OWLClass>());
+		objectPropertyToClassMapping.get(oProperty.getIRI()).add(owlClass);
+	    }
+	    
+	    
+	    
 	}
+	// ** First finish the "classes with shared Relation calculation**
+	// This "Set" element will later on contain all classes that share a relation
+	// with other elements.
+	Set<OWLClass> classesWithSharedRelations = new HashSet<OWLClass>();
+	for (List<OWLClass> classesWithGivenRelation : objectPropertyToClassMapping.values()) {
+	    // If a relation is used in more than two classes, these classes share this
+	    // relation
+	    if (classesWithGivenRelation.size() >= 2)
+		classesWithSharedRelations.addAll(classesWithGivenRelation);
+	}
+	this.returnObject.put("classesThatShareARelation", classesWithSharedRelations.size());
+	
 
 	// Afterwards, do the Path calculation algorithm starting from every root class
 	// But before doing so, initialize the necessary variable for calculating
@@ -217,17 +248,19 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	returnObject.put("pathsToLeafClasses", sumOfPathToLeafClasses);
 	returnObject.put("absoluteDepth", totalDepth);
 	returnObject.put("absoluteLeafCardinality", leafClasses.size());
-	returnObject.put("absoluteRootCardinality", upperClasses.size());
+	returnObject.put("classesWithSubClasses", upperClasses.size());
 	Set<OWLClass> classesWithMoreThanOneDirectAncestor = getClassesWithAncestors(owlClasses, 2);
-	returnObject.put("classesWithMoreThanOneAncestor", classesWithMoreThanOneDirectAncestor.size());
-	returnObject.put("sumOfDirectAncestorOfLeafClasses", getAncestorClasses(leafClasses, 1).size());
-	returnObject.put("sumOfDirectAncestorClasses", getAncestorClasses(owlClasses, 1).size());
-	returnObject.put("sumOfDirectAncestorsWithMoreThanOneDirectAncestor",
+	returnObject.put("classesWithMultipleInheritance", classesWithMoreThanOneDirectAncestor.size());
+	returnObject.put("superClassesOfClassesWithMultipleInheritance",
 		getAncestorClasses(classesWithMoreThanOneDirectAncestor, 1).size());
 	returnObject.put("maximalDepth", maxDepth);
 	returnObject.put("minimumDepth", minDepth);
 	returnObject.put("maxFanoutnessOfLeafClasses", maxFanOutnessOfLeafClass);
 	returnObject.put("rootClasses", rootClasses.size());
+	returnObject.put("superClasses", superClassCount);
+	returnObject.put("maxSuperClassesOfAClass", maxSuperClassOfAClass);
+	returnObject.put("maxSubClassesOfAClass", maxSubClassOfAClass);
+	returnObject.put("classesWithIndividuals", classesWithIndividuals);
 
     }
 
@@ -381,18 +414,5 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	returnObject.put("minimumBreath", minimumBreath);
     }
 
-//TODO: Switch to class without parser 
-    public void tanglednessMetric() {
-	double tangledgness = 0.0;
-	if (withImports)
-	    tangledgness = OntologyUtility
-		    .roundByGlobNK((double) parserI.getTangledClasses().size() / (double) parserI.getNoClasses());
-	else
-	    tangledgness = OntologyUtility
-		    .roundByGlobNK((double) parser.getTangledClasses().size() / (double) parser.getNoClasses());
-
-	returnObject.put("Tangledness", tangledgness);
-
-    }
 
 }

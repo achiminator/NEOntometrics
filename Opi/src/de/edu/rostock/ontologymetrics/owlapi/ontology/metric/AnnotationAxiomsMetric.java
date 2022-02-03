@@ -42,7 +42,7 @@ public class AnnotationAxiomsMetric extends MetricCalculations implements Callab
      */
     private void countAnnotationAxiomsMetric() {
 	int annotationAxiomsCount = ontology.getAnnotations().size();
-	returnObject.put("Annotationaxiomscount", annotationAxiomsCount);
+	returnObject.put("generalAnnotationAxioms", annotationAxiomsCount);
     }
 
     /**

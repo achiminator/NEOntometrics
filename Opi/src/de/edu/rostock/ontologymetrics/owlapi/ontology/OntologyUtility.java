@@ -342,7 +342,8 @@ public class OntologyUtility {
     public static Collection<OWLClass> classExpr2classes(Collection<OWLClassExpression> classExpressions) {
 	Set<OWLClass> classes = new TreeSet<OWLClass>();
 	for (OWLClassExpression classExpression : classExpressions) {
-	    classes.addAll(classExpression.getClassesInSignature());
+	    if(classExpression instanceof OWLClass)
+		classes.addAll(classExpression.getClassesInSignature());
 	}
 	return classes;
     }
