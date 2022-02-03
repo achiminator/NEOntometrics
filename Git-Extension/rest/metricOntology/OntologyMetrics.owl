@@ -4621,6 +4621,21 @@ SD = H/C</neontometrics:MetricDefinition>
     
 
 
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Reasoner_Active -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Reasoner_Active">
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Special_Metrics"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
+                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#reasonerActive"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <neontometrics:MetricDefinition>States whether the reasoner was active while calculating this ontology.</neontometrics:MetricDefinition>
+    </owl:Class>
+    
+
+
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Reflexive_Object_Properties -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Reflexive_Object_Properties">
@@ -5160,14 +5175,6 @@ SD = H/C</neontometrics:MetricDefinition>
     
 
 
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Tangledness -->
-
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Tangledness">
-        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
-    </owl:NamedIndividual>
-    
-
-
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#absoluteBreadth -->
 
     <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#absoluteBreadth">
@@ -5194,19 +5201,25 @@ SD = H/C</neontometrics:MetricDefinition>
 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#annotationAssertionsAxioms -->
 
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#annotationAssertionsAxioms"/>
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#annotationAssertionsAxioms">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
     
 
 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#annotationPropertyDomainAxioms -->
 
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#annotationPropertyDomainAxioms"/>
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#annotationPropertyDomainAxioms">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
     
 
 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#annotationPropertyRangeaxioms -->
 
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#annotationPropertyRangeaxioms"/>
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#annotationPropertyRangeaxioms">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
     
 
 
@@ -5226,39 +5239,27 @@ SD = H/C</neontometrics:MetricDefinition>
     
 
 
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#attributeClassRatio -->
-
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#attributeClassRatio"/>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#attributeRichness -->
-
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#attributeRichness"/>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#averagePopulation -->
-
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#averagePopulation"/>
-    
-
-
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#axioms -->
 
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#axioms"/>
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#axioms">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
     
 
 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#circleHierachies -->
 
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#circleHierachies"/>
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#circleHierachies">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
     
 
 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#classAnnotations -->
 
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#classAnnotations"/>
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#classAnnotations">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
     
 
 
@@ -5267,24 +5268,6 @@ SD = H/C</neontometrics:MetricDefinition>
     <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#classAssertionaxioms">
         <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
     </owl:NamedIndividual>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#classObjectProperties -->
-
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#classObjectProperties"/>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#classRelationRatio -->
-
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#classRelationRatio"/>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#classRichness -->
-
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#classRichness"/>
     
 
 
@@ -5322,7 +5305,9 @@ SD = H/C</neontometrics:MetricDefinition>
 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#classesWithObjectProperties -->
 
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#classesWithObjectProperties"/>
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#classesWithObjectProperties">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
     
 
 
@@ -5336,7 +5321,9 @@ SD = H/C</neontometrics:MetricDefinition>
 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#consistencyCheckSuccessful -->
 
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#consistencyCheckSuccessful"/>
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#consistencyCheckSuccessful">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
     
 
 
@@ -5350,7 +5337,9 @@ SD = H/C</neontometrics:MetricDefinition>
 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#dataPropertyAnnotations -->
 
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#dataPropertyAnnotations"/>
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#dataPropertyAnnotations">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
     
 
 
@@ -5372,13 +5361,17 @@ SD = H/C</neontometrics:MetricDefinition>
 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#dataPropertyRangeAxioms -->
 
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#dataPropertyRangeAxioms"/>
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#dataPropertyRangeAxioms">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
     
 
 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#datatypeAnnotations -->
 
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#datatypeAnnotations"/>
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#datatypeAnnotations">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
     
 
 
@@ -5456,7 +5449,9 @@ SD = H/C</neontometrics:MetricDefinition>
 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#generalAnnotationAxioms -->
 
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#generalAnnotationAxioms"/>
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#generalAnnotationAxioms">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
     
 
 
@@ -5484,12 +5479,6 @@ SD = H/C</neontometrics:MetricDefinition>
     
 
 
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#inverseRelationsRatio -->
-
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#inverseRelationsRatio"/>
-    
-
-
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#irreflexiveObjectPropertyAxioms -->
 
     <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#irreflexiveObjectPropertyAxioms">
@@ -5508,7 +5497,9 @@ SD = H/C</neontometrics:MetricDefinition>
 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#maxFanoutnessOfLeafClasses -->
 
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#maxFanoutnessOfLeafClasses"/>
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#maxFanoutnessOfLeafClasses">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
     
 
 
@@ -5522,7 +5513,9 @@ SD = H/C</neontometrics:MetricDefinition>
 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#maxSuperClassesOfAClass -->
 
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#maxSuperClassesOfAClass"/>
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#maxSuperClassesOfAClass">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
     
 
 
@@ -5576,7 +5569,9 @@ SD = H/C</neontometrics:MetricDefinition>
 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#numberOfConnectedGraphs -->
 
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#numberOfConnectedGraphs"/>
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#numberOfConnectedGraphs">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
     
 
 
@@ -5590,13 +5585,17 @@ SD = H/C</neontometrics:MetricDefinition>
 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#objectPropertiesOnClasses -->
 
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#objectPropertiesOnClasses"/>
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#objectPropertiesOnClasses">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
     
 
 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#objectPropertyAnnotations -->
 
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#objectPropertyAnnotations"/>
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#objectPropertyAnnotations">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
     
 
 
@@ -5626,13 +5625,15 @@ SD = H/C</neontometrics:MetricDefinition>
 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#pathsToLeafClasses -->
 
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#pathsToLeafClasses"/>
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#pathsToLeafClasses">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
     
 
 
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#properties -->
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#reasonerActive -->
 
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#properties">
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#reasonerActive">
         <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
     </owl:NamedIndividual>
     
@@ -5643,12 +5644,6 @@ SD = H/C</neontometrics:MetricDefinition>
     <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#reflexiveObjectPropertyAxioms">
         <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
     </owl:NamedIndividual>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#relationshipRichness -->
-
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#relationshipRichness"/>
     
 
 
@@ -5700,24 +5695,6 @@ SD = H/C</neontometrics:MetricDefinition>
     
 
 
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#sumOfDirectAncestorClasses -->
-
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#sumOfDirectAncestorClasses"/>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#sumOfDirectAncestorOfLeafClasses -->
-
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#sumOfDirectAncestorOfLeafClasses"/>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#sumOfDirectAncestorsWithMoreThanOneDirectAncestor -->
-
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#sumOfDirectAncestorsWithMoreThanOneDirectAncestor"/>
-    
-
-
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#superClasses -->
 
     <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#superClasses">
@@ -5744,7 +5721,9 @@ SD = H/C</neontometrics:MetricDefinition>
 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#symmetricObjectPropertyAxioms -->
 
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#symmetricObjectPropertyAxioms"/>
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#symmetricObjectPropertyAxioms">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
     
 
 

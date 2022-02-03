@@ -55,7 +55,7 @@ class DBHandler:
                         classMetricsModel.save()
         return sourceModel
 
-    def getMetricForOntology(self, repository: str,file ="", branch = "master", classMetrics=False, hideId=True) -> dict:
+    def getMetricForOntology(self, repository: str,file ="", reasonerSelected: bool=False, branch = "master", classMetrics=False, hideId=True) -> dict:
         """Retrieves Metric Calculation (for one ontology or whole Repo) from the database. 
 
         Args:

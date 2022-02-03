@@ -101,6 +101,7 @@ class Metrics(models.Model):
     transitiveObjectPropertyAxioms  = models.PositiveBigIntegerField(default=0)
     superClassesOfLeafClasses  = models.PositiveBigIntegerField(default=0)
     objectPropertyAnnotations  = models.PositiveBigIntegerField(default=0)
+    reasonerActive = models.BooleanField(default=False)
     consistencyCheckSuccessful = models.BooleanField(default=False)
   
 

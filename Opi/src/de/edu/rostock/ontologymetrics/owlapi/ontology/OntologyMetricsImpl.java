@@ -40,7 +40,7 @@ public class OntologyMetricsImpl {
     private OWLOntology ontology;
     protected GraphParser parser;
     protected GraphParser parserI;
-    
+
     protected Future<BaseMetric> baseMetric;
     protected Future<ClassAxiomsMetric> classAxiomsMetric;
     protected Future<DataPropertyAxiomsMetric> dataPropertyAxiomsMetric;
@@ -111,18 +111,20 @@ public class OntologyMetricsImpl {
 	Configuration config = new Configuration();
 	config.ignoreUnsupportedDatatypes = true;
 	if(reasonerCalculationSelected) {
-	OWLReasoner reasoner = new Reasoner(config, ontology);
-	InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner);
-	iog.fillOntology(new OWLDataFactoryImpl(),  ontology);
-	resultSet = execMetricCalculation(true);
-	resultSet.put("consistencyCheckSuccessful", reasoner.isConsistent());
+	    OWLReasoner reasoner = new Reasoner(config, ontology);
+	    InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner);
+	    iog.fillOntology(new OWLDataFactoryImpl(),  ontology);
+	    resultSet = execMetricCalculation(true);
+	    resultSet.put("reasonerActive", true);
+	    resultSet.put("consistencyCheckSuccessful", reasoner.isConsistent());
 	}
 	else {
 	    resultSet = execMetricCalculation(true);
-		resultSet.put("consistencyCheckSuccessful", "False");
+	    resultSet.put("reasonerActive", false);
+	    resultSet.put("consistencyCheckSuccessful", "False");
 	}
-	
-	
+
+
 	Map<String, Object> wrapResult = new LinkedHashMap<String, Object>();
 	wrapResult.put("GeneralOntologyMetrics", resultSet);
 	return wrapResult;
@@ -146,7 +148,7 @@ public class OntologyMetricsImpl {
 	//The following metric calculations now need some of the previous ones. As the previous calculations are stored in the 
 
 	graphMetric = service.submit(new GraphMetric(ontology, parser, parserI, imports));
-	
+
 	// resultSet.put("Basemetrics", baseMetric.calculateAllMetrics(ontology));
 
 	resultSet.putAll(graphMetric.get().getReturnObject());
@@ -162,7 +164,7 @@ public class OntologyMetricsImpl {
 	Set<OWLClass> om = ontology.getClassesInSignature();
 	for (OWLClass owlClass : om) {
 	    //tmpList.add(service.submit(
-		    //new ClassMetrics(knowledgebaseMetric.get(), baseMetric.get(), ontology, owlClass.getIRI())));
+	    //new ClassMetrics(knowledgebaseMetric.get(), baseMetric.get(), ontology, owlClass.getIRI())));
 	}
 	service.shutdown();
 	service.awaitTermination(2, TimeUnit.HOURS);

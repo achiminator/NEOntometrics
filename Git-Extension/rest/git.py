@@ -16,7 +16,7 @@ class GitHandler:
 
 
     @job
-    def getObject(self, repositoryUrl: str, objectLocation: str, branch="master", classMetrics=False) -> dict:
+    def getObject(self, repositoryUrl: str, objectLocation: str, branch="master", reasoner:bool = False, classMetrics=False) -> dict:
         """Analyses one ontology-file for evolutional ontology metrics
 
         Args:
@@ -24,6 +24,7 @@ class GitHandler:
             objectLocation (string): relative path to targeted ontology file in Repository
             branch (str, optional): selected branch. Defaults to "master".
             classMetrics (bool, optional): Enables the calculation of Class Metrics (Computational Expensive). Defaults to False.
+            reasoner (bool, optional): selects that the calcualtion engine runs on a reasoned ontology.
 
         Returns:
             dict: Evolutional Ontology Metrics
@@ -35,12 +36,12 @@ class GitHandler:
             Git.clone_repository("https://"+ repositoryUrl, internalOntologyUrl, checkout_branch=branch)
             self.logger.debug("Repository cloned at "+ internalOntologyUrl)       
         repo = Git.Repository(internalOntologyUrl)
-        metrics = self.getOntologyMetrics(objectLocation, classMetrics, internalOntologyUrl, repositoryUrl, branch, repo)
+        metrics = self.getOntologyMetrics(objectLocation, classMetrics, reasoner, internalOntologyUrl, repositoryUrl, branch, repo)
         rmtree(internalOntologyUrl, ignore_errors=True)
-        
         return(True)
+
     @job
-    def getObjects(self, repositoryUrl: str,  branch="master", classMetrics=False) -> dict:
+    def getObjects(self, repositoryUrl: str,  branch="master", classMetrics=False, reasoner= False) -> dict:
         """Analysis all ontology files in a git Repository
 
         Args:
@@ -66,13 +67,17 @@ class GitHandler:
             if(item.path.endswith((".ttl", ".owl", ".rdf"))):
                 self.logger.debug("Analyse Ontology: "+item.path)
                 logging.debug("Analyse Ontology: "+item.path)
-                metrics.append(self.getOntologyMetrics(item.path, classMetrics, internalOntologyUrl, repositoryUrl, branch, repo))#
+                if(reasoner):
+                    metrics.append(self.getOntologyMetrics(item.path, classMetrics, False, internalOntologyUrl, repositoryUrl, branch, repo))
+                    metrics.append(self.getOntologyMetrics(item.path, classMetrics, True, internalOntologyUrl, repositoryUrl, branch, repo))
+                else:
+                    metrics.append(self.getOntologyMetrics(item.path, classMetrics, True, internalOntologyUrl, repositoryUrl, branch, repo))
         dbhandler = DBHandler()
         dbhandler.setWholeRepoAnalyzed(repository=repositoryUrl)
         rmtree(internalOntologyUrl, ignore_errors=True)
         return(True)
 
-    def getOntologyMetrics(self, objectLocation: str, classMetrics: bool, internalOntologyUrl: str, remoteLocation: str, branch: str, repo: Git.Repository) -> dict:
+    def getOntologyMetrics(self, objectLocation: str, classMetrics: bool, reasoner: bool, internalOntologyUrl: str, remoteLocation: str, branch: str, repo: Git.Repository) -> dict:
         """Calculates Evolutional Ontology-Metrics for one ontology file and stores them into a database
 
         Args:
@@ -138,7 +143,7 @@ class GitHandler:
                         self.logger.error(returnObject["ReadingError"])
                     else:
                         try:
-                            opiMetrics = opi.opiOntologyRequest(obj.data, classMetrics=classMetrics)
+                            opiMetrics = opi.opiOntologyRequest(obj.data, classMetrics=classMetrics, reasoner=reasoner)
                             returnObject.update(opiMetrics)    
                             self.logger.debug("Ontology Analyzed Successfully")
                         except IOError:
