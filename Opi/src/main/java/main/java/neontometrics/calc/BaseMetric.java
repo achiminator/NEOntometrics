@@ -1,4 +1,4 @@
-package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
+package main.java.neontometrics.calc;
 
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -8,7 +8,8 @@ import org.semanticweb.owlapi.metrics.LogicalAxiomCount;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.util.OWLClassExpressionCollector;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
+
+import main.java.neontometrics.calc.handler.OntologyUtility;
 
 public class BaseMetric extends MetricCalculations implements Callable<BaseMetric> {
     public BaseMetric(OWLOntology ontology, boolean imports) {

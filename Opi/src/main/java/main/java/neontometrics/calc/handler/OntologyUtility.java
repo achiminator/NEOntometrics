@@ -1,4 +1,4 @@
-package de.edu.rostock.ontologymetrics.owlapi.ontology;
+package main.java.neontometrics.calc.handler;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

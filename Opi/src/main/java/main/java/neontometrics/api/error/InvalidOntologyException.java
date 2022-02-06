@@ -1,4 +1,4 @@
-package de.edu.rostock.ontologymetrics.api.error;
+package main.java.neontometrics.api.error;
 
 public class InvalidOntologyException extends RuntimeException{
 /**

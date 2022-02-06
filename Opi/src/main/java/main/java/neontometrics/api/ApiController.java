@@ -1,4 +1,4 @@
-package de.edu.rostock.ontologymetrics.api;
+package main.java.neontometrics.api;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
@@ -23,10 +23,11 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.xembly.Directives;
 import org.xembly.ImpossibleModificationException;
 import org.xembly.Xembler;
-import de.edu.rostock.ontologymetrics.api.error.InvalidOntologyException;
-import de.edu.rostock.ontologymetrics.api.error.WrongURIException;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyMetricsImpl;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
+
+import main.java.neontometrics.api.error.InvalidOntologyException;
+import main.java.neontometrics.api.error.WrongURIException;
+import main.java.neontometrics.calc.handler.OntologyMetricsImpl;
+import main.java.neontometrics.calc.handler.OntologyUtility;
 
 @Path("")
 public class ApiController {
@@ -125,8 +126,8 @@ public class ApiController {
 	Map<String, Object> map = ontoMetricsEnginge.getAllMetrics(reasoner);
 	xmlDirectives.append(map2XML(map));
 
-	if (classMetrics)
-	    xmlDirectives = classMetrics2XML(ontoMetricsEnginge.getClassMetrics(), xmlDirectives);
+//	if (classMetrics)
+//	    xmlDirectives = classMetrics2XML(ontoMetricsEnginge.getClassMetrics(), xmlDirectives);
 
 	Xembler xml = new Xembler(xmlDirectives);
 	String xmlString = xml.xml();

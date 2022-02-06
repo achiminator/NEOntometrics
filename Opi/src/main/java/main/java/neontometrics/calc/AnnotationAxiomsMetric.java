@@ -1,4 +1,4 @@
-package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
+package main.java.neontometrics.calc;
 
 
 import java.util.Set;
@@ -9,7 +9,8 @@ import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnonymousIndividual;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
+
+import main.java.neontometrics.calc.handler.OntologyUtility;
 
 public class AnnotationAxiomsMetric extends MetricCalculations implements Callable<AnnotationAxiomsMetric> {
 

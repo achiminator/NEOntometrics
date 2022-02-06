@@ -1,4 +1,4 @@
-package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
+package main.java.neontometrics.calc;
 
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -6,7 +6,8 @@ import org.semanticweb.owlapi.metrics.GCICount;
 import org.semanticweb.owlapi.metrics.HiddenGCICount;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLOntology;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
+
+import main.java.neontometrics.calc.handler.OntologyUtility;
 
 public class ClassAxiomsMetric extends MetricCalculations implements Callable<ClassAxiomsMetric> {
 

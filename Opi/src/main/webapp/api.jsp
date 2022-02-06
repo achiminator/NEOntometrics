@@ -2,7 +2,7 @@
 	pageEncoding="ISO-8859-1"%>
 <%@ page import="java.util.*"%>
 <%@page
-	import="de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility"%>
+	import="main.java.neontometrics.calc.handler.OntologyUtility"%>
 <%
     String hostName = OntologyUtility.getHostName();
 			if (hostName.equals("onto.gg01.local")) {

@@ -1,4 +1,4 @@
-package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
+package main.java.neontometrics.calc;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,8 +19,9 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.search.EntitySearcher;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.basemetric.graphbasemetric.GraphParser;
+
+
+import main.java.neontometrics.calc.handler.OntologyUtility;
 import uk.ac.manchester.cs.owl.owlapi.OWLClassImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
@@ -45,7 +46,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	return this;
     }
 
-    public GraphMetric(OWLOntology ontology, GraphParser parser, GraphParser parserI, boolean withImports) {
+    public GraphMetric(OWLOntology ontology, boolean withImports) {
 	super(ontology, withImports);
 
     }

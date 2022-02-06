@@ -30,6 +30,8 @@ services:
   neontometrics_worker:
     restart: always
     container_name: neontometrics_worker
+    build: 
+      context: ./Git-Extension
     image: neontometrics
     command: python manage.py rqworker
     depends_on:
@@ -45,11 +47,11 @@ services:
       - '8082:8080'
     restart: always
     container_name: opi
-    image: opi
     environment:
       JVM_OPTS: -Xmx12g -Xms12g -XX:MaxPermSize=1024m
     build:
       context: ./Opi
+    image: opi
 
   # The Database for metric documentation
   neontometrics_db:

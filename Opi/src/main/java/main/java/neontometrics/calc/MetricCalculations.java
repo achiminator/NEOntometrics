@@ -1,4 +1,4 @@
-package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
+package main.java.neontometrics.calc;
 
 import java.util.LinkedHashMap;
 

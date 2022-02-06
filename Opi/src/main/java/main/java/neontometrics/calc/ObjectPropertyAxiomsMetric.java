@@ -1,4 +1,4 @@
-package de.edu.rostock.ontologymetrics.owlapi.ontology.metric;
+package main.java.neontometrics.calc;
 
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -7,7 +7,8 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.OntologyUtility;
+
+import main.java.neontometrics.calc.handler.OntologyUtility;
 
 public class ObjectPropertyAxiomsMetric extends MetricCalculations implements Callable<ObjectPropertyAxiomsMetric> {
 

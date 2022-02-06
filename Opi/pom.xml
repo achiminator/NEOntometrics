@@ -5,7 +5,8 @@
 	<groupId>net.sourceforge.owlapi</groupId>
 	<artifactId>owlapi-distribution</artifactId>
 	<version>4.5.4</version>
-
+	
+<packaging>war</packaging>
 	<repositories>
 		<repository>
 			<id>maven2-repository.java.net</id>
@@ -22,7 +23,8 @@
 
 
 	<build>
-		<sourceDirectory>src</sourceDirectory>
+		<!-- <sourceDirectory>src/neontometrics</sourceDirectory>
+		<outputDirectory>target</outputDirectory>-->
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -34,11 +36,13 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>2.6</version>
+				<version>3.3.2</version>
 				<configuration>
-					<warSourceDirectory>WebContent</warSourceDirectory>
-					<failOnMissingWebXml>false</failOnMissingWebXml>
+ 				 <goal>war:war</goal>
+					<warName>ROOT</warName>
+					<!--  <warSourceDirectory>WebContent</warSourceDirectory>-->
 				</configuration>
+				<extensions>true</extensions>
 			</plugin>
 		</plugins>
 	</build>
@@ -125,5 +129,7 @@
 			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
-	<packaging>war</packaging>
+	
+	
+	
 </project>

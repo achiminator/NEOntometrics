@@ -1,33 +1,31 @@
-package de.edu.rostock.ontologymetrics.owlapi.ontology;
+package main.java.neontometrics.calc.handler;
 
-import java.util.ArrayList;
 
 import java.util.LinkedHashMap;
-import java.util.List;
+
 import java.util.Map;
-import java.util.Set;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
-import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.OWLReasoner;
-import org.semanticweb.owlapi.util.InferredOntologyGenerator;
 import org.semanticweb.HermiT.Configuration;
 import org.semanticweb.HermiT.Reasoner;
+import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.util.InferredOntologyGenerator;
 
-import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.AnnotationAxiomsMetric;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.BaseMetric;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.ClassAxiomsMetric;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.ClassMetrics;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.DataPropertyAxiomsMetric;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.GraphMetric;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.IndividualAxiomsMetric;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.ObjectPropertyAxiomsMetric;
-import de.edu.rostock.ontologymetrics.owlapi.ontology.metric.basemetric.graphbasemetric.GraphParser;
+import main.java.neontometrics.calc.AnnotationAxiomsMetric;
+import main.java.neontometrics.calc.BaseMetric;
+import main.java.neontometrics.calc.ClassAxiomsMetric;
+import main.java.neontometrics.calc.DataPropertyAxiomsMetric;
+import main.java.neontometrics.calc.GraphMetric;
+import main.java.neontometrics.calc.IndividualAxiomsMetric;
+import main.java.neontometrics.calc.ObjectPropertyAxiomsMetric;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 /**
@@ -38,8 +36,7 @@ import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 public class OntologyMetricsImpl {
 
     private OWLOntology ontology;
-    protected GraphParser parser;
-    protected GraphParser parserI;
+    
 
     protected Future<BaseMetric> baseMetric;
     protected Future<ClassAxiomsMetric> classAxiomsMetric;
@@ -53,15 +50,11 @@ public class OntologyMetricsImpl {
     public OntologyMetricsImpl(OWLOntology pOntology) {
 	if (pOntology != null) {
 	    ontology = pOntology;
-	    parser = new GraphParser(ontology, false); // without imports
-	    parserI = new GraphParser(ontology, true); // with imports
+
 	} else {
 	    OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-
 	    try {
 		ontology = manager.createOntology();
-		parser = new GraphParser(ontology, false); // without imports
-		parserI = new GraphParser(ontology, true); // with imports
 	    } catch (OWLOntologyCreationException e) {
 		System.out.println(e.getMessage());
 		e.printStackTrace();
@@ -147,7 +140,7 @@ public class OntologyMetricsImpl {
 	resultSet.putAll(baseMetric.get().getReturnObject());
 	//The following metric calculations now need some of the previous ones. As the previous calculations are stored in the 
 
-	graphMetric = service.submit(new GraphMetric(ontology, parser, parserI, imports));
+	graphMetric = service.submit(new GraphMetric(ontology, imports));
 
 	// resultSet.put("Basemetrics", baseMetric.calculateAllMetrics(ontology));
 
@@ -156,22 +149,22 @@ public class OntologyMetricsImpl {
 	return resultSet;
     }
 
-    public List<Map<String, Object>> getClassMetrics() throws Exception {
-	ExecutorService service = Executors.newWorkStealingPool();
-
-	List<Map<String, Object>> ClassMetricsList = new ArrayList<Map<String, Object>>();
-	List<Future<ClassMetrics>> tmpList = new ArrayList<>();
-	Set<OWLClass> om = ontology.getClassesInSignature();
-	for (OWLClass owlClass : om) {
-	    //tmpList.add(service.submit(
-	    //new ClassMetrics(knowledgebaseMetric.get(), baseMetric.get(), ontology, owlClass.getIRI())));
-	}
-	service.shutdown();
-	service.awaitTermination(2, TimeUnit.HOURS);
-	for (Future<ClassMetrics> future : tmpList) {
-	    ClassMetricsList.add(future.get().getAllMetrics());
-	}
-	return ClassMetricsList;
-
-    }
+//    public List<Map<String, Object>> getClassMetrics() throws Exception {
+//	ExecutorService service = Executors.newWorkStealingPool();
+//
+//	List<Map<String, Object>> ClassMetricsList = new ArrayList<Map<String, Object>>();
+//	List<Future<ClassMetrics>> tmpList = new ArrayList<>();
+//	Set<OWLClass> om = ontology.getClassesInSignature();
+//	for (OWLClass owlClass : om) {
+//	    //tmpList.add(service.submit(
+//	    //new ClassMetrics(knowledgebaseMetric.get(), baseMetric.get(), ontology, owlClass.getIRI())));
+//	}
+//	service.shutdown();
+//	service.awaitTermination(2, TimeUnit.HOURS);
+//	for (Future<ClassMetrics> future : tmpList) {
+//	    ClassMetricsList.add(future.get().getAllMetrics());
+//	}
+//	return ClassMetricsList;
+//
+//    }
 }
