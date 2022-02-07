@@ -74,7 +74,7 @@ RQ_QUEUES = {
         'DB': 0,
        # 'PASSWORD': 'some-password',
         'DEFAULT_TIMEOUT': 72000,
-        'ASYNC' : True if bool(os.environ.get("inDocker", False)) else False
+        'ASYNC' : True #if bool(os.environ.get("inDocker", False)) else False
     }
 }
 
@@ -128,23 +128,23 @@ WSGI_APPLICATION = 'ontoMetricsAPI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+#  }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'neontometrics',
+        'USER': 'neontometrics',
+        'PASSWORD': os.environ["db_password"],
+        # For the alignment of Docker intergration & windows development
+        'HOST': 'neontometrics_db' if os.name != "nt" else "localhost",
+        'PORT': 3306 if os.name != "nt" else 3316,
     }
- }
-# DATABASES =pip
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'neontometrics',
-#         'USER': 'neontometrics',
-#         'PASSWORD': os.environ["db_password"],
-#         # For the alignment of Docker intergration & windows development
-#         'HOST': 'neontometrics_db' if os.name != "nt" else "localhost",
-#         'PORT': 3306 if os.name != "nt" else 3316,
-#     }
-# }
+}
 
 
 # Password validation

@@ -16,13 +16,13 @@ class GitHandler:
 
 
     @job
-    def getObject(self, repositoryUrl: str, objectLocation: str, branch="master", reasoner:bool = False, classMetrics=False) -> dict:
+    def getObject(self, repositoryUrl: str, objectLocation: str, branch=None, reasoner:bool = False, classMetrics=False) -> dict:
         """Analyses one ontology-file for evolutional ontology metrics
 
         Args:
             repositoryUrl (string): URL to remote Repository
             objectLocation (string): relative path to targeted ontology file in Repository
-            branch (str, optional): selected branch. Defaults to "master".
+            branch (str, optional): selected branch. Defaults to "None".
             classMetrics (bool, optional): Enables the calculation of Class Metrics (Computational Expensive). Defaults to False.
             reasoner (bool, optional): selects that the calcualtion engine runs on a reasoned ontology.
 
@@ -41,13 +41,13 @@ class GitHandler:
         return(True)
 
     @job
-    def getObjects(self, repositoryUrl: str,  branch="master", classMetrics=False, reasoner= False) -> dict:
+    def getObjects(self, repositoryUrl: str,  branch=None, classMetrics=False, reasoner= False) -> dict:
         """Analysis all ontology files in a git Repository
 
         Args:
             repositoryUrl (string): URL to remote Repository
             objectLocation (string): relative path to targeted ontology file in Repository
-            branch (str, optional): selected branch. Defaults to "master".
+            branch (str, optional): selected branch. Defaults to "None".
             classMetrics (bool, optional): Enables the calculation of Class Metrics (Computational Expensive). Defaults to False.
 
         Returns:
@@ -68,10 +68,11 @@ class GitHandler:
                 self.logger.debug("Analyse Ontology: "+item.path)
                 logging.debug("Analyse Ontology: "+item.path)
                 if(reasoner):
-                    metrics.append(self.getOntologyMetrics(item.path, classMetrics, False, internalOntologyUrl, repositoryUrl, branch, repo))
-                    metrics.append(self.getOntologyMetrics(item.path, classMetrics, True, internalOntologyUrl, repositoryUrl, branch, repo))
+                    metrics.append(self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, reasoner=False, internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo))
+                    metrics.append(self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, reasoner=True, internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo))
+                    
                 else:
-                    metrics.append(self.getOntologyMetrics(item.path, classMetrics, True, internalOntologyUrl, repositoryUrl, branch, repo))
+                    metrics.append(self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, reasoner=False, internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo))
         dbhandler = DBHandler()
         dbhandler.setWholeRepoAnalyzed(repository=repositoryUrl)
         rmtree(internalOntologyUrl, ignore_errors=True)

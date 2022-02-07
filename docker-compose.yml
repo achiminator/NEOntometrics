@@ -30,8 +30,6 @@ services:
   neontometrics_worker:
     restart: always
     container_name: neontometrics_worker
-    build: 
-      context: ./Git-Extension
     image: neontometrics
     command: python manage.py rqworker
     depends_on:
@@ -39,6 +37,7 @@ services:
       - neontometrics_db
     environment:
      db_password: 'KMmsWrwRBBeQLXDO'
+     isWorker: "True"
      inDocker: "True"
   
   # the REST-Calculation Engine

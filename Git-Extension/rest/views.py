@@ -9,7 +9,7 @@ from ontoMetricsAPI.PlainTextParser import PlainTextParser
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.exceptions import APIException, ParseError
-import django_rq, rq, redis, logging, requests, django
+import django_rq, rq, redis, logging, requests, django, os
 from braces.views import CsrfExemptMixin
 from rest.GitHelper import GitHelper, GitUrlParser
 from rest.dbHandler import DBHandler
@@ -32,10 +32,15 @@ class CalculateMetric(APIView):
         return(Response(xmlDict))
 
 class MetricExplorer(APIView):
-    ontology = OntologyHandler()
-    def get(self, request, format=None):
-        explorer = self.ontology.getMetricExplorer()
-        return(Response(explorer))
+    # Calculating the Data for the Metric Explorer Frontent from the ontology is a quite extensive task, which 
+    # is not required for the worker applications (those who run and distribute the metric calculations).
+    # The environment variable "isWorker" is set by the docker-compose file.
+    if not(bool(os.environ.get("inDocker", False))): 
+        ontology = OntologyHandler()
+        def get(self, request, format=None):
+            explorer = self.ontology.getMetricExplorer()
+            return(Response(explorer))
+
 
 
 class CalculateGitMetric(APIView):
@@ -69,7 +74,7 @@ class CalculateGitMetric(APIView):
             hideId = GitHelper.str2bool(request.query_params["hideId"]) if "hideId" in request.query_params else True
             reasonerSelected = GitHelper.str2bool(request.query_params["reasoner"]) if "reasoner" in request.query_params else False
             
-            branch = request.query_params["branch"] if "branch" in request.query_params else "master"
+            branch = request.query_params["branch"] if "branch" in request.query_params else None
         except KeyError as identifier:
             print(identifier)
             raise ParseError("Wrong Input parameter! Check Documentation")
@@ -175,6 +180,7 @@ class CalculateGitMetric(APIView):
         jobPosition = django_rq.get_queue().get_job_position(job)
         resp = {
             "taskFinished": False,
+            "taskIsStarted": job.is_started,
             "queuePosition": jobPosition if jobPosition != None else 0}
         resp.update(url.__dict__)
         return resp

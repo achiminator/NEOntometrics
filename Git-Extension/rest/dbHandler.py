@@ -27,7 +27,7 @@ class DBHandler:
             if not commitMetrics["ReadingError"]:
                 tmpDict.update(commitMetrics["OntologyMetrics"]["GeneralOntologyMetrics"])
             return tmpDict
-    def writeInDB(self, metricsDict: dict, branch: str, file: str, repo: str, wholeRepo=False) -> Source:
+    def writeInDB(self, metricsDict: dict, file: str, repo: str, wholeRepo=False, branch: str="") -> Source:
         """Writes calculated metric-Values in Database
 
         Args:
@@ -37,10 +37,10 @@ class DBHandler:
             repo (str): Repository URL
             wholeRepo(bool): Stores if the whole repository was analyzed or not
         """
-
+        if(branch == None):
+            branch = ""
         # At first, check if these elements already exits. If yes, delete them.
         results =  Source.objects.filter(fileName=file, repository=repo,branch=branch).delete()
-        
         sourceModel = Source.objects.create(fileName=file, repository=repo,branch=branch, wholeRepositoryAnalyzed= wholeRepo)
         for commitMetrics in metricsDict:
             metricsModel = Metrics.objects.create(CommitTime = commitMetrics["CommitTime"], metricSource=sourceModel)                
@@ -55,7 +55,7 @@ class DBHandler:
                         classMetricsModel.save()
         return sourceModel
 
-    def getMetricForOntology(self, repository: str,file ="", reasonerSelected: bool=False, branch = "master", classMetrics=False, hideId=True) -> dict:
+    def getMetricForOntology(self, repository: str,file ="", reasonerSelected: bool=False, branch = None, classMetrics=False, hideId=True) -> dict:
         """Retrieves Metric Calculation (for one ontology or whole Repo) from the database. 
 
         Args:
@@ -70,8 +70,9 @@ class DBHandler:
         Returns:
             dict: Array with the metrics. If no Metrics are found, the method returns an empty Dict {}
         """
+
         if(file == ""):
-            sourceData = Source.objects.filter(repository=repository, branch=branch, wholeRepositoryAnalyzed=1)
+            sourceData = Source.objects.filter(repository=repository, wholeRepositoryAnalyzed=1)
         else:
             sourceData = Source.objects.filter(repository=repository, fileName=file, branch=branch)
         if file != "" and len(sourceData.values()) > 1:
@@ -84,7 +85,7 @@ class DBHandler:
         for SourceRepo in sourceData:
             returnDict =  OrderedDict()
             metricsDict = OrderedDict()
-            metricsData = Metrics.objects.filter(metricSource=SourceRepo)
+            metricsData = Metrics.objects.filter(metricSource=SourceRepo, reasonerActive =reasonerSelected)
             queryMetaData = sourceData.values()[iterator]
             iterator += 1
             if hideId: queryMetaData.pop("id")

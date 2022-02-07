@@ -36,7 +36,7 @@ import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 public class OntologyMetricsImpl {
 
     private OWLOntology ontology;
-    
+
 
     protected Future<BaseMetric> baseMetric;
     protected Future<ClassAxiomsMetric> classAxiomsMetric;
@@ -108,12 +108,16 @@ public class OntologyMetricsImpl {
 	    InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner);
 	    iog.fillOntology(new OWLDataFactoryImpl(),  ontology);
 	    resultSet = execMetricCalculation(true);
-	    resultSet.put("reasonerActive", true);
-	    resultSet.put("consistencyCheckSuccessful", reasoner.isConsistent());
+	    // The Git-Extension application needs capitalized Boolean values for automatically parsing.
+	    resultSet.put("reasonerActive", "True");
+	    if(reasoner.isConsistent())
+		resultSet.put("consistencyCheckSuccessful", "True");
+	    else
+		resultSet.put("consistencyCheckSuccessful", "False");
 	}
 	else {
 	    resultSet = execMetricCalculation(true);
-	    resultSet.put("reasonerActive", false);
+	    resultSet.put("reasonerActive", "False");
 	    resultSet.put("consistencyCheckSuccessful", "False");
 	}
 
@@ -149,22 +153,22 @@ public class OntologyMetricsImpl {
 	return resultSet;
     }
 
-//    public List<Map<String, Object>> getClassMetrics() throws Exception {
-//	ExecutorService service = Executors.newWorkStealingPool();
-//
-//	List<Map<String, Object>> ClassMetricsList = new ArrayList<Map<String, Object>>();
-//	List<Future<ClassMetrics>> tmpList = new ArrayList<>();
-//	Set<OWLClass> om = ontology.getClassesInSignature();
-//	for (OWLClass owlClass : om) {
-//	    //tmpList.add(service.submit(
-//	    //new ClassMetrics(knowledgebaseMetric.get(), baseMetric.get(), ontology, owlClass.getIRI())));
-//	}
-//	service.shutdown();
-//	service.awaitTermination(2, TimeUnit.HOURS);
-//	for (Future<ClassMetrics> future : tmpList) {
-//	    ClassMetricsList.add(future.get().getAllMetrics());
-//	}
-//	return ClassMetricsList;
-//
-//    }
+    //    public List<Map<String, Object>> getClassMetrics() throws Exception {
+    //	ExecutorService service = Executors.newWorkStealingPool();
+    //
+    //	List<Map<String, Object>> ClassMetricsList = new ArrayList<Map<String, Object>>();
+    //	List<Future<ClassMetrics>> tmpList = new ArrayList<>();
+    //	Set<OWLClass> om = ontology.getClassesInSignature();
+    //	for (OWLClass owlClass : om) {
+    //	    //tmpList.add(service.submit(
+    //	    //new ClassMetrics(knowledgebaseMetric.get(), baseMetric.get(), ontology, owlClass.getIRI())));
+    //	}
+    //	service.shutdown();
+    //	service.awaitTermination(2, TimeUnit.HOURS);
+    //	for (Future<ClassMetrics> future : tmpList) {
+    //	    ClassMetricsList.add(future.get().getAllMetrics());
+    //	}
+    //	return ClassMetricsList;
+    //
+    //    }
 }
