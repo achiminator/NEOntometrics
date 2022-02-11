@@ -1239,6 +1239,22 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
     
 
 
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Inconsistent_Classes -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Inconsistent_Classes">
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Special_Metrics"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
+                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#inconsistentClasses"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <neontometrics:MetricDefinition>Counts the subClasses of owl:Nothing. Requires selected reasoner.</neontometrics:MetricDefinition>
+        <neontometrics:MetricDescription>If the reasoner detects classes that are unsatisfiable, it makes them a subclass of owl:Nothing. This metric counts all these subclasses that logically inconsistent.</neontometrics:MetricDescription>
+    </owl:Class>
+    
+
+
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Individuals -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Individuals">
@@ -5452,6 +5468,12 @@ SD = H/C</neontometrics:MetricDefinition>
     <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#generalAnnotationAxioms">
         <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
     </owl:NamedIndividual>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#inconsistentClasses -->
+
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#inconsistentClasses"/>
     
 
 

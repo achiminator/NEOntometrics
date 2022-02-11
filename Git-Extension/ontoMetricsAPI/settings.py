@@ -52,6 +52,11 @@ logging.config.dictConfig({
 
 ALLOWED_HOSTS = ["*"]
 
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ]
+}
 
 # Application definition
 
@@ -141,7 +146,7 @@ DATABASES = {
         'USER': 'neontometrics',
         'PASSWORD': os.environ["db_password"],
         # For the alignment of Docker intergration & windows development
-        'HOST': 'neontometrics_db' if os.name != "nt" else "localhost",
+        'HOST': 'neontometricsdb' if os.name != "nt" else "localhost",
         'PORT': 3306 if os.name != "nt" else 3316,
     }
 }

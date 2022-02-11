@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from rest.metricOntologyHandler import OntologyHandler
 from rest.models import ClassMetrics
 from rest_framework.renderers import TemplateHTMLRenderer
@@ -13,6 +14,7 @@ import django_rq, rq, redis, logging, requests, django, os
 from braces.views import CsrfExemptMixin
 from rest.GitHelper import GitHelper, GitUrlParser
 from rest.dbHandler import DBHandler
+from rest_framework.renderers import JSONRenderer
 # Create your views here.
 
 class index(APIView):
@@ -20,7 +22,7 @@ class index(APIView):
     Returns:
         Response: HTML-Template "index.html"
     """
-    renderer_classes = [TemplateHTMLRenderer]
+    renderer_classes = [JsonResponse]
     def get(self, request):
         return Response(template_name="index.html")
 
@@ -35,7 +37,7 @@ class MetricExplorer(APIView):
     # Calculating the Data for the Metric Explorer Frontent from the ontology is a quite extensive task, which 
     # is not required for the worker applications (those who run and distribute the metric calculations).
     # The environment variable "isWorker" is set by the docker-compose file.
-    if not(bool(os.environ.get("inDocker", False))): 
+    if not(bool(os.environ.get("isWorker", False))): 
         ontology = OntologyHandler()
         def get(self, request, format=None):
             explorer = self.ontology.getMetricExplorer()
@@ -44,11 +46,14 @@ class MetricExplorer(APIView):
 
 
 class CalculateGitMetric(APIView):
+    
     """Calculated the Ontology-Metrics for a Repository (Whole Repository or specific file within)
 
     Raises:
         ParseError: Wrong Ontology Formalizations
     """     
+    
+    renderer_classes = [JSONRenderer]
     def get(self, request: Request, format=None):
         """Requests Ontology Metrics for a given URL (see: https://github.com/Uni-Rostock-Win/NEOntometrics/tree/master/Git-Extension).
 
@@ -117,7 +122,7 @@ class CalculateGitMetric(APIView):
                     "status": 500,
                     "url": GitHelper.deserializeJobId(jobId),
                     "info": "internal server error"
-                }).status_code(500)
+                }, status=500)
         logging.debug("Put job in queue")
         gitHandler = GitHandler()
         if url.file != '':
@@ -177,6 +182,7 @@ class CalculateGitMetric(APIView):
         logging.debug("Job" + url.url + " is already in Queue")
         redis_conn = django_rq.get_connection()
         job = django_rq.jobs.Job(jobId, redis_conn)
+        
         jobPosition = django_rq.get_queue().get_job_position(job)
         resp = {
             "taskFinished": False,

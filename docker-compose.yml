@@ -3,15 +3,15 @@ services:
   # Redis Image is necessary for the asyncronous scheduling in the docker application
   redis-scheduler:
     restart: always
-    container_name: neonto_scheduler
+    container_name: neontoscheduler
     image: redis
     ports:
       - '6379:6379'
 
   # This is the main application for the git metric aggregation
-  neontometrics_api:
+  neontometricsapi:
     restart: always
-    container_name: neontometrics_api
+    container_name: neontometricsapi
     build: 
       context: ./Git-Extension
     image: neontometrics
@@ -22,19 +22,20 @@ services:
     ports:
       - '8012:8000'
     depends_on:
-      - neontometrics_db
+      - neontometricsdb
     environment:
       db_password: 'KMmsWrwRBBeQLXDO'
       inDocker: "True"
 
   neontometrics_worker:
     restart: always
-    container_name: neontometrics_worker
     image: neontometrics
     command: python manage.py rqworker
+    deploy:
+      replicas: 3
     depends_on:
-      - neontometrics_api
-      - neontometrics_db
+      - neontometricsapi
+      - neontometricsdb
     environment:
      db_password: 'KMmsWrwRBBeQLXDO'
      isWorker: "True"
@@ -52,10 +53,22 @@ services:
       context: ./Opi
     image: opi
 
-  # The Database for metric documentation
-  neontometrics_db:
+  # The flutter Frontend
+  frontend:
+    ports:
+    - '8003:8000'
     restart: always
-    container_name: neontometrics_db
+    container_name: neontometricsfrontend
+    build:
+      context: ./frontend
+    image: neontometricsfrontend
+
+
+
+  # The Database for metric documentation
+  neontometricsdb:
+    restart: always
+    container_name: neontometricsdb
     image: mariadb:latest
     ports:
       - '3316:3306'
@@ -65,6 +78,6 @@ services:
       MYSQL_PASSWORD: 'KMmsWrwRBBeQLXDO'
       MYSQL_ROOT_PASSWORD: 'KMmsWrwRBBeQLXDO'
     volumes:
-      - neontometrics_db:/var/lib/mysql
+      - neontometricsdb:/var/lib/mysql
 volumes:
-  neontometrics_db:
+  neontometricsdb:

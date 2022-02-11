@@ -50,7 +50,9 @@ public class ApiController {
 		+ url.toString());
 	OntologyUtility.setTimestamp();
 	OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
+	myLogger.debug("Start Ontology Download");
 	OWLOntology ontology = manager.loadOntologyFromOntologyDocument(url);
+	myLogger.debug("Download Completed");
 	if (ontology == null)
 	    throw new WrongURIException();
 	return calculateMetrics(classMetrics,reasoner, ontology);
@@ -86,14 +88,11 @@ public class ApiController {
 	for (String key : map.keySet()) {
 	    directives.add(key);
 	    if (map.get(key) instanceof Map) {
-		System.out.println("Recursion! :"
-			+ key);
+		
 		directives.append(map2XML((Map<String, Object>) map.get(key)));
 	    } else {
 		directives.set(map.get(key));
-		System.out.println(key
-			+ ":"
-			+ map.get(key));
+		
 	    }
 	    directives.push();
 	    directives.up();
@@ -126,8 +125,6 @@ public class ApiController {
 	Map<String, Object> map = ontoMetricsEnginge.getAllMetrics(reasoner);
 	xmlDirectives.append(map2XML(map));
 
-//	if (classMetrics)
-//	    xmlDirectives = classMetrics2XML(ontoMetricsEnginge.getClassMetrics(), xmlDirectives);
 
 	Xembler xml = new Xembler(xmlDirectives);
 	String xmlString = xml.xml();

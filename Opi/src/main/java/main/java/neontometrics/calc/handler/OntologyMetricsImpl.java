@@ -12,7 +12,6 @@ import java.util.concurrent.Future;
 import org.semanticweb.HermiT.Configuration;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
@@ -45,7 +44,7 @@ public class OntologyMetricsImpl {
     protected Future<ObjectPropertyAxiomsMetric> objectPropertyAxiomsMetric;
     protected Future<AnnotationAxiomsMetric> annotationAxiomsMetric;
     protected Future<GraphMetric> graphMetric;
-    private IRI iri;
+
 
     public OntologyMetricsImpl(OWLOntology pOntology) {
 	if (pOntology != null) {
@@ -61,39 +60,10 @@ public class OntologyMetricsImpl {
 	    }
 	}
 	ontology = pOntology;
-	iri = null;
 
     }
 
-    /*
-     * getter $ setter
-     */
 
-    public OWLOntology getOntology() {
-	return ontology;
-    }
-
-    public void setOntology(OWLOntology pOntology) {
-	ontology = pOntology;
-    }
-
-    public void setIRI(IRI pIRI) {
-	iri = pIRI;
-    }
-
-    // neu
-    public void setIRI(String pIRI) {
-	iri = IRI.create(pIRI);
-    }
-
-    public IRI getIRI() {
-	return iri;
-    }
-
-    // neu
-    public void resetIRI() {
-	iri = null;
-    }
 
     /*
      * metrics
@@ -103,21 +73,27 @@ public class OntologyMetricsImpl {
 	Map<String, Object> resultSet;
 	Configuration config = new Configuration();
 	config.ignoreUnsupportedDatatypes = true;
+	
 	if(reasonerCalculationSelected) {
+	    System.out.println("Reasoner is selected. Starting Reasoner");
 	    OWLReasoner reasoner = new Reasoner(config, ontology);
 	    InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner);
 	    iog.fillOntology(new OWLDataFactoryImpl(),  ontology);
 	    resultSet = execMetricCalculation(true);
 	    // The Git-Extension application needs capitalized Boolean values for automatically parsing.
+	    System.out.println();
 	    resultSet.put("reasonerActive", "True");
+	    resultSet.put("inconsistentClasses", reasoner.getUnsatisfiableClasses().getSize() -1);
 	    if(reasoner.isConsistent())
 		resultSet.put("consistencyCheckSuccessful", "True");
 	    else
 		resultSet.put("consistencyCheckSuccessful", "False");
+	    System.out.println("Reasoner Completed. Starting Ontology Metric calculation");
 	}
 	else {
 	    resultSet = execMetricCalculation(true);
 	    resultSet.put("reasonerActive", "False");
+	    resultSet.put("inconsistentClasses", 0);
 	    resultSet.put("consistencyCheckSuccessful", "False");
 	}
 
