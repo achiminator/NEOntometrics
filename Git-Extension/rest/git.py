@@ -1,12 +1,17 @@
+import django
 import pygit2 as Git
 from os import path
 from shutil import rmtree
-import logging, copy
+import logging
+import copy
 from datetime import datetime
 from rest.opiHandler import OpiHandler
-from django_rq import job
+from rq import job
 from django.conf import settings
 from rest.dbHandler import DBHandler
+import django_rq
+import rq
+
 
 class GitHandler:
     """Handles the Git-Based Ontology Analysis
@@ -14,9 +19,8 @@ class GitHandler:
     logger = logging.getLogger(__name__)
     logging.basicConfig(level=logging.DEBUG)
 
-
-    @job
-    def getObject(self, repositoryUrl: str, objectLocation: str, branch=None, reasoner:bool = False, classMetrics=False) -> dict:
+    @django_rq.job
+    def getObject(self, repositoryUrl: str, objectLocation: str, branch=None, reasoner: bool = False, classMetrics=False) -> dict:
         """Analyses one ontology-file for evolutional ontology metrics
 
         Args:
@@ -29,19 +33,21 @@ class GitHandler:
         Returns:
             dict: Evolutional Ontology Metrics
         """
-        
-        #Creates a folder for the git-Repository based on the hash of the repository URL.
+
+        # Creates a folder for the git-Repository based on the hash of the repository URL.
         internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))
         if(path.exists(internalOntologyUrl) == False):
-            Git.clone_repository("https://"+ repositoryUrl, internalOntologyUrl, checkout_branch=branch)
-            self.logger.debug("Repository cloned at "+ internalOntologyUrl)       
+            Git.clone_repository("https://" + repositoryUrl,
+                                 internalOntologyUrl, checkout_branch=branch)
+            self.logger.debug("Repository cloned at " + internalOntologyUrl)
         repo = Git.Repository(internalOntologyUrl)
-        metrics = self.getOntologyMetrics(objectLocation, classMetrics, reasoner, internalOntologyUrl, repositoryUrl, branch, repo)
+        metrics = self.getOntologyMetrics(
+            objectLocation, classMetrics, reasoner, internalOntologyUrl, repositoryUrl, branch, repo)
         rmtree(internalOntologyUrl, ignore_errors=True)
         return(True)
 
-    @job
-    def getObjects(self, repositoryUrl: str,  branch=None, classMetrics=False, reasoner= False) -> dict:
+    @django_rq.job
+    def getObjects(self, repositoryUrl: str,  branch=None, classMetrics=False, reasoner=False) -> dict:
         """Analysis all ontology files in a git Repository
 
         Args:
@@ -53,26 +59,48 @@ class GitHandler:
         Returns:
             dict: Evolutional Ontology Metrics
         """
-        
-        #Creates a folder for the git-Repository based on the hash of the repository URL.
+
+        # Creates a folder for the git-Repository based on the hash of the repository URL.
         internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))
         if(path.exists(internalOntologyUrl) == False):
-            Git.clone_repository("http://"+ repositoryUrl, internalOntologyUrl, checkout_branch=branch)
-            self.logger.debug("Repository cloned at "+ internalOntologyUrl)       
+            Git.clone_repository("http://" + repositoryUrl,
+                                 internalOntologyUrl, checkout_branch=branch)
+            self.logger.debug("Repository cloned at " + internalOntologyUrl)
         repo = Git.Repository(internalOntologyUrl)
         index = repo.index
         index.read()
         metrics = []
+
+        # This part is for counting how much ontologies are to be calculated in this repository
+        currentJob = rq.job.get_current_job()
+        ontologiesToBeAnalyzed = 0
+        analyzedOntologies = 0
+        for item in index:
+            if(item.path.endswith((".ttl", ".owl", ".rdf"))):
+                ontologiesToBeAnalyzed += 1
+        currentJob.meta = {"analysableOntologies": ontologiesToBeAnalyzed,
+                           "analyzedOntologies": analyzedOntologies}
+        currentJob.save_meta()
+
         for item in index:
             if(item.path.endswith((".ttl", ".owl", ".rdf"))):
                 self.logger.debug("Analyse Ontology: "+item.path)
                 logging.debug("Analyse Ontology: "+item.path)
                 if(reasoner):
-                    metrics.append(self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, reasoner=False, internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo))
-                    metrics.append(self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, reasoner=True, internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo))
-                    
+                    metrics.append(self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, reasoner=False,
+                                   internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo))
+                    metrics.append(self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, reasoner=True,
+                                   internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo))
+
                 else:
-                    metrics.append(self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, reasoner=False, internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo))
+                    metrics.append(self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, reasoner=False,
+                                   internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo))
+
+                analyzedOntologies += 1
+                currentJob.meta = {
+                    "analysableOntologies": ontologiesToBeAnalyzed, "analyzedOntologies": analyzedOntologies}
+                currentJob.save_meta()
+
         dbhandler = DBHandler()
         dbhandler.setWholeRepoAnalyzed(repository=repositoryUrl)
         rmtree(internalOntologyUrl, ignore_errors=True)
@@ -91,31 +119,42 @@ class GitHandler:
 
         Returns:
             dict: Repository with evolutional ontology-Metrics
-        """        
-        
+        """
+
         # Read the index of the repo for accessing the files
         index = repo.index
         index.read()
         # Read the ID-representation of the requested File
         fileId = index[objectLocation].id
-        # Access the RAW-Data of the File using its ID-representation as an identified      
+        # Access the RAW-Data of the File using its ID-representation as an identified
         file = repo.get(fileId)
         opi = OpiHandler()
-        formerObj= None
+        formerObj = None
         metricsDict = []
         commitList = []
         # Iterates through the Repository, finding the relevant Commits based on paths
-        for commit in repo.walk(repo.head.target, Git.GIT_SORT_TOPOLOGICAL  | Git.GIT_SORT_REVERSE):
-            obj = self.getFittingObject(objectLocation, commit.tree)
+        for commit in repo.walk(repo.head.target, Git.GIT_SORT_TOPOLOGICAL | Git.GIT_SORT_REVERSE):
+            obj = self._getFittingObject(objectLocation, commit.tree)
             if obj != None:
                 if(formerObj != obj):
                     formerObj = obj
                     commitList.append(commit)
-        # Sorting the Commits based on TIME, not on PARENTS, thus making the list ready for further filtering                  
-        commitList.sort(key=lambda commit: datetime.fromtimestamp(commit.commit_time))
-        formerObj= None
+
+        # Sorting the Commits based on TIME, not on PARENTS, thus making the list ready for further filtering
+        commitList.sort(
+            key=lambda commit: datetime.fromtimestamp(commit.commit_time))
+        formerObj = None
+        commitCounter = 0
         for commit in commitList:
-            obj = self.getFittingObject(objectLocation, commit.tree)
+            commitCounter += 1
+            job = rq.job.get_current_job()
+            job.meta.update({
+                "commitsForThisOntology": len(commitList),
+                "ananlyzedCommits": commitCounter
+            })
+            job.save_meta()
+
+            obj = self._getFittingObject(objectLocation, commit.tree)
             if obj != None:
                 if(formerObj != obj):
                     branches = repo.branches.with_commit(commit)
@@ -125,7 +164,8 @@ class GitHandler:
                     returnObject["Branches"] = (list(branches))
                     returnObject["Ontology"] = objectLocation
                     returnObject["Repository"] = objectLocation
-                    returnObject["CommitTime"] = datetime.fromtimestamp(commit.commit_time)
+                    returnObject["CommitTime"] = datetime.fromtimestamp(
+                        commit.commit_time)
                     returnObject["CommitMessage"] = commit.message
                     returnObject["AuthorName"] = commit.author.name
                     returnObject["AuthorEmail"] = commit.author.email
@@ -133,32 +173,42 @@ class GitHandler:
                     returnObject["CommiterEmail"] = commit.committer.email
                     returnObject["ReadingError"] = False
                     returnObject["Size"] = obj.size
-                    self.logger.debug("Date: " + str(returnObject["CommitTime"]))
+                    self.logger.debug(
+                        "Date: " + str(returnObject["CommitTime"]))
                     self.logger.debug("Commit:" + commit.message)
                     if (obj.size > settings.CLASSMETRICSLIMIT and classMetrics):
                         classMetrics = False
-                        returnObject["ReadingError"] = "Ontology Exceeds "+ str(settings.CLASSMETRICSLIMIT) + "b. ClassMetrics deactivated"
-                        self.logger.warning(obj.name + " to large - ClassMetrics Deativated")
+                        returnObject["ReadingError"] = "Ontology Exceeds " + \
+                            str(settings.CLASSMETRICSLIMIT) + \
+                            "b. ClassMetrics deactivated"
+                        self.logger.warning(
+                            obj.name + " to large - ClassMetrics Deativated")
                     if(obj.size > settings.ONTOLOGYLIMIT):
-                        returnObject["ReadingError"] = "Ontology Exceeds "+ str(settings.ONTOLOGYLIMIT) + "b. Analysis deactivated"
+                        returnObject["ReadingError"] = "Ontology Exceeds " + \
+                            str(settings.ONTOLOGYLIMIT) + \
+                            "b. Analysis deactivated"
                         self.logger.error(returnObject["ReadingError"])
                     else:
+                        if(obj.size > settings.REASONINGLIMIT):
+                            reasoner = False
                         try:
-                            opiMetrics = opi.opiOntologyRequest(obj.data, classMetrics=classMetrics, reasoner=reasoner)
-                            returnObject.update(opiMetrics)    
+                            opiMetrics = opi.opiOntologyRequest(
+                                obj.data, classMetrics=classMetrics, reasoner=reasoner)
+                            returnObject.update(opiMetrics)
                             self.logger.debug("Ontology Analyzed Successfully")
                         except IOError:
                             # A reading Error occurs, e.g., if an ontology does not conform to a definied ontology standard and cannot be parsed
-                            self.logger.warning("Ontology {0} not Readable ".format(obj.name))
+                            self.logger.warning(
+                                "Ontology {0} not Readable ".format(obj.name))
                             returnObject["ReadingError"] = "Ontology not Readable"
                     metricsDict.append(returnObject)
         # Write Metrics in Database
         dbhandler = DBHandler()
-        dbhandler.writeInDB(metricsDict, branch=branch, file=objectLocation, repo=remoteLocation)
+        dbhandler.writeInDB(metricsDict, branch=branch,
+                            file=objectLocation, repo=remoteLocation)
         return(metricsDict)
 
-    
-    def getFittingObject(self, searchObj, commitTree):
+    def _getFittingObject(self, searchObj, commitTree):
         """Finds specific File in git-commit-Object
 
         Args:
@@ -168,7 +218,7 @@ class GitHandler:
         Returns:
             Object: Ontology-File
         """
-              
+
         if type(searchObj) is list:
             searchList = searchObj
         else:
@@ -176,15 +226,16 @@ class GitHandler:
         breadCrumbCounter = 0
         if(len(searchList) > 1):
             for breadCrumb in searchList:
-            # Check if its the last element of the BreadCrumb Object
+                # Check if its the last element of the BreadCrumb Object
                 if(commitTree.__contains__(breadCrumb)):
                     searchList.pop(0)
-                    return(self.getFittingObject(searchList, commitTree.__getitem__(breadCrumb)))
+                    return(self._getFittingObject(searchList, commitTree.__getitem__(breadCrumb)))
                 else:
                     return None
         else:
             if(commitTree.__contains__(searchList[0])):
                 if(type(commitTree.__getitem__(searchList[0])) is Git.Tree):
-                    self.getFittingObject(searchList[0], commitTree.__getitem__(searchList[0]))
+                    self._getFittingObject(
+                        searchList[0], commitTree.__getitem__(searchList[0]))
                 else:
                     return(commitTree.__getitem__(searchList[0]))
