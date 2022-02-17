@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
       scrollBehavior: MyCustomWebScrollBehavior(),
       title: 'NEOntometrics',
       theme: ThemeData(
-        primarySwatch: Colors.amber,
+        primarySwatch: Colors.deepPurple,
       ),
       home:  EntryPage(),
     );

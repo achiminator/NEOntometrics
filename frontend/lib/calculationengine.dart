@@ -139,21 +139,27 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                     Map<String, dynamic> jsonResponse =
                                         json.decode(httpResponse.body);
                                     SnackBar snack = SnackBar(
-                                      duration:const Duration(seconds: 10),
-                                      content: ListTile(
-                                        textColor: Colors.white,
-                                        leading: (jsonResponse[
-                                                    "taskIsStarted"] ==
-                                                true)
-                                            ? const Icon(
-                                                Icons.wb_incandescent_sharp)
-                                            : const Icon(Icons.query_builder),
-                                        title: Text(
-                                            "Calculation not yet finished. Queue position: ${jsonResponse["queuePosition"]}"),
-                                        subtitle: Text(
-                                            "The task is ${(jsonResponse["taskIsStarted"] == true) ? "already" : "not yet"} started"),
-                                      ),
-                                    );
+                                        backgroundColor: Theme.of(context).focusColor,
+                                        duration: const Duration(seconds: 10),
+                                        content: ListTile(
+                                          iconColor: Colors.white,
+                                          textColor: Colors.white,
+                                          leading: (jsonResponse[
+                                                      "taskIsStarted"] ==
+                                                  true)
+                                              ? const Icon(
+                                                  Icons.wb_incandescent_sharp)
+                                              : const Icon(Icons.query_builder),
+                                          title: Text(
+                                              "Calculation not yet finished. Queue position: ${jsonResponse["queuePosition"]}"),
+                                          //The progress bar for the current state of analyzed ontologies shall only appear
+                                          //if the data is in the json response.
+                                          subtitle: (jsonResponse
+                                                  .containsKey("progress"))
+                                              ? ProgressBarIndicator(
+                                                  jsonResponse: jsonResponse)
+                                              : null,
+                                        ));
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(snack);
                                   } else {
@@ -197,7 +203,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
         leading: const Icon(Icons.warning_amber),
         subtitle: Text(message),
       ),
-      backgroundColor: Colors.red,
+      backgroundColor: Theme.of(context).errorColor,
       duration: const Duration(seconds: 10),
       padding: const EdgeInsets.all(20),
       dismissDirection: DismissDirection.vertical,
@@ -273,5 +279,43 @@ class _CalculationEngineState extends State<CalculationEngine> {
           )));
     }
     return chips;
+  }
+}
+
+class ProgressBarIndicator extends StatelessWidget {
+  const ProgressBarIndicator({
+    Key? key,
+    required this.jsonResponse,
+  }) : super(key: key);
+
+  final Map<String, dynamic> jsonResponse;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 40,
+      child: Column(children: [
+        Row(children: [
+          Text(
+              "Analyzed ${jsonResponse["progress"]["analyzedOntologies"]} of ${jsonResponse["progress"]["analysableOntologies"]} ontologies:  "),
+          Expanded(
+              child: LinearProgressIndicator(
+            value: jsonResponse["progress"]["analysableOntologies"] /
+                jsonResponse["progress"]["analyzedOntologies"],
+            minHeight: 5,
+          ))
+        ]),
+        Row(children: [
+          Text(
+              "Analyzed ${jsonResponse["progress"]["ananlyzedCommits"]} of ${jsonResponse["progress"]["commitsForThisOntology"]} Commits of this ontology:  "),
+          Expanded(
+              child: LinearProgressIndicator(
+            value: jsonResponse["progress"]["ananlyzedCommits"] /
+                jsonResponse["progress"]["commitsForThisOntology"],
+            minHeight: 5,
+          ))
+        ])
+      ]),
+    );
   }
 }

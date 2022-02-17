@@ -1,24 +1,36 @@
-# SemOI
-Semantically Augmentation for Open Images
+# NEOntometrics
+Calculating Ontology Metrics Online
 _______
 
-The application builds upon a microservice architecture. In total, the service consists of three parts: The frontend and image-recognition container (here called ***webapp***), the semantic augmentation web-service (here called ***semanticAPI***), and a triplestore ([Apache Jena Fuseki](https://jena.apache.org/documentation/fuseki2/) based on an Docker Image of [Stain](https://registry.hub.docker.com/r/stain/jena-fuseki)).
+Welcome to the *NEOntometrics* application. *NEOntometrics* enables you to explore and calculate ontology measurements. It implemented manigfold metrics proposed by the literature and much more. All public ontology ressources available on the web can be utilized. *NEOntometrics* is further possible to calculate historic ontology metrics based on git repositories, to enable more broader view on the development process of ontologies. It is targeted to be the single-stop resource for making ontology metrics accessible.
 
-The former serves the webpage, stores the picture temporarily, and performs the object detection using TensorFlow-hub with a pre-trained model for Open Images. In the next step, the detected objects are transferred to the semantic advisory component. This component performs a SPARQL-request for every detected object on an apache fuseki server. Based on the inferred objects, the SC-value is calculated for each detected element and returned to the fronted to display the results.
-The code is written in python and utilizes the Django- and Django-Rest-Framework and Docker  for containerization. For ontology development, we used the tool Protégé. Further, the code is published under an open-source license (LGPL) on Github , including the dockerfile for the service orchestration and the ontology-file.
-**Before using the docker-compose file, please do not forget to change the password**
+The following things are possible with *NEOntometrics*
+- Explore Ontoloy Metrics
+    - Use the Metric Explorer to learn about the measurable characteristics of an ontology.
+    - See how the various measurement points have been utilized by the available frameworks-
+    - Explore the differencies and commonalities of the metric frameworks.
+    - Read about the quality characteristics some of the frameworks have proposed and which metrics influence them.
+- Calculate Ontology Metrics
+    - Put the explored metrics into use. Calulate many of the proposed metrics.
+    - Utilize different ontology sources
+        - Git- repositories
+        - Public Ontology endpoints
+    - Download a CSV for further processing
+    - Use a public available REST & GraphQL interface for metric integration in your applications.
+- Contribute! NEOntometrics is [Open Source](Git_Repo)
+    - Customize the application based on your needs
+    - Propose new metrics
+    - Integrate further ontology sources
 
-Further, we developed a translator the conversion of the json-based hierachy provided by OpenImages into an RDF-graph. Please see SemanticAPI/ImageRecog2RDF for the sourcefiles.
+And of courese, if you have any questions, inquiries or ideas, feel free to contact me [Achim Reiz](mailto:achim.reiz@uni-rostock.de).
 
-# Setting up a development environment
+## How To Use *NEOntometrics*
 
-## Initial setup after clone
+### How To Use The Metric Explorer
 
-- run ``$ pipenv install`` in each subdirectory to install any dependencies.
+### How To Calculate Ontology Metrics
 
-## Running the development server
+### How To Use The Rest Interface
 
-1. run ``$ pipenv shell`` in the desired subdirectory (e.g. "WebApp").
-2. run ``$ python manage.py runserver [port]`` in the previously started shell.
+## The Application Architecture
 
-Any file changes will cause a reload of the project.
