@@ -12,17 +12,17 @@ services:
   neontometricsapi:
     restart: always
     container_name: neontometricsapi
-    build: 
-      context: ./Git-Extension
     image: neontometrics
     # The starting of the mySQL-Database takes longer than the start up of the django webapp.
+
     # Wait-for-it.sh ensures that the database is up and running before starting django.
-    command: python manage.py runserver 0.0.0.0:8000
+    command: "python manage.py runserver 0.0.0.0:8000"
     #command: 'python manage.py runserver 0.0.0.0:8000' 
     ports:
       - '8012:8000'
     depends_on:
       - neontometricsdb
+      - migrateDB
     environment:
       db_password: 'KMmsWrwRBBeQLXDO'
       inDocker: "True"
@@ -36,11 +36,12 @@ services:
     depends_on:
       - neontometricsapi
       - neontometricsdb
+      - migrateDB
     environment:
-     db_password: 'KMmsWrwRBBeQLXDO'
-     isWorker: "True"
-     inDocker: "True"
-  
+      db_password: 'KMmsWrwRBBeQLXDO'
+      isWorker: "True"
+      inDocker: "True"
+
   # the REST-Calculation Engine
   opi:
     ports:
@@ -56,14 +57,25 @@ services:
   # The flutter Frontend
   frontend:
     ports:
-    - '8003:8000'
+      - '8003:8000'
     restart: always
     container_name: neontometricsfrontend
     build:
       context: ./frontend
     image: neontometricsfrontend
 
-
+  # Creates the tables necessary in the database
+  migrateDB:
+    restart: "no"
+    build:
+      context: ./Git-Extension
+    image: neontometrics
+    depends_on:
+      - neontometricsdb
+    environment:
+      db_password: 'KMmsWrwRBBeQLXDO'
+      inDocker: "True"
+    command: bash -c "python manage.py makemigrations rest --noinput && python manage.py migrate"
 
   # The Database for metric documentation
   neontometricsdb:

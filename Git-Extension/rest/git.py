@@ -176,20 +176,20 @@ class GitHandler:
                     self.logger.debug(
                         "Date: " + str(returnObject["CommitTime"]))
                     self.logger.debug("Commit:" + commit.message)
-                    if (obj.size > settings.CLASSMETRICSLIMIT and classMetrics):
+                    if (obj.size > settings.CLASSMETRICSLIMIT and classMetrics and settings.CLASSMETRICSLIMIT >0):
                         classMetrics = False
                         returnObject["ReadingError"] = "Ontology Exceeds " + \
                             str(settings.CLASSMETRICSLIMIT) + \
                             "b. ClassMetrics deactivated"
                         self.logger.warning(
                             obj.name + " to large - ClassMetrics Deativated")
-                    if(obj.size > settings.ONTOLOGYLIMIT):
+                    if(obj.size > settings.ONTOLOGYLIMIT and settings.ONTOLOGYLIMIT > 0):
                         returnObject["ReadingError"] = "Ontology Exceeds " + \
                             str(settings.ONTOLOGYLIMIT) + \
                             "b. Analysis deactivated"
                         self.logger.error(returnObject["ReadingError"])
                     else:
-                        if(obj.size > settings.REASONINGLIMIT):
+                        if(obj.size > settings.REASONINGLIMIT and settings.REASONINGLIMIT > 0):
                             reasoner = False
                         try:
                             opiMetrics = opi.opiOntologyRequest(
