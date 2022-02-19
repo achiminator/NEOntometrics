@@ -139,7 +139,8 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                     Map<String, dynamic> jsonResponse =
                                         json.decode(httpResponse.body);
                                     SnackBar snack = SnackBar(
-                                        backgroundColor: Theme.of(context).focusColor,
+                                        backgroundColor:
+                                            Theme.of(context).focusColor,
                                         duration: const Duration(seconds: 10),
                                         content: ListTile(
                                           iconColor: Colors.white,
@@ -154,8 +155,8 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                               "Calculation not yet finished. Queue position: ${jsonResponse["queuePosition"]}"),
                                           //The progress bar for the current state of analyzed ontologies shall only appear
                                           //if the data is in the json response.
-                                          subtitle: (jsonResponse
-                                                  .containsKey("progress"))
+                                          subtitle: (jsonResponse["progress"]
+                                                  .isNotEmpty)
                                               ? ProgressBarIndicator(
                                                   jsonResponse: jsonResponse)
                                               : null,

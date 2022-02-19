@@ -38,8 +38,9 @@ class GitHandler:
         internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))
         if(path.exists(internalOntologyUrl) == False):
             Git.clone_repository("https://" + repositoryUrl,
-                                 internalOntologyUrl, checkout_branch=branch)
+                                    internalOntologyUrl, checkout_branch=branch)
             self.logger.debug("Repository cloned at " + internalOntologyUrl)
+            
         repo = Git.Repository(internalOntologyUrl)
         metrics = self.getOntologyMetrics(
             objectLocation, classMetrics, reasoner, internalOntologyUrl, repositoryUrl, branch, repo)

@@ -43,19 +43,25 @@ class DBHandler:
         results =  Source.objects.filter(fileName=file, repository=repo,branch=branch).delete()
         sourceModel = Source.objects.create(fileName=file, repository=repo,branch=branch, wholeRepositoryAnalyzed= wholeRepo)
         for commitMetrics in metricsDict:
-            metricsModel = Metrics.objects.create(CommitTime = commitMetrics["CommitTime"], metricSource=sourceModel)                
-            modelDict = self.__commit2MetricsModel__(commitMetrics)
+            # This statement is a little bit "rough". However, if the iteration on metricsDict is a string,
+            # then we analyzed a single ontology metric (then have not analyzed a Repository) and do not need to run the "@commit2Metrics" method.
+            if(type(commitMetrics) == str):
+                metricsModel = Metrics.objects.create(metricSource=sourceModel) 
+                modelDict = metricsDict["OntologyMetrics"]["GeneralOntologyMetrics"]
+            else:
+                metricsModel = Metrics.objects.create(CommitTime = commitMetrics["CommitTime"], metricSource=sourceModel)                
+                modelDict = self.__commit2MetricsModel__(commitMetrics)
             metricsModel.__dict__.update(modelDict)
             metricsModel.save()
-            if "OntologyMetrics" in commitMetrics:
-                if "Classmetrics" in commitMetrics["OntologyMetrics"]:
-                    for classMetricsValues in commitMetrics["OntologyMetrics"]["BaseMetrics"]["Classmetrics"]:
-                        classMetricsModel = ClassMetrics.objects.create(metric = metricsModel)
-                        classMetricsModel.__dict__.update(classMetricsValues)
-                        classMetricsModel.save()
+            # if "OntologyMetrics" in commitMetrics:
+            #     if "Classmetrics" in commitMetrics["OntologyMetrics"]:
+            #         for classMetricsValues in commitMetrics["OntologyMetrics"]["BaseMetrics"]["Classmetrics"]:
+            #             classMetricsModel = ClassMetrics.objects.create(metric = metricsModel)
+            #             classMetricsModel.__dict__.update(classMetricsValues)
+            #             classMetricsModel.save()
         return sourceModel
 
-    def getMetricForOntology(self, repository: str,file ="", reasonerSelected: bool=False, branch = None, classMetrics=False, hideId=True) -> dict:
+    def getMetricForOntology(self, repository: str,file ="", reasonerSelected: bool=False, branch = "", classMetrics=False, hideId=True) -> dict:
         """Retrieves Metric Calculation (for one ontology or whole Repo) from the database. 
 
         Args:

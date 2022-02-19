@@ -98,18 +98,6 @@ class CalculateGitMetric(APIView):
             print(identifier)
             raise ParseError("Wrong Input parameter! Check Documentation")
 
-        # Analyze a Single Ontology File
-        # If the url.repository is empty, no GIT-repository is given and the user pointed directly to a single ontology File
-        if(url.repository == ""):
-            onto = requests.get("http://" + url.file)
-            opi = OpiHandler()
-            try:
-                metrics = opi.opiOntologyRequest(
-                    onto, True, reasoner=reasonerSelected)
-            except:
-                raise ParseError("No Valid Ontology is given in the URL")
-            return(Response(metrics))
-
         # At first check if the value is already stored in the database
         db = DBHandler()
         metricFromDB = db.getMetricForOntology(
@@ -117,6 +105,20 @@ class CalculateGitMetric(APIView):
         if(metricFromDB):
             logging.debug("Read Metrics from Database")
             return Response(metricFromDB)
+
+        # Analyze a Single Ontology File
+        # If the url.repository is empty, no GIT-repository is given and the user pointed directly to a single ontology File
+        if(url.repository == ""):
+            getOntologyResponse = requests.get("http://" + url.file)
+            ontology = getOntologyResponse.text.replace("\n", "")
+            opi = OpiHandler()
+            metrics = opi.opiOntologyRequest(
+                ontology, False, reasoner=reasonerSelected)
+            db.writeInDB(file=url.file, repo=url.repository,
+                            metricsDict=metrics, wholeRepo=0)
+            
+                # raise ParseError("No Valid Ontology is given in the URL")
+            return(Response(metrics))
 
         # If it is not already in the database, check the queue
         # The JobId is the ID of the task whithin the queue
@@ -204,7 +206,7 @@ class CalculateGitMetric(APIView):
         jobPosition = django_rq.get_queue().get_job_position(job)
         resp = {
             "taskFinished": False,
-            "taskIsStarted": job.is_started,
+            "taskIsStarted": job in django_rq.get_queue().started_job_registry,
             "queuePosition": jobPosition if jobPosition != None else 0,
             "progress": job.get_meta()
         }
