@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from rest.metricOntologyHandler import OntologyHandler
 from rest.models import ClassMetrics
 from rest_framework.renderers import TemplateHTMLRenderer
-from rest.git import GitHandler
+from rest.CalculationManager import CalculationManager
 from rest.opiHandler import OpiHandler
 from django.shortcuts import render
 from rest_framework.views import APIView
@@ -106,20 +106,6 @@ class CalculateGitMetric(APIView):
             logging.debug("Read Metrics from Database")
             return Response(metricFromDB)
 
-        # Analyze a Single Ontology File
-        # If the url.repository is empty, no GIT-repository is given and the user pointed directly to a single ontology File
-        if(url.repository == ""):
-            getOntologyResponse = requests.get("http://" + url.file)
-            ontology = getOntologyResponse.text.replace("\n", "")
-            opi = OpiHandler()
-            metrics = opi.opiOntologyRequest(
-                ontology, False, reasoner=reasonerSelected)
-            db.writeInDB(file=url.file, repo=url.repository,
-                            metricsDict=metrics, wholeRepo=0)
-            
-                # raise ParseError("No Valid Ontology is given in the URL")
-            return(Response(metrics))
-
         # If it is not already in the database, check the queue
         # The JobId is the ID of the task whithin the queue
         jobId = GitHelper.serializeJobId(url.url)
@@ -142,16 +128,21 @@ class CalculateGitMetric(APIView):
                     "info": "internal server error"
                 }, status=500)
         logging.debug("Put job in queue")
-        gitHandler = GitHandler()
-        if url.file != '':
-            metrics = django_rq.enqueue(gitHandler.getObject, repositoryUrl=url.repository, objectLocation=url.file,
+        calculationManager = CalculationManager()
+
+            
+            
+        if(url.repository == ""):
+            django_rq.enqueue(calculationManager.ontologyFileWORepo, url, reasonerSelected, job_id=jobId)
+        elif url.file != '':
+            metrics = django_rq.enqueue(calculationManager.getObject, repositoryUrl=url.repository, objectLocation=url.file,
                                         branch=url.branch, classMetrics=classMetrics, reasoner=reasonerSelected,  job_id=jobId)
         # If no file is given, analyze the whole REPO
         else:
-            metrics = django_rq.enqueue(gitHandler.getObjects, repositoryUrl=url.repository,
+            metrics = django_rq.enqueue(calculationManager.getObjects, repositoryUrl=url.repository,
                                         classMetrics=classMetrics, reasoner=reasonerSelected, job_id=jobId)
         return Response(self.__getQueueAnswer__(url, jobId))
-
+    
     def delete(self, request: Request, format=None):
         """Delete a metric caluclation from the Database
 

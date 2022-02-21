@@ -3,8 +3,9 @@ import pygit2 as Git
 from os import path
 from shutil import rmtree
 import logging
-import copy
+import copy, requests
 from datetime import datetime
+from rest.GitHelper import GitHelper, GitUrlParser
 from rest.opiHandler import OpiHandler
 from rq import job
 from django.conf import settings
@@ -13,11 +14,28 @@ import django_rq
 import rq
 
 
-class GitHandler:
-    """Handles the Git-Based Ontology Analysis
+class CalculationManager:
+    """Handles the all preparation before sending the data to the OPI-Endpoint
     """
     logger = logging.getLogger(__name__)
     logging.basicConfig(level=logging.DEBUG)
+
+    @django_rq.job
+    def ontologyFileWORepo(self, url: GitUrlParser, reasonerSelected: bool):
+        """Analyze a single ontology file that is not bound to a repository
+
+        Args:
+            url (GitHelper.GitUrlParser): The GitHelper object that contains information regarding the ontoloy file source
+            reasonerSelected (bool): Depicts if the metrics are calculated using a reasoner or not.
+        """
+        db = DBHandler()
+        getOntologyResponse = requests.get("http://" + url.file)
+        ontology = getOntologyResponse.text.replace("\n", "")
+        opi = OpiHandler()
+        metrics = opi.opiOntologyRequest(
+            ontologyString=ontology, classMetrics=False, ontologySize=len(getOntologyResponse.content), reasoner=reasonerSelected)
+        db.writeInDB(file=url.file, repo=url.repository,
+                     metricsDict=metrics, wholeRepo=0)
 
     @django_rq.job
     def getObject(self, repositoryUrl: str, objectLocation: str, branch=None, reasoner: bool = False, classMetrics=False) -> dict:
@@ -38,9 +56,9 @@ class GitHandler:
         internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))
         if(path.exists(internalOntologyUrl) == False):
             Git.clone_repository("https://" + repositoryUrl,
-                                    internalOntologyUrl, checkout_branch=branch)
+                                 internalOntologyUrl, checkout_branch=branch)
             self.logger.debug("Repository cloned at " + internalOntologyUrl)
-            
+
         repo = Git.Repository(internalOntologyUrl)
         metrics = self.getOntologyMetrics(
             objectLocation, classMetrics, reasoner, internalOntologyUrl, repositoryUrl, branch, repo)
@@ -172,36 +190,20 @@ class GitHandler:
                     returnObject["AuthorEmail"] = commit.author.email
                     returnObject["CommitterName"] = commit.committer.name
                     returnObject["CommiterEmail"] = commit.committer.email
-                    returnObject["ReadingError"] = False
-                    returnObject["Size"] = obj.size
+                    
                     self.logger.debug(
                         "Date: " + str(returnObject["CommitTime"]))
                     self.logger.debug("Commit:" + commit.message)
-                    if (obj.size > settings.CLASSMETRICSLIMIT and classMetrics and settings.CLASSMETRICSLIMIT >0):
-                        classMetrics = False
-                        returnObject["ReadingError"] = "Ontology Exceeds " + \
-                            str(settings.CLASSMETRICSLIMIT) + \
-                            "b. ClassMetrics deactivated"
+                    try:
+                        opiMetrics = opi.opiOntologyRequest(
+                            obj.data, ontologySize=obj.size, classMetrics=classMetrics, reasoner=reasoner)
+                        returnObject.update(opiMetrics)
+                        self.logger.debug("Ontology Analyzed Successfully")
+                    except IOError:
+                        # A reading Error occurs, e.g., if an ontology does not conform to a definied ontology standard and cannot be parsed
                         self.logger.warning(
-                            obj.name + " to large - ClassMetrics Deativated")
-                    if(obj.size > settings.ONTOLOGYLIMIT and settings.ONTOLOGYLIMIT > 0):
-                        returnObject["ReadingError"] = "Ontology Exceeds " + \
-                            str(settings.ONTOLOGYLIMIT) + \
-                            "b. Analysis deactivated"
-                        self.logger.error(returnObject["ReadingError"])
-                    else:
-                        if(obj.size > settings.REASONINGLIMIT and settings.REASONINGLIMIT > 0):
-                            reasoner = False
-                        try:
-                            opiMetrics = opi.opiOntologyRequest(
-                                obj.data, classMetrics=classMetrics, reasoner=reasoner)
-                            returnObject.update(opiMetrics)
-                            self.logger.debug("Ontology Analyzed Successfully")
-                        except IOError:
-                            # A reading Error occurs, e.g., if an ontology does not conform to a definied ontology standard and cannot be parsed
-                            self.logger.warning(
-                                "Ontology {0} not Readable ".format(obj.name))
-                            returnObject["ReadingError"] = "Ontology not Readable"
+                            "Ontology {0} not Readable ".format(obj.name))
+                        returnObject["ReadingError"] = "Ontology not Readable"
                     metricsDict.append(returnObject)
         # Write Metrics in Database
         dbhandler = DBHandler()

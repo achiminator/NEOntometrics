@@ -4,7 +4,7 @@ from ontoMetricsAPI.settings import DATABASES
 from rest import views
 from rest_framework.test import APIRequestFactory, DjangoTestAdapter
 from django.test import TestCase, utils
-from rest.git import GitHandler
+from rest.CalculationManager import CalculationManager
 from rest.metricOntologyHandler import OntologyHandler
 import json, time, requests
 
