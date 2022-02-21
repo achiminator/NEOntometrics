@@ -651,7 +651,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
-                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#DLExpressivity"/>
+                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#dlExpressivity"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The DL-subset of the ontology.</neontometrics:MetricDefinition>
@@ -1199,7 +1199,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
-                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#GCICount"/>
+                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#gciCount"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Counts the number of General Concept Inclusions (GCI).</neontometrics:MetricDefinition>
@@ -1227,7 +1227,7 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
-                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#HiddenGCICount"/>
+                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#hiddengciCount"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Counts the number of implicit, hidden general concept inclusions (GCIs).</neontometrics:MetricDefinition>
@@ -5126,30 +5126,6 @@ SD = H/C</neontometrics:MetricDefinition>
     
 
 
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#DLExpressivity -->
-
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#DLExpressivity">
-        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#GCICount -->
-
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#GCICount">
-        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#HiddenGCICount -->
-
-    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#HiddenGCICount">
-        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
-    </owl:NamedIndividual>
-    
-
-
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#absoluteBreadth -->
 
     <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#absoluteBreadth">
@@ -5382,6 +5358,14 @@ SD = H/C</neontometrics:MetricDefinition>
     
 
 
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#dlExpressivity -->
+
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#dlExpressivity">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
+    
+
+
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#equivalentClassesAxioms -->
 
     <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#equivalentClassesAxioms">
@@ -5422,9 +5406,25 @@ SD = H/C</neontometrics:MetricDefinition>
     
 
 
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#gciCount -->
+
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#gciCount">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
+    
+
+
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#generalAnnotationAxioms -->
 
     <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#generalAnnotationAxioms">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#hiddengciCount -->
+
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#hiddengciCount">
         <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
     </owl:NamedIndividual>
     

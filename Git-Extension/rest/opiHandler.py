@@ -42,7 +42,12 @@ class OpiHandler:
             dict: Ontology-Metrics
         """
         metrics = {}
-        error = False
+        error = ""
+        # The http-Request returns a "str", object, but the Git-Object returns
+        # a byte. However, with the implicit str encoding, some errors can occur for some 
+        # ontologies. This explicit conversion into utf-8 should prevent these problems.
+        if(type(ontologyString) == str):
+            ontologyString = ontologyString.encode("utf-8")
         # if (ontologySize > settings.CLASSMETRICSLIMIT and classMetrics and settings.CLASSMETRICSLIMIT > 0):
         #     classMetrics = False
         #     error = "Ontology Exceeds " + \
@@ -51,34 +56,37 @@ class OpiHandler:
         #     self.logger.warning(
         #         + "ontoloy to large: " + ontologySize + " - ClassMetrics Deativated")
         if(ontologySize > settings.ONTOLOGYLIMIT and settings.ONTOLOGYLIMIT > 0):
-            error = "Ontology Exceeds " + \
+            error += "Ontology Exceeds " + \
                 str(settings.ONTOLOGYLIMIT) + \
-                "b. Analysis deactivated"
+                "b. Analysis deactivated. "
             self.logger.error(error)
         else:
             if(ontologySize > settings.REASONINGLIMIT and settings.REASONINGLIMIT > 0):
                 reasoner = False
-        metricResponse = requestsLib.post(url=self.OntoMetricsEndPoint, data=ontologyString, headers={
-            "save": "false", "reasoner": str(reasoner), "classMetrics": str(classMetrics)})
-        if(metricResponse.status_code != 200):
-            error = metricResponse.text
-        else:
-            xmlTextResponse = metricResponse.text.replace("\n", "")
-            metrics = xmltodict.parse(xmlTextResponse,)
+                error += "Ontology Exceeds " + \
+                str(settings.REASONINGLIMIT) + \
+                "b. Reasoning deactivated. "
+            metricResponse = requestsLib.post(url=self.OntoMetricsEndPoint, data=ontologyString, headers={
+                "save": "false", "reasoner": str(reasoner), "classMetrics": str(classMetrics)})
+            if(metricResponse.status_code != 200):
+                error += metricResponse.text
+            else:
+                xmlTextResponse = metricResponse.text.replace("\n", "")
+                metrics = xmltodict.parse(xmlTextResponse,)
 
-            # Restructure ClassMetrics for a more flat hierachy
-            if classMetrics:
-                tmpClassList = []
-                if (metrics["OntologyMetrics"]["BaseMetrics"]["ClassMetrics"]):
-                    for element in metrics["OntologyMetrics"]["BaseMetrics"]["ClassMetrics"]["Class"]:
-                        element["Classiri"] = element["@iri"]
-                        element.pop("@iri")
-                        tmpClassList.append(element)
-                    metrics["OntologyMetrics"]["BaseMetrics"].pop(
-                        "ClassMetrics")
-                    metrics["OntologyMetrics"]["BaseMetrics"].update(
-                        {"Classmetrics": tmpClassList})
-            
+                # Restructure ClassMetrics for a more flat hierachy
+                if classMetrics:
+                    tmpClassList = []
+                    if (metrics["OntologyMetrics"]["BaseMetrics"]["ClassMetrics"]):
+                        for element in metrics["OntologyMetrics"]["BaseMetrics"]["ClassMetrics"]["Class"]:
+                            element["Classiri"] = element["@iri"]
+                            element.pop("@iri")
+                            tmpClassList.append(element)
+                        metrics["OntologyMetrics"]["BaseMetrics"].pop(
+                            "ClassMetrics")
+                        metrics["OntologyMetrics"]["BaseMetrics"].update(
+                            {"Classmetrics": tmpClassList})
+                
             # There are some metrics, that are not returned by the OPI-application.
         metrics.update({"ReadingError": error,
                         "Size": ontologySize})

@@ -48,11 +48,14 @@ class DBHandler:
             if(type(commitMetrics) == str):
                 metricsModel = Metrics.objects.create(metricSource=sourceModel) 
                 modelDict = metricsDict["OntologyMetrics"]["GeneralOntologyMetrics"]
+                metricsModel.__dict__.update(modelDict)
+                metricsModel.save()
+                break
             else:
                 metricsModel = Metrics.objects.create(CommitTime = commitMetrics["CommitTime"], metricSource=sourceModel)                
                 modelDict = self.__commit2MetricsModel__(commitMetrics)
-            metricsModel.__dict__.update(modelDict)
-            metricsModel.save()
+                metricsModel.__dict__.update(modelDict)
+                metricsModel.save()
             # if "OntologyMetrics" in commitMetrics:
             #     if "Classmetrics" in commitMetrics["OntologyMetrics"]:
             #         for classMetricsValues in commitMetrics["OntologyMetrics"]["BaseMetrics"]["Classmetrics"]:

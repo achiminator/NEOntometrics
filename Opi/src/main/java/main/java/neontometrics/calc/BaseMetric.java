@@ -116,7 +116,7 @@ public class BaseMetric extends MetricCalculations implements Callable<BaseMetri
     public void calculateDLExpressivity() {
 	DLExpressivity expr = new DLExpressivity(ontology);
 	System.out.println(expr.recomputeMetric());
-	this.returnObject.put("DLExpressivity", expr.getValue());
+	this.returnObject.put("dlExpressivity", expr.getValue());
     }
 
 }

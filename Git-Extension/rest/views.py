@@ -108,7 +108,7 @@ class CalculateGitMetric(APIView):
 
         # If it is not already in the database, check the queue
         # The JobId is the ID of the task whithin the queue
-        jobId = GitHelper.serializeJobId(url.url)
+        jobId = GitHelper.serializeJobId(url.service + url.repository + url.file)
         if jobId in django_rq.get_queue().job_ids:
             resp = self.__getQueueAnswer__(url, jobId)
             return Response(resp)

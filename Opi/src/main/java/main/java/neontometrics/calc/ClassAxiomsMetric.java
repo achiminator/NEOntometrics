@@ -54,14 +54,14 @@ public class ClassAxiomsMetric extends MetricCalculations implements Callable<Cl
 	GCICount gc = new GCICount(ontology);
 	gc.setImportsClosureUsed(imports);
 
-	returnObject.put("GCICount", gc.getValue());
+	returnObject.put("gciCount", gc.getValue());
 
     }
 
     private void countHiddenGCIMetric() {
 	HiddenGCICount hgc = new HiddenGCICount(ontology);
 	hgc.setImportsClosureUsed(imports);
-	returnObject.put("HiddenGCICount", hgc.getValue());
+	returnObject.put("hiddengciCount", hgc.getValue());
 
     }
 
