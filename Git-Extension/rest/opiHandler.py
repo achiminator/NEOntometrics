@@ -61,7 +61,7 @@ class OpiHandler:
                 "b. Analysis deactivated. "
             self.logger.error(error)
         else:
-            if(ontologySize > settings.REASONINGLIMIT and settings.REASONINGLIMIT > 0):
+            if(ontologySize > settings.REASONINGLIMIT and settings.REASONINGLIMIT > 0 and reasoner):
                 reasoner = False
                 error += "Ontology Exceeds " + \
                 str(settings.REASONINGLIMIT) + \
