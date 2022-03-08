@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'dart:html' as html;
 
 class MarkDownHandler {
   Widget buildMarkDownElement(String mdLocation) {
@@ -11,7 +12,8 @@ class MarkDownHandler {
           return Center(
               child: Container(
                   padding: const EdgeInsets.all(20),
-                  child: Markdown(data: snapshot.data as String)));
+                  child: Markdown(data: snapshot.data as String, 
+                  onTapLink: (text, href, title) => html.window.open(href!, "resouce"),)));
         } else {
           return const Center(child: CircularProgressIndicator());
         }
