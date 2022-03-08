@@ -179,10 +179,7 @@ class CalculationManager:
                     branches = repo.branches.with_commit(commit)
                     formerObj = obj
                     returnObject = {}
-                    # Commit-Metadata
-                    returnObject["Branches"] = (list(branches))
-                    returnObject["Ontology"] = objectLocation
-                    returnObject["Repository"] = objectLocation
+                    # Commit-Metadata 
                     returnObject["CommitTime"] = datetime.fromtimestamp(
                         commit.commit_time)
                     returnObject["CommitMessage"] = commit.message

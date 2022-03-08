@@ -19,42 +19,50 @@ class _CalculationViewState extends State<CalculationView> {
   final scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Scaffold(
-            appBar: AppBar(
-                title: Row(
-              children: [
-                Expanded(
-                    flex: 3,
-                    child: ListTile(
-                      title: const Text("Metric View"),
-                      subtitle: Text(widget.ontologyName),
-                      leading: const Icon(Icons.add_chart_outlined),
-                    )),
-                Expanded(
-                  flex: 5,
-                  child: ListTile(
-                      leading: const Icon(Icons.filter_none_outlined),
-                      title: DropdownButton(
-                          value: activeMetricFile,
-                          items: getAvailableFileNames(widget.metricData),
-                          onChanged: (value) => setState(() {
-                                activeMetricFile = value as int;
-                              }))),
-                ),
-                Expanded(
-                    flex: 1,
-                    child: OutlinedButton(
-                      onHover: (value) => MaterialStateMouseCursor.clickable,
-                      onPressed: () => downloadMetricFile(activeMetricFile),
-                      child: const ListTile(
-                        title: Text("Download"),
-                        leading: Icon(Icons.download),
-                      ),
-                    ))
-              ],
-            )),
-            body: metricWidgetBuilder(activeMetricFile)));
+    return Scaffold(
+        appBar: AppBar(
+            title: Row(
+              
+          children: [
+            Expanded(
+                flex: 3,
+                child: ListTile(
+                  iconColor: Theme.of(context).secondaryHeaderColor,
+                  textColor: Theme.of(context).secondaryHeaderColor,
+                  title: const Text("Metric View"),
+                  subtitle: Text(widget.ontologyName),
+                  leading: const Icon(Icons.add_chart_outlined),
+                )),
+            Expanded(
+              flex: 5,
+              child: ListTile(
+                textColor: Theme.of(context).secondaryHeaderColor,
+                  leading: const Icon(Icons.filter_none_outlined),
+                  title: DropdownButton(
+                    focusColor: Theme.of(context).secondaryHeaderColor,
+                    iconEnabledColor: Theme.of(context).secondaryHeaderColor,
+                      value: activeMetricFile,
+                      items: getAvailableFileNames(widget.metricData),
+                      onChanged: (value) => setState(() {
+                            activeMetricFile = value as int;
+                          }))),
+            ),
+            Expanded(
+                flex: 1,
+                child: OutlinedButton(
+                  
+                  onHover: (value) => MaterialStateMouseCursor.clickable,
+                  onPressed: () => downloadMetricFile(activeMetricFile),
+                  child:  ListTile(
+                    iconColor: Theme.of(context).secondaryHeaderColor,
+                    textColor: Theme.of(context).secondaryHeaderColor,
+                    title: const Text("Download"),
+                    leading: const Icon(Icons.download),
+                  ),
+                ))
+          ],
+        )),
+        body: metricWidgetBuilder(activeMetricFile));
   }
 
   List<DropdownMenuItem<int>> getAvailableFileNames(List<dynamic> metricData) {
@@ -113,7 +121,10 @@ class _CalculationViewState extends State<CalculationView> {
         constrained: false,
         //controller: this.scrollController,
         clipBehavior: Clip.hardEdge,
-        child: DataTable(
+        child: 
+        
+        PaginatedDataTable( 
+          source: 
           columns: columns,
           rows: tableRows,
         )));

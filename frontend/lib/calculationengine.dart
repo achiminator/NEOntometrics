@@ -117,8 +117,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
                               displayErrorSnackBar(
                                   "Please select at least one metric.",
                                   context);
-                            } else if (urlController.text == "" ||
-                                !urlController.text.contains("http")) {
+                            } else if (urlController.text == "") {
                               displayErrorSnackBar(
                                   "No valid ontology given. Please enter an URL to a valid Ontology.",
                                   context);
@@ -253,6 +252,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
               if (value ?? false) {
                 selectedElementsForCalculation.addAll(leafElements);
               } else {
+                http: //localhost:8012/django-rq/queues/0/github.comgithub.com__II__obophenotype__II__cell-ontology/
                 selectedElementsForCalculation.removeAll(leafElements);
               }
             },
@@ -297,24 +297,30 @@ class ProgressBarIndicator extends StatelessWidget {
       height: 40,
       child: Column(children: [
         Row(children: [
-          Text(
-              "Analyzed ${jsonResponse["progress"]["analyzedOntologies"]} of ${jsonResponse["progress"]["analysableOntologies"]} ontologies:  "),
           Expanded(
+            child: Text(
+                "Analyzed ${jsonResponse["progress"]["analyzedOntologies"]} of ${jsonResponse["progress"]["analysableOntologies"]} ontologies:  "),
+          ),
+          Expanded(
+              flex: 4,
               child: LinearProgressIndicator(
-            value: jsonResponse["progress"]["analysableOntologies"] /
-                jsonResponse["progress"]["analyzedOntologies"],
-            minHeight: 5,
-          ))
+                value: jsonResponse["progress"]["analyzedOntologies"] /
+                    jsonResponse["progress"]["analysableOntologies"],
+                minHeight: 6,
+              ))
         ]),
         Row(children: [
-          Text(
-              "Analyzed ${jsonResponse["progress"]["ananlyzedCommits"]} of ${jsonResponse["progress"]["commitsForThisOntology"]} Commits of this ontology:  "),
           Expanded(
+            child: Text(
+                "Analyzed ${jsonResponse["progress"]["ananlyzedCommits"]} of ${jsonResponse["progress"]["commitsForThisOntology"]} Commits of this ontology:  "),
+          ),
+          Expanded(
+              flex: 4,
               child: LinearProgressIndicator(
-            value: jsonResponse["progress"]["ananlyzedCommits"] /
-                jsonResponse["progress"]["commitsForThisOntology"],
-            minHeight: 5,
-          ))
+                value: jsonResponse["progress"]["ananlyzedCommits"] /
+                    jsonResponse["progress"]["commitsForThisOntology"],
+                minHeight: 5,
+              ))
         ])
       ]),
     );

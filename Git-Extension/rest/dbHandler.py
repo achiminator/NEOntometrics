@@ -28,7 +28,7 @@ class DBHandler:
         tmpDict["CommiterEmail"] = commitMetrics["CommiterEmail"]
         tmpDict["ReadingError"] = commitMetrics["ReadingError"]
         tmpDict["Size"] = commitMetrics["Size"]
-        if not commitMetrics["ReadingError"]:
+        if "OntologyMetrics" in commitMetrics:
             tmpDict.update(
                 commitMetrics["OntologyMetrics"]["GeneralOntologyMetrics"])
         return tmpDict
