@@ -29,7 +29,7 @@ class _MetricExplorerState extends State<MetricExplorer> {
               child: Row(
                 children: [
                   Expanded(
-                      flex: 2,
+                      
                       child: Container(
                           alignment: Alignment.topCenter,
                           child: SingleChildScrollView(
@@ -40,7 +40,7 @@ class _MetricExplorerState extends State<MetricExplorer> {
                     indent: 60,
                     endIndent: 60,
                   ),
-                  buildDetails(),
+                  Expanded(child: buildDetails()),
                 ],
                 crossAxisAlignment: CrossAxisAlignment.center,
               )));
@@ -79,11 +79,12 @@ class _MetricExplorerState extends State<MetricExplorer> {
         margin: const EdgeInsets.only(top: 10, bottom: 20),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
-          color: Theme.of(context).primaryColorDark,
+          color: Theme.of(context).colorScheme.secondary,
         ),
         child: Text(
           "Details: " + activeItemName,
-          style: const TextStyle(color: Colors.white, fontSize: 20),
+          style: TextStyle(
+              color: Theme.of(context).colorScheme.onSecondary, fontSize: 20),
         ),
       ),
     );
@@ -92,7 +93,7 @@ class _MetricExplorerState extends State<MetricExplorer> {
         const ListTile(
             leading: Icon(Icons.info_outline),
             title: Text(
-                "Click on details-icon of an element to see further informaiton")),
+                "Click on details-icon of an element to see further information")),
       );
     }
     if (activeDefinition != "") {
@@ -162,8 +163,7 @@ class _MetricExplorerState extends State<MetricExplorer> {
         );
       }
     }
-    return Expanded(
-        child: Card(
+    return Card(
       child: Container(
           alignment: Alignment.center,
           padding: const EdgeInsets.all(10),
@@ -172,7 +172,7 @@ class _MetricExplorerState extends State<MetricExplorer> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: elementsInDetails,
           )),
-    ));
+    );
   }
 
   /// Entrypoint for building the expandable panel on the left side.

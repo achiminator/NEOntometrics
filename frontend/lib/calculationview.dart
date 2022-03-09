@@ -14,21 +14,40 @@ class CalculationView extends StatefulWidget {
   State<CalculationView> createState() => _CalculationViewState();
 }
 
+class TableData extends DataTableSource {
+  TableData(this.tableRows);
+  List<DataRow> tableRows;
+
+  @override
+  DataRow? getRow(int index) {
+    return tableRows[index];
+  }
+
+  @override
+  bool get isRowCountApproximate => false;
+
+  @override
+  int get rowCount => tableRows.length;
+
+  @override
+  int get selectedRowCount => 0;
+}
+
 class _CalculationViewState extends State<CalculationView> {
   int activeMetricFile = 0;
+
   final scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
             title: Row(
-              
           children: [
             Expanded(
                 flex: 3,
                 child: ListTile(
-                  iconColor: Theme.of(context).secondaryHeaderColor,
-                  textColor: Theme.of(context).secondaryHeaderColor,
+                  iconColor: Theme.of(context).colorScheme.onPrimary,
+                  textColor: Theme.of(context).colorScheme.onPrimary,
                   title: const Text("Metric View"),
                   subtitle: Text(widget.ontologyName),
                   leading: const Icon(Icons.add_chart_outlined),
@@ -36,11 +55,12 @@ class _CalculationViewState extends State<CalculationView> {
             Expanded(
               flex: 5,
               child: ListTile(
-                textColor: Theme.of(context).secondaryHeaderColor,
+                  textColor: Theme.of(context).colorScheme.onPrimary,
+                  iconColor: Theme.of(context).colorScheme.onPrimary,
                   leading: const Icon(Icons.filter_none_outlined),
                   title: DropdownButton(
-                    focusColor: Theme.of(context).secondaryHeaderColor,
-                    iconEnabledColor: Theme.of(context).secondaryHeaderColor,
+                    dropdownColor: Theme.of(context).colorScheme.onPrimary,
+                    focusColor: Theme.of(context).colorScheme.onPrimary,
                       value: activeMetricFile,
                       items: getAvailableFileNames(widget.metricData),
                       onChanged: (value) => setState(() {
@@ -50,12 +70,11 @@ class _CalculationViewState extends State<CalculationView> {
             Expanded(
                 flex: 1,
                 child: OutlinedButton(
-                  
                   onHover: (value) => MaterialStateMouseCursor.clickable,
                   onPressed: () => downloadMetricFile(activeMetricFile),
-                  child:  ListTile(
-                    iconColor: Theme.of(context).secondaryHeaderColor,
-                    textColor: Theme.of(context).secondaryHeaderColor,
+                  child: ListTile(
+                    iconColor: Theme.of(context).colorScheme.onPrimary,
+                    textColor: Theme.of(context).colorScheme.onPrimary,
                     title: const Text("Download"),
                     leading: const Icon(Icons.download),
                   ),
@@ -92,15 +111,15 @@ class _CalculationViewState extends State<CalculationView> {
               height: 400,
               alignment: Alignment.center,
               width: 400,
-              child: const ListTile(
-                title: Text("No Ontology Metrics Found"),
-                subtitle: Text(
+              child: ListTile(
+                title: const Text("No Ontology Metrics Found"),
+                subtitle: const Text(
                   "We were not able to calculate ontology metrics to this File. It is possible that the serialization of the ontology contained errors or that we had an internal error at calculation time.",
                   softWrap: true,
                 ),
                 leading: Icon(
                   Icons.do_not_disturb_alt,
-                  color: Colors.red,
+                  color: Theme.of(context).colorScheme.error,
                 ),
               )));
     }
@@ -116,18 +135,14 @@ class _CalculationViewState extends State<CalculationView> {
       }
       tableRows.add(DataRow(cells: cells));
     }
-    return (InteractiveViewer(
-        scaleEnabled: false,
-        constrained: false,
-        //controller: this.scrollController,
-        clipBehavior: Clip.hardEdge,
-        child: 
-        
-        PaginatedDataTable( 
-          source: 
-          columns: columns,
-          rows: tableRows,
-        )));
+    var data = TableData(tableRows);
+
+    return (PaginatedDataTable(
+      showFirstLastButtons: true,
+      source: data,
+      columns: columns,
+      //rows: tableRows,
+    ));
   }
 
   downloadMetricFile(int activeMetricFile) {

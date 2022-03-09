@@ -13,8 +13,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  
-   const MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
@@ -23,26 +22,29 @@ class MyApp extends StatelessWidget {
       scrollBehavior: MyCustomWebScrollBehavior(),
       title: 'NEOntometrics',
       theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
+
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.teal),
       ),
-      home:  EntryPage(),
+      home: EntryPage(),
     );
   }
 }
+
 /// This custom class is necessary to enable scrolling not only with touch, but also with the
 /// mouse. Especially the metric detail views need that.
-class MyCustomWebScrollBehavior extends MaterialScrollBehavior{
+class MyCustomWebScrollBehavior extends MaterialScrollBehavior {
   @override
-  Set<PointerDeviceKind> get dragDevices =>{
-    PointerDeviceKind.mouse,
-    PointerDeviceKind.stylus,
-    PointerDeviceKind.touch
-  };
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.mouse,
+        PointerDeviceKind.stylus,
+        PointerDeviceKind.touch
+      };
 }
 
 class EntryPage extends StatelessWidget {
-  Future<List<MetricExplorerItem>> metricData =  MetricExplorerItemFactory().getMetricExplorerData();
-   EntryPage({Key? key}) : super(key: key);
+  Future<List<MetricExplorerItem>> metricData =
+      MetricExplorerItemFactory().getMetricExplorerData();
+  EntryPage({Key? key}) : super(key: key);
 
   // Future<String> homeDescription(String location) async {
   //   return await rootBundle.loadString("webpage/$location");
@@ -53,6 +55,14 @@ class EntryPage extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        bottomNavigationBar: Container(
+            color: Theme.of(context).colorScheme.primaryVariant,
+            padding: const EdgeInsets.all(8),
+            child: Text(
+              "Made with 💖 by Achim Reiz.",
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+            )),
         appBar: AppBar(
           bottom: const TabBar(
             tabs: [
@@ -72,10 +82,9 @@ class EntryPage extends StatelessWidget {
         body: TabBarView(children: [
           MarkDownHandler().buildMarkDownElement("homepage.md"),
           MetricExplorer(metricData),
-           CalculationEngine(metricData),
+          CalculationEngine(metricData),
         ]),
       ),
     );
   }
 }
-

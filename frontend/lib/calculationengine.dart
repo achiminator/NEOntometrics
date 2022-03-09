@@ -47,12 +47,12 @@ class _CalculationEngineState extends State<CalculationEngine> {
                     height: 100,
                     decoration: BoxDecoration(
                         //borderRadius: BorderRadius.circular(50),
-                        color: Theme.of(context).backgroundColor,
+                        color: Theme.of(context).colorScheme.secondaryVariant,
                         shape: BoxShape.circle),
                     child: Icon(
                       Icons.live_help_outlined,
                       size: 115,
-                      color: Theme.of(context).secondaryHeaderColor,
+                      color: Theme.of(context).colorScheme.onSecondary
                     )),
               ),
               Expanded(child: markDownDescription)
@@ -72,11 +72,11 @@ class _CalculationEngineState extends State<CalculationEngine> {
                     margin: const EdgeInsets.only(top: 10, bottom: 20),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
-                      color: Theme.of(context).primaryColorDark,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
-                    child: const Text(
+                    child: Text(
                       "Run Calculation",
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      style: TextStyle(color:Theme.of(context).colorScheme.onSecondary, fontSize: 20),
                     ),
                   ),
                   SizedBox(
@@ -139,11 +139,11 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                         json.decode(httpResponse.body);
                                     SnackBar snack = SnackBar(
                                         backgroundColor:
-                                            Theme.of(context).focusColor,
+                                            Theme.of(context).colorScheme.secondaryVariant,
                                         duration: const Duration(seconds: 10),
                                         content: ListTile(
-                                          iconColor: Colors.white,
-                                          textColor: Colors.white,
+                                          iconColor: Theme.of(context).colorScheme.onSecondary,
+                                          textColor:  Theme.of(context).colorScheme.onSecondary,
                                           leading: (jsonResponse[
                                                       "taskIsStarted"] ==
                                                   true)
@@ -175,8 +175,6 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                 }
                               });
                             }
-
-                            // http.get(urlController.text);
                           },
                           icon: const Icon(Icons.send),
                           tooltip: "Send",
@@ -197,13 +195,13 @@ class _CalculationEngineState extends State<CalculationEngine> {
       {String subMessage = ""}) {
     var snack = SnackBar(
       content: ListTile(
-        iconColor: Colors.white,
-        textColor: Colors.white,
+        iconColor: Theme.of(context).colorScheme.onError,
+        textColor: Theme.of(context).colorScheme.onError,
         title: Text("Error:  $subMessage"),
         leading: const Icon(Icons.warning_amber),
         subtitle: Text(message),
       ),
-      backgroundColor: Theme.of(context).errorColor,
+      backgroundColor: Theme.of(context).colorScheme.error,
       duration: const Duration(seconds: 10),
       padding: const EdgeInsets.all(20),
       dismissDirection: DismissDirection.vertical,
@@ -220,7 +218,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
   Widget buildCalculationSettings(List<MetricExplorerItem> data) {
     List<Widget> calculationCategorySetting = [];
     //at first, add the elemental metrics, which are always at the top of the list.
-    calculationCategorySetting.add(buildCalculationSetting(data[0]));
+    calculationCategorySetting.add(buildCalculationSetting(data[0], true));
     for (var element in data[1].subClass) {
       calculationCategorySetting
           //The expanded is necessary because the elements will be wrapped in a Collumn Item.
@@ -233,9 +231,13 @@ class _CalculationEngineState extends State<CalculationEngine> {
   }
 
   ///Builds the Selection Widget for each metric category and the associated sub metrics on the bases of [MetricExplorerItem].
-  Widget buildCalculationSetting(MetricExplorerItem data) {
+  Widget buildCalculationSetting(MetricExplorerItem data,
+      [bool initiallyActive = false]) {
     var leafElements =
         MetricExplorerItem.getLeafItems(data, onlyCalculatableClasses: true);
+    if (initiallyActive) {
+      selectedElementsForCalculation.addAll(leafElements);
+    }
     return Container(
         padding: const EdgeInsets.all(10),
         child: CheckboxListTile(
@@ -244,7 +246,29 @@ class _CalculationEngineState extends State<CalculationEngine> {
           subtitle: Wrap(
             spacing: 3,
             runSpacing: 3,
-            children: buildChips(leafElements),
+            children: (List<MetricExplorerItem> data) {
+              List<Widget> chips = [];
+              for (MetricExplorerItem item in data) {
+                chips.add(Tooltip(
+                    message: (item.definition) != ""
+                        ? item.definition
+                        : item.description,
+                    child: FilterChip(
+                      label: Text(item.itemName),
+                      selected: selectedElementsForCalculation.contains(item),
+                      onSelected: (bool value) {
+                        setState(() {
+                          if (value) {
+                            selectedElementsForCalculation.add(item);
+                          } else {
+                            selectedElementsForCalculation.remove(item);
+                          }
+                        });
+                      },
+                    )));
+              }
+              return chips;
+            }(leafElements),
           ),
           value: selectedElementsForCalculation.containsAll(leafElements),
           onChanged: (value) => setState(
@@ -252,34 +276,11 @@ class _CalculationEngineState extends State<CalculationEngine> {
               if (value ?? false) {
                 selectedElementsForCalculation.addAll(leafElements);
               } else {
-                http: //localhost:8012/django-rq/queues/0/github.comgithub.com__II__obophenotype__II__cell-ontology/
                 selectedElementsForCalculation.removeAll(leafElements);
               }
             },
           ),
         ));
-  }
-
-  List<Widget> buildChips(List<MetricExplorerItem> data) {
-    List<Widget> chips = [];
-    for (MetricExplorerItem item in data) {
-      chips.add(Tooltip(
-          message: (item.definition) != "" ? item.definition : item.description,
-          child: FilterChip(
-            label: Text(item.itemName),
-            selected: selectedElementsForCalculation.contains(item),
-            onSelected: (bool value) {
-              setState(() {
-                if (value) {
-                  selectedElementsForCalculation.add(item);
-                } else {
-                  selectedElementsForCalculation.remove(item);
-                }
-              });
-            },
-          )));
-    }
-    return chips;
   }
 }
 
@@ -302,7 +303,7 @@ class ProgressBarIndicator extends StatelessWidget {
                 "Analyzed ${jsonResponse["progress"]["analyzedOntologies"]} of ${jsonResponse["progress"]["analysableOntologies"]} ontologies:  "),
           ),
           Expanded(
-              flex: 4,
+              flex: 3,
               child: LinearProgressIndicator(
                 value: jsonResponse["progress"]["analyzedOntologies"] /
                     jsonResponse["progress"]["analysableOntologies"],
@@ -315,7 +316,7 @@ class ProgressBarIndicator extends StatelessWidget {
                 "Analyzed ${jsonResponse["progress"]["ananlyzedCommits"]} of ${jsonResponse["progress"]["commitsForThisOntology"]} Commits of this ontology:  "),
           ),
           Expanded(
-              flex: 4,
+              flex: 3,
               child: LinearProgressIndicator(
                 value: jsonResponse["progress"]["ananlyzedCommits"] /
                     jsonResponse["progress"]["commitsForThisOntology"],
