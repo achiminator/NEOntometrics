@@ -85,10 +85,10 @@ services:
     ports:
       - '3316:3306'
     environment:
-      MYSQL_DATABASE: "neontometrics"
-      MYSQL_USER: "neontometrics"
-      MYSQL_PASSWORD: 'KMmsWrwRBBeQLXDO'
-      MYSQL_ROOT_PASSWORD: 'KMmsWrwRBBeQLXDO'
+      MARIADB_DATABASE: 'neontometrics'
+      MARIADB_USER: 'neontometrics'
+      MARIADB_PASSWORD: 'KMmsWrwRBBeQLXDO'
+      MARIADB_ROOT_PASSWORD: 'KMmsWrwRBBeQLXDO'
     volumes:
       - neontometricsdb:/var/lib/mysql
 volumes:
