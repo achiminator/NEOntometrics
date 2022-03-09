@@ -1,6 +1,5 @@
 from django.http import JsonResponse
 from rest.metricOntologyHandler import OntologyHandler
-from rest.models import ClassMetrics
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest.CalculationManager import CalculationManager
 from rest.opiHandler import OpiHandler
@@ -9,6 +8,7 @@ from rest_framework.views import APIView
 from ontoMetricsAPI.PlainTextParser import PlainTextParser
 from rest_framework.response import Response
 from rest_framework.request import Request
+from rest_framework import viewsets
 from rest_framework.exceptions import APIException, ParseError
 import django_rq
 import rq
@@ -21,6 +21,8 @@ from braces.views import CsrfExemptMixin
 from rest.GitHelper import GitHelper, GitUrlParser
 from rest.dbHandler import DBHandler
 from rest_framework.renderers import JSONRenderer
+from rest.models import Metrics, Source
+from rest.serializers import MetricSerializer
 # Create your views here.
 
 
@@ -47,13 +49,23 @@ class MetricExplorer(APIView):
     # Calculating the Data for the Metric Explorer Frontent from the ontology is a quite extensive task, which
     # is not required for the worker applications (those who run and distribute the metric calculations).
     # The environment variable "isWorker" is set by the docker-compose file.
-    if not(bool(os.environ.get("isWorker", False))):
+    if not(bool(os.environ.get("isWorker", False))) and bool(os.environ.get("inDocker", False)):
         ontology = OntologyHandler()
 
         def get(self, request, format=None):
             explorer = self.ontology.getMetricExplorer()
             return(Response(explorer))
 
+class MetricQueryViewSet(viewsets.ReadOnlyModelViewSet):
+    def list(self, request):
+        queryset = Source.objects.all()
+        serializer = MetricSerializer(instance=queryset, many=True)
+        return Response(serializer.data)
+    def retrieve(self, request):
+        #queryset = Source.objects.filter(repository=request)
+        return(None)
+    
+        
 
 class CalculateGitMetric(APIView):
 

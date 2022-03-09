@@ -52,11 +52,11 @@ logging.config.dictConfig({
 
 ALLOWED_HOSTS = ["*"]
 
-REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-    ]
-}
+# REST_FRAMEWORK = {
+#     'DEFAULT_RENDERER_CLASSES': [
+#         'rest_framework.renderers.JSONRenderer',
+#     ]
+# }
 
 # Application definition
 
@@ -70,7 +70,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest',
     'django_rq',
-    'corsheaders'
+  #  'corsheaders'
 ]
 RQ_QUEUES = {
     'default': {

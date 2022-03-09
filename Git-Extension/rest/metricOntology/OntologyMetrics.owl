@@ -1587,16 +1587,6 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
     
 
 
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE -->
-
-    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Frameworks"/>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Tools"/>
-        <rdfs:seeAlso rdf:resource="http://sele.inf.um.es/ontology-metrics/index.html"/>
-    </owl:Class>
-    
-
-
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_ANOnto -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_ANOnto">
@@ -1939,8 +1929,7 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Compatibility -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Compatibility">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE"/>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Dimension"/>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Quality_Dimensions"/>
         <neontometrics:MetricDescription>The ability of two or more software components to exchange information and/or to perform their required functions while sharing the same hardware or software environment</neontometrics:MetricDescription>
     </owl:Class>
     
@@ -2160,8 +2149,7 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Functional_Adequacy -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Functional_Adequacy">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE"/>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Dimension"/>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Quality_Dimensions"/>
         <neontometrics:MetricDescription>The capability of the ontologies to provide concrete functions.</neontometrics:MetricDescription>
     </owl:Class>
     
@@ -2419,8 +2407,7 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Maintainability -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Maintainability">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE"/>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Dimension"/>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Quality_Dimensions"/>
         <neontometrics:MetricDescription>The capability of ontologies to be modified for changes in environments, in requirements or in functional specifications.</neontometrics:MetricDescription>
     </owl:Class>
     
@@ -2429,7 +2416,8 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE"/>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Frameworks"/>
+        <rdfs:seeAlso rdf:resource="http://sele.inf.um.es/ontology-metrics/index.html"/>
     </owl:Class>
     
 
@@ -2591,8 +2579,7 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Operability -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Operability">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE"/>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Dimension"/>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Quality_Dimensions"/>
         <neontometrics:MetricDescription>Effort needed for use, and on the individual assessment of such use, by a stated or implied set of users.</neontometrics:MetricDescription>
     </owl:Class>
     
@@ -2685,11 +2672,18 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
     
 
 
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Quality_Dimensions -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Quality_Dimensions">
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Dimension"/>
+    </owl:Class>
+    
+
+
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Quality_in_use -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Quality_in_use">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE"/>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Dimension"/>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Quality_Dimensions"/>
         <neontometrics:MetricDescription>Quality in a particular context of use. Quality in use is the degree to which a product used by specific users meets their needs to achieve specific goals</neontometrics:MetricDescription>
     </owl:Class>
     
@@ -2967,8 +2961,7 @@ Different ontologies with subjective features and particular perspective on the 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Structural -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Structural">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE"/>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Dimension"/>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Quality_Dimensions"/>
         <neontometrics:MetricDescription>This category is the only one in this framework that is not specified as such in SQuaRE, but it is important when evaluating ontologies, since it accounts for ontology quality factors such as consistency, formalisation, redundancy or tangledness</neontometrics:MetricDescription>
     </owl:Class>
     
@@ -3102,8 +3095,7 @@ Different ontologies with subjective features and particular perspective on the 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Transferability -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Transferability">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE"/>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Dimension"/>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Quality_Dimensions"/>
         <neontometrics:MetricDescription>The degree to which the software product can be transferred from one environment to another</neontometrics:MetricDescription>
     </owl:Class>
     
@@ -3180,15 +3172,6 @@ Different ontologies with subjective features and particular perspective on the 
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
         <rdfs:label>Weighted method count 2</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual -->
-
-    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Frameworks"/>
-        <rdfs:seeAlso>Gangemi, Aldo; Catenacci, Carola; Ciaramita, Massimiliano; Lehmann, Jos; Gil, Rosa; Bolici, Francesco; Strignano Onofrio (2005): Ontology evaluation and validation. An integrated formal model for the quality diagnostic task.</rdfs:seeAlso>
     </owl:Class>
     
 
@@ -3812,7 +3795,6 @@ m = n_m / n_s where n_m is the cardinality of M and n_s is the cardinalty of S( 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Quality_Dimensions -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Quality_Dimensions">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual"/>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Dimension"/>
         <owl:disjointWith rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Structural"/>
     </owl:Class>
@@ -3896,7 +3878,8 @@ m = n_m / n_s where n_m is the cardinality of M and n_s is the cardinalty of S( 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Structural -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Structural">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual"/>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Frameworks"/>
+        <rdfs:seeAlso>Gangemi, Aldo; Catenacci, Carola; Ciaramita, Massimiliano; Lehmann, Jos; Gil, Rosa; Bolici, Francesco; Strignano Onofrio (2005): Ontology evaluation and validation. An integrated formal model for the quality diagnostic task.</rdfs:seeAlso>
     </owl:Class>
     
 
@@ -4577,6 +4560,21 @@ SD = H/C</neontometrics:MetricDefinition>
     
 
 
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl">
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Frameworks"/>
+        <neontometrics:MetricDefinition>• Let P1,P2,.. . ,Pn be the set of n properties defined in an ontology.
+• Let C1,C2,... ,Cm be the set of m classes defined in an ontology. 
+• Let Fc1,Fc2,... , Fcm be the Fanout of each class Ci (see below for the definition of Fanout).
+• Let O1 be the ontology of interest.
+• Let → be a mapping from set Ci ,to Cj such that Ci →Cj if class Cj is a subclass of class Ci
+• Let &amp; be a mapping from set Ci to set Pj such that Ci &amp; Pj if class Ci includes property Pj as part of its definition.</neontometrics:MetricDefinition>
+        <rdfs:seeAlso>Orme, Anthony Mark; Yao, Haining; Etzkorn, Letha H. (2007): Indicating ontology data quality, stability, and completeness throughout ontology evolution. In Journal of Software Maintenance and Evolution 19 (1), pp. 49–75. DOI: 10.1002/smr.341.</rdfs:seeAlso>
+    </owl:Class>
+    
+
+
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Property_Metrics -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Property_Metrics">
@@ -5041,6 +5039,22 @@ SD = H/C</neontometrics:MetricDefinition>
     
 
 
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#recursive_Sub_Classes -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#recursive_Sub_Classes">
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Basic_Metrics"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
+                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#recursiveSubClasses"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <neontometrics:MetricDefinition>Counts the number of subclasses per class iterativly. Also refered to as fan-outness per some papers, though the definition is differently for the papers.</neontometrics:MetricDefinition>
+        <neontometrics:MetricDescription>If b subClassOf a, c subClassOf a and b subClassOf b, then the metric would calculate to a 4, as it first recursivly checks all subClasses of a, then of b, and so on.</neontometrics:MetricDescription>
+    </owl:Class>
+    
+
+
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Knowledge_Acquisition_–_Representation -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Knowledge_Acquisition_–_Representation">
@@ -5111,6 +5125,129 @@ SD = H/C</neontometrics:MetricDefinition>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_logical_adequacy"/>
         <neontometrics:MetricDefinition>The cardinality of the set of classes represents by nodes in g divided by the cardinality of the set of individuals represented by special nodes in g.</neontometrics:MetricDefinition>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Fanout_of_Non-Leaf_Classes_(AF-NL) -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Fanout_of_Non-Leaf_Classes_(AF-NL)">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#divisor"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#recursive_Sub_Classes"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes_With_SubClasses"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl"/>
+        <neontometrics:MetricDefinition>The Average Fanout of Non-LeafClasses (AF-NL) is defined as the Number of Fanouts (NoF) divided by Number of Non-leaf Classes explicitly defined in the ontology Oi .</neontometrics:MetricDefinition>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Fanout_of_Root_Class_(AF-R) -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Fanout_of_Root_Class_(AF-R)">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#divisor"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#recursive_Sub_Classes"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Subclasses_Of_Thing"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl"/>
+        <neontometrics:MetricDefinition>The Average Fanout of Root Classes (AF-R) is defined to be the Number of Fanouts (NoF) divided by the Number of Root Classes in the ontology Oi .</neontometrics:MetricDefinition>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Fanout_per_Class_(AF-C) -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Fanout_per_Class_(AF-C)">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#divisor"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#recursive_Sub_Classes"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl"/>
+        <neontometrics:MetricDefinition>The Average Fanout per Class (AF-C) is the Number of Fanouts (NoF) divided by Number of Classes (NoC) explicitly defined in the ontology Oi</neontometrics:MetricDefinition>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Properties_per_Class_(AP-C) -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Properties_per_Class_(AP-C)">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#divisor"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Object_Property_Class_Assertion"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl"/>
+        <neontometrics:MetricDefinition>The Average Properties per Class (AP-C) is the number of properties explicitly defined in the ontology Oi divided by the number of classes explicitly defined in the ontology Oi .</neontometrics:MetricDefinition>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Maximum_Depth_of_Inheritance_Tree_(MaxDIT) -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Maximum_Depth_of_Inheritance_Tree_(MaxDIT)">
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
+                <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Maximum_Depth"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl"/>
+        <neontometrics:MetricDefinition>The Maximum Depth of Inheritance Tree (MaxDIT) of the ontology Oi is defined as follows. A depth is the total number of nodes in a path. A path starts from the root node to the leaf node. All distinct paths in the ontology Oi include every path from each root node to each leaf node if there exists an inheritance path from the root node to the leaf node. The root node is the first level in each path.</neontometrics:MetricDefinition>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Number_of_Properties_(NOP) -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Number_of_Properties_(NOP)">
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
+                <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Object_Property_Class_Assertion"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl"/>
+        <neontometrics:MetricDefinition>Number of Properties (NoP) is the number of properties explicitly defined in the ontology Oi .</neontometrics:MetricDefinition>
+        <neontometrics:MetricDescription>Example. In the ontology shown in Figure 4, each class can possess properties (but is not required to). Class 1 has one property, class 2 has two properties, class 3 has no properties, class 4 has three properties, and class 5 has one property. Thus, NoP = 7.</neontometrics:MetricDescription>
     </owl:Class>
     
 
@@ -5620,6 +5757,14 @@ SD = H/C</neontometrics:MetricDefinition>
     
 
 
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#recursiveSubClasses -->
+
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#recursiveSubClasses">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
+    
+
+
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#reflexiveObjectPropertyAxioms -->
 
     <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#reflexiveObjectPropertyAxioms">
@@ -5802,6 +5947,17 @@ SD = H/C</neontometrics:MetricDefinition>
             <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Likability"/>
             <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Pleasure"/>
             <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Trust"/>
+        </owl:members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Fanout_of_Non-Leaf_Classes_(AF-NL)"/>
+            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Fanout_of_Root_Class_(AF-R)"/>
+            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Fanout_per_Class_(AF-C)"/>
+            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Properties_per_Class_(AP-C)"/>
+            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Maximum_Depth_of_Inheritance_Tree_(MaxDIT)"/>
+            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Number_of_Properties_(NOP)"/>
         </owl:members>
     </rdf:Description>
 </rdf:RDF>

@@ -13,16 +13,21 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from posixpath import basename
 from django.contrib import admin
-from django.urls import path
+from rest_framework import routers
 from django.urls import include, path
 from rest import views
+router= routers.DefaultRouter()
+router.register(r'metrics', views.MetricQueryViewSet, basename="metrics/{url}")
+
 
 urlpatterns = [
-    path('', views.index.as_view()),
     path('admin/', admin.site.urls),
     path('api', views.CalculateMetric.as_view()),
     path('git', views.CalculateGitMetric.as_view()),
     path('metricexplorer', views.MetricExplorer.as_view()),
-    path('django-rq/', include('django_rq.urls'))
+    path('django-rq/', include('django_rq.urls')),
+    path('', include(router.urls))
 ]
+urlpatterns += router.urls

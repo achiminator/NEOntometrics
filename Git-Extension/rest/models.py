@@ -12,7 +12,7 @@ class Source(models.Model):
 
 
 class Metrics(models.Model):
-    metricSource = models.ForeignKey(Source, on_delete=models.CASCADE)
+    metricSource = models.ForeignKey(Source, related_name="metricSource", on_delete=models.CASCADE)
     CommitTime = models.DateTimeField(default=None, null=True)
     CommitMessage = models.TextField(default=None, null=True)
     AuthorEmail = models.EmailField(default=None, null=True)
@@ -90,6 +90,7 @@ class Metrics(models.Model):
     superClasses  = models.PositiveBigIntegerField(default = None, null=True)
     superClassesOfClassesWithMultipleInheritance  = models.PositiveBigIntegerField(default = None, null=True)
     subClassOfAxioms  = models.PositiveBigIntegerField(default = None, null=True)
+    recursiveSubClasses = models.PositiveBigIntegerField(default=None, null=True)
     symmetricObjectPropertyAxioms  = models.PositiveBigIntegerField(default = None, null=True)
     transitiveObjectPropertyAxioms  = models.PositiveBigIntegerField(default = None, null=True)
     superClassesOfLeafClasses  = models.PositiveBigIntegerField(default = None, null=True)
