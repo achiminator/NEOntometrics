@@ -29,6 +29,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  download: any
   flutter_markdown: ^0.6.9
   csv: ^5.0.1
   url_launcher: ^6.0.18

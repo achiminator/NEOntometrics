@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
-import 'dart:html' as html;
-import 'dart:convert';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:download/download.dart';
 
 class CalculationView extends StatefulWidget {
   final List<dynamic> metricData;
@@ -59,8 +57,8 @@ class _CalculationViewState extends State<CalculationView> {
                   iconColor: Theme.of(context).colorScheme.onPrimary,
                   leading: const Icon(Icons.filter_none_outlined),
                   title: DropdownButton(
-                    dropdownColor: Theme.of(context).colorScheme.onPrimary,
-                    focusColor: Theme.of(context).colorScheme.onPrimary,
+                      dropdownColor: Theme.of(context).colorScheme.onPrimary,
+                      focusColor: Theme.of(context).colorScheme.onPrimary,
                       value: activeMetricFile,
                       items: getAvailableFileNames(widget.metricData),
                       onChanged: (value) => setState(() {
@@ -148,7 +146,6 @@ class _CalculationViewState extends State<CalculationView> {
   downloadMetricFile(int activeMetricFile) {
     Map<String, dynamic> metricDataForOntologyFile =
         widget.metricData[activeMetricFile];
-    List<String> header = [];
     List<List<dynamic>> rows = [];
     bool firstElement = true;
     if (metricDataForOntologyFile["metrics"].isEmpty) {
@@ -163,21 +160,11 @@ class _CalculationViewState extends State<CalculationView> {
       rows.add(metricForOntologyFile.values.toList());
     }
 
-    var csv = const ListToCsvConverter().convert(rows);
-    final bytes = utf8.encode(csv);
-    final blob = html.Blob([bytes]);
-    final url = html.Url.createObjectUrlFromBlob(blob);
-    final anchor = html.document.createElement('a') as html.AnchorElement
-      ..href = url
-      ..style.display = 'none'
-      ..download = 'metrics.csv';
-    html.document.body?.children.add(anchor);
-
-    // download
-    anchor.click();
-
-    // cleanup
-    html.document.body?.children.remove(anchor);
-    html.Url.revokeObjectUrl(url);
+    var csv = const ListToCsvConverter().convert(
+      rows,
+    );
+    final stream =
+        Stream.fromIterable(csv.toString().replaceAll("\n", ". ").codeUnits);
+    download(stream, "metrics.csv");
   }
 }

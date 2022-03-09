@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
-import 'package:flutter_math_fork/tex.dart';
 import 'dart:html' as html;
-import 'package:neonto_frontend/metricData.dart';
+import 'package:neonto_frontend/metric_data.dart';
 
 class _MetricExplorerState extends State<MetricExplorer> {
   _MetricExplorerState();

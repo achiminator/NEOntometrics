@@ -1,12 +1,10 @@
 import 'dart:async' show Future;
 import 'dart:ui';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
-import 'package:flutter_math_fork/ast.dart';
-import "metricexplorer.dart";
+import 'metric_explorer.dart';
 import "calculationengine.dart";
-import "markdownhandler.dart";
-import "metricData.dart";
+import 'markdown_handler.dart';
+import 'metric_data.dart';
 
 void main() {
   runApp(const MyApp());
@@ -42,7 +40,7 @@ class MyCustomWebScrollBehavior extends MaterialScrollBehavior {
 }
 
 class EntryPage extends StatelessWidget {
-  Future<List<MetricExplorerItem>> metricData =
+  final Future<List<MetricExplorerItem>> metricData =
       MetricExplorerItemFactory().getMetricExplorerData();
   EntryPage({Key? key}) : super(key: key);
 

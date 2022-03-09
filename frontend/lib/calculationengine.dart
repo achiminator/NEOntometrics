@@ -1,12 +1,10 @@
 import 'dart:convert';
-import 'dart:html';
 import "calculationview.dart";
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:neonto_frontend/markdownhandler.dart';
-import 'package:neonto_frontend/metricData.dart';
+import 'package:neonto_frontend/markdown_handler.dart';
+import 'package:neonto_frontend/metric_data.dart';
 
 import 'settings.dart';
 
@@ -207,10 +205,6 @@ class _CalculationEngineState extends State<CalculationEngine> {
       dismissDirection: DismissDirection.vertical,
     );
     ScaffoldMessenger.of(context).showSnackBar(snack);
-  }
-
-  Future<String> _homeDescription(String location) async {
-    return await rootBundle.loadString("webpage/$location");
   }
 
   /// Takes the root element of the [List<MetricExplorerItem>] after the return call.

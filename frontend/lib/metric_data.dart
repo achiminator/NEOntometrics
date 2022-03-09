@@ -1,7 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
-import 'package:flutter/foundation.dart';
-
 import "settings.dart";
 import 'package:http/http.dart' as http;
 
@@ -48,13 +45,12 @@ class MetricExplorerItemFactory {
   Future<List<MetricExplorerItem>> getMetricExplorerData() async {
     final response =
         await http.get(Uri.parse("${Settings().apiUrl}/metricexplorer"));
-    final body;
+    final dynamic body;
     List<MetricExplorerItem> metricExplorerItems = [];
     if (response.statusCode != 200) {
       throw Exception(
           "Connection to Ontology-Endpoint was not Successfull (internal error)");
     } else {
-      print("Fetch Done");
       body = jsonDecode(response.body);
     }
     metricExplorerItems.addAll(createMetricItems(body["thing"]["children"]));
