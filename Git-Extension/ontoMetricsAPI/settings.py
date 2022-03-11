@@ -11,6 +11,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
+# There seems to be a Bug in the graphql-django package.
+# This might fix it until fix-relase
+import django
+from django.utils.encoding import force_str
+django.utils.encoding.force_text = force_str
+
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -28,7 +34,7 @@ SECRET_KEY = '+d9$bcwd(^4o2862x$-xe6kl0$sqcbtkkib+6@2zv*!ysnz)2o'
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = False if (os.environ.get("inDocker", False)) else True
 
 logging.config.dictConfig({
     'version': 1,
@@ -56,6 +62,11 @@ logging.config.dictConfig({
 
 ALLOWED_HOSTS = ["*"]
 
+# REST_FRAMEWORK = {
+#     'DEFAULT_RENDERER_CLASSES': [
+#         'rest_framework.renderers.JSONRenderer',
+#     ]
+# }
 
 # Application definition
 
@@ -79,16 +90,19 @@ RQ_QUEUES = {
         'DB': 0,
        # 'PASSWORD': 'some-password',
         'DEFAULT_TIMEOUT': 72000,
-        'ASYNC' : True #if bool(os.environ.get("inDocker", False)) else False
+        'ASYNC' : True if bool(os.environ.get("inDocker", False)) else False
     }
 }
 
 # The URL of the OPI (Ontology Programming Interface)
 OPI = "opi:8080" if bool(os.environ.get("inDocker", False)) else "localhost:8082"
 
-# Size-Limits for analysis. If An ontology is larger than 1mb, deactivate ClassMetrics. If Larger than 30mb, do not calculate at all.
-ONTOLOGYLIMIT = 31457280000
-CLASSMETRICSLIMIT = 1048576000 
+# Size-Limits for analysis. If An ontology is larger than 1mb, deactivate ClassMetrics and Reasoner, because the computational
+# time is enormous.
+
+ONTOLOGYLIMIT = -1
+REASONINGLIMIT = 1048576
+CLASSMETRICSLIMIT = 1048576
 
 # REST_FRAMEWORK = {
 #     'DEFAULT_PARSER_CLASSES': [

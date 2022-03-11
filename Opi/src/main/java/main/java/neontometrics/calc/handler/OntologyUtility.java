@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
@@ -22,7 +21,6 @@ import org.semanticweb.owlapi.search.EntitySearcher;
 
 public class OntologyUtility {
 
-    private static Logger myLogger = Logger.getLogger("OntologyUtility");
 
     private static double GlobNK = 6.0;
     private static String GlobTimestamp = null;
@@ -102,8 +100,7 @@ public class OntologyUtility {
      * @return Warning- or error-messages for the result
      */
     public static String getMessages(String type) {
-	myLogger.debug("getMessages: "
-		+ messages);
+
 	if (type == "E")
 	    return errors;
 	else
@@ -117,17 +114,13 @@ public class OntologyUtility {
      * @param type     - 'E' error or other
      */
     public static void setMessages(String ProbTxt, String type) {
-	myLogger.debug("type: "
-		+ type);
+
 
 	if (ProbTxt == null) {
 	    return;
 	} else {
 	    if (ProbTxt.length() > 255)
 		ProbTxt.substring(0, 255);
-
-	    myLogger.debug("setMessages: "
-		    + ProbTxt);
 
 	    if (type == "E") {
 		if (!OntologyUtility.errors.isEmpty())

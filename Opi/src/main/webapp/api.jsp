@@ -45,6 +45,7 @@
 			|<a class="heading_link2" href="#">FAQ</a>
 		</div> -->
 			</div>
+			</div>
 		</div>
 
 		<!-- end header -->
@@ -83,6 +84,7 @@
 
 
 				</p>
+			</div>
 			</div>
 </body>
 </html>

@@ -3,43 +3,45 @@ services:
   # Redis Image is necessary for the asyncronous scheduling in the docker application
   redis-scheduler:
     restart: always
-    container_name: neonto_scheduler
+    container_name: neontoscheduler
     image: redis
     ports:
       - '6379:6379'
 
   # This is the main application for the git metric aggregation
-  neontometrics_api:
+  neontometricsapi:
     restart: always
-    container_name: neontometrics_api
-    build: 
-      context: ./Git-Extension
+    container_name: neontometricsapi
     image: neontometrics
     # The starting of the mySQL-Database takes longer than the start up of the django webapp.
+
     # Wait-for-it.sh ensures that the database is up and running before starting django.
-    command: python manage.py runserver 0.0.0.0:8000
+    command: "python manage.py runserver 0.0.0.0:8000"
     #command: 'python manage.py runserver 0.0.0.0:8000' 
     ports:
       - '8012:8000'
     depends_on:
-      - neontometrics_db
+      - neontometricsdb
+      - migrateDB
     environment:
       db_password: 'KMmsWrwRBBeQLXDO'
       inDocker: "True"
 
   neontometrics_worker:
     restart: always
-    container_name: neontometrics_worker
     image: neontometrics
     command: python manage.py rqworker
+    deploy:
+      replicas: 3
     depends_on:
-      - neontometrics_api
-      - neontometrics_db
+      - neontometricsapi
+      - neontometricsdb
+      - migrateDB
     environment:
-     db_password: 'KMmsWrwRBBeQLXDO'
-     isWorker: "True"
-     inDocker: "True"
-  
+      db_password: 'KMmsWrwRBBeQLXDO'
+      isWorker: "True"
+      inDocker: "True"
+
   # the REST-Calculation Engine
   opi:
     ports:
@@ -47,24 +49,47 @@ services:
     restart: always
     container_name: opi
     environment:
-      JVM_OPTS: -Xmx12g -Xms12g -XX:MaxPermSize=1024m
+      JVM_OPTS: -Xmx12g -Xms12g -XX:MaxPermSize=2g
     build:
       context: ./Opi
     image: opi
 
-  # The Database for metric documentation
-  neontometrics_db:
+  # The flutter Frontend
+  frontend:
+    ports:
+      - '8003:8000'
     restart: always
-    container_name: neontometrics_db
+    container_name: neontometricsfrontend
+    build:
+      context: ./frontend
+    image: neontometricsfrontend
+
+  # Creates the tables necessary in the database
+  migrateDB:
+    restart: "no"
+    build:
+      context: ./Git-Extension
+    image: neontometrics
+    depends_on:
+      - neontometricsdb
+    environment:
+      db_password: 'KMmsWrwRBBeQLXDO'
+      inDocker: "True"
+    command: bash -c "python manage.py makemigrations rest --noinput && python manage.py migrate"
+
+  # The Database for metric documentation
+  neontometricsdb:
+    restart: always
+    container_name: neontometricsdb
     image: mariadb:latest
     ports:
       - '3316:3306'
     environment:
-      MYSQL_DATABASE: "neontometrics"
-      MYSQL_USER: "neontometrics"
-      MYSQL_PASSWORD: 'KMmsWrwRBBeQLXDO'
-      MYSQL_ROOT_PASSWORD: 'KMmsWrwRBBeQLXDO'
+      MARIADB_DATABASE: 'neontometrics'
+      MARIADB_USER: 'neontometrics'
+      MARIADB_PASSWORD: 'KMmsWrwRBBeQLXDO'
+      MARIADB_ROOT_PASSWORD: 'KMmsWrwRBBeQLXDO'
     volumes:
-      - neontometrics_db:/var/lib/mysql
+      - neontometricsdb:/var/lib/mysql
 volumes:
-  neontometrics_db:
+  neontometricsdb:

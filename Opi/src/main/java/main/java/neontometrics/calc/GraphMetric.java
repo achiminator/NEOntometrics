@@ -27,7 +27,6 @@ import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 public class GraphMetric extends MetricCalculations implements Callable<GraphMetric> {
 
-    private static final String False = null;
     private boolean withImports;
 
     private int sumOfPathToLeafClasses = 0;
@@ -111,7 +110,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
      * Calculates such Metrics that need an iteration over the classes of the
      * Metrics. They are all from different categories, though the boundling should
      * save computational resources. This includes: leafcardinalty, rootcardinality,
-     * pathlengths, Annotation/Class
+     * pathlengths
      * 
      * @param withImports
      */
@@ -134,20 +133,20 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 
 	// Root classes are at the very top of the Ontology
 	Set<OWLClass> rootClasses = new TreeSet<OWLClass>();
-	
+
 	//A Map that links the object proeprties to the connected classes.
 	Map<IRI, List<OWLClass>> objectPropertyToClassMapping = new LinkedHashMap<IRI, List<OWLClass>>();
 	Set<OWLClass> owlClasses = ontology.getClassesInSignature(OntologyUtility.ImportClosures(withImports));
-	
+
 	int maxSuperClassOfAClass = 0;
 	int superClassCount = 0;
 	int classesWithIndividuals = 0;
 	int maxSubClassOfAClass = 0;
-	
-	
+	int iterativeSubClasses = 0;
+
 	// Iterate over all classes
 	for (OWLClass owlClass : owlClasses) {
-	    
+
 	    // If a thing does not have superclasses, then it is a root class
 	    Collection<OWLClass> superClassesofOwlClass = OntologyUtility
 		    .classExpr2classes(EntitySearcher.getSuperClasses(owlClass, ontology));
@@ -158,16 +157,17 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 		classesWithIndividuals++;
 	    if ((superClassesofOwlClass.size() < 1 // add a class as a root class if it does not have any superclasses
 		    || superClassesofOwlClass.contains(new OWLDataFactoryImpl().getOWLThing())) // or if it is a
-												// subclass
-												// of OWL:Thing
+		    // subclass
+		    // of OWL:Thing
 		    && !owlClass.isOWLThing()) // And it is not owl:Thing itself!
 		rootClasses.add(owlClass);
 	    Collection<OWLClassExpression> subClassExpr = EntitySearcher.getSubClasses(owlClass, ontology);
 	    Collection<OWLClass> subClasses = OntologyUtility.classExpr2classes(subClassExpr);
 	    if(subClasses.size() > maxSubClassOfAClass) 
 		maxSubClassOfAClass = subClasses.size();
-		
 	    
+	    iterativeSubClasses += getIterativeSubClasses(owlClass, iterativeSubClasses);
+
 	    if (subClasses.size() < 1) {
 		// If a classes does not have any subclasses, it is a leaf class. As owl-Thing
 		// is always on top, we do not count it as a root class.
@@ -189,7 +189,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 		    // asserted knowledge. Built-in classes like owl:Thing are disregarded
 		    upperClasses.add(owlClass);
 	    }
-	    
+
 	    // This part is responsible for finding how much classes share relations with
 	    // each other. Relations are mostly modeled using anonymous superclasses. An
 	    // example is the modeling of relations in Protege. There, you mostly create
@@ -204,9 +204,9 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 		    objectPropertyToClassMapping.put(oProperty.getIRI(), new ArrayList<OWLClass>());
 		objectPropertyToClassMapping.get(oProperty.getIRI()).add(owlClass);
 	    }
-	    
-	    
-	    
+
+
+
 	}
 	// ** First finish the "classes with shared Relation calculation**
 	// This "Set" element will later on contain all classes that share a relation
@@ -219,7 +219,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 		classesWithSharedRelations.addAll(classesWithGivenRelation);
 	}
 	this.returnObject.put("classesThatShareARelation", classesWithSharedRelations.size());
-	
+
 
 	// Afterwards, do the Path calculation algorithm starting from every root class
 	// But before doing so, initialize the necessary variable for calculating
@@ -250,6 +250,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	returnObject.put("absoluteDepth", totalDepth);
 	returnObject.put("absoluteLeafCardinality", leafClasses.size());
 	returnObject.put("classesWithSubClasses", upperClasses.size());
+	returnObject.put("recursiveSubClasses", upperClasses.size());
 	Set<OWLClass> classesWithMoreThanOneDirectAncestor = getClassesWithAncestors(owlClasses, 2);
 	returnObject.put("classesWithMultipleInheritance", classesWithMoreThanOneDirectAncestor.size());
 	returnObject.put("superClassesOfClassesWithMultipleInheritance",
@@ -264,13 +265,28 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	returnObject.put("classesWithIndividuals", classesWithIndividuals);
 
     }
-
+    /**
+     * This method gets all subclasses of a given class + all subclasses of its children.
+     *  I honestly think that this is quite weird and not useful. However,
+     *  one calculation framework uses this kind of metric, so.. let's see.
+     * @param currentOWLClass The class that is currently calculated.
+     * @param alreadyDetected
+     * @return
+     */
+    private int getIterativeSubClasses (OWLClass currentOWLClass, int alreadyDetected) {
+	Set<OWLClass> classes = allSubClassesOfClass(new HashSet<OWLClass>(), currentOWLClass);
+	alreadyDetected += classes.size();
+	for (OWLClass owlClass : classes) {
+	    alreadyDetected += getIterativeSubClasses(owlClass, alreadyDetected);
+	}
+	return alreadyDetected;
+    }
     /**
      * Checks if the classes/subclasses of the root classes are linked together or
      * not. (By sub class or object property declarations)
      * 
      * @param rootClasses
-     * @return
+     * @return an int value of all the subclasses of the class itself and all its subClasses 
      */
     private int numberOfConnectedGraphs(Set<OWLClass> rootClasses) {
 	Map<Integer, Set<OWLClass>> relatedClassesMapping = new HashMap<Integer, Set<OWLClass>>();
@@ -286,7 +302,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	    if (relatedClassesWithRootClass.size() < 1 || rootClass.isOWLThing())
 		continue;
 	    if (!relatedClassesMapping.containsKey(1)) // If the class does not have the first element yet, add all the
-						       // subclasses to it
+		// subclasses to it
 		relatedClassesMapping.put(i, relatedClassesWithRootClass);
 	    else {
 		int elementIncluded = -1;
@@ -329,7 +345,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
      * Returns a Set of all subclasses of a given class
      * 
      * @param A         set of the items that the class has already detected (needed
-     *                  for recursion)
+     *                  for recursion). Needs to be a new Hashset when calles the first time.
      * @param rootClass
      * @return
      */
@@ -338,7 +354,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 		.classExpr2classes(EntitySearcher.getSubClasses(rootClass, ontology));
 	Set<OWLClass> foundSubClasses = new HashSet<OWLClass>();
 	if (subClasses.size() > 0 && !alreadyDetected.contains(rootClass)) // the latter is necessary to prevent the
-									   // stack overflow in cyclic relationships
+	    // stack overflow in cyclic relationships
 	    for (OWLClass owlClass : subClasses) {
 		foundSubClasses.addAll(allSubClassesOfClass(subClasses, owlClass));
 	    }

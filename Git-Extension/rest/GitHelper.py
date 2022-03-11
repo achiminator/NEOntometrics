@@ -83,4 +83,4 @@ class GitUrlParser:
             self.repository = self.url[self.url.index(urlParsed.netloc):]
         if self.repository.endswith("/"):
             self.repository = self.repository[:-1]
-        self.service = urlParsed.netloc
+        self.service = urlParsed.netloc.replace("www.", "")

@@ -15,7 +15,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
+
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -32,8 +32,6 @@ import main.java.neontometrics.calc.handler.OntologyUtility;
 @Path("")
 public class ApiController {
 
-    final Logger myLogger = Logger.getLogger(this.getClass());
-
     public ApiController() {
 	// TODO Auto-generated constructor stub
     }
@@ -46,8 +44,6 @@ public class ApiController {
 	if (urlInput.sameFile(new URL("http://127.0.0.1")))
 	    throw new WrongURIException();
 	IRI url = IRI.create(urlInput);
-	myLogger.debug("Get-URL: "
-		+ url.toString());
 	OntologyUtility.setTimestamp();
 	OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 	OWLOntology ontology = manager.loadOntologyFromOntologyDocument(url);
@@ -62,7 +58,6 @@ public class ApiController {
 	    @DefaultValue("false") @HeaderParam("classmetrics") boolean classMetrics, @DefaultValue("false") @HeaderParam("reasoner") boolean reasoner) throws Exception {
 	//OntologyMetricManagerImpl manager = new OntologyMetricManagerImpl();
 	
-	myLogger.info("Get-from-Post");
 	OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 	OWLOntology ontology;
 	try {
@@ -74,7 +69,6 @@ public class ApiController {
 	if (ontology == null) {
 	    throw new InvalidOntologyException();
 	}
-	myLogger.debug("Ontology loaded");
 	OntologyUtility.setTimestamp();
 
 	return calculateMetrics(classMetrics, reasoner, ontology);
@@ -86,14 +80,11 @@ public class ApiController {
 	for (String key : map.keySet()) {
 	    directives.add(key);
 	    if (map.get(key) instanceof Map) {
-		System.out.println("Recursion! :"
-			+ key);
+		
 		directives.append(map2XML((Map<String, Object>) map.get(key)));
 	    } else {
 		directives.set(map.get(key));
-		System.out.println(key
-			+ ":"
-			+ map.get(key));
+		
 	    }
 	    directives.push();
 	    directives.up();
@@ -103,7 +94,6 @@ public class ApiController {
     }
 
     protected Directives classMetrics2XML(List<Map<String, Object>> classMetrics, Directives xmlBuilder) {
-	myLogger.debug("Calculate Class Metrics");
 	xmlBuilder.pop();
 	xmlBuilder.add("ClassMetrics");
 	for (Map<String, Object> classMetric : classMetrics) {
@@ -126,8 +116,6 @@ public class ApiController {
 	Map<String, Object> map = ontoMetricsEnginge.getAllMetrics(reasoner);
 	xmlDirectives.append(map2XML(map));
 
-//	if (classMetrics)
-//	    xmlDirectives = classMetrics2XML(ontoMetricsEnginge.getClassMetrics(), xmlDirectives);
 
 	Xembler xml = new Xembler(xmlDirectives);
 	String xmlString = xml.xml();
