@@ -17,12 +17,17 @@ from django.contrib import admin
 from django.urls import path
 from django.urls import include, path
 from rest import views
+from django.conf import settings
+from graphene_django.views import GraphQLView
+from rest.schema import schema
 
 urlpatterns = [
+
     path('', views.index.as_view()),
     path('admin/', admin.site.urls),
     path('api', views.CalculateMetric.as_view()),
     path('git', views.CalculateGitMetric.as_view()),
     path('metricexplorer', views.MetricExplorer.as_view()),
-    path('django-rq/', include('django_rq.urls'))
+    path('django-rq/', include('django_rq.urls')),
+    path("graphql", GraphQLView.as_view(graphiql=True, schema=schema)),
 ]

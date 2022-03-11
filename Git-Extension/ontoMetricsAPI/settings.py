@@ -17,11 +17,15 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+# Put the line provided below into your `urlpatterns` list.
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '+d9$bcwd(^4o2862x$-xe6kl0$sqcbtkkib+6@2zv*!ysnz)2o'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -65,11 +69,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest',
     'django_rq',
-    'corsheaders'
+    'corsheaders',
+    'graphene_django',
 ]
 RQ_QUEUES = {
     'default': {
-        'HOST': 'redis-scheduler' if os.name != "nt" else "localhost",
+        'HOST': 'redis-scheduler' if bool(os.environ.get("inDocker", False)) else "localhost",
         'PORT': 6379,
         'DB': 0,
        # 'PASSWORD': 'some-password',
@@ -125,6 +130,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'ontoMetricsAPI.wsgi.application'
 
 
+
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -139,10 +145,10 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'neontometrics',
         'USER': 'neontometrics',
-        'PASSWORD': os.environ["db_password"],
+        'PASSWORD':os.environ['db_password'],
         # For the alignment of Docker intergration & windows development
-        'HOST': 'neontometrics_db' if os.name != "nt" else "localhost",
-        'PORT': 3306 if os.name != "nt" else 3316,
+        'HOST': 'neontometrics_db' if bool(os.environ.get("inDocker", False)) else "localhost",
+        'PORT': 3306 if bool(os.environ.get("inDocker", False)) else 3316,
     }
 }
 
@@ -184,9 +190,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # The standard mysql driver of django depends on a C++ Extension.
 # Using PyMySql instead resolves compoatibility issues and enables the same behavior in 
 # Docker and the local development area.
 pymysql.version_info = (1, 4, 2, "final", 0)
 pymysql.install_as_MySQLdb()
+
+# Graphene
+GRAPHENE = {
+    'SCHEMA': 'rest.schema.schema'
+}

@@ -17,6 +17,7 @@ django-cors-headers = "*"
 treelib = "*"
 oxrdflib = "*"
 rdflib = "*"
+graphene="*"
 
 [dev-packages]
 autopep8 = "*"

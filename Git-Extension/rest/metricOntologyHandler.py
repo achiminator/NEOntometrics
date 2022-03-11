@@ -1,11 +1,11 @@
 from copy import copy, deepcopy
-import rdflib
 import os
+import rdflib
 import re
 import treelib
-#import rest.models
-#from rest.views import MetricExplorer
-#from rest.models import Source, Metrics
+import rest.models
+from rest.views import *
+from rest.models import Source, Metrics
 
 
 class OntologyHandler:

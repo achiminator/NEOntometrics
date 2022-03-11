@@ -2,34 +2,26 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="088a966e-6a3c-4994-91c9-9c9241220f50" name="Default Changelist" comment="VisualizationBar.html">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/NEOnotmetrics Frontend/app/Visualizations.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/NEOnotmetrics Frontend/app/Visualizations.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/NEOnotmetrics Frontend/app/templates/app/Circleplot.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/NEOnotmetrics Frontend/app/templates/app/VisualizationBar.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/NEOnotmetrics Frontend/app/templates/app/VisualizationLine.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/NEOnotmetrics Frontend/app/templates/app/Visualizations.html" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/NEOnotmetrics Frontend/app/templates/app/Barplot.html" afterPath="$PROJECT_DIR$/NEOnotmetrics Frontend/app/templates/app/Barplot.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/NEOnotmetrics Frontend/app/templates/app/RestResponse.html" afterPath="$PROJECT_DIR$/NEOnotmetrics Frontend/app/templates/app/RestResponse.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/NEOnotmetrics Frontend/app/templates/app/Vertical_Bar.html" afterPath="$PROJECT_DIR$/NEOnotmetrics Frontend/app/templates/app/Vertical_Bar.html" />
+      <change afterPath="$PROJECT_DIR$/Git-Extension/rest/schema.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Git-Extension/Pipfile" beforeDir="false" afterPath="$PROJECT_DIR$/Git-Extension/Pipfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Git-Extension/ontoMetricsAPI/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Git-Extension/ontoMetricsAPI/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Git-Extension/ontoMetricsAPI/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Git-Extension/ontoMetricsAPI/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Git-Extension/rest/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/Git-Extension/rest/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Git-Extension/rest/metricOntologyHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/Git-Extension/rest/metricOntologyHandler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/NEOnotmetrics Frontend/django_theme/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/NEOnotmetrics Frontend/django_theme/settings.py" afterDir="false" />
     </list>
     <list id="0eece263-ad40-4a91-86c9-f2a6c1230fc2" name="Visualizations.py: Übersetzung von JSON Code und Auswahl für Plotfunktionen" comment="Dropdownbutton" />
-    <ignored path="F:\Uni\NEOntometrics\.idea\shelf/" />
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
-    <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FileEditorManager">
-    <leaf />
-  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="HTML File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -92,6 +84,9 @@
         <option value="$PROJECT_DIR$/NEOnotmetrics Frontend/app/urls.py" />
       </list>
     </option>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="586" />
@@ -174,7 +169,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="TODO_SCOPE" value="All Places" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../IDAS" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
@@ -183,27 +178,15 @@
       <recent name="C:\Users\patze\PycharmProjects\NEOntometrics\NEOnotmetrics Frontend\app\templates\app" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
   <component name="RunManager">
-    <configuration name="Unnamed" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+    <configuration name="OntoMetrics" type="PythonConfigurationType" factoryName="Python">
       <module name="NEOntometrics" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\Users\patze\anaconda3\python.exe" />
+      <option name="SDK_HOME" value="$USER_HOME$/.local/share/virtualenvs/Git-Extension-0CPnEL1a/bin/python" />
       <option name="WORKING_DIRECTORY" value="" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -240,9 +223,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-  </component>
-  <component name="ShelveChangesManager" show_recycled="false">
-    <option name="remove_strategy" value="false" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -374,12 +354,6 @@
         <entry key="1">
           <value>
             <State>
-              <option name="RECENTLY_FILTERED_USER_GROUPS">
-                <collection />
-              </option>
-              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
-                <collection />
-              </option>
               <option name="FILTERS">
                 <map>
                   <entry key="branch">
@@ -404,12 +378,6 @@
         <entry key="MAIN">
           <value>
             <State>
-              <option name="RECENTLY_FILTERED_USER_GROUPS">
-                <collection />
-              </option>
-              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
-                <collection />
-              </option>
               <option name="FILTERS">
                 <map>
                   <entry key="branch">
@@ -432,19 +400,12 @@
       </map>
     </option>
   </component>
-  <component name="VcsContentAnnotationSettings">
-    <option name="myLimit" value="2678400000" />
-  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Visualizations.py: Übersetzung von JSON Code und Auswahl für Plotfunktionen" />
     <MESSAGE value="Dropdownbutton" />
     <MESSAGE value="Seitenaufruf für Visualizations.html.&#10;&#10;Was fehlt: Parameterübergabe und Einbindung des Pythoncodes" />
     <MESSAGE value="VisualistionsLine" />
     <option name="LAST_COMMIT_MESSAGE" value="VisualistionsLine" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager />
-    <watches-manager />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/NEOnotmetrics Frontend/app/templates/app/VisualizationLine.html">
