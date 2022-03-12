@@ -79,9 +79,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest',
+    'django_filters',
     'django_rq',
     'corsheaders',
-    'graphene_django',
+    'graphene_django'
 ]
 RQ_QUEUES = {
     'default': {
