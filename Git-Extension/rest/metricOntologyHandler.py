@@ -3,10 +3,6 @@ import os
 import rdflib
 import re
 import treelib
-import rest.models
-from rest.views import *
-from rest.models import Source, Metrics
-
 
 class OntologyHandler:
     def __init__(self):
@@ -137,7 +133,6 @@ class OntologyHandler:
         })
 
         self.metricDict = metricDict
-
         return metricDict
 
     def __buildLambdaFunctionFromOntology(self, calculationDict: dict) -> str:
@@ -277,3 +272,6 @@ class OntologyHandler:
         self.tree = tree
 
         return tree.to_dict(with_data=True)
+
+if not(bool(os.environ.get("isWorker", False))):
+    ontologyhandler = OntologyHandler()

@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from rest.metricOntologyHandler import OntologyHandler
+import rest.metricOntologyHandler 
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest.CalculationManager import CalculationManager
 from rest.opiHandler import OpiHandler
@@ -49,11 +49,10 @@ class MetricExplorer(APIView):
     # Calculating the Data for the Metric Explorer Frontent from the ontology is a quite extensive task, which
     # is not required for the worker applications (those who run and distribute the metric calculations).
     # The environment variable "isWorker" is set by the docker-compose file.
-    if not(bool(os.environ.get("isWorker", False))) and bool(os.environ.get("inDocker", False)):
-        ontology = OntologyHandler()
-
+    
+    #if not(bool(os.environ.get("isWorker", False))) and bool(os.environ.get("inDocker", False)):
         def get(self, request, format=None):
-            explorer = self.ontology.getMetricExplorer()
+            explorer = rest.metricOntologyHandler.OntologyHandler.getMetricExplorer()
             return(Response(explorer))
 
 class MetricQueryViewSet(viewsets.ReadOnlyModelViewSet):

@@ -3339,6 +3339,29 @@ Different ontologies with subjective features and particular perspective on the 
     
 
 
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Axiom-class_ratio -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Axiom-class_ratio">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#divisor"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Axioms"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_logical_adequacy"/>
+        <neontometrics:MetricDefinition>The cardinality of the set of classes represents by nodes in g divided by the cardinality of the set of axioms represented by subgraphs in g.</neontometrics:MetricDefinition>
+    </owl:Class>
+    
+
+
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Class_relation_ratio -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Class_relation_ratio">
@@ -3553,6 +3576,29 @@ understood, manipulated, and exploited.</neontometrics:MetricDescription>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_logical_adequacy"/>
         <neontometrics:MetricDescription>a complexity scale, e.g. the one used for description logics</neontometrics:MetricDescription>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Individual-Class_ratio -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Individual-Class_ratio">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#divisor"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Instances_Metrics"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_logical_adequacy"/>
+        <neontometrics:MetricDefinition>The cardinality of the set of classes represents by nodes in g divided by the cardinality of the set of individuals represented by special nodes in g.</neontometrics:MetricDefinition>
     </owl:Class>
     
 
@@ -3905,6 +3951,12 @@ m = n_m / n_s where n_m is the cardinality of M and n_s is the cardinalty of S( 
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#positiveAffectedBy"/>
+                <owl:someValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Axiom-class_ratio"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#positiveAffectedBy"/>
                 <owl:someValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Generic_complexity"/>
             </owl:Restriction>
         </rdfs:subClassOf>
@@ -3936,12 +3988,6 @@ m = n_m / n_s where n_m is the cardinality of M and n_s is the cardinalty of S( 
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#positiveAffectedBy"/>
                 <owl:someValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Modularity_rate"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#positiveAffectedBy"/>
-                <owl:someValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Axiom/class_ratio"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <neontometrics:MetricDescription>This principle prospects an ontology that can be analyzed in
@@ -5079,52 +5125,6 @@ SD = H/C</neontometrics:MetricDefinition>
         </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Capability of the Ontology to represent the knowledge acquired.</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>Knowledge acquisition is the gathering, storage, and encoding of existing information.</neontometrics:MetricDescription>
-    </owl:Class>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Axiom/class_ratio -->
-
-    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Axiom/class_ratio">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#divisor"/>
-                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
-                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Axioms"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_logical_adequacy"/>
-        <neontometrics:MetricDefinition>The cardinality of the set of classes represents by nodes in g divided by the cardinality of the set of axioms represented by subgraphs in g.</neontometrics:MetricDefinition>
-    </owl:Class>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Individual/class_ratio -->
-
-    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Individual/class_ratio">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#divisor"/>
-                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
-                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Instances_Metrics"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_logical_adequacy"/>
-        <neontometrics:MetricDefinition>The cardinality of the set of classes represents by nodes in g divided by the cardinality of the set of individuals represented by special nodes in g.</neontometrics:MetricDefinition>
     </owl:Class>
     
 

@@ -1,12 +1,21 @@
-import graphene
+import graphene, rest.metricOntologyHandler
 from graphene_django import DjangoObjectType, DjangoListField
 from .models import Source, Metrics, ClassMetrics
 
 
 class MetricsType(DjangoObjectType):
+
+    metrics = rest.metricOntologyHandler.ontologyhandler.getMetricDict()
+    for element in metrics:
+        if(len(element["metricCalculation"]) > 0 ):
+            metricName = element["metric"].replace(" ", "_").replace("-", "").replace("(", "").replace(")", "")
+            exec("{0} = graphene.Float(source=\"{0}\")".format(metricName))
+    badadum = graphene.Int(source="badadum")
     class Meta:
         model = Metrics
         fields = "__all__"
+        #exclude = ["id", "metricSource"]
+    
 
 
 class SourceType(DjangoObjectType):

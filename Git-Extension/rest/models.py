@@ -1,5 +1,8 @@
+from logging import exception
+from xml.sax.handler import property_encoding
 from django.db import models
-
+from rest.metricOntologyHandler import ontologyhandler
+import re
 # Create your models here.
 
 
@@ -98,7 +101,28 @@ class Metrics(models.Model):
     reasonerActive = models.BooleanField(default=False)
     inconsistentClasses = models.PositiveIntegerField(default=0)
     consistencyCheckSuccessful = models.BooleanField(default=False)
-  
+
+    # This part handles the set up of the calculated metrics that build upon the ones in the dabase.
+    # They are sterred by the ontoloy.
+    calculations = ontologyhandler.getMetricDict()
+    for element in calculations:
+        if(len(element["metricCalculation"]) > 0 ):
+            # The original Metric Name out of the Ontology contains invalid characters for a function.
+            metricName = element["metric"].replace(" ", "_").replace("-", "").replace("(", "").replace(")", "")
+            calculationElements = element["metricCalculation"]
+            # The try catch is necessary because some of the metrics can be null, thus render the further calculations that build
+            # Upon these Metrics invalid
+            tmp =calculationElements.replace("(", "").replace(")", "").replace(" ", "")
+            splitted = re.split("\/|\+|-|\*", tmp)
+            for calculationPart in splitted:
+                calculationElements = calculationElements.replace(calculationPart, "self."+ calculationPart)
+            metric = """def {0} (self):
+                try:
+                    return {1}  
+                except: return 9999.9""".format(metricName, calculationElements)
+            exec(metric)
+            exec("{0}"" = property(fget={0})".format(metricName))
+            print(metric)
 
 class ClassMetrics(models.Model):
     metric = models.ForeignKey(Metrics, on_delete=models.CASCADE)
