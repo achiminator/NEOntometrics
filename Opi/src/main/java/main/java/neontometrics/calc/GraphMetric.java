@@ -142,7 +142,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	int superClassCount = 0;
 	int classesWithIndividuals = 0;
 	int maxSubClassOfAClass = 0;
-	int iterativeSubClasses = 0;
+	int recursiveSubClasses = 0;
 
 	// Iterate over all classes
 	for (OWLClass owlClass : owlClasses) {
@@ -165,8 +165,8 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	    Collection<OWLClass> subClasses = OntologyUtility.classExpr2classes(subClassExpr);
 	    if(subClasses.size() > maxSubClassOfAClass) 
 		maxSubClassOfAClass = subClasses.size();
-	    
-	    iterativeSubClasses += getIterativeSubClasses(owlClass, iterativeSubClasses);
+
+	    recursiveSubClasses += getRecursiveSubClasses(owlClass, recursiveSubClasses, new HashSet<OWLClass>());
 
 	    if (subClasses.size() < 1) {
 		// If a classes does not have any subclasses, it is a leaf class. As owl-Thing
@@ -250,7 +250,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	returnObject.put("absoluteDepth", totalDepth);
 	returnObject.put("absoluteLeafCardinality", leafClasses.size());
 	returnObject.put("classesWithSubClasses", upperClasses.size());
-	returnObject.put("recursiveSubClasses", upperClasses.size());
+	returnObject.put("recursiveSubClasses", recursiveSubClasses);
 	Set<OWLClass> classesWithMoreThanOneDirectAncestor = getClassesWithAncestors(owlClasses, 2);
 	returnObject.put("classesWithMultipleInheritance", classesWithMoreThanOneDirectAncestor.size());
 	returnObject.put("superClassesOfClassesWithMultipleInheritance",
@@ -273,11 +273,14 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
      * @param alreadyDetected
      * @return
      */
-    private int getIterativeSubClasses (OWLClass currentOWLClass, int alreadyDetected) {
+    private int getRecursiveSubClasses (OWLClass currentOWLClass, int alreadyDetected, Set<OWLClass> detectedOnHigherLevel) {
 	Set<OWLClass> classes = allSubClassesOfClass(new HashSet<OWLClass>(), currentOWLClass);
 	alreadyDetected += classes.size();
 	for (OWLClass owlClass : classes) {
-	    alreadyDetected += getIterativeSubClasses(owlClass, alreadyDetected);
+	    if (detectedOnHigherLevel.contains(currentOWLClass))
+		continue;
+	    detectedOnHigherLevel.add(currentOWLClass);
+	    alreadyDetected += getRecursiveSubClasses(owlClass, alreadyDetected, detectedOnHigherLevel);
 	}
 	return alreadyDetected;
     }
