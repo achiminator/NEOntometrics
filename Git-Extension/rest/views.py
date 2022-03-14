@@ -1,6 +1,5 @@
 from django.http import JsonResponse
 import rest.metricOntologyHandler 
-from rest_framework.renderers import TemplateHTMLRenderer
 from rest.CalculationManager import CalculationManager
 from rest.opiHandler import OpiHandler
 from django.shortcuts import render
@@ -9,15 +8,10 @@ from ontoMetricsAPI.PlainTextParser import PlainTextParser
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import viewsets
-from rest_framework.exceptions import APIException, ParseError
+from rest_framework.exceptions import ParseError
 import django_rq
-import rq
-import redis
+import rest.queueInformation
 import logging
-import requests
-import django
-import os
-from braces.views import CsrfExemptMixin
 from rest.GitHelper import GitHelper, GitUrlParser
 from rest.dbHandler import DBHandler
 from rest_framework.renderers import JSONRenderer
@@ -91,6 +85,7 @@ class CalculateGitMetric(APIView):
         """
         targetLocation = ""
         url = GitUrlParser()
+        queueInfo = rest.queueInformation.QueueInformation()
 
         try:
             if "url" in request.query_params:
@@ -121,7 +116,7 @@ class CalculateGitMetric(APIView):
         # The JobId is the ID of the task whithin the queue
         jobId = GitHelper.serializeJobId(url.service + url.repository + url.file)
         if jobId in django_rq.get_queue().job_ids:
-            resp = self.__getQueueAnswer__(url, jobId)
+            resp = queueInfo.__getQueueAnswer__(url, jobId)
             return Response(resp)
         # If it is  not in the queue, it might be in failed? Check the failed job registry..
         elif jobId in django_rq.get_queue().failed_job_registry:
@@ -152,7 +147,7 @@ class CalculateGitMetric(APIView):
         else:
             metrics = django_rq.enqueue(calculationManager.getObjects, repositoryUrl=url.repository,
                                         classMetrics=classMetrics, reasoner=reasonerSelected, job_id=jobId)
-        return Response(self.__getQueueAnswer__(url, jobId))
+        return Response(queueInfo.__getQueueAnswer__(url, jobId))
     
     def delete(self, request: Request, format=None):
         """Delete a metric caluclation from the Database
@@ -190,35 +185,3 @@ class CalculateGitMetric(APIView):
         opi = OpiHandler()
         metric = opi.opiOntologyRequest(data, True)
         return(Response(metric))
-
-    def __getQueueAnswer__(self, url: GitUrlParser, jobId: str) -> dict:
-        """Generates the response if the ontology to calculate is not yet finished
-
-        Args:
-            url (GitUrlParser): The GitUrlParser-Object containing information on the target repository/file
-            jobId (str): The Job-ID/Request URL
-
-        Returns:
-            dict: Output Dict ready for JSON-Serialization
-        """
-        logging.debug("Job" + url.url + " is already in Queue")
-        redis_conn = django_rq.get_connection()
-        job = django_rq.jobs.Job(jobId, redis_conn)
-
-        jobPosition = django_rq.get_queue().get_job_position(job)
-        resp = {
-            "taskFinished": False,
-            "taskIsStarted": job in django_rq.get_queue().started_job_registry,
-            "queuePosition": jobPosition if jobPosition != None else 0,
-            "progress": job.get_meta()
-        }
-        resp.update(url.__dict__)
-        return resp
-
-    def __getFailedQueueAnswer__(self, jobId: str) -> dict:
-        job = django_rq.get_queue().fetch_job(jobId)
-        resp = {
-            "status": 400,
-            "url": GitHelper.deserializeJobId(jobId),
-            "info": "No valid Ontology or Git-Repository found at this URL. Check your Query!"
-        }
