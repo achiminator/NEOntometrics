@@ -119,7 +119,7 @@ class Metrics(models.Model):
             metric = """def {0} (self):
                 try:
                     return {1}  
-                except: return 9999.9""".format(metricName, calculationElements)
+                except: return None""".format(metricName, calculationElements)
             exec(metric)
             exec("{0}"" = property(fget={0})".format(metricName))
             print(metric)
