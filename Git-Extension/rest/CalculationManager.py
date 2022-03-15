@@ -1,4 +1,3 @@
-import django
 import pygit2 as Git
 from os import path
 from shutil import rmtree
@@ -8,7 +7,6 @@ from datetime import datetime
 from rest.GitHelper import GitHelper, GitUrlParser
 from rest.opiHandler import OpiHandler
 from rq import job
-from django.conf import settings
 from rest.dbHandler import DBHandler
 import django_rq
 import rq
@@ -19,6 +17,21 @@ class CalculationManager:
     """
     logger = logging.getLogger(__name__)
     logging.basicConfig(level=logging.DEBUG)
+    @staticmethod
+    def putInQueue(url: GitUrlParser, reasonerSelected=True, classMetrics=False):
+        calculationManager = CalculationManager()
+        jobId = GitHelper.serializeJobId(url)
+        if(url.repository == ""):
+            django_rq.enqueue(calculationManager.ontologyFileWORepo, url, reasonerSelected, job_id=jobId)
+        elif url.file != '':
+            metrics = django_rq.enqueue(calculationManager.getObject, repositoryUrl=url.repository, objectLocation=url.file,
+                                        branch=url.branch, classMetrics=classMetrics, reasoner=reasonerSelected,  job_id=jobId)
+        # If no file is given, analyze the whole REPO
+        else:
+            metrics = django_rq.enqueue(calculationManager.getObjects, repositoryUrl=url.repository,
+                                        classMetrics=classMetrics, reasoner=reasonerSelected, job_id=jobId)
+        
+    
 
     @django_rq.job
     def ontologyFileWORepo(self, url: GitUrlParser, reasonerSelected: bool):

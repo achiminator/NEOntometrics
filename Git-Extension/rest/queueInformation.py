@@ -10,32 +10,46 @@ class QueueInformation:
     taskStarted = None
     queuePosition = -1        
     url = None
+    error = False
+    errorMessage = ""
+    urlInSystem = False
     
     def __init__(self, urlString: str) -> dict:
         self.url = GitUrlParser()
         self.url.parse(urlString)
-        jobId = GitHelper.serializeJobId(self.url.service + self.url.repository + self.url.file)
+        jobId = GitHelper.serializeJobId(self.url)
         if jobId in django_rq.get_queue().job_ids:
             redis_conn = django_rq.get_connection()
             job = django_rq.jobs.Job(jobId, redis_conn)
             jobPosition = django_rq.get_queue().get_job_position(job)
-            self.taskFinished = False,
-            self.taskStarted  = job in django_rq.get_queue().started_job_registry,
-            self.queuePosition = jobPosition if jobPosition != None else 0,
+            self.taskFinished = False
+            self.urlInSystem = True
+            self.taskStarted  = job in django_rq.get_queue().started_job_registry
+            self.queuePosition = jobPosition if jobPosition != None else 0
             selfprogress = job.get_meta()
+            
+        if jobId in django_rq.get_queue().failed_job_registry:
+            self.error = True
+            self.urlInSystem = True
+            job = django_rq.get_queue().fetch_job(jobId)
+            if ("status code: 404" in job.exc_info) or ("KeyError: \"reference" in job.exc_info):
+                self.errorMessage = "No valid Ontology found"
+            else:
+                self.errorMessage = "internalServerError"
 
         else:
             db = DBHandler()
             metricFromDB = db.getMetricForOntology(
                 file=self.url.file, repository=self.url.repository, hideId=False)
             if(metricFromDB):
+                self.urlInSystem = True
                 self.taskFinished = True
                 
         
         
 
 
-    def __getQueueAnswer__(self, url: GitUrlParser, jobId: str) -> dict:
+    def getQueueAnswer(self, url: GitUrlParser, jobId: str) -> dict:
         """Generates the response if the ontology to calculate is not yet finished
 
         Args:
@@ -60,7 +74,7 @@ class QueueInformation:
         resp.update(url.__dict__)
         return resp
     
-    def __getFailedQueueAnswer__(self, jobId: str) -> dict:
+    def getFailedQueueAnswer(self, jobId: str) -> dict:
         job = django_rq.get_queue().fetch_job(jobId)
         resp = {
             "status": 400,

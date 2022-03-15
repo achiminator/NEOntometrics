@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-import rest.metricOntologyHandler 
+import rest.metricOntologyHandler
 from rest.CalculationManager import CalculationManager
 from rest.opiHandler import OpiHandler
 from django.shortcuts import render
@@ -43,22 +43,23 @@ class MetricExplorer(APIView):
     # Calculating the Data for the Metric Explorer Frontent from the ontology is a quite extensive task, which
     # is not required for the worker applications (those who run and distribute the metric calculations).
     # The environment variable "isWorker" is set by the docker-compose file.
-    
-    #if not(bool(os.environ.get("isWorker", False))) and bool(os.environ.get("inDocker", False)):
-        def get(self, request, format=None):
-            explorer = rest.metricOntologyHandler.OntologyHandler.getMetricExplorer()
-            return(Response(explorer))
+
+    # if not(bool(os.environ.get("isWorker", False))) and bool(os.environ.get("inDocker", False)):
+    def get(self, request, format=None):
+        explorer = rest.metricOntologyHandler.OntologyHandler.getMetricExplorer()
+        return(Response(explorer))
+
 
 class MetricQueryViewSet(viewsets.ReadOnlyModelViewSet):
     def list(self, request):
         queryset = Source.objects.all()
         serializer = MetricSerializer(instance=queryset, many=True)
         return Response(serializer.data)
+
     def retrieve(self, request):
         #queryset = Source.objects.filter(repository=request)
         return(None)
-    
-        
+
 
 class CalculateGitMetric(APIView):
 
@@ -114,9 +115,10 @@ class CalculateGitMetric(APIView):
 
         # If it is not already in the database, check the queue
         # The JobId is the ID of the task whithin the queue
-        jobId = GitHelper.serializeJobId(url.service + url.repository + url.file)
+        jobId = GitHelper.serializeJobId(
+            url.service + url.repository + url.file)
         if jobId in django_rq.get_queue().job_ids:
-            resp = queueInfo.__getQueueAnswer__(url, jobId)
+            resp = queueInfo.getQueueAnswer(url, jobId)
             return Response(resp)
         # If it is  not in the queue, it might be in failed? Check the failed job registry..
         elif jobId in django_rq.get_queue().failed_job_registry:
@@ -134,21 +136,12 @@ class CalculateGitMetric(APIView):
                     "info": "internal server error"
                 }, status=500)
         logging.debug("Put job in queue")
-        calculationManager = CalculationManager()
 
-            
-            
-        if(url.repository == ""):
-            django_rq.enqueue(calculationManager.ontologyFileWORepo, url, reasonerSelected, job_id=jobId)
-        elif url.file != '':
-            metrics = django_rq.enqueue(calculationManager.getObject, repositoryUrl=url.repository, objectLocation=url.file,
-                                        branch=url.branch, classMetrics=classMetrics, reasoner=reasonerSelected,  job_id=jobId)
-        # If no file is given, analyze the whole REPO
-        else:
-            metrics = django_rq.enqueue(calculationManager.getObjects, repositoryUrl=url.repository,
-                                        classMetrics=classMetrics, reasoner=reasonerSelected, job_id=jobId)
-        return Response(queueInfo.__getQueueAnswer__(url, jobId))
-    
+        calculationManager = CalculationManager()
+        self.putInQueue(url=url, classMetrics=classMetrics,
+                        reasonerSelected=reasonerSelected, jobId=jobId)
+        return Response(queueInfo.getQueueAnswer(url, jobId))
+
     def delete(self, request: Request, format=None):
         """Delete a metric caluclation from the Database
 

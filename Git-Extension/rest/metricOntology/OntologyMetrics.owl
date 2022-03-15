@@ -4184,7 +4184,17 @@ detail, with a rich formalization of conceptual choices and motivations</neontom
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
-                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Property_Metrics"/>
+                        <owl:allValuesFrom>
+                            <owl:Class>
+                                <owl:intersectionOf rdf:parseType="Collection">
+                                    <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Object_Properties"/>
+                                    <owl:Restriction>
+                                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#sum"/>
+                                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Data_Properties"/>
+                                    </owl:Restriction>
+                                </owl:intersectionOf>
+                            </owl:Class>
+                        </owl:allValuesFrom>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
