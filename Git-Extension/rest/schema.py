@@ -1,7 +1,8 @@
+from fileinput import filename
 from logging import Filter
 import queue
 from urllib.parse import urlparse
-import graphene
+import graphene, django_filters
 from graphene import relay
 from rest.CalculationManager import CalculationManager
 from rest.GitHelper import GitHelper, GitUrlParser
@@ -10,7 +11,7 @@ import rest.queueInformation
 from graphene_django import DjangoObjectType, DjangoListField
 from .models import Source, Metrics, ClassMetrics
 from django.db.models import Prefetch
-from graphene_django.filter import DjangoFilterConnectionField
+import graphene_django.filter as filter
 
 
 class MetricsNode(DjangoObjectType):
@@ -21,7 +22,16 @@ class MetricsNode(DjangoObjectType):
         if(len(element["metricCalculation"]) > 0):
             metricName = element["metric"].replace(" ", "_").replace(
                 "-", "").replace("(", "").replace(")", "")
-            exec("{0} = graphene.Float(source=\"{0}\")".format(metricName))
+            # If there is a division going on in the calculation, the resulting values will be 
+            # a float. (As all the originating values are integers, there is no other possibility)
+            if("/" in element["metricCalculation"]):
+                exec("{0} = graphene.Float(source=\"{0}\")".format(metricName))
+            # Unfortunately, for one of the values we need to make an exception. DLExpressivity is a string, 
+            # (the only one).
+            elif("dlExpressivity" in element["metricCalculation"]):
+                exec("{0} = graphene.String(source=\"{0}\")".format(metricName))
+            else:
+                exec("{0} = graphene.Int(source=\"{0}\")".format(metricName))
 
     class Meta:
         model = Metrics
@@ -53,44 +63,8 @@ class RepositoryNode(DjangoObjectType):
     class Meta:
         model = Source
    #     exclude =["id"]
-        filter_fields = {"repository": ["exact", "icontains"],
-                         "fileName": ["icontains"]}
+        filter_fields = ["repository", "fileName"]
         interfaces = (relay.Node, )
-
-
-class Query(graphene.ObjectType):
-    """Responsible for the graphQL-Metric Endoint
-    """
-    queueInformation = graphene.Field(
-        QueueInformationNode, url=graphene.String(required=True))
-    repositories = DjangoFilterConnectionField(RepositoryNode)
-
-    def resolve_queueInformation(root, info, url):
-        """Gathers the information on the queue of the file.
-
-        Args:
-            root (_type_): _description_
-            info (_type_): _description_
-            url (graphene.String(required=True)): The URL to the required OntologyFile 
-        """
-        queueInfo = rest.queueInformation.QueueInformation(url)
-        return QueueInformationNode(
-            urlInSystem=queueInfo.urlInSystem,
-            taskFinished=queueInfo.taskFinished,
-            taskStarted=queueInfo.taskStarted,
-            queuePosition=queueInfo.queuePosition,
-            analyzedCommits = queueInfo.analyzedCommits,
-            commitsForThisOntology = queueInfo.commitsForThisOntology,
-            analyzedOntologies = queueInfo.analyzedOntologies,
-            analysableOntologies = queueInfo.analysableOntologies,
-            url=queueInfo.url.url,
-            repository=queueInfo.url.repository,
-            service=queueInfo.url.service,
-            fileName=queueInfo.url.file,
-            error=queueInfo.error,
-            errorMessage=queueInfo.errorMessage
-        )
-
 
 class QueueMutation(graphene.Mutation):
     class Arguments:
@@ -134,6 +108,54 @@ class QueueMutation(graphene.Mutation):
 
 class Mutation(graphene.ObjectType):
     update_queueInfo = QueueMutation.Field()
+
+class RepositoryFilter(django_filters.FilterSet):
+    repository = django_filters.CharFilter(field_name="repository", method="repoFilter", required=True)
+    fileName = django_filters.CharFilter(field_name="fileName", method="fileFilter")
+    
+
+    def repoFilter(self, queryset, name, value):
+        urlObject = GitUrlParser()
+        urlObject.parse(value)
+        return queryset.filter(repository = urlObject.repository)
+        
+    def fileFilter(self, queryset, name, value):
+        urlObject = GitUrlParser()
+        urlObject.parse(value)
+        return queryset.filter(fileName = urlObject.file)
+
+class Query(graphene.ObjectType):
+    """Responsible for the graphQL-Metric Endoint
+    """
+    queueInformation = graphene.Field(
+        QueueInformationNode, url=graphene.String(required=True))
+    repositories = filter.DjangoFilterConnectionField(RepositoryNode, filterset_class=RepositoryFilter)
+
+    def resolve_queueInformation(root, info, url):
+        """Gathers the information on the queue of the file.
+
+        Args:
+            root (_type_): _description_
+            info (_type_): _description_
+            url (graphene.String(required=True)): The URL to the required OntologyFile 
+        """
+        queueInfo = rest.queueInformation.QueueInformation(url)
+        return QueueInformationNode(
+            urlInSystem=queueInfo.urlInSystem,
+            taskFinished=queueInfo.taskFinished,
+            taskStarted=queueInfo.taskStarted,
+            queuePosition=queueInfo.queuePosition,
+            analyzedCommits = queueInfo.analyzedCommits,
+            commitsForThisOntology = queueInfo.commitsForThisOntology,
+            analyzedOntologies = queueInfo.analyzedOntologies,
+            analysableOntologies = queueInfo.analysableOntologies,
+            url=queueInfo.url.url,
+            repository=queueInfo.url.repository,
+            service=queueInfo.url.service,
+            fileName=queueInfo.url.file,
+            error=queueInfo.error,
+            errorMessage=queueInfo.errorMessage
+        )
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation, auto_camelcase=False)

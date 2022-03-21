@@ -328,7 +328,8 @@ class _CalculationEngineState extends State<CalculationEngine> {
             children: (List<MetricExplorerItem> data) {
               List<Widget> chips = [];
               for (MetricExplorerItem item in data) {
-                chips.add(Tooltip(
+                chips.add(
+                  Tooltip(
                     message: (item.definition) != ""
                         ? item.definition
                         : item.description,
@@ -344,7 +345,8 @@ class _CalculationEngineState extends State<CalculationEngine> {
                           }
                         });
                       },
-                    )));
+                    ))
+                    );
               }
               return chips;
             }(leafElements),
@@ -362,6 +364,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
         ));
   }
 }
+
 
 class ProgressBarIndicator extends StatelessWidget {
   const ProgressBarIndicator({
