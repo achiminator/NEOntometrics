@@ -1,8 +1,9 @@
 import 'dart:async' show Future;
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'metric_explorer.dart';
-import "calculationengine.dart";
+import 'calculationsettings.dart';
 import 'markdown_handler.dart';
 import 'metric_data.dart';
 
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       scrollBehavior: MyCustomWebScrollBehavior(),
       title: 'NEOntometrics',
+      builder: EasyLoading.init(), // Necessary for showing the loading screen on the Calculation-Page
       theme: ThemeData(
 
         colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.teal),

@@ -21,6 +21,7 @@ from rest import views
 from django.conf import settings
 from graphene_django.views import GraphQLView
 from rest.schema import schema
+from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = [
 
@@ -30,5 +31,6 @@ urlpatterns = [
     path('git', views.CalculateGitMetric.as_view()),
     path('metricexplorer', views.MetricExplorer.as_view()),
     path('django-rq/', include('django_rq.urls')),
-    path("graphql", GraphQLView.as_view(graphiql=True, schema=schema)),
+    path("graphiql", GraphQLView.as_view(graphiql=True, schema=schema)),
+    path("graphql", csrf_exempt(GraphQLView.as_view(graphiql=False, schema=schema))),
 ]

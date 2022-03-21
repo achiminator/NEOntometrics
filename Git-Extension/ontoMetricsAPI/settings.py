@@ -34,7 +34,7 @@ SECRET_KEY = '+d9$bcwd(^4o2862x$-xe6kl0$sqcbtkkib+6@2zv*!ysnz)2o'
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False if (os.environ.get("inDocker", False)) else True
+DEBUG = True#  False if (os.environ.get("inDocker", False)) else True
 
 logging.config.dictConfig({
     'version': 1,
@@ -60,7 +60,7 @@ logging.config.dictConfig({
     },
 })
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["*", "localhost"]
 
 # REST_FRAMEWORK = {
 #     'DEFAULT_RENDERER_CLASSES': [
@@ -91,7 +91,7 @@ RQ_QUEUES = {
         'DB': 0,
        # 'PASSWORD': 'some-password',
         'DEFAULT_TIMEOUT': 72000,
-        'ASYNC' : True if bool(os.environ.get("inDocker", False)) else False
+        'ASYNC' : True #if bool(os.environ.get("inDocker", False)) else False
     }
 }
 

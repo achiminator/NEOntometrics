@@ -15,7 +15,7 @@ class Source(models.Model):
 
 
 class Metrics(models.Model):
-    metricSource = models.ForeignKey(Source, related_name="metricSource", on_delete=models.CASCADE)
+    metricSource = models.ForeignKey(Source, related_name="metrics", on_delete=models.CASCADE)
     CommitTime = models.DateTimeField(default=None, null=True)
     CommitMessage = models.TextField(default=None, null=True)
     AuthorEmail = models.EmailField(default=None, null=True)

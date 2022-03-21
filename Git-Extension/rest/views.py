@@ -46,7 +46,7 @@ class MetricExplorer(APIView):
 
     # if not(bool(os.environ.get("isWorker", False))) and bool(os.environ.get("inDocker", False)):
     def get(self, request, format=None):
-        explorer = rest.metricOntologyHandler.OntologyHandler.getMetricExplorer()
+        explorer = rest.metricOntologyHandler.ontologyhandler.getMetricExplorer()
         return(Response(explorer))
 
 

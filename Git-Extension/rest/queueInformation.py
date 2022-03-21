@@ -13,6 +13,10 @@ class QueueInformation:
     error = False
     errorMessage = ""
     urlInSystem = False
+    analyzedOntologies = None
+    analysableOntologies = None
+    commitsForThisOntology = None
+    analyzedCommits = None
     
     def __init__(self, urlString: str) -> dict:
         self.url = GitUrlParser()
@@ -27,6 +31,14 @@ class QueueInformation:
             self.taskStarted  = job in django_rq.get_queue().started_job_registry
             self.queuePosition = jobPosition if jobPosition != None else 0
             selfprogress = job.get_meta()
+            if "analyzedOntologies" in selfprogress:
+                self.analyzedOntologies = selfprogress["analyzedOntologies"]
+            if "analysableOntologies" in selfprogress:
+                self.analysableOntologies = selfprogress["analysableOntologies"]
+            if "commitsForThisOntology" in selfprogress:
+                self.commitsForThisOntology = selfprogress["commitsForThisOntology"]
+            if "ananlyzedCommits" in selfprogress:
+                self.analyzedCommits = selfprogress["ananlyzedCommits"]
             
         if jobId in django_rq.get_queue().failed_job_registry:
             self.error = True

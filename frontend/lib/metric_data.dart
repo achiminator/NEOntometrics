@@ -2,17 +2,20 @@ import 'dart:convert';
 import "settings.dart";
 import 'package:http/http.dart' as http;
 
+
 class MetricExplorerItem {
+  ///Flattens the Hierachy of the hierachical structure of the [MetricExplorerItem]. The element onlyCalculatableClasses 
+  // asks if only such elmeents are shown, that are possible to calculate.
   static List<MetricExplorerItem> getLeafItems(MetricExplorerItem input,
       {bool onlyCalculatableClasses = false}) {
     List<MetricExplorerItem> leafItems = [];
     if (input.subClass.isEmpty) {
-      if (!onlyCalculatableClasses || input.calculation != "") {
+      if (!onlyCalculatableClasses || input.calculation != "" || input.implentationName != "") {
         leafItems.add(input);
       }
     } else {
       for (var item in input.subClass) {
-        leafItems.addAll(getLeafItems(item));
+        leafItems.addAll(getLeafItems(input = item, onlyCalculatableClasses: true));
       }
     }
 

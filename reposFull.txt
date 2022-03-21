@@ -94,7 +94,6 @@ https://github.com/geonetwork/core-geonetwork
 https://github.com/adamml/data-release-ont
 https://github.com/adamml/LinkedOceanDataCloud
 https://github.com/opengeospatial/HY_Features
-https://github.com/CSIRO-enviro-informatics/PUV-ont
 https://github.com/thesmartenergy/seas
 https://github.com/allysonlister/swo
 https://github.com/fr4ncidir/SemanticWoT

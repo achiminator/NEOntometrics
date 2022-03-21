@@ -88,7 +88,7 @@ class _CalculationViewState extends State<CalculationView> {
     for (Map<String, dynamic> filesInMetricData in metricData) {
       ontologyFiles.add(
         DropdownMenuItem(
-          child: Text(filesInMetricData["fileName"]),
+          child: Text(filesInMetricData["node"]["fileName"]),
           value: counter,
         ),
       );
@@ -101,8 +101,9 @@ class _CalculationViewState extends State<CalculationView> {
     List<DataColumn> columns = [];
     List<DataRow> tableRows = [];
     Map<String, dynamic> metricDataForOntologyFile =
-        widget.metricData[activeFile];
-    List<dynamic> metricsForOntologyFile = metricDataForOntologyFile["metrics"];
+        widget.metricData[activeFile]?["node"];
+    List<dynamic> metricsForOntologyFile =
+        metricDataForOntologyFile["metrics"]["edges"];
     if (metricsForOntologyFile.isEmpty) {
       return Center(
           child: Container(
@@ -123,12 +124,12 @@ class _CalculationViewState extends State<CalculationView> {
     }
     for (Map<String, dynamic> metricForOntologyFile in metricsForOntologyFile) {
       if (columns.isEmpty) {
-        for (String key in metricForOntologyFile.keys) {
+        for (String key in metricForOntologyFile["node"].keys) {
           columns.add(DataColumn(label: Text(key)));
         }
       }
       List<DataCell> cells = [];
-      for (var metric in metricForOntologyFile.values) {
+      for (var metric in metricForOntologyFile["node"].values) {
         cells.add(DataCell(Text(metric.toString())));
       }
       tableRows.add(DataRow(cells: cells));
@@ -152,12 +153,12 @@ class _CalculationViewState extends State<CalculationView> {
       return null;
     }
     for (Map<String, dynamic> metricForOntologyFile
-        in metricDataForOntologyFile["metrics"]) {
+        in metricDataForOntologyFile["metrics"]["edges"]) {
       if (firstElement) {
-        rows.add(metricForOntologyFile.keys.toList());
+        rows.add(metricForOntologyFile["node"].keys.toList());
         firstElement = false;
       }
-      rows.add(metricForOntologyFile.values.toList());
+      rows.add(metricForOntologyFile["node"].values.toList());
     }
 
     var csv = const ListToCsvConverter().convert(

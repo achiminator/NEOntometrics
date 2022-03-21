@@ -1,12 +1,14 @@
 import 'dart:convert';
+import 'dart:io';
 import "calculationview.dart";
+import "graphql.dart";
 import 'package:http/http.dart' as http;
+import 'package:graphql/client.dart';
 
 import 'package:flutter/material.dart';
 import 'package:neonto_frontend/markdown_handler.dart';
 import 'package:neonto_frontend/metric_data.dart';
-
-import 'settings.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class CalculationEngine extends StatefulWidget {
   final Future<List<MetricExplorerItem>> metricData;
@@ -22,6 +24,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
   _CalculationEngineState();
   late Widget markDownDescription = const CircularProgressIndicator();
   var urlController = TextEditingController();
+  var graphQL = GraphQLHandler();
   @override
   void initState() {
     super.initState();
@@ -47,11 +50,9 @@ class _CalculationEngineState extends State<CalculationEngine> {
                         //borderRadius: BorderRadius.circular(50),
                         color: Theme.of(context).colorScheme.secondaryVariant,
                         shape: BoxShape.circle),
-                    child: Icon(
-                      Icons.live_help_outlined,
-                      size: 115,
-                      color: Theme.of(context).colorScheme.onSecondary
-                    )),
+                    child: Icon(Icons.live_help_outlined,
+                        size: 115,
+                        color: Theme.of(context).colorScheme.onSecondary)),
               ),
               Expanded(child: markDownDescription)
             ]),
@@ -74,7 +75,9 @@ class _CalculationEngineState extends State<CalculationEngine> {
                     ),
                     child: Text(
                       "Run Calculation",
-                      style: TextStyle(color:Theme.of(context).colorScheme.onSecondary, fontSize: 20),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSecondary,
+                          fontSize: 20),
                     ),
                   ),
                   SizedBox(
@@ -120,56 +123,120 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                   "No valid ontology given. Please enter an URL to a valid Ontology.",
                                   context);
                             } else {
-                              var httpFut = http.get(Uri.parse(
-                                  "${Settings().apiUrl}/git?reasoner=$reasoner&url=${urlController.text}"));
-                              httpFut.then((httpResponse) {
-                                if (httpResponse.statusCode != 200) {
+                              Future<QueryResult<dynamic>> response =
+                                  graphQL.queueFromAPI(urlController.text);
+                              response.then((graphQlResponse) {
+                                if (graphQlResponse.hasException) {
                                   displayErrorSnackBar(
-                                      jsonDecode(httpResponse.body)["info"],
+                                      graphQlResponse.exception.toString(),
                                       context);
-                                } else {
-                                  //Things to show if there is not error but also not yet the result
-                                  if (httpResponse.body
-                                          .contains("taskFinished") &&
-                                      httpResponse.body
-                                          .contains("queuePosition")) {
-                                    Map<String, dynamic> jsonResponse =
-                                        json.decode(httpResponse.body);
-                                    SnackBar snack = SnackBar(
-                                        backgroundColor:
-                                            Theme.of(context).colorScheme.secondaryVariant,
-                                        duration: const Duration(seconds: 10),
-                                        content: ListTile(
-                                          iconColor: Theme.of(context).colorScheme.onSecondary,
-                                          textColor:  Theme.of(context).colorScheme.onSecondary,
-                                          leading: (jsonResponse[
-                                                      "taskIsStarted"] ==
-                                                  true)
-                                              ? const Icon(
-                                                  Icons.wb_incandescent_sharp)
-                                              : const Icon(Icons.query_builder),
-                                          title: Text(
-                                              "Calculation not yet finished. Queue position: ${jsonResponse["queuePosition"]}"),
-                                          //The progress bar for the current state of analyzed ontologies shall only appear
-                                          //if the data is in the json response.
-                                          subtitle: (jsonResponse["progress"]
-                                                  .isNotEmpty)
-                                              ? ProgressBarIndicator(
-                                                  jsonResponse: jsonResponse)
-                                              : null,
-                                        ));
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(snack);
-                                  } else {
-                                    List<dynamic> jsonResponse =
-                                        json.decode(httpResponse.body);
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                CalculationView(jsonResponse,
-                                                    urlController.text)));
-                                  }
+                                }
+                                if (graphQlResponse.data?["queueInformation"]
+                                        ?["error"] ==
+                                    true) {
+                                  displayErrorSnackBar(
+                                      graphQlResponse.data?["queueInformation"]
+                                          ?["errorMessage"],
+                                      context);
+                                } else if (graphQlResponse
+                                            .data?["queueInformation"]
+                                        ?["urlInSystem"] ==
+                                    false) {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          AlertDialog(
+                                            title: const Text(
+                                                "Data not yet in Database"),
+                                            content: Text(
+                                                "There is no data yet in the system. Would you like to calculate ontology metrics for the given URL?\n${urlController.text}"),
+                                            actions: [
+                                              TextButton(
+                                                  child: const Text(
+                                                      "Yes, Put in Queue"),
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  }),
+                                              TextButton(
+                                                  child: const Text("Abort"),
+                                                  onPressed: () =>
+                                                      Navigator.pop(context))
+                                            ],
+                                          ));
+                                  displayErrorSnackBar(
+                                      "Data not yet in system", context);
+                                } else if (graphQlResponse
+                                        .data?["queueInformation"]
+                                    ?["taskFinished"]) {
+                                  String graphQlQueryAppender =
+                                      graphQL.selectedMetrics2GraphQLInsertion(
+                                          selectedElementsForCalculation);
+
+                                  Future<QueryResult<dynamic>> futureResonse =
+                                      graphQL.getMetricsFromAPI( urlController.text,
+                                          graphQlQueryAppender);
+                                  futureResonse.then((graphQlResponse) {
+                                    if (graphQlResponse.hasException) {
+                                      EasyLoading.dismiss();
+                                      displayErrorSnackBar(
+                                          graphQlResponse.exception.toString(),
+                                          context);
+                                    } else {
+                                      EasyLoading.dismiss();
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CalculationView(
+                                                      graphQlResponse.data?[
+                                                              "repositories"]
+                                                          ["edges"],
+                                                      urlController.text)));
+                                    }
+                                  });
+                                  EasyLoading.show(
+                                      status:
+                                          "We're fetching the Ontology Data...");
+                                  //  else {
+                                  //   //Things to show if there is not error but also not yet the result
+                                  //   if (httpResponse.body
+                                  //           .contains("taskFinished") &&
+                                  //       httpResponse.body
+                                  //           .contains("queuePosition")) {
+                                  //     Map<String, dynamic> jsonResponse =
+                                  //         json.decode(httpResponse.body);
+                                  //     SnackBar snack = SnackBar(
+                                  //         backgroundColor: Theme.of(context)
+                                  //             .colorScheme
+                                  //             .secondaryVariant,
+                                  //         duration: const Duration(seconds: 10),
+                                  //         content: ListTile(
+                                  //           iconColor: Theme.of(context)
+                                  //               .colorScheme
+                                  //               .onSecondary,
+                                  //           textColor: Theme.of(context)
+                                  //               .colorScheme
+                                  //               .onSecondary,
+                                  //           leading: (jsonResponse[
+                                  //                       "taskIsStarted"] ==
+                                  //                   true)
+                                  //               ? const Icon(
+                                  //                   Icons.wb_incandescent_sharp)
+                                  //               : const Icon(Icons.query_builder),
+                                  //           title: Text(
+                                  //               "Calculation not yet finished. Queue position: ${jsonResponse["queuePosition"]}"),
+                                  //           //The progress bar for the current state of analyzed ontologies shall only appear
+                                  //           //if the data is in the json response.
+                                  //           subtitle: (jsonResponse["progress"]
+                                  //                   .isNotEmpty)
+                                  //               ? ProgressBarIndicator(
+                                  //                   jsonResponse: jsonResponse)
+                                  //               : null,
+                                  //         ));
+                                  //     ScaffoldMessenger.of(context)
+                                  //         .showSnackBar(snack);
+                                  //   }
+
                                 }
                               });
                             }
@@ -212,7 +279,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
   Widget buildCalculationSettings(List<MetricExplorerItem> data) {
     List<Widget> calculationCategorySetting = [];
     //at first, add the elemental metrics, which are always at the top of the list.
-    calculationCategorySetting.add(buildCalculationSetting(data[0], true));
+    calculationCategorySetting.add(buildCalculationSetting(data[0]));
     for (var element in data[1].subClass) {
       calculationCategorySetting
           //The expanded is necessary because the elements will be wrapped in a Collumn Item.
@@ -227,6 +294,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
   ///Builds the Selection Widget for each metric category and the associated sub metrics on the bases of [MetricExplorerItem].
   Widget buildCalculationSetting(MetricExplorerItem data,
       [bool initiallyActive = false]) {
+    var graphQL = GraphQLHandler();
     var leafElements =
         MetricExplorerItem.getLeafItems(data, onlyCalculatableClasses: true);
     if (initiallyActive) {

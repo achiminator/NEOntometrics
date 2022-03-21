@@ -27,16 +27,20 @@ class MetricsNode(DjangoObjectType):
         model = Metrics
         filter_fields = {"reasonerActive": ["exact"]}
         #fields = "__all__"
-        exclude = ["id", "metricSource"]
+        exclude = ["id", "metrics"]
 
         interfaces = (relay.Node, )
 
 
 class QueueInformationNode(graphene.ObjectType):
     urlInSystem = graphene.Boolean()
-    tasFinished = graphene.Boolean()
+    taskFinished = graphene.Boolean()
     taskStarted = graphene.Boolean()
     queuePosition = graphene.Int()
+    analyzedCommits = graphene.Int()
+    commitsForThisOntology = graphene.Int()
+    analyzedOntologies = graphene.Int()
+    analysableOntologies = graphene.Int()
     url = graphene.String()
     repository = graphene.String()
     service = graphene.String()
@@ -49,7 +53,7 @@ class RepositoryNode(DjangoObjectType):
     class Meta:
         model = Source
    #     exclude =["id"]
-        filter_fields = {"repository": ["icontains"],
+        filter_fields = {"repository": ["exact", "icontains"],
                          "fileName": ["icontains"]}
         interfaces = (relay.Node, )
 
@@ -72,9 +76,13 @@ class Query(graphene.ObjectType):
         queueInfo = rest.queueInformation.QueueInformation(url)
         return QueueInformationNode(
             urlInSystem=queueInfo.urlInSystem,
-            tasFinished=queueInfo.taskFinished,
+            taskFinished=queueInfo.taskFinished,
             taskStarted=queueInfo.taskStarted,
             queuePosition=queueInfo.queuePosition,
+            analyzedCommits = queueInfo.analyzedCommits,
+            commitsForThisOntology = queueInfo.commitsForThisOntology,
+            analyzedOntologies = queueInfo.analyzedOntologies,
+            analysableOntologies = queueInfo.analysableOntologies,
             url=queueInfo.url.url,
             repository=queueInfo.url.repository,
             service=queueInfo.url.service,
@@ -106,9 +114,13 @@ class QueueMutation(graphene.Mutation):
             queueInfo = rest.queueInformation.QueueInformation(urlObject.url)
         queueInfo = QueueInformationNode(
             urlInSystem=queueInfo.urlInSystem,
-            tasFinished=queueInfo.taskFinished,
+            taskFinished=queueInfo.taskFinished,
             taskStarted=queueInfo.taskStarted,
             queuePosition=queueInfo.queuePosition,
+            analyzedCommits = queueInfo.analyzedCommits,
+            commitsForThisOntology = queueInfo.commitsForThisOntology,
+            analyzedOntologies = queueInfo.analyzedOntologies,
+            analysableOntologies = queueInfo.analysableOntologies,
             url=queueInfo.url.url,
             repository=queueInfo.url.repository,
             service=queueInfo.url.service,
@@ -124,4 +136,4 @@ class Mutation(graphene.ObjectType):
     update_queueInfo = QueueMutation.Field()
 
 
-schema = graphene.Schema(query=Query, mutation=Mutation)
+schema = graphene.Schema(query=Query, mutation=Mutation, auto_camelcase=False)
