@@ -1,15 +1,12 @@
 import 'package:graphql/client.dart';
 import 'package:neonto_frontend/settings.dart';
-
 import 'metric_data.dart';
 
-class GraphQLHandler{
-  final _graphQlClient =  GraphQLClient(
-                                  link:
-                                      HttpLink(Settings().apiUrl + "/graphql"),
-                                  cache: GraphQLCache());
+class GraphQLHandler {
+  final _graphQlClient = GraphQLClient(
+      link: HttpLink(Settings().apiUrl + "/graphql"), cache: GraphQLCache());
 
-   Future<QueryResult<dynamic>> queueFromAPI(String url) {
+  Future<QueryResult<dynamic>> queueFromAPI(String url) {
     var response = _graphQlClient.query(QueryOptions(document: gql("""{
   queueInformation(url: "$url"){ 
         urlInSystem
@@ -19,13 +16,42 @@ class GraphQLHandler{
         repository
         error
         errorMessage
-        
+        analyzedCommits
+        commitsForThisOntology
+        analyzedOntologies
+        analysableOntologies
       }
     }""")));
     return response;
   }
+  Future<QueryResult<dynamic>> putInQueue(String url, bool reasoner) {
+    var mutation = """mutation{
+  update_queueInfo(
+    reasoner: $reasoner
+    url: "$url"
+  ) {
+    error
+    errorMessage
+    queueInfo {
+      urlInSystem
+      taskFinished
+      taskStarted
+      queuePosition
+      urlj
+      repository
+      service
+      fileName 
+      error
+      errorMessage
+    }
+  }
+}""";
+    var response = _graphQlClient.mutate(MutationOptions(document: gql(mutation)));
+    return response;
+  }
 
-  String selectedMetrics2GraphQLInsertion(Set<MetricExplorerItem> selectedElementsForCalculation) {
+  String selectedMetrics2GraphQLInsertion(
+      Set<MetricExplorerItem> selectedElementsForCalculation) {
     String graphQlQueryAppender = "";
     for (var selectedItem in selectedElementsForCalculation) {
       String metricToAdd;
@@ -43,8 +69,8 @@ class GraphQLHandler{
     return graphQlQueryAppender;
   }
 
-    Future<QueryResult<dynamic>> getMetricsFromAPI (String url,
-      String graphQlQueryAppender) {
+  Future<QueryResult<dynamic>> getMetricsFromAPI(
+      String url, String graphQlQueryAppender) {
     var graphQlMetricQuery = """{
   repositories (repository: "$url") {
     edges {
@@ -74,5 +100,4 @@ class GraphQLHandler{
         _graphQlClient.query(QueryOptions(document: gql(graphQlMetricQuery)));
     return futureResonse;
   }
-
 }

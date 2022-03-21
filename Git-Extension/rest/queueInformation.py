@@ -22,7 +22,8 @@ class QueueInformation:
         self.url = GitUrlParser()
         self.url.parse(urlString)
         jobId = GitHelper.serializeJobId(self.url)
-        if jobId in django_rq.get_queue().job_ids:
+        queue = django_rq.get_queue()
+        if jobId in queue.job_ids or jobId in queue.started_job_registry:
             redis_conn = django_rq.get_connection()
             job = django_rq.jobs.Job(jobId, redis_conn)
             jobPosition = django_rq.get_queue().get_job_position(job)

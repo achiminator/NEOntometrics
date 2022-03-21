@@ -123,6 +123,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                   "No valid ontology given. Please enter an URL to a valid Ontology.",
                                   context);
                             } else {
+                              // At first, we ask the service if the ontology is already known in the system.
                               Future<QueryResult<dynamic>> response =
                                   graphQL.queueFromAPI(urlController.text);
                               response.then((graphQlResponse) {
@@ -138,7 +139,10 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                       graphQlResponse.data?["queueInformation"]
                                           ?["errorMessage"],
                                       context);
-                                } else if (graphQlResponse
+                                }
+                                // The reponse urlInSystem = False states that there is no information on the given ontology already stored in the system.
+                                // Thus, we ask the user if we shall put it into the queue.
+                                else if (graphQlResponse
                                             .data?["queueInformation"]
                                         ?["urlInSystem"] ==
                                     false) {
@@ -155,6 +159,31 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                                   child: const Text(
                                                       "Yes, Put in Queue"),
                                                   onPressed: () {
+                                                    response =
+                                                        graphQL.putInQueue(
+                                                            urlController.text,
+                                                            reasoner);
+                                                    response
+                                                        .then((jsonResponse) {
+                                                      if (jsonResponse
+                                                          .hasException) {
+                                                        displayErrorSnackBar(
+                                                            jsonResponse
+                                                                .exception
+                                                                .toString(),
+                                                            context);
+                                                      } else if (jsonResponse
+                                                          .data?["error"]) {
+                                                        displayErrorSnackBar(
+                                                            jsonResponse.data?[
+                                                                "errorMessage"],
+                                                            context);
+                                                      } else {
+                                                        progressSnackBar(
+                                                            jsonResponse.data![
+                                                                "queueInfo"]);
+                                                      }
+                                                    });
                                                     Navigator.pop(context);
                                                   }),
                                               TextButton(
@@ -163,9 +192,16 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                                       Navigator.pop(context))
                                             ],
                                           ));
-                                  displayErrorSnackBar(
-                                      "Data not yet in system", context);
                                 } else if (graphQlResponse
+                                            .data?["queueInformation"]
+                                        ?["taskFinished"] ==
+                                    false) {
+                                  progressSnackBar(graphQlResponse
+                                      .data?["queueInformation"]);
+                                }
+                                // If the first query on the queue information state that the metrics are already in the ontology file,
+                                // then, retrieve the date with another GraphQL query.F
+                                else if (graphQlResponse
                                         .data?["queueInformation"]
                                     ?["taskFinished"]) {
                                   String graphQlQueryAppender =
@@ -173,7 +209,8 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                           selectedElementsForCalculation);
 
                                   Future<QueryResult<dynamic>> futureResonse =
-                                      graphQL.getMetricsFromAPI( urlController.text,
+                                      graphQL.getMetricsFromAPI(
+                                          urlController.text,
                                           graphQlQueryAppender);
                                   futureResonse.then((graphQlResponse) {
                                     if (graphQlResponse.hasException) {
@@ -197,46 +234,6 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                   EasyLoading.show(
                                       status:
                                           "We're fetching the Ontology Data...");
-                                  //  else {
-                                  //   //Things to show if there is not error but also not yet the result
-                                  //   if (httpResponse.body
-                                  //           .contains("taskFinished") &&
-                                  //       httpResponse.body
-                                  //           .contains("queuePosition")) {
-                                  //     Map<String, dynamic> jsonResponse =
-                                  //         json.decode(httpResponse.body);
-                                  //     SnackBar snack = SnackBar(
-                                  //         backgroundColor: Theme.of(context)
-                                  //             .colorScheme
-                                  //             .secondaryVariant,
-                                  //         duration: const Duration(seconds: 10),
-                                  //         content: ListTile(
-                                  //           iconColor: Theme.of(context)
-                                  //               .colorScheme
-                                  //               .onSecondary,
-                                  //           textColor: Theme.of(context)
-                                  //               .colorScheme
-                                  //               .onSecondary,
-                                  //           leading: (jsonResponse[
-                                  //                       "taskIsStarted"] ==
-                                  //                   true)
-                                  //               ? const Icon(
-                                  //                   Icons.wb_incandescent_sharp)
-                                  //               : const Icon(Icons.query_builder),
-                                  //           title: Text(
-                                  //               "Calculation not yet finished. Queue position: ${jsonResponse["queuePosition"]}"),
-                                  //           //The progress bar for the current state of analyzed ontologies shall only appear
-                                  //           //if the data is in the json response.
-                                  //           subtitle: (jsonResponse["progress"]
-                                  //                   .isNotEmpty)
-                                  //               ? ProgressBarIndicator(
-                                  //                   jsonResponse: jsonResponse)
-                                  //               : null,
-                                  //         ));
-                                  //     ScaffoldMessenger.of(context)
-                                  //         .showSnackBar(snack);
-                                  //   }
-
                                 }
                               });
                             }
@@ -254,6 +251,27 @@ class _CalculationEngineState extends State<CalculationEngine> {
                 ],
               )))
         ]));
+  }
+
+  void progressSnackBar(Map<String, dynamic> queueInformation) {
+    SnackBar snack = SnackBar(
+        backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
+        duration: const Duration(seconds: 10),
+        content: ListTile(
+          iconColor: Theme.of(context).colorScheme.onSecondary,
+          textColor: Theme.of(context).colorScheme.onSecondary,
+          leading: (queueInformation["taskIsStarted"] == true)
+              ? const Icon(Icons.wb_incandescent_sharp)
+              : const Icon(Icons.query_builder),
+          title: Text(
+              "Calculation not yet finished${(queueInformation["taskIsStarted"] == true) ? ", but started and currently in Progress." : ""}. Queue position: ${queueInformation["queuePosition"]}"),
+          //The progress bar for the current state of analyzed ontologies shall only appear
+          //if the data is in the json response.
+          subtitle: (queueInformation.containsKey("commitsForThisOntology"))
+              ? ProgressBarIndicator(jsonResponse: queueInformation)
+              : null,
+        ));
+    ScaffoldMessenger.of(context).showSnackBar(snack);
   }
 
   void displayErrorSnackBar(String message, BuildContext context,
@@ -294,7 +312,6 @@ class _CalculationEngineState extends State<CalculationEngine> {
   ///Builds the Selection Widget for each metric category and the associated sub metrics on the bases of [MetricExplorerItem].
   Widget buildCalculationSetting(MetricExplorerItem data,
       [bool initiallyActive = false]) {
-    var graphQL = GraphQLHandler();
     var leafElements =
         MetricExplorerItem.getLeafItems(data, onlyCalculatableClasses: true);
     if (initiallyActive) {
@@ -362,26 +379,26 @@ class ProgressBarIndicator extends StatelessWidget {
         Row(children: [
           Expanded(
             child: Text(
-                "Analyzed ${jsonResponse["progress"]["analyzedOntologies"]} of ${jsonResponse["progress"]["analysableOntologies"]} ontologies:  "),
+                "Analyzed ${jsonResponse["analyzedOntologies"]} of ${jsonResponse["analysableOntologies"]} ontologies:  "),
           ),
           Expanded(
               flex: 3,
               child: LinearProgressIndicator(
-                value: jsonResponse["progress"]["analyzedOntologies"] /
-                    jsonResponse["progress"]["analysableOntologies"],
+                value: jsonResponse["analyzedOntologies"] /
+                    jsonResponse["analysableOntologies"],
                 minHeight: 6,
               ))
         ]),
         Row(children: [
           Expanded(
             child: Text(
-                "Analyzed ${jsonResponse["progress"]["ananlyzedCommits"]} of ${jsonResponse["progress"]["commitsForThisOntology"]} Commits of this ontology:  "),
+                "Analyzed ${jsonResponse["analyzedCommits"]} of ${jsonResponse["commitsForThisOntology"]} Commits of this ontology:  "),
           ),
           Expanded(
               flex: 3,
               child: LinearProgressIndicator(
-                value: jsonResponse["progress"]["ananlyzedCommits"] /
-                    jsonResponse["progress"]["commitsForThisOntology"],
+                value: jsonResponse["analyzedCommits"] /
+                    jsonResponse["commitsForThisOntology"],
                 minHeight: 5,
               ))
         ])

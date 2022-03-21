@@ -90,7 +90,7 @@ class GitHelper:
         Returns:
             str: URL with escaped **/** symbol
         """
-        return((input.service + input.repository + input.file).replace("/", "__II__"))
+        return((input.repository + input.file).replace("/", "__II__"))
 
     def deserializeJobId(input: str) -> str:
         """Reverses the serializeJob-Method
