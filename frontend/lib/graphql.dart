@@ -49,7 +49,20 @@ class GraphQLHandler {
     var response = _graphQlClient.mutate(MutationOptions(document: gql(mutation)));
     return response;
   }
+  Future<QueryResult<dynamic>> getRepositoryList() {
+    var graphQLQuery = """
+{
+  repositoriesInformation {
+    repository
+    analyzedOntologyCommits
+  }
+}""";
+ var futureResonse = 
+        _graphQlClient.query(QueryOptions(document: gql(graphQLQuery)));
+    return futureResonse;
+  
 
+  }
   String selectedMetrics2GraphQLInsertion(
       Set<MetricExplorerItem> selectedElementsForCalculation) {
     String graphQlQueryAppender = "";
@@ -67,12 +80,13 @@ class GraphQLHandler {
       graphQlQueryAppender += "$metricToAdd\n";
     }
     return graphQlQueryAppender;
+    
   }
 
   Future<QueryResult<dynamic>> getMetricsFromAPI(
       String url, String graphQlQueryAppender) {
     var graphQlMetricQuery = """{
-  repositories (repository: "$url") {
+  getRepository (repository: "$url") {
     edges {
       node {
         repository

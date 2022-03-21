@@ -1,14 +1,18 @@
-import logging, logging, django_rq
+import logging
+import logging
+import django_rq
+from django.db import DatabaseError
 from django import urls
 from rest.GitHelper import GitUrlParser, GitHelper
-from rest.dbHandler import DBHandler
+from rest.dbHandler import DBHandler, RepositoryFilter
+from rest.models import Source
 
 
 class QueueInformation:
-        
+
     taskFinished = None
     taskStarted = None
-    queuePosition = -1        
+    queuePosition = -1
     url = None
     error = False
     errorMessage = ""
@@ -17,7 +21,7 @@ class QueueInformation:
     analysableOntologies = None
     commitsForThisOntology = None
     analyzedCommits = None
-    
+
     def __init__(self, urlString: str) -> dict:
         self.url = GitUrlParser()
         self.url.parse(urlString)
@@ -29,7 +33,7 @@ class QueueInformation:
             jobPosition = django_rq.get_queue().get_job_position(job)
             self.taskFinished = False
             self.urlInSystem = True
-            self.taskStarted  = job in django_rq.get_queue().started_job_registry
+            self.taskStarted = job in django_rq.get_queue().started_job_registry
             self.queuePosition = jobPosition if jobPosition != None else 0
             selfprogress = job.get_meta()
             if "analyzedOntologies" in selfprogress:
@@ -40,7 +44,7 @@ class QueueInformation:
                 self.commitsForThisOntology = selfprogress["commitsForThisOntology"]
             if "ananlyzedCommits" in selfprogress:
                 self.analyzedCommits = selfprogress["ananlyzedCommits"]
-            
+
         if jobId in django_rq.get_queue().failed_job_registry:
             self.error = True
             self.urlInSystem = True
@@ -51,16 +55,18 @@ class QueueInformation:
                 self.errorMessage = "internalServerError"
 
         else:
-            db = DBHandler()
-            metricFromDB = db.getMetricForOntology(
-                file=self.url.file, repository=self.url.repository, hideId=False)
-            if(metricFromDB):
+            if(self.url.file == '' and self.url.repository != ''):
+                query = Source.objects.filter(repository=self.url.repository)
+            elif(self.url.repository == '' and self.url.file != ''):
+                query = Source.objects.filter(fileName=self.url.file)
+            elif(self.url.repository != '' and self.url.file != ''):
+                query = Source.objects.filter(
+                    fileName=self.url.file, repository=self.url.repository)
+            else:
+                throw: DatabaseError("No given Data in the Database")
+            if(query.count() > 0):
                 self.urlInSystem = True
                 self.taskFinished = True
-                
-        
-        
-
 
     def getQueueAnswer(self, url: GitUrlParser, jobId: str) -> dict:
         """Generates the response if the ontology to calculate is not yet finished
@@ -77,7 +83,7 @@ class QueueInformation:
         job = django_rq.jobs.Job(jobId, redis_conn)
 
         jobPosition = django_rq.get_queue().get_job_position(job)
-        
+
         resp = {
             "taskFinished": False,
             "taskIsStarted": job in django_rq.get_queue().started_job_registry,
@@ -86,7 +92,7 @@ class QueueInformation:
         }
         resp.update(url.__dict__)
         return resp
-    
+
     def getFailedQueueAnswer(self, jobId: str) -> dict:
         job = django_rq.get_queue().fetch_job(jobId)
         resp = {

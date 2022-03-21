@@ -1,9 +1,10 @@
 from django.conf import settings
 from django.http.request import RAISE_ERROR
+from rest.GitHelper import GitUrlParser
 from rest.models import Metrics, Source, ClassMetrics
 from collections import OrderedDict
 from django.db.models import Q
-import logging
+import logging, django_filters
 
 
 class DBHandler:
@@ -75,6 +76,7 @@ class DBHandler:
             #             classMetricsModel.save()
         return sourceModel
 
+    @DeprecationWarning
     def getMetricForOntology(self, repository: str, file="", reasonerSelected: bool = False, branch="", classMetrics=False, hideId=True) -> dict:
         """Retrieves Metric Calculation (for one ontology or whole Repo) from the database. 
 
@@ -170,3 +172,27 @@ class DBHandler:
         """
         repoMetrics = Source.objects.filter(repository=repository)
         repoMetrics.update(wholeRepositoryAnalyzed=True)
+
+
+class RepositoryFilter(django_filters.FilterSet):
+    """A custom django-repository filter. Filters the Repository for the filenames and Repository names that are part of a git-url
+
+    Args:
+        django_filters (_type_): 
+
+    Returns:
+        django_filter.queryset.filter: A django-filter set for filtering django Models
+"""
+    repository = django_filters.CharFilter(field_name="repository", method="repoFilter", required=True)
+    fileName = django_filters.CharFilter(field_name="fileName", method="fileFilter")
+    
+
+    def repoFilter(self, queryset, name, value):
+        urlObject = GitUrlParser()
+        urlObject.parse(value)
+        return queryset.filter(repository = urlObject.repository)
+        
+    def fileFilter(self, queryset, name, value):
+        urlObject = GitUrlParser()
+        urlObject.parse(value)
+        return queryset.filter(fileName = urlObject.file)
