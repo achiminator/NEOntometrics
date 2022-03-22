@@ -142,7 +142,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	int superClassCount = 0;
 	int classesWithIndividuals = 0;
 	int maxSubClassOfAClass = 0;
-	int recursiveSubClasses = 0;
+	long recursiveSubClasses = 0;
 
 	// Iterate over all classes
 	for (OWLClass owlClass : owlClasses) {
@@ -166,7 +166,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	    if(subClasses.size() > maxSubClassOfAClass) 
 		maxSubClassOfAClass = subClasses.size();
 
-	    recursiveSubClasses += getRecursiveSubClasses(owlClass, recursiveSubClasses, new HashSet<OWLClass>());
+	    recursiveSubClasses= getRecursiveSubClasses(owlClass, recursiveSubClasses, new HashSet<OWLClass>());
 
 	    if (subClasses.size() < 1) {
 		// If a classes does not have any subclasses, it is a leaf class. As owl-Thing
@@ -270,19 +270,19 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
      *  I honestly think that this is quite weird and not useful. However,
      *  one calculation framework uses this kind of metric, so.. let's see.
      * @param currentOWLClass The class that is currently calculated.
-     * @param alreadyDetected
+     * @param recursiveSubClasses
      * @return
      */
-    private int getRecursiveSubClasses (OWLClass currentOWLClass, int alreadyDetected, Set<OWLClass> detectedOnHigherLevel) {
+    private long getRecursiveSubClasses (OWLClass currentOWLClass, long recursiveSubClasses, Set<OWLClass> detectedOnHigherLevel) {
+	detectedOnHigherLevel.add(currentOWLClass);
 	Set<OWLClass> classes = allSubClassesOfClass(new HashSet<OWLClass>(), currentOWLClass);
-	alreadyDetected += classes.size();
+	recursiveSubClasses += classes.size();
 	for (OWLClass owlClass : classes) {
-	    if (detectedOnHigherLevel.contains(currentOWLClass))
+	    if (detectedOnHigherLevel.contains(currentOWLClass)) 
 		continue;
-	    detectedOnHigherLevel.add(currentOWLClass);
-	    alreadyDetected += getRecursiveSubClasses(owlClass, alreadyDetected, detectedOnHigherLevel);
+	    recursiveSubClasses += getRecursiveSubClasses(owlClass, recursiveSubClasses, detectedOnHigherLevel);
 	}
-	return alreadyDetected;
+	return recursiveSubClasses;
     }
     /**
      * Checks if the classes/subclasses of the root classes are linked together or
