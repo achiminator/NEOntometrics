@@ -77,13 +77,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'sorl.thumbnail',
     'rest_framework',
     'rest',
     'django_filters',
     'django_rq',
     'corsheaders',
-    'graphene_django'
+    'graphene_django',
+    'newsletter'
 ]
+SITE_ID = 1 # Because this error https://stackoverflow.com/questions/35388637/runtimeerror-model-class-django-contrib-sites-models-site-doesnt-declare-an-ex
+RQ_SHOW_ADMIN_LINK = True 
 RQ_QUEUES = {
     'default': {
         'HOST': 'redis-scheduler' if bool(os.environ.get("inDocker", False)) else "localhost",
@@ -144,6 +149,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ontoMetricsAPI.wsgi.application'
 
+NEWSLETTER_THUMBNAIL = 'sorl-thumbnail'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp-mail.outlook.com'
+EMAIL_HOST_USER = 'neontometrics@outlook.com'
+EMAIL_HOST_PASSWORD = os.environ.get("outlookApp")
+EMAIL_PORT = 25
 
 
 # Database

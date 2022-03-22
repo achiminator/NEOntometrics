@@ -19,6 +19,7 @@ rdflib = "*"
 graphene-django = "*"
 django = "<4"
 django-filter = "*"
+django-newsletter = "*"
 
 [dev-packages]
 autopep8 = "*"

@@ -195,6 +195,7 @@ class CalculationManager:
                     # Commit-Metadata 
                     returnObject["CommitTime"] = datetime.fromtimestamp(
                         commit.commit_time)
+                    returnObject["CommitID"] = commit.hex    
                     returnObject["CommitMessage"] = commit.message
                     returnObject["AuthorName"] = commit.author.name
                     returnObject["AuthorEmail"] = commit.author.email

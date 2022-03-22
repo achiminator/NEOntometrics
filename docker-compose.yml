@@ -21,7 +21,7 @@ services:
     ports:
       - '8012:8000'
     depends_on:
-      - neontometricsdb
+      - neontometrics_db
       - migrateDB
     environment:
       db_password: 'KMmsWrwRBBeQLXDO'
@@ -35,7 +35,7 @@ services:
       replicas: 3
     depends_on:
       - neontometricsapi
-      - neontometricsdb
+      - neontometrics_db
       - migrateDB
     environment:
       db_password: 'KMmsWrwRBBeQLXDO'
@@ -71,16 +71,16 @@ services:
       context: ./Git-Extension
     image: neontometrics
     depends_on:
-      - neontometricsdb
+      - neontometrics_db
     environment:
       db_password: 'KMmsWrwRBBeQLXDO'
       inDocker: "True"
     command: bash -c "python manage.py makemigrations rest --noinput && python manage.py migrate"
 
   # The Database for metric documentation
-  neontometricsdb:
+  neontometrics_db:
     restart: always
-    container_name: neontometricsdb
+    container_name: neontometrics_db
     image: mariadb:latest
     ports:
       - '3316:3306'

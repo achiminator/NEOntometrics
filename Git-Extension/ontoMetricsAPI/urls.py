@@ -31,6 +31,7 @@ urlpatterns = [
     path('git', views.CalculateGitMetric.as_view()),
     path('metricexplorer', views.MetricExplorer.as_view()),
     path('django-rq/', include('django_rq.urls')),
-    path("graphiql", GraphQLView.as_view(graphiql=True, schema=schema)),
-    path("graphql", csrf_exempt(GraphQLView.as_view(graphiql=False, schema=schema))),
+    #path("graphiql", GraphQLView.as_view(graphiql=True, schema=schema)),
+    path('newsletter/', include('newsletter.urls')),
+    path("graphql", csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),
 ]

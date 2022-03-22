@@ -199,18 +199,20 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                                                       .exception
                                                                       .toString(),
                                                                   context);
-                                                            } else if (jsonResponse
-                                                                    .data?[
-                                                                "error"]) {
-                                                              displayErrorSnackBar(
-                                                                  jsonResponse
-                                                                          .data?[
-                                                                      "errorMessage"],
-                                                                  context);
-                                                            } else {
+                                                            }
+                                                            //  else if (jsonResponse
+                                                            //         .data?["update_queueInfo"][
+                                                            //     "error"]??false) {
+                                                            //   displayErrorSnackBar(
+                                                            //       jsonResponse
+                                                            //               .data?["update_queueInfo"][
+                                                            //           "errorMessage"],
+                                                            //       context);
+                                                            // }
+                                                             else {
                                                               progressSnackBar(
                                                                   jsonResponse
-                                                                          .data![
+                                                                          .data?["update_queueInfo"][
                                                                       "queueInfo"]);
                                                             }
                                                           });
@@ -307,7 +309,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
               "Calculation not yet finished${(queueInformation["taskIsStarted"] == true) ? ", but started and currently in Progress." : ""}. Queue position: ${queueInformation["queuePosition"]}"),
           //The progress bar for the current state of analyzed ontologies shall only appear
           //if the data is in the json response.
-          subtitle: (queueInformation.containsKey("commitsForThisOntology"))
+          subtitle: (queueInformation["commitsForThisOntology"]??false)
               ? ProgressBarIndicator(jsonResponse: queueInformation)
               : null,
         ));

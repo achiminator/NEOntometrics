@@ -273,5 +273,5 @@ class OntologyHandler:
 
         return tree.to_dict(with_data=True)
 
-if not(bool(os.environ.get("isWorker", False))):
-    ontologyhandler = OntologyHandler()
+
+ontologyhandler = OntologyHandler()

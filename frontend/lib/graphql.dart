@@ -1,13 +1,15 @@
 import 'package:graphql/client.dart';
+import 'package:gql/language.dart';
 import 'package:neonto_frontend/settings.dart';
 import 'metric_data.dart';
 
 class GraphQLHandler {
   final _graphQlClient = GraphQLClient(
-      link: HttpLink(Settings().apiUrl + "/graphql"), cache: GraphQLCache());
+      link: HttpLink(Settings().apiUrl + "/graphql"), cache: GraphQLCache(), alwaysRebroadcast: true);
 
   Future<QueryResult<dynamic>> queueFromAPI(String url) {
-    var response = _graphQlClient.query(QueryOptions(document: gql("""{
+    
+    var response = _graphQlClient.query(QueryOptions(fetchPolicy: FetchPolicy.networkOnly, document: parseString("""{
   queueInformation(url: "$url"){ 
         urlInSystem
         taskFinished
@@ -37,7 +39,7 @@ class GraphQLHandler {
       taskFinished
       taskStarted
       queuePosition
-      urlj
+      url
       repository
       service
       fileName 
@@ -46,7 +48,7 @@ class GraphQLHandler {
     }
   }
 }""";
-    var response = _graphQlClient.mutate(MutationOptions(document: gql(mutation)));
+    var response = _graphQlClient.mutate(MutationOptions(fetchPolicy: FetchPolicy.networkOnly, document: parseString(mutation)));
     return response;
   }
   Future<QueryResult<dynamic>> getRepositoryList() {
@@ -58,7 +60,7 @@ class GraphQLHandler {
   }
 }""";
  var futureResonse = 
-        _graphQlClient.query(QueryOptions(document: gql(graphQLQuery)));
+        _graphQlClient.query(QueryOptions(fetchPolicy: FetchPolicy.networkOnly, document: parseString(graphQLQuery)));
     return futureResonse;
   
 
@@ -111,7 +113,7 @@ class GraphQLHandler {
       }
     }""";
     var futureResonse =
-        _graphQlClient.query(QueryOptions(document: gql(graphQlMetricQuery)));
+        _graphQlClient.query(QueryOptions(fetchPolicy: FetchPolicy.networkOnly, document: parseString(graphQlMetricQuery)));
     return futureResonse;
   }
 }
