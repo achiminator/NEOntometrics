@@ -149,11 +149,11 @@ class _CalculationViewState extends State<CalculationView> {
         widget.metricData[activeMetricFile];
     List<List<dynamic>> rows = [];
     bool firstElement = true;
-    if (metricDataForOntologyFile["metrics"].isEmpty) {
+    if (metricDataForOntologyFile["node"]["metrics"].isEmpty) {
       return null;
     }
     for (Map<String, dynamic> metricForOntologyFile
-        in metricDataForOntologyFile["metrics"]["edges"]) {
+        in metricDataForOntologyFile["node"]["metrics"]["edges"]) {
       if (firstElement) {
         rows.add(metricForOntologyFile["node"].keys.toList());
         firstElement = false;
