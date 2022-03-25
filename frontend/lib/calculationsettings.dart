@@ -136,11 +136,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
                           decoration: InputDecoration(
                               suffixIcon: IconButton(
                                 onPressed: () {
-                                  if (selectedElementsForCalculation.isEmpty) {
-                                    displayErrorSnackBar(
-                                        "Please select at least one metric.",
-                                        context);
-                                  } else if (urlController.text == "") {
+                                  if (urlController.text == "") {
                                     displayErrorSnackBar(
                                         "No valid ontology given. Please enter an URL to a valid Ontology.",
                                         context);
