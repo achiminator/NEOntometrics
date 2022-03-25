@@ -2,9 +2,9 @@ import 'dart:async' show Future;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:neonto_frontend/indexpage.dart';
 import 'metric_explorer.dart';
 import 'calculationsettings.dart';
-import 'markdown_handler.dart';
 import 'metric_data.dart';
 
 void main() {
@@ -20,9 +20,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       scrollBehavior: MyCustomWebScrollBehavior(),
       title: 'NEOntometrics',
-      builder: EasyLoading.init(), // Necessary for showing the loading screen on the Calculation-Page
+      builder: EasyLoading
+          .init(), // Necessary for showing the loading screen on the Calculation-Page
       theme: ThemeData(
-
         colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.teal),
       ),
       home: EntryPage(),
@@ -80,7 +80,7 @@ class EntryPage extends StatelessWidget {
           centerTitle: true,
         ),
         body: TabBarView(children: [
-          MarkDownHandler().buildMarkDownElement("homepage.md"),
+          const indexPage(),
           MetricExplorer(metricData),
           CalculationEngine(metricData),
         ]),
