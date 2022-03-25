@@ -56,6 +56,7 @@ https://github.com/NCI-Thesaurus/thesaurus-obo-edition
 https://github.com/lisfestork/NHC-Ontology
 https://github.com/obi-ontology/obi
 https://github.com/obi-ontology/obi-legacy-svn
+https://github.com/knowrob/knowrob
 https://github.com/phenoscape/phenoscape-ontologies
 https://git.dcc.sib.swiss/sphn-semantic-framework/sphn-ontology
 https://github.com/VICO-ontology/VICO

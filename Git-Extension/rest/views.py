@@ -86,7 +86,8 @@ class CalculateGitMetric(APIView):
         """
         targetLocation = ""
         url = GitUrlParser()
-        queueInfo = rest.queueInformation.QueueInformation()
+        queueInfo = rest.queueInformation.QueueInformation(
+            request.query_params["url"])
 
         try:
             if "url" in request.query_params:
@@ -116,7 +117,7 @@ class CalculateGitMetric(APIView):
         # If it is not already in the database, check the queue
         # The JobId is the ID of the task whithin the queue
         jobId = GitHelper.serializeJobId(
-            url.service + url.repository + url.file)
+            url)
         if jobId in django_rq.get_queue().job_ids:
             resp = queueInfo.getQueueAnswer(url, jobId)
             return Response(resp)
@@ -138,8 +139,8 @@ class CalculateGitMetric(APIView):
         logging.debug("Put job in queue")
 
         calculationManager = CalculationManager()
-        self.putInQueue(url=url, classMetrics=classMetrics,
-                        reasonerSelected=reasonerSelected, jobId=jobId)
+        calculationManager.putInQueue(url=url, classMetrics=classMetrics,
+                        reasonerSelected=reasonerSelected)
         return Response(queueInfo.getQueueAnswer(url, jobId))
 
     def delete(self, request: Request, format=None):

@@ -77,7 +77,7 @@ class DBHandler:
             #             classMetricsModel.save()
         return sourceModel
 
-    @DeprecationWarning
+    #@DeprecationWarning
     def getMetricForOntology(self, repository: str, file="", reasonerSelected: bool = False, branch="", classMetrics=False, hideId=True) -> dict:
         """Retrieves Metric Calculation (for one ontology or whole Repo) from the database. 
 
