@@ -27,8 +27,6 @@ import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 public class GraphMetric extends MetricCalculations implements Callable<GraphMetric> {
 
-    private boolean withImports;
-
     private int sumOfPathToLeafClasses = 0;
     private int totalDepth = 0;
     private int maxDepth = 0;
@@ -136,7 +134,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 
 	//A Map that links the object proeprties to the connected classes.
 	Map<IRI, List<OWLClass>> objectPropertyToClassMapping = new LinkedHashMap<IRI, List<OWLClass>>();
-	Set<OWLClass> owlClasses = ontology.getClassesInSignature(OntologyUtility.ImportClosures(withImports));
+	Set<OWLClass> owlClasses = ontology.getClassesInSignature(OntologyUtility.ImportClosures(imports));
 
 	int maxSuperClassOfAClass = 0;
 	int superClassCount = 0;
