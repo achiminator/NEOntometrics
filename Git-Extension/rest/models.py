@@ -116,8 +116,11 @@ class Metrics(models.Model):
             # Upon these Metrics invalid
             tmp =calculationElements.replace("(", "").replace(")", "").replace(" ", "")
             splitted = re.split("\/|\+|-|\*", tmp)
+            alreadyAddedSelf = []
             for calculationPart in splitted:
-                calculationElements = calculationElements.replace(calculationPart, "self."+ calculationPart)
+                if(calculationPart not in alreadyAddedSelf):
+                    calculationElements = calculationElements.replace(calculationPart, "self."+ calculationPart)
+                    alreadyAddedSelf.append(calculationPart)
             metric = """def {0} (self):
                 try:
                     return {1}  

@@ -103,12 +103,12 @@ RQ_QUEUES = {
 # The URL of the OPI (Ontology Programming Interface)
 OPI = "opi:8080" if bool(os.environ.get("inDocker", False)) else "localhost:8082"
 
-# Size-Limits for analysis. If An ontology is larger than 1mb, deactivate ClassMetrics and Reasoner, because the computational
+# Size-Limits for analysis. If An ontology is larger than 0,3mb, deactivate ClassMetrics and Reasoner, because the computational
 # time is enormous.
 
 ONTOLOGYLIMIT = -1
-REASONINGLIMIT = 1048576
-CLASSMETRICSLIMIT = 1048576
+REASONINGLIMIT = 348576
+CLASSMETRICSLIMIT = 348576
 
 # REST_FRAMEWORK = {
 #     'DEFAULT_PARSER_CLASSES': [
@@ -149,12 +149,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ontoMetricsAPI.wsgi.application'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 NEWSLETTER_THUMBNAIL = 'sorl-thumbnail'
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp-mail.outlook.com'
+EMAIL_HOST = 'smtp.office365.com'
 EMAIL_HOST_USER = 'neontometrics@outlook.com'
 EMAIL_HOST_PASSWORD = os.environ.get("outlookApp")
-EMAIL_PORT = 25
+EMAIL_PORT = 587
 
 
 # Database
