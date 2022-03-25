@@ -1,8 +1,9 @@
 from django.conf import settings
 from django.http.request import RAISE_ERROR
-from rest.GitHelper import GitUrlParser
+from rest.CalculationHelper import GitUrlParser
 from rest.models import Metrics, Source, ClassMetrics
 from collections import OrderedDict
+from rest.serializers import MetricSerializer
 from django.db.models import Q
 import logging, django_filters
 
@@ -47,9 +48,7 @@ class DBHandler:
         """
         if(branch == None):
             branch = ""
-        # At first, check if these elements already exits. If yes, delete them.
-        results = Source.objects.filter(
-            fileName=file, repository=repo, branch=branch).delete()
+            
         sourceModel = Source.objects.create(
             fileName=file, repository=repo, branch=branch, wholeRepositoryAnalyzed=wholeRepo)
         for commitMetrics in metricsDict:

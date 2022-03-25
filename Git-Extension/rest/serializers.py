@@ -8,10 +8,10 @@ class _MetricDetailSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
 class MetricSerializer(serializers.ModelSerializer):
-    metricSource = _MetricDetailSerializer(many=True, read_only=True)
+    metrics = _MetricDetailSerializer(many=True, read_only=True)
     class Meta:
         model = Source
         # fields = "__all__"
-        fields = ["created", "repository", "fileName", "wholeRepositoryAnalyzed", "metricSource"]
+        fields = ["created", "repository", "fileName", "wholeRepositoryAnalyzed", "metrics"]
 
 

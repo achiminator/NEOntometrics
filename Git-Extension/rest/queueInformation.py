@@ -3,7 +3,7 @@ import logging
 import django_rq
 from django.db import DatabaseError
 from django import urls
-from rest.GitHelper import GitUrlParser, GitHelper
+from rest.CalculationHelper import GitUrlParser, GitHelper
 from rest.dbHandler import DBHandler, RepositoryFilter
 from rest.models import Source
 

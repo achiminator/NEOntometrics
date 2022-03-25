@@ -12,7 +12,7 @@ from rest_framework.exceptions import ParseError
 import django_rq
 import rest.queueInformation
 import logging
-from rest.GitHelper import GitHelper, GitUrlParser
+from rest.CalculationHelper import GitHelper, GitUrlParser
 from rest.dbHandler import DBHandler
 from rest_framework.renderers import JSONRenderer
 from rest.models import Metrics, Source

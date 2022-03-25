@@ -7,7 +7,7 @@ import graphene
 import django_filters
 from graphene import relay
 from rest.CalculationManager import CalculationManager
-from rest.GitHelper import GitHelper, GitUrlParser
+from rest.CalculationHelper import GitHelper, GitUrlParser
 from rest.dbHandler import RepositoryFilter
 import rest.metricOntologyHandler
 import rest.queueInformation

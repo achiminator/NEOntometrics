@@ -4,7 +4,7 @@ from shutil import rmtree
 import logging
 import copy, requests
 from datetime import datetime
-from rest.GitHelper import GitHelper, GitUrlParser
+from rest.CalculationHelper import GitHelper, GitUrlParser
 from rest.opiHandler import OpiHandler
 from rq import job
 from rest.dbHandler import DBHandler
