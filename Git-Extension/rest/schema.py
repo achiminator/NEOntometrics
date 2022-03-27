@@ -67,7 +67,7 @@ class QueueInformationNode(graphene.ObjectType):
 class RepositoryInformationNode(graphene.ObjectType):
     repository = graphene.String()
     analyzedOntologyCommits = graphene.Int()
-
+    
 class RepositoryNode(DjangoObjectType):
     class Meta:
         model = Source
@@ -130,7 +130,7 @@ class Query(graphene.ObjectType):
     repositoriesInformation = graphene.List(RepositoryInformationNode)
 
     def resolve_repositoriesInformation(root, info):
-        resp = Source.objects.values("repository").annotate(analyzedOntologyCommits=Count("repository")).order_by("-analyzedOntologyCommits")
+        resp = Source.objects.values("repository").annotate(analyzedOntologyCommits=Count("metrics")).order_by("-analyzedOntologyCommits")
         return resp
 
     def resolve_queueInformation(root, info, url):
