@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import "settings.dart";
 import 'package:http/http.dart' as http;
 
@@ -47,7 +48,7 @@ class MetricExplorerItem {
 class MetricExplorerItemFactory {
   Future<List<MetricExplorerItem>> getMetricExplorerData() async {
     final response =
-        await http.get(Uri.parse("${Settings().apiUrl}/metricexplorer"));
+        await http.get(Uri.parse("${Settings().apiUrl}/metricexplorer"), headers: {"Access-Control-Allow-Origin": "*"});
     final dynamic body;
     List<MetricExplorerItem> metricExplorerItems = [];
     if (response.statusCode != 200) {

@@ -6,6 +6,7 @@ import 'package:neonto_frontend/indexpage.dart';
 import 'metric_explorer.dart';
 import 'calculationsettings.dart';
 import 'metric_data.dart';
+import 'dart:html' as html;
 
 void main() {
   runApp(const MyApp());
@@ -58,11 +59,34 @@ class EntryPage extends StatelessWidget {
         bottomNavigationBar: Container(
             color: Theme.of(context).colorScheme.primaryVariant,
             padding: const EdgeInsets.all(8),
-            child: Text(
-              "Made with 💖 by Achim Reiz.",
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-            )),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Text(
+                "NEOntometrics.",
+                textAlign: TextAlign.center,
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+              ),
+              TextButton(
+                  onPressed: () => html.window.open(
+                      "https://www.wirtschaftsinformatik.uni-rostock.de/footer/impressum/",
+                      "Impressum"),
+                  child: Text(
+                    "Impressum",
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        decoration: TextDecoration.underline),
+                  )),
+              TextButton(
+                  onPressed: () => html.window.open(
+                      "https://www.wirtschaftsinformatik.uni-rostock.de/en/footer/imprint/",
+                      "Impressum"),
+                  child: Text(
+                    "Imprint",
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        decoration: TextDecoration.underline),
+                  ))
+            ])),
         appBar: AppBar(
           bottom: const TabBar(
             tabs: [

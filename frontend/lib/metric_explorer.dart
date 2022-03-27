@@ -141,13 +141,16 @@ class _MetricExplorerState extends State<MetricExplorer> {
       if (seeAlso.contains("http")) {
         elementsInDetails.add(
           GestureDetector(
-            child: ListTile(
-              leading: const Icon(Icons.link),
-              title: Text(seeAlso,
-                  style: const TextStyle(
-                      color: Colors.blue,
-                      decoration: TextDecoration.underline)),
-              subtitle: const Text("See Also"),
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: ListTile(
+                leading: const Icon(Icons.link),
+                title: Text(seeAlso,
+                    style: const TextStyle(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline)),
+                subtitle: const Text("See Also"),
+              ),
             ),
             onTap: () => html.window.open(seeAlso, "resouce"),
           ),
@@ -156,7 +159,7 @@ class _MetricExplorerState extends State<MetricExplorer> {
         elementsInDetails.add(
           ListTile(
             leading: const Icon(Icons.link),
-            title: Text(seeAlso),
+            title: SelectableText(seeAlso),
             subtitle: const Text("See Also"),
           ),
         );
