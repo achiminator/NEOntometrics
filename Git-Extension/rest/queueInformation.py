@@ -45,7 +45,7 @@ class QueueInformation:
             if "ananlyzedCommits" in selfprogress:
                 self.analyzedCommits = selfprogress["ananlyzedCommits"]
 
-        if jobId in django_rq.get_queue().failed_job_registry:
+        elif jobId in django_rq.get_queue().failed_job_registry:
             self.error = True
             self.urlInSystem = True
             job = django_rq.get_queue().fetch_job(jobId)

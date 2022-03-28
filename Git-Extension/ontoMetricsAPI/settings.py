@@ -95,7 +95,7 @@ RQ_QUEUES = {
         'PORT': 6379,
         'DB': 0,
        # 'PASSWORD': 'some-password',
-        'DEFAULT_TIMEOUT': 72000,
+        'DEFAULT_TIMEOUT': 259200,
         'ASYNC' : True if bool(os.environ.get("inDocker", False)) else False
     }
 }
