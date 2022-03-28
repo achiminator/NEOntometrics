@@ -48,10 +48,10 @@ class MetricExplorerItem {
 class MetricExplorerItemFactory {
   Future<List<MetricExplorerItem>> getMetricExplorerData() async {
     final response =
-        await http.get(Uri.parse("${Settings().apiUrl}/metricexplorer"), headers: {"Access-Control-Allow-Origin": "*"});
+        await http.get(Uri.parse("${Settings().apiUrl}/metricexplorer"));
     final dynamic body;
     List<MetricExplorerItem> metricExplorerItems = [];
-    if (response.statusCode != 200) {
+    if (response.statusCode != 200) { 
       throw Exception(
           "Connection to Ontology-Endpoint was not Successfull (internal error)");
     } else {
