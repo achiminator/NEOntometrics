@@ -1624,6 +1624,8 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <neontometrics:MetricDefinition>Mean number of annotations per class.</neontometrics:MetricDefinition>
+        <neontometrics:MetricInterpretation>Best: x&gt;0.8. Worst: x&lt;0.2</neontometrics:MetricInterpretation>
         <rdfs:label>Annotation Richness</rdfs:label>
     </owl:Class>
     
@@ -1659,6 +1661,8 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <neontometrics:MetricDefinition>Mean number of attributes per class.</neontometrics:MetricDefinition>
+        <neontometrics:MetricInterpretation>Best: x&gt;0.8. Worst: x&lt;0.2</neontometrics:MetricInterpretation>
         <rdfs:label>Attribute Richness</rdfs:label>
     </owl:Class>
     
@@ -1783,6 +1787,8 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
                 </owl:intersectionOf>
             </owl:Class>
         </rdfs:subClassOf>
+        <neontometrics:MetricDefinition>Coupling between Objects: Number of related classes. It is the average number of the direct parents per class minus the relationships of Thing.</neontometrics:MetricDefinition>
+        <neontometrics:MetricInterpretation>Best: x:1-3. Worst: x&gt;12</neontometrics:MetricInterpretation>
         <rdfs:label>Coupling between Objects</rdfs:label>
     </owl:Class>
     
@@ -1806,6 +1812,7 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <neontometrics:MetricInterpretation>Best: x:1-3. Worst: x&gt;12</neontometrics:MetricInterpretation>
         <rdfs:label>Coupling between Objects 2</rdfs:label>
     </owl:Class>
     
@@ -1829,6 +1836,7 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <neontometrics:MetricInterpretation>Best: x&gt;0.8. Worst: x&lt;0.2</neontometrics:MetricInterpretation>
         <rdfs:label>Class Richness</rdfs:label>
     </owl:Class>
     
@@ -2051,6 +2059,9 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
             </owl:Restriction>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <neontometrics:MetricDefinition>Depth of subsumption hierarchy: Length of the largest path from Thing to a leaf
+class.</neontometrics:MetricDefinition>
+        <neontometrics:MetricInterpretation>Best: x:1-2. Worst: x&gt;8</neontometrics:MetricInterpretation>
         <rdfs:label>Depth of subsumption hierarchy</rdfs:label>
     </owl:Class>
     
@@ -2212,6 +2223,7 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <neontometrics:MetricInterpretation>Best: x&gt;0.8. Worst: x&lt;0.2</neontometrics:MetricInterpretation>
         <rdfs:label>Relationships per class</rdfs:label>
     </owl:Class>
     
@@ -2351,6 +2363,8 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <neontometrics:MetricDescription>The semantic and conceptual relatedness of classes can be used to measure the separation of responsibilities and independence of components of ontologies.</neontometrics:MetricDescription>
+        <neontometrics:MetricInterpretation>Best: x:1-2. Worst: x&gt;8</neontometrics:MetricInterpretation>
         <rdfs:label>Lack of cohesion in methods</rdfs:label>
     </owl:Class>
     
@@ -2424,7 +2438,9 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Frameworks"/>
-        <rdfs:seeAlso rdf:resource="http://sele.inf.um.es/ontology-metrics/index.html"/>
+        <rdfs:seeAlso>Reiz, A. and Sandkuhl, K. (2022). Harmonizing the OQuaRE Quality Framework.  In Proceedings of the 24th International Conference on Enterprise Information Systems - Volume 2, ISBN 978-989-758-569-2. ISSN 2184-4992, pages 148-158.
+
+Duque-Ramos, Astrid; Fernández-Breis, J. T.; Stevens, R.; Aussenac-Gilles, Nathalie (2011): OQuaRE: A square-based approach for evaluating the quality of ontologies. In Journal of Research and Practice in Information Technology 43 (2), pp. 159–176.</rdfs:seeAlso>
     </owl:Class>
     
 
@@ -2507,6 +2523,8 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <neontometrics:MetricDefinition>Number of Ancestor Classes: Mean number of ancestor classes per leaf class. It is the number of direct superclasses per leaf class.</neontometrics:MetricDefinition>
+        <neontometrics:MetricInterpretation>Best: x:1-2. Worst: x&gt;8</neontometrics:MetricInterpretation>
         <rdfs:label>Number of ancestor classes</rdfs:label>
     </owl:Class>
     
@@ -2543,6 +2561,8 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <neontometrics:MetricDefinition>Number of Children: Mean number of direct subclasses. It is the number of relationships divided by the number of classes minus the relationships of Thing.</neontometrics:MetricDefinition>
+        <neontometrics:MetricInterpretation>Best: x:1-2. Worst: x&gt;8</neontometrics:MetricInterpretation>
         <rdfs:label>Number of children</rdfs:label>
     </owl:Class>
     
@@ -2578,6 +2598,8 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <neontometrics:MetricDefinition>Number of properties: Number of properties per class.</neontometrics:MetricDefinition>
+        <neontometrics:MetricInterpretation>Best: x:1-2. Worst: x&gt;8</neontometrics:MetricInterpretation>
         <rdfs:label>Number of properties</rdfs:label>
     </owl:Class>
     
@@ -2610,6 +2632,7 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <neontometrics:MetricInterpretation>Best: x&gt;0.8. Worst: x&lt;0.2</neontometrics:MetricInterpretation>
         <rdfs:label>Ancestors per class</rdfs:label>
     </owl:Class>
     
@@ -2646,6 +2669,7 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <neontometrics:MetricInterpretation>Best: x&gt;0.8. Worst: x&lt;0.2</neontometrics:MetricInterpretation>
         <rdfs:label>Properties Richness</rdfs:label>
     </owl:Class>
     
@@ -2740,6 +2764,8 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <neontometrics:MetricDefinition>Response for a class: Number of properties that can be directly accessed from the class.</neontometrics:MetricDefinition>
+        <neontometrics:MetricInterpretation>Best: x:1-3. Worst: x&gt;12</neontometrics:MetricInterpretation>
         <rdfs:label>Response for a class</rdfs:label>
     </owl:Class>
     
@@ -2753,7 +2779,20 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#divisor"/>
-                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Class_Declarations"/>
+                        <owl:allValuesFrom>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#sum"/>
+                                <owl:allValuesFrom>
+                                    <owl:Class>
+                                        <owl:intersectionOf rdf:parseType="Collection">
+                                            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Data_Property_Assertions"/>
+                                            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Object_Property_Class_Assertion"/>
+                                            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Class_Declarations"/>
+                                        </owl:intersectionOf>
+                                    </owl:Class>
+                                </owl:allValuesFrom>
+                            </owl:Restriction>
+                        </owl:allValuesFrom>
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
@@ -2775,6 +2814,8 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <neontometrics:MetricDefinition>Relationship Richness: Number of properties defined in the ontology divided by the number of relationships and properties</neontometrics:MetricDefinition>
+        <neontometrics:MetricInterpretation>Best: x&gt;0.8. Worst: x&lt;0.2</neontometrics:MetricInterpretation>
         <rdfs:label>Relationship Richness</rdfs:label>
     </owl:Class>
     
@@ -3002,6 +3043,8 @@ Different ontologies with subjective features and particular perspective on the 
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <neontometrics:MetricDefinition>Mean number of parents per class. ∑| RCi| / ∑|Ci|-∑|C(DP)i|; where Ci is the i-th class in the ontology and C(DP)i is the i-th class in the ontology with more than one direct parent.</neontometrics:MetricDefinition>
+        <neontometrics:MetricInterpretation>Best: x:1-2. Worst: x&gt;8</neontometrics:MetricInterpretation>
         <rdfs:label>Tangledness</rdfs:label>
     </owl:Class>
     
@@ -3025,6 +3068,7 @@ Different ontologies with subjective features and particular perspective on the 
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <neontometrics:MetricInterpretation>Best: x:1-2. Worst: x&gt;8</neontometrics:MetricInterpretation>
         <rdfs:label>Tangledness 2</rdfs:label>
     </owl:Class>
     
@@ -3155,6 +3199,8 @@ Different ontologies with subjective features and particular perspective on the 
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <neontometrics:MetricDefinition>Weighted Method Count: Mean number of properties and relationships per class.</neontometrics:MetricDefinition>
+        <neontometrics:MetricInterpretation>Best: x:1-2. Worst: x&gt;8</neontometrics:MetricInterpretation>
         <rdfs:label>Weighted method count</rdfs:label>
     </owl:Class>
     
@@ -3178,6 +3224,7 @@ Different ontologies with subjective features and particular perspective on the 
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <neontometrics:MetricInterpretation>Best: x:1-2. Worst: x&gt;8</neontometrics:MetricInterpretation>
         <rdfs:label>Weighted method count 2</rdfs:label>
     </owl:Class>
     
@@ -4649,7 +4696,9 @@ SD = H/C</neontometrics:MetricDefinition>
 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Dimension -->
 
-    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Dimension"/>
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Dimension">
+        <rdfs:comment>Quality Dimensions. Currently not part of NEOntometrics.</rdfs:comment>
+    </owl:Class>
     
 
 
@@ -4750,7 +4799,7 @@ SD = H/C</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#SemoticSuite -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#SemoticSuite">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Frameworks"/>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Dimension"/>
         <rdfs:seeAlso>Burton-Jones, Andrew; Storey, Veda C.; Sugumaran, Vijayan; Ahluwalia, Punit (2005): A semiotic metrics suite for assessing the quality of ontologies. In Data &amp; Knowledge Engineering 55 (1), pp. 84–102. DOI: 10.1016/j.datak.2004.11.010.</rdfs:seeAlso>
     </owl:Class>
     
