@@ -193,6 +193,7 @@ https://github.com/fiesta-iot/ontology
 https://github.com/ClinicalTrialOntology/CTO
 https://github.com/HerculesCRUE/ROH
 https://github.com/vocol/MTConnect
+https://github.com/commonsense/conceptnet5
 https://github.com/vocol/shopfloor
 https://github.com/vocol/mobivoc
 https://github.com/HerculesCRUE/ib-hercules-ontology

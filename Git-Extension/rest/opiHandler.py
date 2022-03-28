@@ -60,12 +60,12 @@ class OpiHandler:
                 str(settings.ONTOLOGYLIMIT) + \
                 "b. Analysis deactivated. "
             self.logger.error(error)
+        elif(ontologySize > settings.REASONINGLIMIT and settings.REASONINGLIMIT > 0 and reasoner):
+            reasoner = False
+            error += "Ontology Exceeds " + \
+            str(settings.REASONINGLIMIT) + \
+            "b. Reasoning deactivated. "
         else:
-            if(ontologySize > settings.REASONINGLIMIT and settings.REASONINGLIMIT > 0 and reasoner):
-                reasoner = False
-                error += "Ontology Exceeds " + \
-                str(settings.REASONINGLIMIT) + \
-                "b. Reasoning deactivated. "
             metricResponse = requestsLib.post(url=self.OntoMetricsEndPoint, data=ontologyString, headers={
                 "save": "false", "reasoner": str(reasoner), "classMetrics": str(classMetrics)})
             if(metricResponse.status_code != 200):
