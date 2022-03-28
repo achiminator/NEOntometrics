@@ -78,22 +78,13 @@ class OntologyHandler:
         calculationDict = {}
         previousitem = None
         for line in qres:
-            # Currently commmented out. Was used to junp to the debug of a metric that was not calculated correctly
-            if self.resURI2str(line["metric"]) == "OQuaRE DITOnto":
+            if("Orme" in line[0]):
                 print("pass")
             if previousitem == None and not calculationDict.get("directlyUsesMetric"):
                 previousitem = line
             elif previousitem["metric"] != line["metric"]:
                 print(self.__buildLambdaFunctionFromOntology(calculationDict))
-                metricDict.append({
-                    "framework": self.resURI2str(previousitem["framework"]),
-                    "metricCategory": self.resURI2str(previousitem["metricCategory"]),
-                    "metric": self.resURI2str(previousitem["metric"]),
-                    "metricDescription": str(previousitem["description"]),
-                    "metricDefinition": str(previousitem["definition"]),
-                    "metricInterpretation": str(previousitem["interpretation"]),
-                    "metricCalculation": self.__buildLambdaFunctionFromOntology(calculationDict)
-                })
+                metricDict.append(self.buildMetricDict(calculationDict, previousitem))
                 calculationDict = {}
             if(line["property"] != None and line["value"] != None):
                 #print (line["metric"] + ", " + line["property"] + ", " + line["value"] + "\\n" )
@@ -122,18 +113,21 @@ class OntologyHandler:
 
             previousitem = line
 
-        metricDict.append({
-            "framework": previousitem["framework"],
-            "metricCategory": previousitem["metricCategory"],
-            "metric": previousitem["metric"],
-            "metricDescription": previousitem["description"],
-            "metricDefinition": previousitem["definition"],
-            "metricInterpretation": previousitem["interpretation"],
-            "metricCalculation": calculationDict
-        })
+        metricDict.append(self.buildMetricDict(calculationDict=calculationDict, previousitem=previousitem))
 
         self.metricDict = metricDict
         return metricDict
+
+    def buildMetricDict(self, calculationDict, previousitem):
+        return {
+                    "framework": self.resURI2str(previousitem["framework"]),
+                    "metricCategory": self.resURI2str(previousitem["metricCategory"]),
+                    "metric": self.resURI2str(previousitem["metric"]),
+                    "metricDescription": str(previousitem["description"]),
+                    "metricDefinition": str(previousitem["definition"]),
+                    "metricInterpretation": str(previousitem["interpretation"]),
+                    "metricCalculation": self.__buildLambdaFunctionFromOntology(calculationDict)
+                }
 
     def __buildLambdaFunctionFromOntology(self, calculationDict: dict) -> str:
         """Takes the preliminary Metric calculation that is calculated in the calling method getMetricDict and 
