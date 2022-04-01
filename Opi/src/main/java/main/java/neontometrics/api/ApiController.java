@@ -17,9 +17,17 @@ import javax.ws.rs.core.Response;
 
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.io.OWLOntologyDocumentSource;
+import org.semanticweb.owlapi.io.OWLOntologyDocumentSourceBase;
+import org.semanticweb.owlapi.io.StreamDocumentSource;
+import org.semanticweb.owlapi.io.StringDocumentSource;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.MissingImportHandlingStrategy;
+import org.semanticweb.owlapi.model.OWLDocumentFormatImpl;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyLoaderConfiguration;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.OWLOntologyLoaderConfiguration.MissingOntologyHeaderStrategy;
 import org.xembly.Directives;
 import org.xembly.ImpossibleModificationException;
 import org.xembly.Xembler;
@@ -57,11 +65,15 @@ public class ApiController {
     public Response getBaseMetricFromOntology(String request, 
 	    @DefaultValue("false") @HeaderParam("classmetrics") boolean classMetrics, @DefaultValue("false") @HeaderParam("reasoner") boolean reasoner) throws Exception {
 	//OntologyMetricManagerImpl manager = new OntologyMetricManagerImpl();
+	OWLOntologyLoaderConfiguration loaderConfig = new OWLOntologyLoaderConfiguration();
+	loaderConfig = loaderConfig.setMissingImportHandlingStrategy(MissingImportHandlingStrategy.SILENT);
+	OWLOntologyDocumentSource documentSource = new StringDocumentSource(request);
 	
 	OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
+	
 	OWLOntology ontology;
 	try {
-	    ontology = manager.loadOntologyFromOntologyDocument(new ByteArrayInputStream(request.getBytes()));
+	    ontology = manager.loadOntologyFromOntologyDocument(documentSource, loaderConfig);
 	    
 	} catch (Exception e) {
 	    throw new InvalidOntologyException();

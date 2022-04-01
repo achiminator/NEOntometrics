@@ -69,6 +69,7 @@ https://github.com/RinkeHoekstra/lkif-core
 https://github.com/RinkeHoekstra/best-onto
 https://github.com/iot-ontologies/dogont
 https://github.com/iot-ontologies/notont
+https://github.com/ease-crc/soma
 https://github.com/oral-health-and-disease-ontologies/NDPBRN
 https://github.com/Onto-Med/COP
 https://github.com/HajoRijgersberg/OM
