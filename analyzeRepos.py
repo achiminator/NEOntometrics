@@ -3,14 +3,14 @@ import requests, threading, time, json
 from requests import status_codes
 
 #metricsEndPoint = "http://fittony.gg01.local:8012/git?classMetrics=True&"
-metricsEndPoint = "http://localhost:8012/git?classMetrics=False&reasoner=True&url="
+metricsEndPoint = "http://localhost:8012/git?classMetrics=False&reasoner=False&url="
 error = 0
 def getResults(url: str):
     requestURL = metricsEndPoint + url
     resp = requests.get(requestURL)
-    while (resp.status_code == 200 and "taskFinished" in json.loads(resp.content)):
-        time.sleep(4)
-        resp = requests.get(requestURL) 
+    #while (resp.status_code == 200 and "taskFinished" in json.loads(resp.content)):
+    time.sleep(4)
+    resp = requests.get(requestURL) 
     if(resp.status_code != 200):
         print(requestURL + "did not analyzed correctly")
         print(resp.content)
