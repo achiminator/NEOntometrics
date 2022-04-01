@@ -1,8 +1,7 @@
-import 'dart:convert';
-import 'dart:io';
+import 'package:neonto_frontend/settings.dart';
+
 import "calculationview.dart";
 import "graphql.dart";
-import 'package:http/http.dart' as http;
 import 'package:graphql/client.dart';
 
 import 'package:flutter/material.dart';
@@ -19,7 +18,7 @@ class CalculationEngine extends StatefulWidget {
 }
 
 class _CalculationEngineState extends State<CalculationEngine> {
-  bool reasoner = true;
+  bool reasoner = false;
   Set<MetricExplorerItem> selectedElementsForCalculation = {};
   _CalculationEngineState();
   late Widget markDownDescription = const CircularProgressIndicator();
@@ -54,7 +53,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
                         size: 115,
                         color: Theme.of(context).colorScheme.onSecondary)),
               ),
-              Expanded(child: markDownDescription)
+              Expanded(flex: 2, child: markDownDescription)
             ]),
           ),
           const Divider(),
@@ -87,9 +86,39 @@ class _CalculationEngineState extends State<CalculationEngine> {
                         contentPadding:
                             const EdgeInsets.symmetric(horizontal: 50),
                         title: const Text("Reasoner Active"),
-                        onChanged: (value) => setState(() {
+                        onChanged: (value) {
+                          if (value == true) {
+                            var dialog = AlertDialog(
+                              
+                              title: const ListTile(
+                                  leading: Icon(Icons.warning),
+                                  title: Text("Activating Reasoner")),
+                              content: Text(
+                                  "On larger ontologies, the reasoning takes a large amount of time. On ontologies > ${Settings().reasoningLimit}, the reasoning is deactivated. We recommend the reasoning capabilities just for smaller ontologies and repositories."),
+                              actions: [
+                                TextButton(
+                                  child: const Text("Yes, active reasoning"),
+                                  onPressed: () {
+                                    setState(() {
+                                      reasoner = true;
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                                TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text("Abort"))
+                              ],
+                            );
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) => dialog);
+                          } else {
+                            setState(() {
                               reasoner = value;
-                            })),
+                            });
+                          }
+                        }),
                   ),
                   FutureBuilder(
                     future: widget.metricData,
@@ -117,11 +146,13 @@ class _CalculationEngineState extends State<CalculationEngine> {
                             onPressed: () {
                               var dialog = Dialog();
                               showDialog(
-                                  barrierDismissible: true,
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return dialog;
-                                  }).then((value) => {urlController.text = value??""});
+                                      barrierDismissible: true,
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return dialog;
+                                      })
+                                  .then((value) =>
+                                      {urlController.text = value ?? ""});
                             },
                             child: const ListTile(
                               leading: Icon(Icons.list),
@@ -205,11 +236,12 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                                             //           "errorMessage"],
                                                             //       context);
                                                             // }
-                                                             else {
-                                                              progressSnackBar(
-                                                                  jsonResponse
-                                                                          .data?["update_queueInfo"][
-                                                                      "queueInfo"]);
+                                                            else {
+                                                              progressSnackBar(jsonResponse
+                                                                          .data?[
+                                                                      "update_queueInfo"]
+                                                                  [
+                                                                  "queueInfo"]);
                                                             }
                                                           });
                                                           Navigator.pop(
@@ -305,7 +337,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
               "Calculation not yet finished${(queueInformation["taskIsStarted"] == true) ? ", but started and currently in Progress." : ""}. Queue position: ${queueInformation["queuePosition"]}"),
           //The progress bar for the current state of analyzed ontologies shall only appear
           //if the data is in the json response.
-          subtitle: (queueInformation["commitsForThisOntology"]??false)
+          subtitle: (queueInformation["commitsForThisOntology"] ?? false)
               ? ProgressBarIndicator(jsonResponse: queueInformation)
               : null,
         ));
@@ -410,12 +442,11 @@ class Dialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final graphQL = GraphQLHandler();
     var f = graphQL.getRepositoryList();
-    
 
     return FutureBuilder(
         future: f,
         builder: (context, snapshot) {
-          if(!snapshot.hasData){
+          if (!snapshot.hasData) {
             EasyLoading.show(status: "We're fetching existing Repositories");
             return Text("");
           }
@@ -425,27 +456,30 @@ class Dialog extends StatelessWidget {
 
             for (var element in result.data!["repositoriesInformation"]) {
               simpleDialogOptions.add(SimpleDialogOption(
-                  child: Row(
-                    children: [
-                      Expanded(child: Text(element["repository"])),
-                      Text(element["analyzedOntologyCommits"].toString(), textAlign: TextAlign.right,),
-                    ],
-                  ),
-                  onPressed: () =>Navigator.pop(context, element["repository"] ?? ""),
-                  ));
+                child: Row(
+                  children: [
+                    Expanded(child: Text(element["repository"])),
+                    Text(
+                      element["analyzedOntologyCommits"].toString(),
+                      textAlign: TextAlign.right,
+                    ),
+                  ],
+                ),
+                onPressed: () =>
+                    Navigator.pop(context, element["repository"] ?? ""),
+              ));
             }
 
             Widget simpleDialog = SimpleDialog(
-              title: const Text(
-                  " Select one of the already calcualated ontology repositories:"),
-              children:simpleDialogOptions
-            );
+                title: const Text(
+                    " Select one of the already calcualated ontology repositories:"),
+                children: simpleDialogOptions);
             EasyLoading.dismiss();
             return simpleDialog;
           }
           throw Exception("Failure in Fechting Repository Information");
         });
-    
+
     //EasyLoading.dismiss();
   }
 }

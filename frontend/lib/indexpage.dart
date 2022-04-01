@@ -27,7 +27,7 @@ class indexPage extends StatelessWidget {
           height: 30,
         ),
         const Text(
-          "Neontometrics allows you to quickly calculate a variety of mntology metrics for ontology files and git-based ontology repositories",
+          "...Quickly calculate a variety of metrics for ontology files and git-based ontology repositories",
           style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic),
         ),
         Row(

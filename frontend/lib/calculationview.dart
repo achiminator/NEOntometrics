@@ -57,16 +57,18 @@ class _CalculationViewState extends State<CalculationView> {
                   iconColor: Theme.of(context).colorScheme.onPrimary,
                   leading: const Icon(Icons.filter_none_outlined),
                   title: DropdownButton(
-                      dropdownColor: Theme.of(context).colorScheme.onPrimary,
-                      focusColor: Theme.of(context).colorScheme.onPrimary,
+                      dropdownColor: Theme.of(context).colorScheme.primary,
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary),
                       value: activeMetricFile,
                       items: getAvailableFileNames(widget.metricData),
                       onChanged: (value) => setState(() {
                             activeMetricFile = value as int;
                           }))),
             ),
-            Expanded(
-                flex: 1,
+            SizedBox(
+
+              width: 190,
                 child: OutlinedButton(
                   onHover: (value) => MaterialStateMouseCursor.clickable,
                   onPressed: () => downloadMetricFile(activeMetricFile),

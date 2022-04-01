@@ -12,7 +12,8 @@ class MarkDownHandler {
           return Center(
               child: Container(
                   padding: const EdgeInsets.all(20),
-                  child: Markdown(data: snapshot.data as String, 
+                  child: Markdown(data: snapshot.data as String,
+                  styleSheet: MarkdownStyleSheet(textScaleFactor: 1.2), 
                   onTapLink: (text, href, title) => html.window.open(href!, "resouce"),)));
         } else {
           return const Center(child: CircularProgressIndicator());
@@ -22,6 +23,6 @@ class MarkDownHandler {
   }
 
   Future<String> _homeDescription(String location) async {
-    return await rootBundle.loadString("webpage/$location");
+    return await rootBundle.loadString("assets/webpage/$location");
   }
 }
