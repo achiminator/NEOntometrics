@@ -9,7 +9,7 @@ Opi/build/
 Opi/target/
 Opi/data/
 ontologies/
-Opi/docker-compose.yml
+docker-compose.yml
 .vscode
 Git-Extension/db.sqlite3
 Git-Extension/rest/__pycache__/
