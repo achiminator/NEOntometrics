@@ -1,6 +1,6 @@
 FROM cirrusci/flutter AS flutterbuild
 
-COPY ../ /frontend
+COPY . /frontend
 WORKDIR /frontend
 RUN flutter build web
 
