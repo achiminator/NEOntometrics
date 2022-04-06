@@ -32,6 +32,8 @@ import org.xembly.Directives;
 import org.xembly.ImpossibleModificationException;
 import org.xembly.Xembler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import main.java.neontometrics.api.error.InvalidOntologyException;
 import main.java.neontometrics.api.error.WrongURIException;
 import main.java.neontometrics.calc.handler.OntologyMetricsImpl;
@@ -45,7 +47,7 @@ public class ApiController {
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getBaseMetricFromURL(@DefaultValue("http://127.0.0.1") @QueryParam("url") URL urlInput,
 	     @DefaultValue("false") @HeaderParam("classmetrics") boolean classMetrics, @DefaultValue("false") @HeaderParam("reasoner") boolean reasoner)
 	    throws Exception {
@@ -61,7 +63,7 @@ public class ApiController {
     }
 
     @POST
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getBaseMetricFromOntology(String request, 
 	    @DefaultValue("false") @HeaderParam("classmetrics") boolean classMetrics, @DefaultValue("false") @HeaderParam("reasoner") boolean reasoner) throws Exception {
 	//OntologyMetricManagerImpl manager = new OntologyMetricManagerImpl();
@@ -105,32 +107,15 @@ public class ApiController {
 	return directives;
     }
 
-    protected Directives classMetrics2XML(List<Map<String, Object>> classMetrics, Directives xmlBuilder) {
-	xmlBuilder.pop();
-	xmlBuilder.add("ClassMetrics");
-	for (Map<String, Object> classMetric : classMetrics) {
-	    xmlBuilder.add("Class");
-	    xmlBuilder.attr("iri", classMetric.get("iri"));
-	    classMetric.remove("iri");
-
-	    xmlBuilder.add(classMetric);
-	    xmlBuilder.up();
-	}
-	xmlBuilder.up();
-	return xmlBuilder;
-    }
 
     protected Response calculateMetrics(boolean classMetrics, boolean reasoner, OWLOntology ontology)
 	    throws Exception, ImpossibleModificationException {
 
 	OntologyMetricsImpl ontoMetricsEnginge = new OntologyMetricsImpl(ontology);
-	Directives xmlDirectives = new Directives().add("OntologyMetrics");
 	Map<String, Object> map = ontoMetricsEnginge.getAllMetrics(reasoner);
-	xmlDirectives.append(map2XML(map));
-
-
-	Xembler xml = new Xembler(xmlDirectives);
-	String xmlString = xml.xml();
-	return Response.ok(xmlString).header("saved", "False").build();
+	ObjectMapper mapper = new ObjectMapper();
+	String reponse = mapper.writeValueAsString(map);
+	
+	return Response.ok(reponse).header("saved", "False").build();
     }
 }

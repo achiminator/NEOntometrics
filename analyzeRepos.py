@@ -3,7 +3,7 @@ import requests, threading, time, json
 from requests import status_codes
 
 #metricsEndPoint = "http://fittony.gg01.local:8012/git?classMetrics=True&"
-metricsEndPoint = "http://localhost:8012/git?classMetrics=False&reasoner=False&url="
+metricsEndPoint = "http://localhost:8005/git?classMetrics=False&reasoner=False&url="
 error = 0
 def getResults(url: str):
     requestURL = metricsEndPoint + url

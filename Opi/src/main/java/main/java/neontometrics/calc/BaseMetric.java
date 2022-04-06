@@ -1,11 +1,13 @@
 package main.java.neontometrics.calc;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import org.semanticweb.owlapi.metrics.AxiomCount;
 import org.semanticweb.owlapi.metrics.DLExpressivity;
 import org.semanticweb.owlapi.metrics.LogicalAxiomCount;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLImportsDeclaration;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.util.OWLClassExpressionCollector;
 
@@ -25,6 +27,7 @@ public class BaseMetric extends MetricCalculations implements Callable<BaseMetri
 	calculateCountIndividuals();
 	calculateDLExpressivity();
 	calculateAnonymousClasses();
+	calculateImports();
 	return (this);
     }
 
@@ -115,8 +118,31 @@ public class BaseMetric extends MetricCalculations implements Callable<BaseMetri
      */
     public void calculateDLExpressivity() {
 	DLExpressivity expr = new DLExpressivity(ontology);
-	System.out.println(expr.recomputeMetric());
 	this.returnObject.put("dlExpressivity", expr.getValue());
     }
+    public void calculateImports() {
+	Set<OWLImportsDeclaration> declaredImports = ontology.getImportsDeclarations();
+	Set<String> declaredImportStrings = new HashSet<>();
+	for (OWLImportsDeclaration owlImportsDeclaration : declaredImports) {
+	    declaredImportStrings.add(owlImportsDeclaration.getIRI().toString());
+	}
+	this.returnObject.put("declaredImports", declaredImportStrings);
+	
+	Set<String> directImports = new HashSet<>();
+	Set<org.semanticweb.owlapi.model.IRI> directImportIris = ontology.getDirectImportsDocuments();
+	for (org.semanticweb.owlapi.model.IRI iri : directImportIris) {
+	    directImports.add(iri.toString());
+	}
+	this.returnObject.put("directImports", directImports);
+	
+	Set<String> allActualImports = new HashSet<>();
+	Set<OWLOntology> allActualImportOntologies = ontology.getImports();
+	for (OWLOntology importOntology : allActualImportOntologies) {
+	    allActualImports.add(importOntology.getOntologyID().getOntologyIRI().get().toString());
+	}
+	this.returnObject.put("allActualImports", allActualImports);
+
+    }
+
 
 }

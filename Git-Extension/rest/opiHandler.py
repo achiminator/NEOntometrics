@@ -1,3 +1,5 @@
+from json import JSONDecoder
+import json
 import requests as requestsLib
 from django.conf import settings
 import xmltodict
@@ -21,14 +23,11 @@ class OpiHandler:
         """
 
         resp = requestsLib.get(self.OntoMetricsEndPoint + urlToOntology,
-                               headers={"save": "false", "classMetrics": str(classMetrics)})
+                               headers={"classMetrics": str(classMetrics)})
         if(resp.status_code != 200):
             print(resp.status_code)
         else:
-            xmlText = resp.text.replace("\n", "")
-            xmlText = xmlText.replace("@", "")
-            xmlDict = xmltodict.parse(xmlText,)
-            return xmlDict
+            return resp.json()  
 
     def opiOntologyRequest(self, ontologyString: str, ontologySize: int, classMetrics=True, reasoner=False) -> dict:
         """Make a URL to an OPI server and return a dict with the Ontology-Data .
@@ -66,13 +65,22 @@ class OpiHandler:
             str(settings.REASONINGLIMIT) + \
             "b. Reasoning deactivated. "
         else:
-            metricResponse = requestsLib.post(url=self.OntoMetricsEndPoint, data=ontologyString, headers={
-                "save": "false", "reasoner": str(reasoner), "classMetrics": str(classMetrics)})
-            if(metricResponse.status_code != 200):
-                error += metricResponse.text
-            else:
-                xmlTextResponse = metricResponse.text.replace("\n", "")
-                metrics = xmltodict.parse(xmlTextResponse,)
+            counter = 0
+            try:
+                metricResponse = requestsLib.post(url=self.OntoMetricsEndPoint, data=ontologyString,  timeout=settings.OPITIMEOUT, headers={
+                    "save": "false", "reasoner": str(reasoner), "classMetrics": str(classMetrics)})
+            except requestsLib.exceptions.Timeout:
+                # At first, retry and check if the error happens again
+                try:
+                    metricResponse = requestsLib.post(url=self.OntoMetricsEndPoint, data=ontologyString,  timeout=settings.OPITIMEOUT, headers={
+                            "save": "false", "reasoner": str(reasoner), "classMetrics": str(classMetrics)})
+                except:
+                    error += "Request to Calculation Service timed out. It took longer than " + str(settings.OPITIMEOUT) + "seconds"
+            if(metricResponse):
+                if(metricResponse.status_code != 200):
+                    error += metricResponse.text
+                else:
+                    metrics = metricResponse.json()
 
                 # Restructure ClassMetrics for a more flat hierachy
                 if classMetrics:

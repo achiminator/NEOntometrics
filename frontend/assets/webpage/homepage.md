@@ -38,7 +38,7 @@ Fig. 1 presents an example for this kind of decomposition. The ontology is analy
 
 The _Elementary\_Metrics_ are connected to metric instances that are named identically to the implementation names in the calculation service and the elements in the database. In the example of the _Sub\_Class\_Declarations_, this element has relationship _implementedBy value subClassOfAxioms_. This allows for the usage of new metrics without the need to perform a new calculation.
 
-![](resource:webpage/ontology.png)
+![](resource:assets/webpage/ontology.png)
 
 **Fig. 1.** Excerpt of the Metric Ontology.
 
@@ -56,7 +56,7 @@ After startup, a user can use GraphQL to first check whether the data he request
 
 The **worker** is responsible for the calculation of the metrics itself. It checks wheteher jobs are available in the **scheduler** redis database. If so, it starts the analysis by first downloading the repository, then iterating through every file and commit, analyzing the owl ontologies using the **OPI** metric calulation endpoint. Afterwards, the calculation results are stored in the **database**. The scheduling mechanism is based on _django-rq. Even though it shares a code base with the api, it runs as a separate application. The number of parallel calculations can be scaled by increasing the number of workers.
 
-![](resource:webpage/sequenceDiagram.jpg)
+![](resource:assets/webpage/sequenceDiagram.jpg)
 
 **Fig. 2.** The process of analyzing and retrieving ontologies with NEOntometrics.
 

@@ -3,7 +3,7 @@ from django.http.request import RAISE_ERROR
 from rest.CalculationHelper import GitUrlParser
 from rest.models import Metrics, Source, ClassMetrics
 from collections import OrderedDict
-from rest.serializers import MetricSerializer
+from rest.serializers import MetricSerializer, _MetricDetailSerializer
 from django.db.models import Q
 import logging, django_filters
 
@@ -12,7 +12,7 @@ class DBHandler:
     """Handles the Database connections, especially prepares the metrics for writing into the database.
     """
 
-    def __commit2MetricsModel(self, commitMetrics: dict) -> dict:
+    def _flattenCommitStructure(self, commitMetrics: dict) -> dict:
         """Flattens the nested Dict-Metrics to prepare it for a database write.
 
         Args:
@@ -31,9 +31,9 @@ class DBHandler:
         tmpDict["ReadingError"] = commitMetrics["ReadingError"]
         tmpDict["CommitID"] = commitMetrics["CommitID"]
         tmpDict["Size"] = commitMetrics["Size"]
-        if "OntologyMetrics" in commitMetrics:
+        if "GeneralOntologyMetrics" in commitMetrics:
             tmpDict.update(
-                commitMetrics["OntologyMetrics"]["GeneralOntologyMetrics"])
+                commitMetrics["GeneralOntologyMetrics"])
         return tmpDict
 
     def writeInDB(self, metricsDict: dict, file: str, repo: str, wholeRepo=False, branch: str = "") -> Source:
@@ -47,8 +47,8 @@ class DBHandler:
             wholeRepo(bool): Stores if the whole repository was analyzed or not
         """
         if(branch == None):
-            branch = ""
-            
+            branch = ""      
+                 
         sourceModel = Source.objects.create(
             fileName=file, repository=repo, branch=branch, wholeRepositoryAnalyzed=wholeRepo)
         for commitMetrics in metricsDict:
@@ -65,15 +65,9 @@ class DBHandler:
             else:
                 metricsModel = Metrics.objects.create(
                     CommitTime=commitMetrics["CommitTime"], metricSource=sourceModel)
-                modelDict = self.__commit2MetricsModel(commitMetrics)
+                modelDict = self._flattenCommitStructure(commitMetrics)
                 metricsModel.__dict__.update(modelDict)
                 metricsModel.save()
-            # if "OntologyMetrics" in commitMetrics:
-            #     if "Classmetrics" in commitMetrics["OntologyMetrics"]:
-            #         for classMetricsValues in commitMetrics["OntologyMetrics"]["BaseMetrics"]["Classmetrics"]:
-            #             classMetricsModel = ClassMetrics.objects.create(metric = metricsModel)
-            #             classMetricsModel.__dict__.update(classMetricsValues)
-            #             classMetricsModel.save()
         return sourceModel
 
     #@DeprecationWarning

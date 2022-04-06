@@ -1,40 +1,40 @@
 from fileinput import filename
-from itertools import count
-from logging import Filter
-import queue
 from urllib.parse import urlparse
 import graphene
-import django_filters
 from graphene import relay
 from rest.CalculationManager import CalculationManager
-from rest.CalculationHelper import GitHelper, GitUrlParser
+from rest.CalculationHelper import GitUrlParser
 from rest.dbHandler import RepositoryFilter
 import rest.metricOntologyHandler
 import rest.queueInformation
-from graphene_django import DjangoObjectType, DjangoListField
+from graphene_django import DjangoObjectType
 from .models import Source, Metrics
 from django.db.models import Count
 import graphene_django.filter as filter
 
 
 class MetricsNode(DjangoObjectType):
+    """The calculated Metrics for a ontology file. It is nested in a repository node.
 
+    """
     # This part publishes the calculated Metrics (see the function in the model) to the GraphQL-Endpoint
     metrics = rest.metricOntologyHandler.ontologyhandler.getMetricDict()
     for element in metrics:
         if(len(element["metricCalculation"]) > 0):
+            description = element["metricDefinition"] if len(element["metricDefinition"]) > 0 else element["metricDescription"]
+            description = description.replace("\n", "")
             metricName = element["metric"].replace(" ", "_").replace(
                 "-", "").replace("(", "").replace(")", "")
             # If there is a division going on in the calculation, the resulting values will be
             # a float. (As all the originating values are integers, there is no other possibility)
             if("/" in element["metricCalculation"]):
-                exec("{0} = graphene.Float(source=\"{0}\")".format(metricName))
+                exec("{0} = graphene.Float(source=\"{0}\", description=\"{1}\")".format(metricName, description))
             # Unfortunately, for one of the values we need to make an exception. DLExpressivity is a string,
             # (the only one).
             elif("dlExpressivity" in element["metricCalculation"]):
-                exec("{0} = graphene.String(source=\"{0}\")".format(metricName))
+                exec("{0} = graphene.String(source=\"{0}\", description=\"{1}\")".format(metricName, description))
             else:
-                exec("{0} = graphene.Int(source=\"{0}\")".format(metricName))
+                exec("{0} = graphene.Int(source=\"{0}\", description=\"{1}\")".format(metricName, description)) 
 
     class Meta:
         model = Metrics
@@ -49,26 +49,31 @@ class QueueInformationNode(graphene.ObjectType):
     """Gets information on the status of an ontology in the system, meaning if it already calcualted,
     in the queue (including its position in the queue) or not in the system at all.
     """
-    urlInSystem = graphene.Boolean()
-    taskFinished = graphene.Boolean()
-    taskStarted = graphene.Boolean()
-    queuePosition = graphene.Int()
-    analyzedCommits = graphene.Int()
-    commitsForThisOntology = graphene.Int()
-    analyzedOntologies = graphene.Int()
-    analysableOntologies = graphene.Int()
-    url = graphene.String()
-    repository = graphene.String()
-    service = graphene.String()
+    urlInSystem = graphene.Boolean(description="Is False, if the repository is not known to the system at all.")
+    taskFinished = graphene.Boolean(description="Is True if the repository is fully analyzed and stored in the database")
+    taskStarted = graphene.Boolean(description="Is True if the calculation task has already started")
+    queuePosition = graphene.Int(description="The current position in the calculation backlog. Gets calculated if it reaches 0")
+    analyzedCommits = graphene.Int(description="Information on the current state of the repository calculation. The number of analyzed commits for a given repository file. If is not yet started, the value remains Null.")
+    commitsForThisOntology = graphene.Int(description="Information on the current state of the repository calculation. The number of commits that the given ontology in the repository has. If is not yet started, the value remains Null.")
+    analyzedOntologies = graphene.Int(description="Information on the current state of the repository calculation. The number of already analyzed ontologies in the repository. If is not yet started, the value remains Null.")
+    analysableOntologies = graphene.Int(description="Information on the current state of the repository calculation. the number of ontologies that are getting analyzed in the repository. If is not yet started, the value remains Null.")
+    url = graphene.String(description="The requested URL.")
+    repository = graphene.String(description="The requested repository")
+    service = graphene.String(description="The underlying service on where the repository/ontology can be found.")
     fileName = graphene.String()
-    error = graphene.Boolean()
-    errorMessage = graphene.String()
+    error = graphene.Boolean(description="Whether a fatal error occured during repository/ontology analysis.")
+    errorMessage = graphene.String(description="The detailed Error-Message for a given Error.")
 
 class RepositoryInformationNode(graphene.ObjectType):
-    repository = graphene.String()
-    analyzedOntologyCommits = graphene.Int()
+    """A brief information on the repositories and their commits already analzed.
+    """
+    repository = graphene.String(description="The repository (including all its files)")
+    analyzedOntologyCommits = graphene.Int(description="The number of file-commits analyzed in this repository. Summed up all analyzed commits for every file.")
     
 class RepositoryNode(DjangoObjectType):
+    """The root node of the calculated files. Contains the basic information like the fileName, 
+    repositoryname, date of calculation, etc.
+    """
     class Meta:
         model = Source
    #     exclude =["id"]
@@ -77,11 +82,13 @@ class RepositoryNode(DjangoObjectType):
 
 
 class QueueMutation(graphene.Mutation):
+    """Allows to add an element to the queue (if it is not in there, already).
+    """
     class Arguments:
         url = graphene.String(required=True)
         reasoner = graphene.Boolean(required=True)
-    error = graphene.Boolean()
-    errorMessage = graphene.String()
+    error = graphene.Boolean(description="True if altering the queue was not successful.")
+    errorMessage = graphene.String(description="Detailed information on an unsuccessful queue mutation.")
     queueInfo = graphene.Field(QueueInformationNode)
 
     @classmethod
@@ -117,17 +124,20 @@ class QueueMutation(graphene.Mutation):
 
 
 class Mutation(graphene.ObjectType):
+    """Alter the queue for calculation.
+    """
     update_queueInfo = QueueMutation.Field()
 
 
 class Query(graphene.ObjectType):
-    """Responsible for the graphQL-Metric Endoint
+    """Query Metric Information
     """
     queueInformation = graphene.Field(
-        QueueInformationNode, url=graphene.String(required=True))
+        QueueInformationNode, description="Prints out the current status of an object in system. Useful to determine whether the repository is already in the queue, in the database or not known at all.", url=graphene.String(required=True))
     getRepository = filter.DjangoFilterConnectionField(
-        RepositoryNode, filterset_class=RepositoryFilter)
-    repositoriesInformation = graphene.List(RepositoryInformationNode)
+        RepositoryNode, description="The entrypoint for gathering metric Data. Contains the main information of an ontology file, the calculated metrics are nested in a \"metrics\" field.",
+        filterset_class=RepositoryFilter)
+    repositoriesInformation = graphene.List(RepositoryInformationNode, description="Prints out the repositories already calculated in the database.")
 
     def resolve_repositoriesInformation(root, info):
         resp = Source.objects.values("repository").annotate(analyzedOntologyCommits=Count("metrics")).order_by("-analyzedOntologyCommits")

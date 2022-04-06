@@ -101,7 +101,9 @@ RQ_QUEUES = {
 }
 
 # The URL of the OPI (Ontology Programming Interface)
-OPI = "opi:8080" if bool(os.environ.get("inDocker", False)) else "localhost:8082"
+OPI = "opi:8080" if bool(os.environ.get("inDocker", False)) else "localhost:8080/ROOT"
+OPITIMEOUT = 300 # Seconds until a connection request to OPI times out.
+OPIRETRIES = 1 # How often the service is allows to give OPI another try.
 
 # Size-Limits for analysis. If An ontology is larger than 0,3mb, deactivate ClassMetrics and Reasoner, because the computational
 # time is enormous.
@@ -175,7 +177,7 @@ DATABASES = {
         'PASSWORD':os.environ['db_password'],
         # For the alignment of Docker intergration & windows development
         'HOST': 'neontometrics_db' if bool(os.environ.get("inDocker", False)) else "localhost",
-        'PORT': 3306 if bool(os.environ.get("inDocker", False)) else 3316,
+        'PORT': 3306 if bool(os.environ.get("inDocker", False)) else 3366,
     }
 }
 

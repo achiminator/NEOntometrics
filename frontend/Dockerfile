@@ -1,4 +1,4 @@
-FROM cirrusci/flutter AS flutterbuild
+FROM cirrusci/flutter:2.10.0 AS flutterbuild
 
 COPY . /frontend
 WORKDIR /frontend

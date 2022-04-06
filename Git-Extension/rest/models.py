@@ -100,6 +100,9 @@ class Metrics(models.Model):
     transitiveObjectPropertyAxioms  = models.PositiveBigIntegerField(default = None, null=True)
     superClassesOfLeafClasses  = models.PositiveBigIntegerField(default = None, null=True)
     objectPropertyAnnotations  = models.PositiveBigIntegerField(default = None, null=True)
+    allActualImports = models.TextField(default=None, null=True)
+    directImports = models.TextField(default=None, null=True)
+    declaredImports = models.TextField(default=None, null=True)
     reasonerActive = models.BooleanField(default=False)
     inconsistentClasses = models.PositiveIntegerField(default=0)
     consistencyCheckSuccessful = models.BooleanField(default=False)
@@ -112,15 +115,10 @@ class Metrics(models.Model):
             # The original Metric Name out of the Ontology contains invalid characters for a function.
             metricName = element["metric"].replace(" ", "_").replace("-", "").replace("(", "").replace(")", "")
             calculationElements = element["metricCalculation"]
+            # This little Regex-Function adds the "self." before 
+            calculationElements = re.sub(pattern=r"(\b\w)", repl=r"self.\g<0>", string=calculationElements)
             # The try catch is necessary because some of the metrics can be null, thus render the further calculations that build
             # Upon these Metrics invalid
-            tmp =calculationElements.replace("(", "").replace(")", "").replace(" ", "")
-            splitted = re.split("\/|\+|-|\*", tmp)
-            alreadyAddedSelf = []
-            for calculationPart in splitted:
-                if(calculationPart not in alreadyAddedSelf):
-                    calculationElements = calculationElements.replace(calculationPart, "self."+ calculationPart)
-                    alreadyAddedSelf.append(calculationPart)
             metric = """def {0} (self):
                 try:
                     return {1}  

@@ -67,7 +67,10 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-  - ./webpage/
+  - assets/webpage/ontology.png
+  - assets/webpage/SequenceDiagram.jpg
+  - assets/webpage/calculationdescription.md
+  - assets/webpage/homepage.md
   - ./linkedin.png
   - ./GitHub.png
   - ./neonto_logo.svg
