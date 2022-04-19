@@ -19,7 +19,7 @@ services:
     command: "python manage.py runserver 0.0.0.0:8000"
     #command: 'python manage.py runserver 0.0.0.0:8000' 
     ports:
-      - '8005:8000'
+      - '8006:8000'
     depends_on:
       - neontometrics_db
       - migrateDB
@@ -57,7 +57,7 @@ services:
   # The flutter Frontend
   frontend:
     ports:
-      - '8006:8000'
+      - '8008:8000'
     restart: always
     container_name: neontometricsfrontend
     build:

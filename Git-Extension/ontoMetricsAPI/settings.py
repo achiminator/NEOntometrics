@@ -102,7 +102,7 @@ RQ_QUEUES = {
 
 # The URL of the OPI (Ontology Programming Interface)
 OPI = "opi:8080" if bool(os.environ.get("inDocker", False)) else "localhost:8080/ROOT"
-OPITIMEOUT = 300 # Seconds until a connection request to OPI times out.
+OPITIMEOUT = 800 # Seconds until a connection request to OPI times out.
 OPIRETRIES = 1 # How often the service is allows to give OPI another try.
 
 # Size-Limits for analysis. If An ontology is larger than 0,3mb, deactivate ClassMetrics and Reasoner, because the computational
