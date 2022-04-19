@@ -1,5 +1,5 @@
 FROM maven:3.8.4-jdk-11 as maven_builder
-COPY ../ /RAWFILES/
+COPY . /RAWFILES/
 WORKDIR /RAWFILES
 RUN mvn clean package
 
