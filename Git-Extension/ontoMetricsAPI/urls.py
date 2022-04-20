@@ -13,19 +13,17 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from posixpath import basename
 from django.contrib import admin
-from rest_framework import routers
 from django.urls import include, path
+from django.views.generic.base import RedirectView
 from rest import views
-from django.conf import settings
 from graphene_django.views import GraphQLView
 from rest.schema import schema
 from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = [
-
-    path('', views.index.as_view()),
+ #   path('', RedirectView.as_view(url="http://www.google.com", permanent=False)),
+    path('', RedirectView.as_view(url="graphql", permanent=False)),
     path('admin/', admin.site.urls),
     path('api', views.CalculateMetric.as_view()),
     path('git', views.CalculateGitMetric.as_view()),
