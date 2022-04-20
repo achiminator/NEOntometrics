@@ -261,8 +261,8 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                 <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#annotationPropertyDomainAxioms"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <neontometrics:MetricDefinition>Counts the number of annotation domain declarations of the (custom) annotation properties.</neontometrics:MetricDefinition>
-        <neontometrics:MetricDescription>Annotation Domain restrictions in the settings of the annotation properties limit the classes on where an annotation can be put. If &quot;Class&quot; (1) &quot;hasAnnotation&quot; (2) &quot;Annotation&quot; (3), the class (1) is is limited through the domain element.</neontometrics:MetricDescription>
+        <neontometrics:MetricDefinition>Counts the number of annotation domain declarations of the annotation properties.</neontometrics:MetricDefinition>
+        <neontometrics:MetricDescription>Annotation Domain restrictions in the settings of the annotation properties limit the classes on where an annotation can be put. If &quot;Class&quot; (1) &quot;hasAnnotation&quot; (2) &quot;Annotation&quot; (3), the class (1) is limited through the domain element.</neontometrics:MetricDescription>
         <rdfs:seeAlso rdf:resource="https://www.w3.org/TR/owl2-syntax/#Annotation_Property_Domain"/>
     </owl:Class>
     
@@ -279,7 +279,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
             </owl:Restriction>
         </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Counts the number of annotation range declarations of the (custom) annotation properties.</neontometrics:MetricDefinition>
-        <neontometrics:MetricDescription>Annotation Range restrictions in the settings of the annotation properties limit the types or classes that can be used as an annotation.  If &quot;Class&quot; (1) &quot;hasAnnotation&quot; (2) &quot;Annotation&quot; (3), the annotation (1) is is limited through the Range element. Examples are datatypes like &quot;xsd:integer&quot; or other classes (if these other classes are used as annotations for a class)</neontometrics:MetricDescription>
+        <neontometrics:MetricDescription>Annotation Range restrictions in the settings of the annotation properties limit the types or classes that can be used as an annotation.  If &quot;Class&quot; (1) &quot;hasAnnotation&quot; (2) &quot;Annotation&quot; (3), the annotation (3) is limited through the Range element. Examples are datatypes like &quot;xsd:integer&quot; or other classes (if these other classes are used as annotations for a class)</neontometrics:MetricDescription>
         <rdfs:seeAlso rdf:resource="https://www.w3.org/TR/owl2-syntax/#Annotation_Property_Range"/>
     </owl:Class>
     
@@ -327,8 +327,8 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                 <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#datatypeAnnotations"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <neontometrics:MetricDefinition>Coutns the number of annotations on datatypes.</neontometrics:MetricDefinition>
-        <neontometrics:MetricDescription>Annotations can also be set on built-in or custom data types. (e.g. xsd:</neontometrics:MetricDescription>
+        <neontometrics:MetricDefinition>Counts the number of annotations on datatypes.</neontometrics:MetricDefinition>
+        <neontometrics:MetricDescription>Counts the number of annotation on data types (e.g., xsd:Int)</neontometrics:MetricDescription>
     </owl:Class>
     
 
@@ -343,8 +343,8 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                 <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#generalAnnotationAxioms"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <neontometrics:MetricDefinition>Counts the number of annotations on the ontoology in general.</neontometrics:MetricDefinition>
-        <neontometrics:MetricDescription>Coutns the annotations set on the ontology in general. E.g.,: &quot;This is an ontology about family relations&quot;</neontometrics:MetricDescription>
+        <neontometrics:MetricDefinition>Counts the number of annotations on the ontology in general.</neontometrics:MetricDefinition>
+        <neontometrics:MetricDescription>Counts the annotations set on the ontology in general. E.g.,: &quot;This is an ontology about family relations&quot;</neontometrics:MetricDescription>
     </owl:Class>
     
 
@@ -353,8 +353,8 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Annotations_on_Class">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Class_Metrics"/>
-        <neontometrics:MetricDefinition>Number of Annotations on a Class</neontometrics:MetricDefinition>
-        <neontometrics:MetricDescription>Calculates the number of human centered class annotations. This can be based on built-in annotation proeprties like e.g., rdfs:comment, or rdfs:seeAlso, or self-created properties.</neontometrics:MetricDescription>
+        <neontometrics:MetricDefinition>Number of annotations on a class.</neontometrics:MetricDefinition>
+        <neontometrics:MetricDescription>Calculates the number of human centered class annotations. This can be based on built-in annotation properties like e.g., rdfs:comment, or rdfs:seeAlso, or self-created properties.</neontometrics:MetricDescription>
     </owl:Class>
     
 
@@ -369,7 +369,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                 <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#objectPropertyAnnotations"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <neontometrics:MetricDefinition>Counts the number of annotations on object propertiies.</neontometrics:MetricDefinition>
+        <neontometrics:MetricDefinition>Counts the number of annotations on object properties.</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>Measures the annotations set on object properties, thus relations between classes. E.g.: inLoveWith -&gt; The romantical feeling to one another.</neontometrics:MetricDescription>
     </owl:Class>
     
@@ -466,8 +466,8 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Class_Metrics">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Iterative_Metrics"/>
-        <neontometrics:MetricDefinition>Metrics that are calculated per class</neontometrics:MetricDefinition>
-        <neontometrics:MetricDescription>Class Metrics give an further insight into the individual classes.</neontometrics:MetricDescription>
+        <neontometrics:MetricDefinition>Metrics that are calculated per class in the ontology.</neontometrics:MetricDefinition>
+        <neontometrics:MetricDescription>Class Metrics give an further insight into the individual classes. They are calculated once for every class in the ontology.</neontometrics:MetricDescription>
     </owl:Class>
     
 
@@ -501,7 +501,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                 <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#classesThatShareARelation"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <neontometrics:MetricDescription>The number of subclasses of for each class that have the same relation declaration.</neontometrics:MetricDescription>
+        <neontometrics:MetricDescription>The number of classes that use share a relation with another class.</neontometrics:MetricDescription>
         <neontometrics:MetricInterpretation>Can be used to determine whether the usage of the various relation properties is rather diverse or homogenous.</neontometrics:MetricInterpretation>
     </owl:Class>
     
@@ -582,7 +582,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#CohesionMetrics">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Frameworks"/>
-        <rdfs:seeAlso>Yao, Haining; Orme, Anthony Mark; Etzkorn, Letha (2005): Cohesion Metrics for Ontology Design and Application. In J. of Computer Science 1 (1), pp. 107–113. DOI: 10.3844/jcssp.2005.107.113.</rdfs:seeAlso>
+        <rdfs:seeAlso>Yao, Haining; Orme, Anthony Mark; Etzkorn, Letha (2005): Cohesion Metrics for Ontology Design and Application. In J. of Computer Science 1 (1), pp. 107–113. DOI: 10.3844/jcssp.2005.107.113.</rdfs:seeAlso>
     </owl:Class>
     
 
@@ -655,7 +655,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
             </owl:Restriction>
         </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The DL-subset of the ontology.</neontometrics:MetricDefinition>
-        <neontometrics:MetricDescription>Computational ontologies are build on description logic as their foundation. Description Logic comes in several subsets, dending on their expressivity. This element shows to which subset this ontology belongs.</neontometrics:MetricDescription>
+        <neontometrics:MetricDescription>Computational ontologies are build on description logic as their foundation. Description Logic comes in several subsets, depending on their expressivity. This element shows to which subset this ontology belongs.</neontometrics:MetricDescription>
         <rdfs:seeAlso rdf:resource="http://www.cs.man.ac.uk/~ezolin/dl/"/>
     </owl:Class>
     
@@ -726,7 +726,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Data_Property_Characteristics">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Property_Metrics"/>
-        <neontometrics:MetricDescription>Data properties can be further logically described usiing predefined attributes (like disjointness, equivalence). These statements are covered by this category.</neontometrics:MetricDescription>
+        <neontometrics:MetricDescription>Data properties can be further logically described using predefined attributes (like disjointness, equivalence). These statements are covered by this category.</neontometrics:MetricDescription>
         <rdfs:seeAlso rdf:resource="https://www.w3.org/TR/2012/REC-owl2-syntax-20121211/#Data_Property_Axioms"/>
     </owl:Class>
     
@@ -743,7 +743,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
             </owl:Restriction>
         </rdfs:subClassOf>
         <neontometrics:MetricDescription>Counts the number of data property domain declarations.</neontometrics:MetricDescription>
-        <neontometrics:MetricDescription>Imagine the dataproperty statements of the class Domain:&quot;Person&quot; &quot;hasAge&quot;. Then we use the domain statement to restrict that the Data Property &quot;hasAge&quot; can only be linked to elements of the class &quot;person.</neontometrics:MetricDescription>
+        <neontometrics:MetricDescription>Imagine the data property statements of the class Domain:&quot;Person&quot; &quot;hasAge&quot;. Then we use the domain statement to restrict that the Data Property &quot;hasAge&quot; can only be linked to elements of the class &quot;person.</neontometrics:MetricDescription>
         <rdfs:seeAlso rdf:resource="https://www.w3.org/TR/2012/REC-owl2-syntax-20121211/#Data_Property_Domain"/>
     </owl:Class>
     
@@ -760,7 +760,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
             </owl:Restriction>
         </rdfs:subClassOf>
         <neontometrics:MetricDescription>Counts the number of data property range declarations.</neontometrics:MetricDescription>
-        <neontometrics:MetricDescription>Imagine the dataproperty statements of the class &quot;hasAge&quot; Range:&quot;xsd:integer&quot;. Then we use the range statement to restrict that the Data Property &quot;hasAge&quot; can only be linked to the datatype &quot;xsd:integer&quot;</neontometrics:MetricDescription>
+        <neontometrics:MetricDescription>Imagine the data property statements of the class &quot;hasAge&quot; Range:&quot;xsd:integer&quot;. Then we use the range statement to restrict that the Data Property &quot;hasAge&quot; can only be linked to the datatype &quot;xsd:integer&quot;</neontometrics:MetricDescription>
         <rdfs:seeAlso rdf:resource="https://www.w3.org/TR/2012/REC-owl2-syntax-20121211/#Data_Property_Range"/>
     </owl:Class>
     
@@ -858,7 +858,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Elemental_Metrics">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Metrics"/>
-        <neontometrics:MetricDescription>The &quot;Elemental Metrics&quot; are the &quot;building blocks&quot; of all other metrics proposed in the Frameworks. E.g., If a framework poposes an &quot;attribute/class&quot; Ratio, it consists of elemental metrics &quot;Attributes&quot; and &quot;Classes&quot;</neontometrics:MetricDescription>
+        <neontometrics:MetricDescription>The &quot;Elemental Metrics&quot; are the &quot;building blocks&quot; of all other metrics proposed in the Frameworks. E.g., If a framework proposes an &quot;attribute/class&quot; Ratio, it consists of elemental metrics &quot;Attributes&quot; and &quot;Classes&quot;</neontometrics:MetricDescription>
     </owl:Class>
     
 
@@ -1176,8 +1176,8 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
             </owl:Restriction>
         </rdfs:subClassOf>
         <neontometrics:MetricDefinition>States that an individual with a functional data property can have at most one distinct property</neontometrics:MetricDefinition>
-        <neontometrics:MetricDescription rdf:resource="https://www.w3.org/TR/2012/REC-owl2-syntax-20121211/#Functional_Data_Properties"/>
         <neontometrics:MetricDescription>An example for a classical functional data property would be &quot;birth day&quot;, as one person can have at most one birthday.</neontometrics:MetricDescription>
+        <rdfs:seeAlso rdf:resource="https://www.w3.org/TR/2012/REC-owl2-syntax-20121211/#Functional_Data_Properties"/>
     </owl:Class>
     
 
@@ -1423,7 +1423,7 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
             </owl:Restriction>
         </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The maximum depth of a path in a graph.</neontometrics:MetricDefinition>
-        <neontometrics:MetricDescription>The maximum number of following sub class statements (without regarding multi inheritance) of a path. Imagine a tree, the leaf that is the farest away from the root.</neontometrics:MetricDescription>
+        <neontometrics:MetricDescription>The maximum number of following sub class statements (without regarding multi inheritance) of a path. Imagine a tree, the leaf that is the farthest away from the root.</neontometrics:MetricDescription>
     </owl:Class>
     
 
@@ -1455,7 +1455,7 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
             </owl:Restriction>
         </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Shows the maximum number of superclasses a class has.</neontometrics:MetricDefinition>
-        <neontometrics:MetricDescription>This element indicates the highest level of mutli inheritance of a class in the ontology.</neontometrics:MetricDescription>
+        <neontometrics:MetricDescription>This element indicates the highest level of multi inheritance of a class in the ontology.</neontometrics:MetricDescription>
     </owl:Class>
     
 
@@ -1525,7 +1525,7 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
                 <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#negativeObjectPropertyAssertionAxioms"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <neontometrics:MetricDefinition>Counts how many object properties are negativly asserted overall.</neontometrics:MetricDefinition>
+        <neontometrics:MetricDefinition>Counts how many object properties are negatively asserted overall.</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>A negative object property assertion is the statement that two individuals are NOT connected with each other.</neontometrics:MetricDescription>
         <rdfs:seeAlso rdf:resource="https://www.w3.org/TR/2012/REC-owl2-syntax-20121211/#Negative_Object_Property_Assertions"/>
     </owl:Class>
@@ -1555,7 +1555,7 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
             </owl:Restriction>
         </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Measures the number of independent graphs in an ontology.</neontometrics:MetricDefinition>
-        <neontometrics:MetricDescription>At times, an ontology does not only contain one large, interconnected graph, but &quot;islands&quot; that are independent from each other. This metric does measure iif the subclasses of root classes are connected wiith each other (through object properties). If not, it shows how much graphs (trees beginnig from the root) are isolated.</neontometrics:MetricDescription>
+        <neontometrics:MetricDescription>At times, an ontology does not only contain one large, interconnected graph, but &quot;islands&quot; that are independent from each other. This metric does measure if the subclasses of root classes are connected with each other (through object properties). If not, it shows how much graphs (graphs that start on root level) are isolated.</neontometrics:MetricDescription>
         <neontometrics:MetricInterpretation>Ontologies can get quite large. If there are &quot;islands&quot; within an ontology, it can make sense to seperate these into seperate ontology files, to reduce complexity.</neontometrics:MetricInterpretation>
     </owl:Class>
     
@@ -3739,7 +3739,7 @@ understood, manipulated, and exploited.</neontometrics:MetricDescription>
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Breath">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Structural"/>
-        <neontometrics:MetricDefinition>Breadth is a property related to the cardinality of levels (“generations”) in a graph, where the arcs considered here are again only isa arcs. This measure only applies to digraphs.</neontometrics:MetricDefinition>
+        <neontometrics:MetricDefinition>Breadth is a property related to the cardinality of levels (generations) in a graph, where the arcs considered here are again only isa arcs. This measure only applies to digraphs.</neontometrics:MetricDefinition>
     </owl:Class>
     
 
@@ -3802,7 +3802,7 @@ represent values from a metric space of just a list</neontometrics:MetricDescrip
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_meta-logical_adequacy">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Structural"/>
         <neontometrics:MetricDescription>Formal semantics can go beyond first-order, in order to attempt at representing functional adequacy as well.
-The major example of that attempt is OntoClean [Guarino&amp;Welty 2004]. OntoClean aims to classify the classes of an ontology according to some meta-properties, e.g. rigidity, unity, dependence. OntoClean metaproperties try to reduce some functional measures to the measurement of adequacy wrt series of possible worlds (states of affairs).
+The major example of that attempt is OntoClean [Guarino&amp;Welty 2004]. OntoClean aims to classify the classes of an ontology according to some meta-properties, e.g. rigidity, unity, dependence. OntoClean metaproperties try to reduce some functional measures to the measurement of adequacy w.r.t. series of possible worlds (states of affairs).
 Possible worlds can be used to check the quality of an ontology only
 in an ex-post way, e.g. by analyzing the history of a temporal database built according to the ontology that must be evaluated. This is unfit, since an ontology is supposed to be evaluated before its application, not afterwords. For this reason, OntoClean methodology suggests designers or experts to assign metaproperties in advance, and then to use these assignments to check the meta-logical consistency of the taxonomy.</neontometrics:MetricDescription>
     </owl:Class>
@@ -4354,7 +4354,7 @@ F = Ci(I) / Ci`(I)</neontometrics:MetricDefinition>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Metrics"/>
         <neontometrics:MetricDefinition>The importance of a class (Imp(Ci)) is defined as the number of instances that belong to the inheritance subtree rooted at Ci in the KB(inst(Ci)) compared to the total number of class instances in the KB (CI).
 Imp(Ci) = Inst(Ci)/KB(CI)</neontometrics:MetricDefinition>
-        <neontometrics:MetricDescription>This metric is important because it helps in identifying which areas of the schema are in focus when the instances are extracted and inform the user of the suitability of his/her intended use. It will also help direct the ontology developer or data extractor to where s/he should focus on getting data if the intention is to get a consistent coverage of all classes in the schema. Although this measure doesn’t consider the real world semantics, where some classes naturally have more instances than others, the class importance can still be used (together with the class connectivity measure mentioned above) to give an indication on what parts of the ontology are considered focal and what parts are on the edges.</neontometrics:MetricDescription>
+        <neontometrics:MetricDescription>This metric is important because it helps in identifying which areas of the schema are in focus when the instances are extracted and inform the user of the suitability of his/her intended use. It will also help direct the ontology developer or data extractor to where s/he should focus on getting data if the intention is to get a consistent coverage of all classes in the schema. Although this measure does not consider the real world semantics, where some classes naturally have more instances than others, the class importance can still be used (together with the class connectivity measure mentioned above) to give an indication on what parts of the ontology are considered focal and what parts are on the edges.</neontometrics:MetricDescription>
     </owl:Class>
     
 
@@ -4497,7 +4497,7 @@ RU(Ci) = IREL(Ci) / CREL(Ci)</neontometrics:MetricDefinition>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Knowledgebase_Metrics"/>
         <neontometrics:MetricDefinition>The cohesion (Coh) of an ontology is defined as the number of connected components (CC) of the graph representing the KB.</neontometrics:MetricDefinition>
-        <neontometrics:MetricDescription>This metric represents the number of connected components in the KB. This metric can particularly help if “islands” form in the KB as a result of extracting data from separate sources that do not have common knowledge, giving insight into what areas need more instances in order to enable the different connected components to connect to each other. Having less connected components (ideally 1) can be helpful, for example, in finding more useful semantic-associations [3] in the ontology.</neontometrics:MetricDescription>
+        <neontometrics:MetricDescription>This metric represents the number of connected components in the KB. This metric can particularly help if &apos;islands&apos; form in the KB as a result of extracting data from separate sources that do not have common knowledge, giving insight into what areas need more instances in order to enable the different connected components to connect to each other. Having less connected components (ideally 1) can be helpful, for example, in finding more useful semantic-associations [3] in the ontology.</neontometrics:MetricDescription>
         <neontometrics:MetricInterpretation>The result will be an integer representing the number of connected components in the ontology.</neontometrics:MetricInterpretation>
     </owl:Class>
     
@@ -4522,7 +4522,7 @@ RU(Ci) = IREL(Ci) / CREL(Ci)</neontometrics:MetricDefinition>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Schema_Metrics"/>
         <neontometrics:MetricDefinition>Formally, the inheritance richness of the schema (IRs) is defined as the average number of subclasses per class.</neontometrics:MetricDefinition>
-        <neontometrics:MetricDescription>This measure describes the distribution of information across different levels of the ontology’s inheritance tree or the fan-out of parent classes. This is a good indication of how well knowledge is grouped into different categories and subcategories in the ontology. This measure can distinguish a horizontal ontology from a vertical ontology or an ontology with different levels of specialization. A horizontal (or flat) ontology is an ontology that has a small number of inheritance levels, and each class has a relatively large number of subclasses. In contrast, a vertical ontology contains a large number of inheritance levels where classes have a small number of subclasses. This metric can be measured for the whole schema or for a subtree of the schema.</neontometrics:MetricDescription>
+        <neontometrics:MetricDescription>This measure describes the distribution of information across different levels of the ontology inheritance tree or the fan-out of parent classes. This is a good indication of how well knowledge is grouped into different categories and subcategories in the ontology. This measure can distinguish a horizontal ontology from a vertical ontology or an ontology with different levels of specialization. A horizontal (or flat) ontology is an ontology that has a small number of inheritance levels, and each class has a relatively large number of subclasses. In contrast, a vertical ontology contains a large number of inheritance levels where classes have a small number of subclasses. This metric can be measured for the whole schema or for a subtree of the schema.</neontometrics:MetricDescription>
         <neontometrics:MetricInterpretation>The result of the formula will be a real number representing the average number of subclasses per class. An ontology with a low IRS would be or a vertical nature, which might reflect a very detailed type of knowledge that the ontology represents. while an ontology with a high IRS would be of a horizontal nature, which means that ontology represents a wide range of general knowledge.</neontometrics:MetricInterpretation>
     </owl:Class>
     
@@ -4593,7 +4593,7 @@ RD = P / (H +P)</neontometrics:MetricDefinition>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Relationship_Metrics"/>
         <neontometrics:MetricDefinition>The importance of a relationship (Imp(Ri)) is defined as the number of instances of relationship Ri in the KB (inst(Ri)) compared to the total number of property instances in the KB (RI)
 Imp(Ri) = Inst(Ri) / KB (RI)</neontometrics:MetricDefinition>
-        <neontometrics:MetricDescription>Relationship Importance: This metric measures the percentage of instances of a relationship with respect to the total number of relationship instances in the KB. This metric is important in that it will help in identifying which schema relationships were in focus when the instances were extracted and inform the user of the suitability of his/her intended use. This metric can also help in directing the instance extraction process to include a more diverse set of relationships the KB doesn’t include the required diversity.</neontometrics:MetricDescription>
+        <neontometrics:MetricDescription>Relationship Importance: This metric measures the percentage of instances of a relationship with respect to the total number of relationship instances in the KB. This metric is important in that it will help in identifying which schema relationships were in focus when the instances were extracted and inform the user of the suitability of his/her intended use. This metric can also help in directing the instance extraction process to include a more diverse set of relationships the KB does not include the required diversity.</neontometrics:MetricDescription>
         <neontometrics:MetricInterpretation>The result of the formula will be a percentage representing the importance of the current class.</neontometrics:MetricInterpretation>
     </owl:Class>
     
@@ -4626,8 +4626,7 @@ Imp(Ri) = Inst(Ri) / KB (RI)</neontometrics:MetricDefinition>
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Schema_Metrics"/>
-        <neontometrics:MetricDefinition>Formally, the relationship Diversity (RR) of a schema is defined as the ratio of the number of relationships (P) defined in the schema, divided by the sum of the number of subclasses (SC) (which is the same as the number of inheritance relationships)
-relationships.
+        <neontometrics:MetricDefinition>Formally, the relationship Diversity (RR) of a schema is defined as the ratio of the number of relationships (P) defined in the schema, divided by the sum of the number of subclasses (SC) (which is the same as the number of inheritance relationships).
 RR = P / (SC + P)</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>This metric reflects the diversity of relations and placement of relations in the ontology. An ontology that contains many relations other than class-subclass relations is richer than a taxonomy with only class-subclass relationships.</neontometrics:MetricDescription>
         <neontometrics:MetricInterpretation>The result of the formula will be a percentage representing how much of the connections between classes are rich relationships compared to all of the possible connections that can include rich relationships and inheritance relationships. For example, if an ontology has an RR close to zero, that would indicate that most of the relationships are class-subclass (i.e. ISA) relationships. In contrast, an ontology with a RR close to one would indicate that most of the relationships are other than class-subclass.</neontometrics:MetricInterpretation>
@@ -4674,12 +4673,12 @@ SD = H/C</neontometrics:MetricDefinition>
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Frameworks"/>
-        <neontometrics:MetricDefinition>• Let P1,P2,.. . ,Pn be the set of n properties defined in an ontology.
-• Let C1,C2,... ,Cm be the set of m classes defined in an ontology. 
-• Let Fc1,Fc2,... , Fcm be the Fanout of each class Ci (see below for the definition of Fanout).
-• Let O1 be the ontology of interest.
-• Let → be a mapping from set Ci ,to Cj such that Ci →Cj if class Cj is a subclass of class Ci
-• Let &amp; be a mapping from set Ci to set Pj such that Ci &amp; Pj if class Ci includes property Pj as part of its definition.</neontometrics:MetricDefinition>
+        <neontometrics:MetricDefinition>- Let P1,P2,.. . ,Pn be the set of n properties defined in an ontology.
+- Let C1,C2,... ,Cm be the set of m classes defined in an ontology. 
+- Let Fc1,Fc2,... , Fcm be the Fanout of each class Ci (see below for the definition of Fanout).
+- Let O1 be the ontology of interest.
+- Let -&gt; be a mapping from set Ci ,to Cj such that Ci -&gt; Cj if class Cj is a subclass of class Ci
+- Let &amp; be a mapping from set Ci to set Pj such that Ci &amp; Pj if class Ci includes property Pj as part of its definition.</neontometrics:MetricDefinition>
         <rdfs:seeAlso>Orme, Anthony Mark; Yao, Haining; Etzkorn, Letha H. (2007): Indicating ontology data quality, stability, and completeness throughout ontology evolution. In Journal of Software Maintenance and Evolution 19 (1), pp. 49–75. DOI: 10.1002/smr.341.</rdfs:seeAlso>
     </owl:Class>
     
@@ -4689,7 +4688,7 @@ SD = H/C</neontometrics:MetricDefinition>
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Property_Metrics">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Elemental_Metrics"/>
-        <neontometrics:MetricDescription>Metrics that are concerned with properties than can be assigned to classes. That includes Data-, Annotation-, or Object Property metrics</neontometrics:MetricDescription>
+        <neontometrics:MetricDescription>Metrics that are concerned with properties than can be assigned to classes. That includes data-, annotation-, or object property metrics.</neontometrics:MetricDescription>
     </owl:Class>
     
 
@@ -4766,7 +4765,7 @@ SD = H/C</neontometrics:MetricDefinition>
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Relationship_Assertions_on_Class">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Class_Metrics"/>
         <neontometrics:MetricDefinition>Counts the number of relationship assertions on a class.</neontometrics:MetricDefinition>
-        <neontometrics:MetricDescription>Classes can be connnected to other classes using object properties. This measurement counts how many classes are connected to a specific class using object properties in the subClassOf Signature.</neontometrics:MetricDescription>
+        <neontometrics:MetricDescription>Classes can be connected to other classes using object properties. This measurement counts how many classes are connected to a specific class using object properties in the subClassOf Signature.</neontometrics:MetricDescription>
     </owl:Class>
     
 
@@ -5005,7 +5004,7 @@ SD = H/C</neontometrics:MetricDefinition>
                 <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#rootClasses"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <neontometrics:MetricDefinition>Counts all classes that do not have parent classes. Note, that the classes do not necesarly need the statement &quot;rdfs:subClassOf owl:Thing&quot; to be counted.</neontometrics:MetricDefinition>
+        <neontometrics:MetricDefinition>Counts all classes that do not have parent classes. Note, that the classes do not necessarily need the statement &quot;rdfs:subClassOf owl:Thing&quot; to be counted.</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>All the classes at the top of an ontology. It tells us how many &quot;entrypoints&quot; in the inheritance tree exist
 .</neontometrics:MetricDescription>
         <rdfs:label>Subclasses of Thing</rdfs:label>
@@ -5113,7 +5112,7 @@ SD = H/C</neontometrics:MetricDefinition>
             </owl:Restriction>
         </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The depth of all paths accumulated</neontometrics:MetricDefinition>
-        <neontometrics:MetricDescription>The summed up depth of all paths in an ontology. Eg, path a from ROOT to leaf class A has 3 levels, path b has 2, etc</neontometrics:MetricDescription>
+        <neontometrics:MetricDescription>The summed up depth of all paths in an ontology. E.g., path a from ROOT to leaf class A has 3 levels, path b has 2, etc.</neontometrics:MetricDescription>
     </owl:Class>
     
 
@@ -5161,7 +5160,7 @@ SD = H/C</neontometrics:MetricDefinition>
                 <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#recursiveSubClasses"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <neontometrics:MetricDefinition>Counts the number of subclasses per class iterativly. Also refered to as fan-outness per some papers, though the definition is differently for the papers.</neontometrics:MetricDefinition>
+        <neontometrics:MetricDefinition>Counts the number of subclasses per class iteratively. Also refered to as fan-outness per some papers, though the definition is differently for the papers.</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>If b subClassOf a, c subClassOf a and b subClassOf b, then the metric would calculate to a 4, as it first recursivly checks all subClasses of a, then of b, and so on.</neontometrics:MetricDescription>
     </owl:Class>
     
@@ -5313,7 +5312,7 @@ SD = H/C</neontometrics:MetricDefinition>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl"/>
         <neontometrics:MetricDefinition>Number of Properties (NoP) is the number of properties explicitly defined in the ontology Oi .</neontometrics:MetricDefinition>
-        <neontometrics:MetricDescription>Example. In the ontology shown in Figure 4, each class can possess properties (but is not required to). Class 1 has one property, class 2 has two properties, class 3 has no properties, class 4 has three properties, and class 5 has one property. Thus, NoP = 7.</neontometrics:MetricDescription>
+        <neontometrics:MetricDescription>Example. Each class can possess properties (but is not required to). Class 1 has one property, class 2 has two properties, class 3 has no properties, class 4 has three properties, and class 5 has one property. Thus, NoP = 7.</neontometrics:MetricDescription>
     </owl:Class>
     
 
