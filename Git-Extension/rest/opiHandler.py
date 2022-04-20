@@ -66,6 +66,7 @@ class OpiHandler:
             "b. Reasoning deactivated. "
         else:
             counter = 0
+            metricResponse = None
             try:
                 metricResponse = requestsLib.post(url=self.OntoMetricsEndPoint, data=ontologyString,  timeout=settings.OPITIMEOUT, headers={
                     "save": "false", "reasoner": str(reasoner), "classMetrics": str(classMetrics)})
