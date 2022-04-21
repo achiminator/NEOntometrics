@@ -1,6 +1,5 @@
 package main.java.neontometrics.calc;
 
-
 import java.util.Set;
 import java.util.concurrent.Callable;
 import org.semanticweb.owlapi.model.AxiomType;
@@ -23,7 +22,6 @@ public class AnnotationAxiomsMetric extends MetricCalculations implements Callab
     public AnnotationAxiomsMetric(OWLOntology ontology, boolean withImports) {
 	super(ontology, withImports);
     }
-
 
     public AnnotationAxiomsMetric call() {
 	countAnnotationAxiomsMetric();
@@ -54,40 +52,67 @@ public class AnnotationAxiomsMetric extends MetricCalculations implements Callab
      * @param withImports
      */
     private void iterativeAnnotationMetrics() {
-	int objectPropertyAnnotation=0;
-	int dataPropertyAnnotation=0;
+	int objectPropertyAnnotation = 0;
+	int dataPropertyAnnotation = 0;
 	int datatypeAnnotation = 0;
+	int individualAnnotation = 0;
 	int classAnnoation = 0;
+	int deprecatedClass = 0;
+	int deprecatedDataType = 0;
+	int deprecatedDataProperty = 0;
+	int deprecatedIndividual = 0;
+	int deprecatedObjectProperty = 0;
 	Set<OWLAnnotationAssertionAxiom> annotationAxioms = ontology.getAxioms(AxiomType.ANNOTATION_ASSERTION,
 		OntologyUtility.ImportClosures(imports));
 	for (OWLAnnotationAssertionAxiom owlAnnotationAssertionAxiom : annotationAxioms) {
+
 	    if (!(owlAnnotationAssertionAxiom.getSubject() instanceof OWLAnonymousIndividual)) {
 		Set<OWLEntity> entities = ontology
 			.getEntitiesInSignature((IRI) owlAnnotationAssertionAxiom.getSubject());
 		for (OWLEntity entity : entities) {
-		    if (entity.isOWLClass())
+		    if (entity.isOWLClass()) {
+			if (owlAnnotationAssertionAxiom.isDeprecatedIRIAssertion())
+			    deprecatedClass++;
 			classAnnoation++;
-		    else if (entity.isOWLDatatype())
-			datatypeAnnotation++;
-		    else if (entity.isOWLDataProperty())
+		    } else if (entity.isOWLDatatype()) {
+			if (owlAnnotationAssertionAxiom.isDeprecatedIRIAssertion())
+			    deprecatedDataType++;
+			datatypeAnnotation++;}
+			else if (entity.isOWLNamedIndividual()) {
+			    if (owlAnnotationAssertionAxiom.isDeprecatedIRIAssertion())
+				deprecatedIndividual++;
+			    individualAnnotation++;
+			
+		    } else if (entity.isOWLDataProperty()) {
+			if (owlAnnotationAssertionAxiom.isDeprecatedIRIAssertion())
+			    deprecatedDataProperty++;
 			dataPropertyAnnotation++;
-		    else if (entity.isOWLObjectProperty())
+		    } else if (entity.isOWLObjectProperty()) {
+			if (owlAnnotationAssertionAxiom.isDeprecatedIRIAssertion())
+			    deprecatedObjectProperty++;
 			objectPropertyAnnotation++;
+		    }
 		}
 	    }
 	}
-	
+
 	returnObject.put("dataPropertyAnnotations", dataPropertyAnnotation);
 	returnObject.put("classAnnotations", classAnnoation);
 	returnObject.put("objectPropertyAnnotations", objectPropertyAnnotation);
+	returnObject.put("individualAnnotations", individualAnnotation);
 	returnObject.put("datatypeAnnotations", datatypeAnnotation);
+	returnObject.put("deprecatedDataProperties", deprecatedDataProperty);
+	returnObject.put("deprecatedClasses", deprecatedClass);
+	returnObject.put("deprecatedObjectProperties", deprecatedObjectProperty);
+	returnObject.put("deprecatedDataTypes", deprecatedDataType);
+	returnObject.put("deprecatedIndividuals", deprecatedIndividual);
     }
 
     private void countAnnotationAssertionAxiomsMetric() {
 	int annotationAssertionAxiomsCount = ontology.getAxiomCount(AxiomType.ANNOTATION_ASSERTION,
 		OntologyUtility.ImportClosures(imports));
 	returnObject.put("annotationAssertionsAxioms", annotationAssertionAxiomsCount);
-	
+
     }
 
     private void countAnnotationPropertyDomainAxiomsMetric() {

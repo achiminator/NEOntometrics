@@ -244,7 +244,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Annotation_Properties -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Annotation_Properties">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Property_Metrics"/>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Elemental_Metrics"/>
         <neontometrics:MetricDefinition>Metrics related to annotation properties.</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>Annotations provide human centered descriptions and explanations.</neontometrics:MetricDescription>
     </owl:Class>
@@ -333,6 +333,38 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
     
 
 
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Annotations_On_Individuals -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Annotations_On_Individuals">
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Annotation_Properties"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
+                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#individualAnnotations"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <neontometrics:MetricDefinition>Counts the number of annotations on individuals.</neontometrics:MetricDefinition>
+        <neontometrics:MetricDescription>Counts the number of annotation on individuals (or instances). E.g. Individual &apos;Herbert&apos; which is an instance of the class &apos;Person&apos; has the Annotation &apos;rdfs:comment: Nice person&quot;</neontometrics:MetricDescription>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Annotations_On_Object_Properties -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Annotations_On_Object_Properties">
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Annotation_Properties"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
+                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#objectPropertyAnnotations"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <neontometrics:MetricDefinition>Counts the number of annotations on object properties.</neontometrics:MetricDefinition>
+        <neontometrics:MetricDescription>Measures the annotations set on object properties, thus relations between classes. E.g.: inLoveWith -&gt; The romantical feeling to one another.</neontometrics:MetricDescription>
+    </owl:Class>
+    
+
+
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Annotations_On_Ontology -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Annotations_On_Ontology">
@@ -355,22 +387,6 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Class_Metrics"/>
         <neontometrics:MetricDefinition>Number of annotations on a class.</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>Calculates the number of human centered class annotations. This can be based on built-in annotation properties like e.g., rdfs:comment, or rdfs:seeAlso, or self-created properties.</neontometrics:MetricDescription>
-    </owl:Class>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Annotations_on_Object_Properties -->
-
-    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Annotations_on_Object_Properties">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Annotation_Properties"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
-                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#objectPropertyAnnotations"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <neontometrics:MetricDefinition>Counts the number of annotations on object properties.</neontometrics:MetricDefinition>
-        <neontometrics:MetricDescription>Measures the annotations set on object properties, thus relations between classes. E.g.: inLoveWith -&gt; The romantical feeling to one another.</neontometrics:MetricDescription>
     </owl:Class>
     
 
@@ -772,6 +788,86 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Class_Metrics"/>
         <neontometrics:MetricDefinition>Counts the number of relationships on a class</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>This metrics counts how many relationships are asserted in the respective class.</neontometrics:MetricDescription>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Deprecated_Classes -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Deprecated_Classes">
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Annotation_Properties"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
+                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#deprecatedClasses"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <neontometrics:MetricDefinition>Counts how many classes are marked as &quot;Deprecated&quot;</neontometrics:MetricDefinition>
+        <neontometrics:MetricInterpretation>Some ontology developers do not like to delete their obsolete classes, as the knowledge would be lost. Instead, they mark them with the standardized annotation &apos;deprecated&apos;. This tells other knowledge engineers to not use it further in upcoming versions, without loosing the modeled knowledge.</neontometrics:MetricInterpretation>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Deprecated_Data_Properties -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Deprecated_Data_Properties">
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Annotation_Properties"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
+                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#deprecatedDataProperties"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <neontometrics:MetricDefinition>Counts how many data properties are marked as &quot;Deprecated&quot;</neontometrics:MetricDefinition>
+        <neontometrics:MetricInterpretation>Some ontology developers do not like to delete their obsolete classes, as the knowledge would be lost. Instead, they mark them with the standardized annotation &apos;deprecated&apos;. This tells other knowledge engineers to not use it further in upcoming versions, without loosing the modeled knowledge.</neontometrics:MetricInterpretation>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Deprecated_Data_Types -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Deprecated_Data_Types">
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Annotation_Properties"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
+                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#deprecatedDataTypes"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <neontometrics:MetricDefinition>Counts how many data types are marked as &quot;Deprecated&quot;</neontometrics:MetricDefinition>
+        <neontometrics:MetricInterpretation>Some ontology developers do not like to delete their obsolete classes, as the knowledge would be lost. Instead, they mark them with the standardized annotation &apos;deprecated&apos;. This tells other knowledge engineers to not use it further in upcoming versions, without loosing the modeled knowledge.</neontometrics:MetricInterpretation>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Deprecated_Individuals -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Deprecated_Individuals">
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Annotation_Properties"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
+                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#deprecatedIndividuals"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <neontometrics:MetricDefinition>Counts how many individuals are marked as &quot;Deprecated&quot;</neontometrics:MetricDefinition>
+        <neontometrics:MetricInterpretation>Some ontology developers do not like to delete their obsolete classes, as the knowledge would be lost. Instead, they mark them with the standardized annotation &apos;deprecated&apos;. This tells other knowledge engineers to not use it further in upcoming versions, without loosing the modeled knowledge.</neontometrics:MetricInterpretation>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Deprecated_Object_Properties -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Deprecated_Object_Properties">
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Annotation_Properties"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
+                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#deprecatedObjectProperties"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <neontometrics:MetricDefinition>Counts how many object properties are marked as &apos;Deprecated&apos;</neontometrics:MetricDefinition>
+        <neontometrics:MetricInterpretation>Some ontology developers do not like to delete their obsolete classes, as the knowledge would be lost. Instead, they mark them with the standardized annotation &apos;deprecated&apos;. This tells other knowledge engineers to not use it further in upcoming versions, without loosing the modeled knowledge.</neontometrics:MetricInterpretation>
     </owl:Class>
     
 
@@ -5528,6 +5624,46 @@ SD = H/C</neontometrics:MetricDefinition>
     
 
 
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#deprecatedClasses -->
+
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#deprecatedClasses">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#deprecatedDataProperties -->
+
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#deprecatedDataProperties">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#deprecatedDataTypes -->
+
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#deprecatedDataTypes">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#deprecatedIndividuals -->
+
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#deprecatedIndividuals">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#deprecatedObjectProperties -->
+
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#deprecatedObjectProperties">
+        <rdf:type rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoMetrics"/>
+    </owl:NamedIndividual>
+    
+
+
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#differentIndividualsAxioms -->
 
     <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#differentIndividualsAxioms">
@@ -5635,6 +5771,12 @@ SD = H/C</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#inconsistentClasses -->
 
     <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#inconsistentClasses"/>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#individualAnnotations -->
+
+    <owl:NamedIndividual rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#individualAnnotations"/>
     
 
 
