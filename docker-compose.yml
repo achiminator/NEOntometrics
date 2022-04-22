@@ -32,7 +32,7 @@ services:
     image: neontometrics
     command: python manage.py rqworker
     deploy:
-      replicas: 5
+      replicas: 4
     depends_on:
       - neontometricsapi
       - neontometrics_db
@@ -57,7 +57,7 @@ services:
   # The flutter Frontend
   frontend:
     ports:
-      - '8088:8000'
+      - '8888:8000'
     restart: always
     container_name: neontometricsfrontend
     build:
