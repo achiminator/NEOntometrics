@@ -18,7 +18,7 @@ from django.urls import include, path
 from django.views.generic.base import RedirectView
 from rest import views
 from graphene_django.views import GraphQLView
-from rest.schema import schema
+from rest.graphql import schema
 from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = [

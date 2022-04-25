@@ -229,5 +229,6 @@ pymysql.install_as_MySQLdb()
 
 # Graphene
 GRAPHENE = {
-    'SCHEMA': 'rest.schema.schema'
+    'SCHEMA': 'rest.graqhql.schema',
+    'RELAY_CONNECTION_MAX_LIMIT': 10000,
 }
