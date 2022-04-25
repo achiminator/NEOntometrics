@@ -22,8 +22,6 @@ import org.semanticweb.owlapi.model.MissingImportHandlingStrategy;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyLoaderConfiguration;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
-import org.xembly.Directives;
-import org.xembly.ImpossibleModificationException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -81,28 +79,28 @@ public class ApiController {
 	return calculateMetrics(classMetrics, reasoner, ontology);
     }
 
-    @SuppressWarnings("unchecked")
-    protected Directives map2XML(Map<String, Object> map) {
-	Directives directives = new Directives();
-	for (String key : map.keySet()) {
-	    directives.add(key);
-	    if (map.get(key) instanceof Map) {
-		
-		directives.append(map2XML((Map<String, Object>) map.get(key)));
-	    } else {
-		directives.set(map.get(key));
-		
-	    }
-	    directives.push();
-	    directives.up();
-
-	}
-	return directives;
-    }
+//    @SuppressWarnings("unchecked")
+//    protected Directives map2XML(Map<String, Object> map) {
+//	Directives directives = new Directives();
+//	for (String key : map.keySet()) {
+//	    directives.add(key);
+//	    if (map.get(key) instanceof Map) {
+//		
+//		directives.append(map2XML((Map<String, Object>) map.get(key)));
+//	    } else {
+//		directives.set(map.get(key));
+//		
+//	    }
+//	    directives.push();
+//	    directives.up();
+//
+//	}
+//	return directives;
+//    }
 
 
     protected Response calculateMetrics(boolean classMetrics, boolean reasoner, OWLOntology ontology)
-	    throws Exception, ImpossibleModificationException {
+	    throws Exception {
 
 	OntologyMetricsImpl ontoMetricsEnginge = new OntologyMetricsImpl(ontology);
 	Map<String, Object> map = ontoMetricsEnginge.getAllMetrics(reasoner);
