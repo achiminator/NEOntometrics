@@ -39,21 +39,22 @@ class _CalculationEngineState extends State<CalculationEngine> {
         padding: const EdgeInsets.all(20),
         child: Column(children: [
           SizedBox(
-            height: 200,
-            child:
-                Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            height:310,
+            width: 1200,
+            child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
               Expanded(
                 child: Container(
                     height: 100,
+                    margin: const EdgeInsets.all(50.0),
                     decoration: BoxDecoration(
                         //borderRadius: BorderRadius.circular(50),
-                        color: Theme.of(context).colorScheme.secondaryVariant,
+                        color: Theme.of(context).colorScheme.secondaryContainer,
                         shape: BoxShape.circle),
                     child: Icon(Icons.live_help_outlined,
                         size: 115,
                         color: Theme.of(context).colorScheme.onSecondary)),
               ),
-              Expanded(flex: 2, child: markDownDescription)
+              Expanded(flex: 3, child: markDownDescription)
             ]),
           ),
           const Divider(),
@@ -89,7 +90,6 @@ class _CalculationEngineState extends State<CalculationEngine> {
                         onChanged: (value) {
                           if (value == true) {
                             var dialog = AlertDialog(
-                              
                               title: const ListTile(
                                   leading: Icon(Icons.warning),
                                   title: Text("Activating Reasoner")),
@@ -124,7 +124,8 @@ class _CalculationEngineState extends State<CalculationEngine> {
                     future: widget.metricData,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState != ConnectionState.done) {
-                        return const Center(child: RefreshProgressIndicator());
+                        return const Center(
+                            child: RefreshProgressIndicator());
                       } else {
                         return (Container(
                           padding: const EdgeInsets.all(20.0),
@@ -162,7 +163,8 @@ class _CalculationEngineState extends State<CalculationEngine> {
                       Expanded(
                         child: TextFormField(
                           //This is the textfield. It triggers the analysis.
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          autovalidateMode:
+                              AutovalidateMode.onUserInteraction,
                           controller: urlController,
                           decoration: InputDecoration(
                               suffixIcon: IconButton(
@@ -201,60 +203,60 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                           false) {
                                         showDialog(
                                             context: context,
-                                            builder: (BuildContext context) =>
-                                                AlertDialog(
-                                                  title: const Text(
-                                                      "Data not yet in Database"),
-                                                  content: Text(
-                                                      "There is no data yet in the system. Would you like to calculate ontology metrics for the given URL?\n${urlController.text}"),
-                                                  actions: [
-                                                    TextButton(
-                                                        child: const Text(
-                                                            "Yes, Put in Queue"),
-                                                        onPressed: () {
-                                                          response = graphQL
-                                                              .putInQueue(
-                                                                  urlController
-                                                                      .text,
-                                                                  reasoner);
-                                                          response.then(
-                                                              (jsonResponse) {
-                                                            if (jsonResponse
-                                                                .hasException) {
-                                                              displayErrorSnackBar(
-                                                                  jsonResponse
-                                                                      .exception
-                                                                      .toString(),
+                                            builder:
+                                                (BuildContext context) =>
+                                                    AlertDialog(
+                                                      title: const Text(
+                                                          "Data not yet in Database"),
+                                                      content: Text(
+                                                          "There is no data yet in the system. Would you like to calculate ontology metrics for the given URL?\n${urlController.text}"),
+                                                      actions: [
+                                                        TextButton(
+                                                            child: const Text(
+                                                                "Yes, Put in Queue"),
+                                                            onPressed: () {
+                                                              response = graphQL
+                                                                  .putInQueue(
+                                                                      urlController
+                                                                          .text,
+                                                                      reasoner);
+                                                              response.then(
+                                                                  (jsonResponse) {
+                                                                if (jsonResponse
+                                                                    .hasException) {
+                                                                  displayErrorSnackBar(
+                                                                      jsonResponse
+                                                                          .exception
+                                                                          .toString(),
+                                                                      context);
+                                                                }
+                                                                //  else if (jsonResponse
+                                                                //         .data?["update_queueInfo"][
+                                                                //     "error"]??false) {
+                                                                //   displayErrorSnackBar(
+                                                                //       jsonResponse
+                                                                //               .data?["update_queueInfo"][
+                                                                //           "errorMessage"],
+                                                                //       context);
+                                                                // }
+                                                                else {
+                                                                  progressSnackBar(
+                                                                      jsonResponse.data?["update_queueInfo"]
+                                                                          [
+                                                                          "queueInfo"]);
+                                                                }
+                                                              });
+                                                              Navigator.pop(
                                                                   context);
-                                                            }
-                                                            //  else if (jsonResponse
-                                                            //         .data?["update_queueInfo"][
-                                                            //     "error"]??false) {
-                                                            //   displayErrorSnackBar(
-                                                            //       jsonResponse
-                                                            //               .data?["update_queueInfo"][
-                                                            //           "errorMessage"],
-                                                            //       context);
-                                                            // }
-                                                            else {
-                                                              progressSnackBar(jsonResponse
-                                                                          .data?[
-                                                                      "update_queueInfo"]
-                                                                  [
-                                                                  "queueInfo"]);
-                                                            }
-                                                          });
-                                                          Navigator.pop(
-                                                              context);
-                                                        }),
-                                                    TextButton(
-                                                        child:
-                                                            const Text("Abort"),
-                                                        onPressed: () =>
-                                                            Navigator.pop(
-                                                                context))
-                                                  ],
-                                                ));
+                                                            }),
+                                                        TextButton(
+                                                            child: const Text(
+                                                                "Abort"),
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    context))
+                                                      ],
+                                                    ));
                                       } else if (graphQlResponse
                                                   .data?["queueInformation"]
                                               ?["taskFinished"] ==
@@ -270,7 +272,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                         String graphQlQueryAppender = graphQL
                                             .selectedMetrics2GraphQLInsertion(
                                                 selectedElementsForCalculation);
-
+        
                                         Future<QueryResult<dynamic>>
                                             futureResonse =
                                             graphQL.getMetricsFromAPI(

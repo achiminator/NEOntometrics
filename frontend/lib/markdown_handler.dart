@@ -12,9 +12,13 @@ class MarkDownHandler {
           return Center(
               child: Container(
                   padding: const EdgeInsets.all(20),
-                  child: Markdown(data: snapshot.data as String,
-                  styleSheet: MarkdownStyleSheet(textScaleFactor: 1.2), 
-                  onTapLink: (text, href, title) => html.window.open(href!, "resouce"),)));
+                  child: MarkdownBody(
+                    data: snapshot.data as String,
+                    fitContent: true,
+                    styleSheet: MarkdownStyleSheet(textScaleFactor: 1.2),
+                    onTapLink: (text, href, title) =>
+                        html.window.open(href!, "resouce"),
+                  )));
         } else {
           return const Center(child: CircularProgressIndicator());
         }

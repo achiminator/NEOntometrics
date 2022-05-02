@@ -34,7 +34,7 @@ SECRET_KEY = '+d9$bcwd(^4o2862x$-xe6kl0$sqcbtkkib+6@2zv*!ysnz)2o'
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True#  False if (os.environ.get("inDocker", False)) else True
+DEBUG =  False if (os.environ.get("inDocker", False)) else True
 
 logging.config.dictConfig({
     'version': 1,
