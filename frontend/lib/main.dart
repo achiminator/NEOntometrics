@@ -2,7 +2,6 @@ import 'dart:async' show Future;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:neonto_frontend/indexpage.dart';
 import 'metric_explorer.dart';
 import 'calculationsettings.dart';
@@ -58,7 +57,7 @@ class EntryPage extends StatelessWidget {
       length: 3,
       child: Scaffold(
         bottomNavigationBar: Container(
-            color: Theme.of(context).colorScheme.primaryVariant,
+            color: Theme.of(context).colorScheme.primaryContainer,
             padding: const EdgeInsets.all(8),
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Text(
@@ -105,7 +104,7 @@ class EntryPage extends StatelessWidget {
           centerTitle: true,
         ),
         body: TabBarView(children: [
-          const indexPage(),
+          const IndexPage(),
           MetricExplorer(metricData),
           CalculationEngine(metricData),
         ]),

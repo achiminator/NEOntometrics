@@ -7,7 +7,7 @@ Welcome to the *NEOntometrics* application. *NEOntometrics* enables you to explo
 The following things are possible with *NEOntometrics*
 - Explore Ontoloy Metrics
     - Use the Metric Explorer to learn about the measurable characteristics of an ontology.
-    - See how the various measurement points have been utilized by the available frameworks-
+    - See how the various measurement points have been utilized by the available frameworks.
     - Explore the differencies and commonalities of the metric frameworks.
     - Read about the quality characteristics some of the frameworks have proposed and which metrics influence them.
 - Calculate Ontology Metrics
@@ -32,15 +32,18 @@ The following section details the software itself: it presents the different com
 
   ### The Architecture of the Metric Calculation
 
-Our design goal was to create an application that is flexible regarding the integration of new metrics. A researcher shall have the possibility to adapt the application to their individual needs, and to easily implement the individual metrics that they need. To achieve this adaptability, we did not implement the metrics of the various frameworks directly, but decomposed them first and then reused as much as possible, with a set up provided by an ontology.
+One design goal was to create a flexible application regarding the integration of new metrics. A researcher shall have the possibility to adapt the application to their individual needs and quickly implement the metrics they require.
 
-Fig. 1 presents an example for this kind of decomposition. The ontology is analyzed for the atomar elements that build the further compositions, here named _Elementary\_Metrics_. In the example of _OntoQA- Class Inheritance Richness_, the _Elementary\_Metrics_ are _Classes_ (the number of classes) and _Sub\_Class\_Declarations_. The ontology further specifies mathematical relationships between the metrics, in the given example, _OntoQA\_Class\_Inheritance\_Richness__isEquivalentTo (divisor only Classes) and (numerator only Sub\_Class\_Declarations)_.
+To achieve this adaptability, we did not implement the metrics of the various frameworks directly but decomposed them first into their building blocks. For example, a metric _axiom/class ratio_ is not calculated at the time of the ontology analysis. Instead, their building blocks _axioms_ and _classes_ are saved in the database. The compositional values are then calculated at the time of querying.
 
-The _Elementary\_Metrics_ are connected to metric instances that are named identically to the implementation names in the calculation service and the elements in the database. In the example of the _Sub\_Class\_Declarations_, this element has relationship _implementedBy value subClassOfAxioms_. This allows for the usage of new metrics without the need to perform a new calculation.
+Fig. 1 presents an example of this kind of decomposition and their representation in the ontology. _Elemental Metrics_ contains the atomic elements that build the further compositions. For _OntoQA Class Inheritance Richness_, the _Elementary\_Metrics_ are _Classes_ (the number of classes) and _Sub\_Class\_Declarations_. The ontology further specifies mathematical relationships between the metrics. In the given example, _OntoQA\_Class\_Inheritance\_Richness__isEquivalentTo (divisor only Classes) and (numerator only Sub\_Class\_Declarations)_.
+
+The _Elementary\_Metrics_ are connected to metric instances named identically to the implementation names in the calculation service and the elements in the database. In the example of the _Sub\_Class\_Declarations_, this element has a relationship _implementedBy value subClassOfAxioms_.
 
 ![](resource:assets/webpage/ontology.png)
 
-**Fig. 1.** Excerpt of the Metric Ontology.
+**Fig. 1.** Excerpt of the Metric Ontology. The given _OntoQA_ metric is stored as:
+_OntoQA\_Class\_Inheritance\_Richness isEquivalentTo (divisor only Classes) and (numerator only Sub\_Class\_Declarations)._
 
 Further, all of the elements have rich annotations, providing human centered meaning of the metrics. The elementary metrics come with descriptions on what they measures, the metrics of the framworks are annotated with the information out of the corresponding papers. Additionally, links to further online ressources or the scientific publications are provided. These annotation are the foundation for the _Metric Explorer_, where users find help on the application.
 
@@ -60,23 +63,28 @@ The **worker** is responsible for the calculation of the metrics itself. It chec
 
 **Fig. 2.** The process of analyzing and retrieving ontologies with NEOntometrics.
 
-The calculation service **OPI** is responsible for calculating metrics out of ontology documents. While it is based on the calculation service published in [19], most of the underlying code has been replaced. The old application struggled with ontology files larger than 10 MB due to inefficient memory allocation, had no seperation of the calulation of the _Elemental Metrics_ and composed metrics of the metric frameworks and lacked support for reasoning. The old application was designed as a standalone application, while the new calculation engine is hidden for the user and only accessed by the **API**.
+The calculation service **OPI** is responsible for calculating metrics out of ontology documents. While it is based on the calculation service published in [BLINDED], most underlying code has been replaced. The old application struggled with ontology files larger than 10 MB due to inefficient memory allocation, had no separation of the calculation of the _Elemental Metrics,_ and the _composed metrics_ of the metric frameworks, and lacked support for reasoning. The old application was designed as a standalone application, while the new calculation engine is hidden from the user and only accessed by the **API**.
 
-The backend application utilizes two languages: The **API** is written in python, **OPI** engine builds on Java. While this adds complexity regarding the application design, it allows to integrate and use of the OWLAPI. This library provides many convenience functions for handling OWL and RDF-Files like an entity searcher or the automatic calculation of some of the axiom-based metrics.
+The backend application utilizes two languages: The **API** is written in python, **OPI** engine builds on Java. While this adds complexity to the application design, it allows the integration and use of the OWL API. This library provides many convenient functions for handling OWL and RDF-Files like an entity searcher or the automatic calculation of some axiom-based metrics.
 
-  # Using NEOntometrics
-  ## The Metric explorer
+# Using the application
 
-The page _Metric Explorer_ is an repository on available metrics in NEOntometrics and beyond. It two main categories are _Elemental Metrics_, which are the underlying, atomar measurements that are calculated on the ontologies itself. All information shown in this category originates from the authors of the software. _Quality Frameworks_, in opposite,presents the ontology quality metrics developed by other researchers, like the OntoQA Metrics [10] by Tartir et. al shown in Fig. 3. Here, all information originates from the authos of the given frameworks.
+## The Metric explorer
 
-The page provides information on five categories (though not all of them are filled for all the metrics). _Metric Definition_ contains the formal definiton of the metrics and how they are caluclated. _Metric Description_ supplements a more human readable explonation, at times also an example. _Metric Interpretation_ guides the practical usage. _Calculation_ provides their decompositions into the _Elemental Metrics_ and _seeAlso_ links to further ressources like the corresponding papers or additional reads.
+The page _Metric Explorer_ is a repository of available metrics in NEOntometrics and beyond. The two main categories are _Elemental Metrics_, the underlying atomic measurements of the ontologies. The authors of the software create all information shown in this category. _Quality Frameworks_, on the opposite,present the ontology quality metrics developed by other researchers, like the OntoQA Metrics [10] by Tartir et al., shown in Fig. 3. Here, all information originates from the authors of the given frameworks.
 
-## Using the Calculation-Frontend
+The page provides information on five categories (though not all of them are filled for all the metrics). _Metric Definition_ contains the formal definition of the metrics and how they are calculated, while _Metric Description_ supplements a more human-readable explanation and is, at times, an example. _Metric Interpretation_ guides practical usage. _Calculation_ explains their decompositions into the _Elemental Metrics_ using the metric names that are returned by the API_,_ and _seeAlso_ links to further resources like the corresponding papers or additional reads.
 
-The tab _Calculation Engine_ is the main entrypoint for the selection of the metrics. Howering over the elements shows additional information identically to parts of the M_etric Explorer_. Checking the box on the right enables the calculation of all metrics of a given category. However, it is also possible to add further, isolated metrics by clicking on the metric items. The button *"Already Calculated"*; shows the repositories which metrics are already in the database. These repositories can be a starting point for further exploration.
+  ## Using the Calculation-Frontend
 
-A click on the arrow starts the metric request. If the metric is not yet stored in the system, the application asks to put the calculation task into the queue. If it is already in the queue, a notification informs on the progress. As soon as the data is completely analyzed, a click on the arrow leads to the metric results presented as a paginated table, representing the metric values along the different ontology versions. The drop down menu in the header allows for the selection of the various ontology metrics, the download button exports the metrics of the file into a .csv.
+The tab _Calculation Engine_ is the main entry point for the metrics calculation. Hovering over the elements shows additional information identically to parts of the M_etric Explorer_. Checking the box on the right enables the calculation of all metrics of a given category. However, adding additional metrics is also possible by clicking on the metric items. The &quot;Already Calculated&quot; button shows the repositories are already in the database. These repositories can be a starting point for further exploration.
 
-  ## Using the API
+A click on the arrow starts the metric request. If the metric is unknown in the system, the application asks to queue the calculation task. If it is already in the queue, a notification informs of the progress. As soon as the data is analyzed, a click on the arrow leads to the metric results presented as a paginated table (cf. Fig. 5), representing the metric values for the different ontology versions. The drop-down menu in the header allows for selecting the various ontology files, the download button exports the metrics of the file into a .csv.
 
-The graphQL endpoint is available on _/graphql_ , accessible through a browser on a GraphiQL interface or by using any other GraphQL client. Typically, one would first query the node _queueInformation_ to check whether the data is already in the database or in the calculation queue, then either run a mutation to put the data into the queue or fetch the data from the node _getRepository_. Using the GraphiQL interface, it is possible to iteratively develop the query while exploring the query-schema.
+
+
+## Using the API
+
+The GraphQL endpoint is available on _api.neontometrics.blindeduniversity.xx/graphql_, accessible through a browser on a GraphiQL interface, or by using any other GraphQL client. Typically, one would first query the node _queueInformation_ to check whether the data is already in the database or the calculation queue, then run a mutation to put the data into the queue or fetch the data from the node _getRepository_.
+
+The GraphQL endpoints further provide documentation on the various available requests and possible return values, thus enabling the guided development of new queries.

@@ -1,5 +1,4 @@
 from django.db.models.fields.related import ManyToManyField
-import xmltodict
 from ontoMetricsAPI.settings import DATABASES
 from rest import views
 from rest_framework.test import APIRequestFactory, DjangoTestAdapter
@@ -40,12 +39,12 @@ class ConsistencyTests(TestCase):
             self.assertIn(ontologyMetric, dbFieldsName)
     def testConsistencyOntologyOPI(self):
         url = "https://raw.githubusercontent.com/Data-Semantics-Laboratory/MaterialsPropertyOwl/master/matl-prop.owl"
-        resp = requests.get("http://localhost:8080/owlapi-distribution/api?url={0}".format(url))
+        resp = requests.get("http://localhost:8085/api?url={0}".format(url))
         self.assertEqual(200, resp.status_code, "Connection to the OPI-Service does not work") # Check if the HTML response code is 200 (okay)
-        opiContent = xmltodict.parse(resp.content)
+        opiContent = json.loads(resp.content)
         for item in self.ontologyImplementationStatements:
-            self.assertIn(item, opiContent["OntologyMetrics"]["GeneralOntologyMetrics"], "an Element that is in the ontology is not in the OPI-Reponse")
-        for item in opiContent["OntologyMetrics"]["GeneralOntologyMetrics"]:
+            self.assertIn(item, opiContent["GeneralOntologyMetrics"], "an Element that is in the ontology is not in the OPI-Reponse")
+        for item in opiContent["GeneralOntologyMetrics"]:
             self.assertIn(item, self.ontologyImplementationStatements, "an element that is in OPI ist not in the ontology")
     def metricCalculationTest(self):
         metricDict = self.ontology.getMetricDict()

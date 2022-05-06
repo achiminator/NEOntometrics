@@ -145,7 +145,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
                         padding: const EdgeInsets.only(right: 25),
                         child: OutlinedButton(
                             onPressed: () {
-                              var dialog = Dialog();
+                              var dialog = const Dialog();
                               showDialog(
                                       barrierDismissible: true,
                                       context: context,
@@ -327,7 +327,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
 
   void progressSnackBar(Map<String, dynamic> queueInformation) {
     SnackBar snack = SnackBar(
-        backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
+        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
         duration: const Duration(seconds: 10),
         content: ListTile(
           iconColor: Theme.of(context).colorScheme.onSecondary,
@@ -436,7 +436,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
 }
 
 class Dialog extends StatelessWidget {
-  Dialog({
+  const Dialog({
     Key? key,
   }) : super(key: key);
 
@@ -450,7 +450,7 @@ class Dialog extends StatelessWidget {
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             EasyLoading.show(status: "We're fetching existing Repositories");
-            return Text("");
+            return const Text("");
           }
           if (snapshot.hasData) {
             var result = snapshot.data as QueryResult<dynamic>;

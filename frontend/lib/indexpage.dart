@@ -5,8 +5,8 @@ import 'dart:html' as html;
 import 'package:neonto_frontend/settings.dart';
 
 //import 'markdown_handler.dart';
-class indexPage extends StatelessWidget {
-  const indexPage({Key? key}) : super(key: key);
+class IndexPage extends StatelessWidget {
+  const IndexPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -51,12 +51,13 @@ class indexPage extends StatelessWidget {
                     iconSize: 40,
                     icon: Image.asset("linkedin.png")),
               ),
-              Expanded(
-                  child: IconButton(
-                      tooltip: "Newsletter",
-                      iconSize: 50,
-                      onPressed: () => html.window.open(Settings().apiUrl + "/newsletter/neontometrics/subscribe", "Newsletter"),
-                      icon: const Icon(Icons.outgoing_mail))),
+              // While the Newsletter is technically working, it does not look good (yet). So it is not yet published on the page.
+              // Expanded(
+              //     child: IconButton(
+              //         tooltip: "Newsletter",
+              //         iconSize: 50,
+              //         onPressed: () => html.window.open(Settings().apiUrl + "/newsletter/neontometrics/subscribe", "Newsletter"),
+              //         icon: const Icon(Icons.outgoing_mail))),
               Expanded(
                   child: IconButton(
                       tooltip: "GitHub",
