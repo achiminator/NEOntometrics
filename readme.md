@@ -1,12 +1,6 @@
-# OntoMetrics Suite
+# NEOntometrics Ontology Calculation software
 
-The following application consits of (so far) 2 Elements
-- The calculation engine *(opi)*
-- The Git Extension
+Welcome to **NEOntometrics**. It offers a flexible endpoint for calculating ontology metrics online, either directly from an online ressource or a git-based repository. 
+You can use the service online on neontometrics.com, or visit api.neontometrics.com for the GraphQL api.
 
-The following contains a short description of both services. For a more detailed perspective visit the subfolders. There you'll find additional readme documents containing more information.
-## OPI
-The ontology programming interface takes an ontology via `POST` or a link to a ontoloy via `GET` and calculates the Metrics known from the [OntoMetrics Platform](ontometrics.informatik.uni-rostock.de).
-
-## Git Extension
-This extension written in Python using the Django Rest Framework. It accepts a public git url, clones the repository and calculates the Ontology measurment for every commit of the selected file using the OPI-Api.
+The scientific papers that further describe the service are currently under review. As soon as they are accepted, we will provide them here as well.
