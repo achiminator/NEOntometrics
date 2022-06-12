@@ -10,6 +10,8 @@ from rq import job
 from rest.dbHandler import DBHandler
 import django_rq
 import rq
+import shutil
+from django.core.files import File
 
 
 class CalculationManager:
@@ -98,10 +100,10 @@ class CalculationManager:
             Git.clone_repository("http://" + repositoryUrl,
                                  internalOntologyUrl, checkout_branch=branch)
             self.logger.debug("Repository cloned at " + internalOntologyUrl)
+            
         repo = Git.Repository(internalOntologyUrl)
         index = repo.index
         index.read()
-        metrics = []
 
         # This part is for counting how much ontologies are to be calculated in this repository
         currentJob = rq.job.get_current_job()
@@ -118,15 +120,16 @@ class CalculationManager:
             if(item.path.endswith((".ttl", ".owl", ".rdf"))):
                 self.logger.debug("Analyse Ontology: "+item.path)
                 logging.debug("Analyse Ontology: "+item.path)
+                sourceModel = None
                 if(reasoner):
-                    metrics.append(self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, reasoner=False,
-                                   internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo))
-                    metrics.append(self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, reasoner=True,
-                                   internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo))
+                    sourceModel = self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, reasoner=False,
+                        internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo)
+                    sourceModel = self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, reasoner=True,
+                        internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo)
 
                 else:
-                    metrics.append(self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, reasoner=False,
-                                   internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo))
+                    sourceModel = self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, reasoner=False,
+                        internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo)
 
                 analyzedOntologies += 1
                 currentJob.meta = {
@@ -134,7 +137,11 @@ class CalculationManager:
                 currentJob.save_meta()
 
         dbhandler = DBHandler()
+        
         dbhandler.setWholeRepoAnalyzed(repository=repositoryUrl)
+        file = shutil.make_archive(internalOntologyUrl+"_packed", "gztar", internalOntologyUrl)
+        with open(file, "rb") as packed:
+            sourceModel.gitRepositoryFile.save(internalOntologyUrl, File(packed))
         rmtree(internalOntologyUrl, ignore_errors=True)
         return(True)
 
@@ -214,13 +221,14 @@ class CalculationManager:
                         # A reading Error occurs, e.g., if an ontology does not conform to a definied ontology standard and cannot be parsed
                         self.logger.warning(
                             "Ontology {0} not Readable ".format(obj.name))
+                        returnObject["Size"] = obj.size
                         returnObject["ReadingError"] = "Ontology not Readable"
                     metricsDict.append(returnObject)
         # Write Metrics in Database
         dbhandler = DBHandler()
-        dbhandler.writeInDB(metricsDict, branch=branch,
+        sourceModel = dbhandler.writeInDB(metricsDict, branch=branch,
                             file=objectLocation, repo=remoteLocation)
-        return(metricsDict)
+        return(sourceModel)
 
     def _getFittingObject(self, searchObj, commitTree):
         """Finds specific File in git-commit-Object

@@ -9,6 +9,7 @@ import re
 class Source(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     repository = models.CharField(max_length=350, default= None, null=True)
+    gitRepositoryFile = models.FileField(upload_to="repositoryCollection", default=None, null=True)
     fileName = models.CharField(max_length=500)
     branch = models.CharField(max_length=150, default=None, null=True)
     wholeRepositoryAnalyzed = models.BooleanField(default=False)
@@ -131,7 +132,7 @@ class Metrics(models.Model):
                 except: return None""".format(metricName, calculationElements)
             exec(metric)
             exec("{0}"" = property(fget={0})".format(metricName))
-            print(metric)
+            
 
 class ClassMetrics(models.Model):
     metric = models.ForeignKey(Metrics, on_delete=models.CASCADE)
