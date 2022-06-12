@@ -17,3 +17,4 @@ Git-Extension/ontoMetricsAPI/__pycache__
 
 Git-Extension/rest/migrations
 /.DS_Store
+Git-Extension/rest/metricOntology/pickleDump.pickle

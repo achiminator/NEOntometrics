@@ -3,12 +3,10 @@ import os
 import rdflib
 import re
 import treelib
+import pickle
 
 class OntologyHandler:
     def __init__(self):
-        self.rdf = rdflib.Graph(store="OxMemory")
-        self.rdf.parse(
-            location="rest/metricOntology/OntologyMetrics.owl", format="application/rdf+xml")
         self.getMetricExplorer()
 
     @staticmethod
@@ -23,7 +21,7 @@ class OntologyHandler:
         """
         return re.sub("((.*)#)", "", uriResult).replace("_", " ")
 
-    def getElementalMetricDescriptions(self) -> rdflib.query.Result:
+    def getElementalMetricDescriptions(self, rdf) -> rdflib.query.Result:
         qres = self.rdf.query("""
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -53,12 +51,16 @@ class OntologyHandler:
         Returns:
             list: List of implemented metrics, according to ontology.
         """
-        qres = self.getElementalMetricDescriptions()
+        rdf = rdflib.Graph(store="OxMemory")
+        rdf.parse(
+            location="rest/metricOntology/OntologyMetrics.owl", format="application/rdf+xml")
+        qres = self.getElementalMetricDescriptions(rdf)
         ontologyImplementedMetrics = []
         for row in qres:
             ontologyImplementedMetrics.append(
                 self.resURI2str(row["implementedAs"]))
         return ontologyImplementedMetrics
+
 
     def getMetricDict(self) -> list:
         """Build a list of available Metrics (in the form of a dict) to enable the future calculation of these metrics.
@@ -70,10 +72,12 @@ class OntologyHandler:
         # As the method is pretty computational expensive, first check whether the data is already available.
         if hasattr(self, "metricDict"):
             return(self.metricDict)
-
+        else:
+            raise Exception("Fatal Error: MetricDict Accessed before calculated")
+    def calculateMetricDict(self, rdf)->list:
         with open("rest/metricOntology/metricQuery.sparql", "r") as f:
             query = f.read()
-        qres = self.rdf.query(query)
+        qres = rdf.query(query)
         metricDict = []
         calculationDict = {}
         previousitem = None
@@ -223,15 +227,18 @@ class OntologyHandler:
         Returns:
             list: JSON-Tree with the relevant information.
         """
+        rdf = rdflib.Graph(store="OxMemory")
+        rdf.parse(
+            location="rest/metricOntology/OntologyMetrics.owl", format="application/rdf+xml")
 
         # As the method is pretty computational expensive, first check whether the data is already available.
         if (not(hasattr(self, "metricDict"))):
-            self.metricDict = self.getMetricDict()
+            self.metricDict = self.calculateMetricDict(rdf)
         if hasattr(self, "tree"):
             return self.tree.to_dict(with_data=True)
         with open("rest/metricOntology/metricExplorerQuery.sparql", "r") as f:
             query = f.read()
-        qres = self.rdf.query(query)
+        qres = rdf.query(query)
         tree = treelib.Tree()
 
         metricExplorerData = []
@@ -267,5 +274,12 @@ class OntologyHandler:
 
         return tree.to_dict(with_data=True)
 
-
-ontologyhandler = OntologyHandler()
+# Creating the ontologyHandler object queries the ontology itself with all the SPARQL-Queries. That can be tremendously slow. So for development, it is more 
+# convinient to store the ontologyhandler in a pickle file to 
+if os.path.exists("rest/metricOntology/pickleDump.pickle") and bool(os.environ.get("inDocker", False)) == False:
+    with open("rest/metricOntology/pickleDump.pickle", "rb") as file:
+        ontologyhandler = pickle.load(file)
+else:
+    ontologyhandler = OntologyHandler()
+    with open("rest/metricOntology/pickleDump.pickle", "wb") as file:
+        pickle.dump(ontologyhandler, file)
