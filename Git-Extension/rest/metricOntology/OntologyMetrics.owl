@@ -680,7 +680,19 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#divisor"/>
-                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Paths_Overall"/>
+                        <owl:allValuesFrom>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#sum"/>
+                                <owl:allValuesFrom>
+                                    <owl:Class>
+                                        <owl:intersectionOf rdf:parseType="Collection">
+                                            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Subclasses_Of_Thing"/>
+                                            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Super_Classes"/>
+                                        </owl:intersectionOf>
+                                    </owl:Class>
+                                </owl:allValuesFrom>
+                            </owl:Restriction>
+                        </owl:allValuesFrom>
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
@@ -690,6 +702,8 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
+        <neontometrics:MetricDefinition>The average path length of the ontology.</neontometrics:MetricDefinition>
+        <neontometrics:MetricInterpretation>Please note that the number of pathes is understood in this paper as the number of connections of all concepts to the root classes. For our calculation engine, that is equivalent to the number of Superclasses (As it states how many connections there are to the top) plus the number of subclasses of thing. The latter is necessary as these metrics would not  otherwise be counted as they have no superclasses. But for the given metric framework, these top level concepts are counted as the first hierachical level</neontometrics:MetricInterpretation>
     </owl:Class>
     
 
@@ -706,13 +720,27 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
-                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Paths_Overall"/>
+                        <owl:allValuesFrom>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#sum"/>
+                                <owl:allValuesFrom>
+                                    <owl:Class>
+                                        <owl:intersectionOf rdf:parseType="Collection">
+                                            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Subclasses_Of_Thing"/>
+                                            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Super_Classes"/>
+                                        </owl:intersectionOf>
+                                    </owl:Class>
+                                </owl:allValuesFrom>
+                            </owl:Restriction>
+                        </owl:allValuesFrom>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
-        <neontometrics:MetricInterpretation>Average Paths Per Concept must be equal to or greater than 1 (each concept must have a parent except for the most general concept). If =1 then the ontology is a tree. Multi relation cocepts multi relation concepts(higher &quot;average relationships per concept ratio ratio) result in gy higher ρ ratio for an ontology</neontometrics:MetricInterpretation>
+        <neontometrics:MetricInterpretation>Average Paths Per Concept must be equal to or greater than 1 (each concept must have a parent except for the most general concept). If =1 then the ontology is a tree. Multi relation cocepts multi relation concepts(higher &quot;average relationships per concept ratio ratio) result in gy higher ρ ratio for an ontology
+
+Please note that the number of pathes is understood in this paper as the number of connections of all concepts to the root classes. For our calculation engine, that is equivalent to the number of Superclasses (As it states how many connections there are to the top) plus the number of subclasses of thing. The latter is necessary as these metrics would not  otherwise be counted as they have no superclasses. But for the given metric framework, these top level concepts are counted as the first hierachical level</neontometrics:MetricInterpretation>
     </owl:Class>
     
 
@@ -736,7 +764,8 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
         <neontometrics:MetricDefinition>The average relations per concept in an ontology</neontometrics:MetricDefinition>
-        <neontometrics:MetricInterpretation>Indicates the average connectivity degree of a concept</neontometrics:MetricInterpretation>
+        <neontometrics:MetricDescription>Indicates the average connectivity degree of a concept</neontometrics:MetricDescription>
+        <neontometrics:MetricInterpretation>MetricInterpretation &quot;Please note that the number of pathes is understood in this paper as the number of connections of all concepts to the root classes. For our calculation engine, that is equivalent to the number of Superclasses (As it states how many connections there are to the top) plus the number of subclasses of thing. The latter is necessary as these metrics would not  otherwise be counted as they have no superclasses. But for the given metric framework, these top level concepts are counted as the first hierachical level&quot;</neontometrics:MetricInterpretation>
     </owl:Class>
     
 
