@@ -218,7 +218,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'http://neontometrics.informatik.uni-rostock.de/djangostatic/' 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # The standard mysql driver of django depends on a C++ Extension.
