@@ -5,7 +5,7 @@ from django.db import DatabaseError
 from django import urls
 from rest.CalculationHelper import GitUrlParser, GitHelper
 from rest.dbHandler import DBHandler, RepositoryFilter
-from rest.models import Source
+from rest.models import OntologyFile, Repository
 
 
 class QueueInformation:
@@ -56,12 +56,15 @@ class QueueInformation:
 
         else:
             if(self.url.file == '' and self.url.repository != ''):
-                query = Source.objects.filter(repository=self.url.repository)
+                query = Repository.objects.filter(repository=self.url.repository)
             elif(self.url.repository == '' and self.url.file != ''):
-                query = Source.objects.filter(fileName=self.url.file)
+                query = OntologyFile.objects.filter(fileName=self.url.file)
             elif(self.url.repository != '' and self.url.file != ''):
-                query = Source.objects.filter(
-                    fileName=self.url.file, repository=self.url.repository)
+                query = Repository.objects.filter(repository=self.url.repository)
+                q2 = []
+                for element in query:
+                    q2.append(OntologyFile.objects.filter(repository = element, fileName = self.url.file))
+                query = q2
             else:
                 throw: DatabaseError("No given Data in the Database")
             if(query.count() > 0):

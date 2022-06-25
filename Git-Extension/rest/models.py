@@ -6,17 +6,21 @@ import re
 # Create your models here.
 
 
-class Source(models.Model):
+class Repository(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     repository = models.CharField(max_length=350, default= None, null=True)
     gitRepositoryFile = models.FileField(upload_to="repositoryCollection", default=None, null=True)
-    fileName = models.CharField(max_length=500)
-    branch = models.CharField(max_length=150, default=None, null=True)
     wholeRepositoryAnalyzed = models.BooleanField(default=False)
 
+class OntologyFile(models.Model):
+    repository = models.ForeignKey(Repository, default=None, null=True, on_delete=models.CASCADE)
+    fileName = models.CharField(max_length=500)
+    branch = models.CharField(max_length=150, default=None, null=True)
+    
+    
 
-class Metrics(models.Model):
-    metricSource = models.ForeignKey(Source, related_name="metrics", on_delete=models.CASCADE)
+class Commit(models.Model):
+    metricSource = models.ForeignKey(OntologyFile, related_name="commit", on_delete=models.CASCADE)
     CommitMessage = models.TextField(default=None, null=True)
     CommitTime = models.DateTimeField(default=None, null=True)
     CommitID = models.TextField(default = None, null=True)
@@ -135,7 +139,7 @@ class Metrics(models.Model):
             
 
 class ClassMetrics(models.Model):
-    metric = models.ForeignKey(Metrics, on_delete=models.CASCADE)
+    metric = models.ForeignKey(Commit, on_delete=models.CASCADE)
     Classiri = models.CharField(default = None, null=True, max_length=400)
     Classconnectivity = models.PositiveSmallIntegerField(default=0)
     Classfulness = models.FloatField(default = 0)

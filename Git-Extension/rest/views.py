@@ -15,8 +15,7 @@ import logging
 from rest.CalculationHelper import GitHelper, GitUrlParser
 from rest.dbHandler import DBHandler
 from rest_framework.renderers import JSONRenderer
-from rest.models import Metrics, Source
-from rest.serializers import MetricSerializer
+# from rest.models import Metrics, Source
 # Create your views here.
 
 

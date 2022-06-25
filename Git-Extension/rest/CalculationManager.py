@@ -5,6 +5,8 @@ import logging
 import copy, requests
 from datetime import datetime
 from rest.CalculationHelper import GitHelper, GitUrlParser
+from rest.models import Commit, Repository, OntologyFile, ClassMetrics
+from rest.serializers import CommitSerializer, OntoloySerializer, RepositorySerializer
 from rest.opiHandler import OpiHandler
 from rq import job
 from rest.dbHandler import DBHandler
@@ -100,10 +102,12 @@ class CalculationManager:
             Git.clone_repository("http://" + repositoryUrl,
                                  internalOntologyUrl, checkout_branch=branch)
             self.logger.debug("Repository cloned at " + internalOntologyUrl)
-            
+        
         repo = Git.Repository(internalOntologyUrl)
         index = repo.index
         index.read()
+        repository = Repository.objects.create(repository = repositoryUrl)
+
 
         # This part is for counting how much ontologies are to be calculated in this repository
         currentJob = rq.job.get_current_job()
@@ -115,20 +119,20 @@ class CalculationManager:
         currentJob.meta = {"analysableOntologies": ontologiesToBeAnalyzed,
                            "analyzedOntologies": analyzedOntologies}
         currentJob.save_meta()
-
+        sourceModel = [] # All the ontology files where we attach the git-Repositoryfile.
         for item in index:
             if(item.path.endswith((".ttl", ".owl", ".rdf"))):
                 self.logger.debug("Analyse Ontology: "+item.path)
                 logging.debug("Analyse Ontology: "+item.path)
                 sourceModel = None
                 if(reasoner):
-                    sourceModel = self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, reasoner=False,
+                    sourceModel = self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, repository=repository, reasoner=False,
                         internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo)
-                    sourceModel = self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, reasoner=True,
+                    sourceModel = self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, repository=repository, reasoner=True,
                         internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo)
 
                 else:
-                    sourceModel = self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, reasoner=False,
+                    sourceModel = self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, repository=repository, reasoner=False,
                         internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo)
 
                 analyzedOntologies += 1
@@ -136,16 +140,14 @@ class CalculationManager:
                     "analysableOntologies": ontologiesToBeAnalyzed, "analyzedOntologies": analyzedOntologies}
                 currentJob.save_meta()
 
-        dbhandler = DBHandler()
-        
-        dbhandler.setWholeRepoAnalyzed(repository=repositoryUrl)
+        repository.wholeRepositoryAnalyzed = True
         file = shutil.make_archive(internalOntologyUrl+"_packed", "gztar", internalOntologyUrl)
         with open(file, "rb") as packed:
-            sourceModel.gitRepositoryFile.save(internalOntologyUrl, File(packed))
+            repository.gitRepositoryFile.save(internalOntologyUrl, File(packed))
         rmtree(internalOntologyUrl, ignore_errors=True)
         return(True)
 
-    def getOntologyMetrics(self, objectLocation: str, classMetrics: bool, reasoner: bool, internalOntologyUrl: str, remoteLocation: str, branch: str, repo: Git.Repository) -> dict:
+    def getOntologyMetrics(self, objectLocation: str, classMetrics: bool, reasoner: bool, repository: Repository, internalOntologyUrl: str, remoteLocation: str, branch: str, repo: Git.Repository) -> dict:
         """Calculates Evolutional Ontology-Metrics for one ontology file and stores them into a database
 
         Args:
@@ -184,6 +186,7 @@ class CalculationManager:
             key=lambda commit: datetime.fromtimestamp(commit.commit_time))
         formerObj = None
         commitCounter = 0
+        ontologyFile = OntologyFile.objects.create(repository = repository, fileName=remoteLocation)
         for commit in commitList:
             commitCounter += 1
             job = rq.job.get_current_job()
@@ -192,7 +195,6 @@ class CalculationManager:
                 "ananlyzedCommits": commitCounter
             })
             job.save_meta()
-
             obj = self._getFittingObject(objectLocation, commit.tree)
             if obj != None:
                 if(formerObj != obj):
@@ -215,6 +217,7 @@ class CalculationManager:
                     try:
                         opiMetrics = opi.opiOntologyRequest(
                             obj.data, ontologySize=obj.size, classMetrics=classMetrics, reasoner=reasoner)
+                        opiMetrics.update(opiMetrics.pop("GeneralOntologyMetrics"))
                         returnObject.update(opiMetrics)
                         self.logger.debug("Ontology Analyzed Successfully")
                     except IOError:
@@ -223,13 +226,9 @@ class CalculationManager:
                             "Ontology {0} not Readable ".format(obj.name))
                         returnObject["Size"] = obj.size
                         returnObject["ReadingError"] = "Ontology not Readable"
-                    metricsDict.append(returnObject)
-        # Write Metrics in Database
-        dbhandler = DBHandler()
-        sourceModel = dbhandler.writeInDB(metricsDict, branch=branch,
-                            file=objectLocation, repo=remoteLocation)
-        return(sourceModel)
+                    Commit.objects.create(metricSource = ontologyFile, **returnObject)
 
+        
     def _getFittingObject(self, searchObj, commitTree):
         """Finds specific File in git-commit-Object
 

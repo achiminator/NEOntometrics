@@ -77,6 +77,8 @@ class OpiHandler:
                             "save": "false", "reasoner": str(reasoner), "classMetrics": str(classMetrics)})
                 except:
                     error += "Request to Calculation Service timed out. It took longer than " + str(settings.OPITIMEOUT) + "seconds"
+            except requestsLib.exceptions.ConnectionError:
+                error += "Connection Error. Cannot reach OPI-Service"
             if(metricResponse):
                 if(metricResponse.status_code != 200):
                     error += metricResponse.text
