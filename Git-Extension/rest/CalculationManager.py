@@ -1,12 +1,12 @@
+import os
 import pygit2 as Git
 from os import path
-from shutil import rmtree
 import logging
 import copy, requests
 from datetime import datetime
 from rest.CalculationHelper import GitHelper, GitUrlParser
 from rest.models import Commit, Repository, OntologyFile, ClassMetrics
-from rest.serializers import CommitSerializer, OntoloySerializer, RepositorySerializer
+from rest.serializers import DBCommitsInRepositorySerializer
 from rest.opiHandler import OpiHandler
 from rq import job
 from rest.dbHandler import DBHandler
@@ -68,7 +68,9 @@ class CalculationManager:
         Returns:
             dict: Evolutional Ontology Metrics
         """
-
+        
+            
+        
         # Creates a folder for the git-Repository based on the hash of the repository URL.
         internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))
         if(path.exists(internalOntologyUrl) == False):
@@ -79,7 +81,7 @@ class CalculationManager:
         repo = Git.Repository(internalOntologyUrl)
         metrics = self.getOntologyMetrics(
             objectLocation, classMetrics, reasoner, internalOntologyUrl, repositoryUrl, branch, repo)
-        rmtree(internalOntologyUrl, ignore_errors=True)
+        shutil.rmtree(internalOntologyUrl, ignore_errors=True)
         return(True)
 
     @django_rq.job
@@ -95,18 +97,25 @@ class CalculationManager:
         Returns:
             dict: Evolutional Ontology Metrics
         """
-
-        # Creates a folder for the git-Repository based on the hash of the repository URL.
-        internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))
-        if(path.exists(internalOntologyUrl) == False):
-            Git.clone_repository("http://" + repositoryUrl,
-                                 internalOntologyUrl, checkout_branch=branch)
-            self.logger.debug("Repository cloned at " + internalOntologyUrl)
         
+        internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))
+        if Repository.objects.filter(repository = repositoryUrl).exists():
+            repository = Repository.objects.get(repository = repositoryUrl)
+            shutil.copy(repository.gitRepositoryFile.path, internalOntologyUrl+ "_packed.zip")
+            shutil.unpack_archive( internalOntologyUrl + "_packed.zip", internalOntologyUrl)
+        
+        # Creates a folder for the git-Repository based on the hash of the repository URL.
+        else:
+            if(path.exists(internalOntologyUrl) == False):
+                Git.clone_repository("http://" + repositoryUrl,
+                                    internalOntologyUrl, checkout_branch=branch)
+                self.logger.debug("Repository cloned at " +  internalOntologyUrl + "_packed.tar.gz")
+            repository = Repository.objects.create(repository = repositoryUrl)
+            
         repo = Git.Repository(internalOntologyUrl)
         index = repo.index
         index.read()
-        repository = Repository.objects.create(repository = repositoryUrl)
+        
 
 
         # This part is for counting how much ontologies are to be calculated in this repository
@@ -119,20 +128,20 @@ class CalculationManager:
         currentJob.meta = {"analysableOntologies": ontologiesToBeAnalyzed,
                            "analyzedOntologies": analyzedOntologies}
         currentJob.save_meta()
-        sourceModel = [] # All the ontology files where we attach the git-Repositoryfile.
+        
         for item in index:
             if(item.path.endswith((".ttl", ".owl", ".rdf"))):
                 self.logger.debug("Analyse Ontology: "+item.path)
                 logging.debug("Analyse Ontology: "+item.path)
-                sourceModel = None
+                
                 if(reasoner):
-                    sourceModel = self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, repository=repository, reasoner=False,
+                    self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, repository=repository, reasoner=False,
                         internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo)
-                    sourceModel = self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, repository=repository, reasoner=True,
+                    self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, repository=repository, reasoner=True,
                         internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo)
 
                 else:
-                    sourceModel = self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, repository=repository, reasoner=False,
+                    self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, repository=repository, reasoner=False,
                         internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo)
 
                 analyzedOntologies += 1
@@ -141,10 +150,13 @@ class CalculationManager:
                 currentJob.save_meta()
 
         repository.wholeRepositoryAnalyzed = True
-        file = shutil.make_archive(internalOntologyUrl+"_packed", "gztar", internalOntologyUrl)
+
+        del repo
+        file = shutil.make_archive(internalOntologyUrl+"_packed", "zip", internalOntologyUrl)
         with open(file, "rb") as packed:
             repository.gitRepositoryFile.save(internalOntologyUrl, File(packed))
-        rmtree(internalOntologyUrl, ignore_errors=True)
+        shutil.rmtree(internalOntologyUrl, ignore_errors=True)
+        os.remove(file)
         return(True)
 
     def getOntologyMetrics(self, objectLocation: str, classMetrics: bool, reasoner: bool, repository: Repository, internalOntologyUrl: str, remoteLocation: str, branch: str, repo: Git.Repository) -> dict:
@@ -165,16 +177,19 @@ class CalculationManager:
         # Read the index of the repo for accessing the files
         index = repo.index
         index.read()
-        # Read the ID-representation of the requested File
-        fileId = index[objectLocation].id
-        # Access the RAW-Data of the File using its ID-representation as an identified
-        file = repo.get(fileId)
         opi = OpiHandler()
         formerObj = None
-        metricsDict = []
         commitList = []
+        if OntologyFile.objects.filter(fileName = objectLocation, repository=repository).exists():
+            ontologyFile = OntologyFile.objects.get(fileName = objectLocation, repository=repository)
+            alreadyExistingCommits =  DBCommitsInRepositorySerializer.flattenReponse(DBCommitsInRepositorySerializer(repository).data)
+        else:
+            ontologyFile = OntologyFile.objects.create(repository = repository, fileName=objectLocation)
+            alreadyExistingCommits = []
         # Iterates through the Repository, finding the relevant Commits based on paths
         for commit in repo.walk(repo.head.target, Git.GIT_SORT_TOPOLOGICAL | Git.GIT_SORT_REVERSE):
+            if commit in alreadyExistingCommits:
+                continue
             obj = self._getFittingObject(objectLocation, commit.tree)
             if obj != None:
                 if(formerObj != obj):
@@ -186,7 +201,7 @@ class CalculationManager:
             key=lambda commit: datetime.fromtimestamp(commit.commit_time))
         formerObj = None
         commitCounter = 0
-        ontologyFile = OntologyFile.objects.create(repository = repository, fileName=remoteLocation)
+        
         for commit in commitList:
             commitCounter += 1
             job = rq.job.get_current_job()

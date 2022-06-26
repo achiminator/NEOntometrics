@@ -2,7 +2,6 @@ from django.conf import settings
 from django.http.request import RAISE_ERROR
 from rest.CalculationHelper import GitUrlParser
 from rest.models import Commit, Repository, OntologyFile, ClassMetrics
-from rest.serializers import CommitSerializer, OntoloySerializer, RepositorySerializer
 from collections import OrderedDict
 
 from django.db.models import Q
@@ -100,15 +99,6 @@ class DBHandler:
                                   fileName=file).delete()
             Source.objects.filter(repository=repository).update(
                 wholeRepositoryAnalyzed=False)
-
-    def setWholeRepoAnalyzed(self, repository: str):
-        """Marks that all files in a repository are analyzed
-
-        Args:
-            repository (str): url to Repository
-        """
-        repoMetrics = Source.objects.filter(repository=repository)
-        repoMetrics.update(wholeRepositoryAnalyzed=True)
 
 
 class RepositoryFilter(django_filters.FilterSet):

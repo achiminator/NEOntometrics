@@ -19,7 +19,7 @@ class QueueInformation:
     urlInSystem = False
     analyzedOntologies = None
     analysableOntologies = None
-    commitsForThisOntology = None
+    commitsForThisOntology = None#
     analyzedCommits = None
 
     def __init__(self, urlString: str) -> dict:
