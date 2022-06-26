@@ -74,7 +74,7 @@ class CalculationManager:
         # Creates a folder for the git-Repository based on the hash of the repository URL.
         internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))
         if(path.exists(internalOntologyUrl) == False):
-            Git.clone_repository("https://" + repositoryUrl,
+            repo = Git.clone_repository("https://" + repositoryUrl,
                                  internalOntologyUrl, checkout_branch=branch)
             self.logger.debug("Repository cloned at " + internalOntologyUrl)
 
@@ -97,22 +97,22 @@ class CalculationManager:
         Returns:
             dict: Evolutional Ontology Metrics
         """
-        
+        repo = None
         internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))
         if Repository.objects.filter(repository = repositoryUrl).exists():
             repository = Repository.objects.get(repository = repositoryUrl)
             shutil.copy(repository.gitRepositoryFile.path, internalOntologyUrl+ "_packed.zip")
             shutil.unpack_archive( internalOntologyUrl + "_packed.zip", internalOntologyUrl)
-        
+            repo = Git.Repository(internalOntologyUrl)
         # Creates a folder for the git-Repository based on the hash of the repository URL.
         else:
             if(path.exists(internalOntologyUrl) == False):
-                Git.clone_repository("http://" + repositoryUrl,
+                repo = Git.clone_repository("http://" + repositoryUrl,
                                     internalOntologyUrl, checkout_branch=branch)
                 self.logger.debug("Repository cloned at " +  internalOntologyUrl + "_packed.tar.gz")
             repository = Repository.objects.create(repository = repositoryUrl)
             
-        repo = Git.Repository(internalOntologyUrl)
+        
         index = repo.index
         index.read()
         
@@ -150,7 +150,7 @@ class CalculationManager:
                 currentJob.save_meta()
 
         repository.wholeRepositoryAnalyzed = True
-
+        del Git
         del repo
         file = shutil.make_archive(internalOntologyUrl+"_packed", "zip", internalOntologyUrl)
         with open(file, "rb") as packed:
@@ -188,8 +188,6 @@ class CalculationManager:
             alreadyExistingCommits = []
         # Iterates through the Repository, finding the relevant Commits based on paths
         for commit in repo.walk(repo.head.target, Git.GIT_SORT_TOPOLOGICAL | Git.GIT_SORT_REVERSE):
-            if commit in alreadyExistingCommits:
-                continue
             obj = self._getFittingObject(objectLocation, commit.tree)
             if obj != None:
                 if(formerObj != obj):
@@ -203,6 +201,8 @@ class CalculationManager:
         commitCounter = 0
         
         for commit in commitList:
+            if commit.hex in alreadyExistingCommits:
+                continue
             commitCounter += 1
             job = rq.job.get_current_job()
             job.meta.update({
@@ -241,7 +241,8 @@ class CalculationManager:
                             "Ontology {0} not Readable ".format(obj.name))
                         returnObject["Size"] = obj.size
                         returnObject["ReadingError"] = "Ontology not Readable"
-                    Commit.objects.create(metricSource = ontologyFile, **returnObject)
+                    if not Commit.objects.filter(metricSource=ontologyFile, CommitID = commit.hex, reasonerActive = reasoner ).exists():
+                        Commit.objects.create(metricSource = ontologyFile, **returnObject)
 
         
     def _getFittingObject(self, searchObj, commitTree):
