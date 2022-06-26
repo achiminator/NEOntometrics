@@ -104,6 +104,8 @@ class CalculationManager:
             shutil.copy(repository.gitRepositoryFile.path, internalOntologyUrl+ "_packed.zip")
             shutil.unpack_archive( internalOntologyUrl + "_packed.zip", internalOntologyUrl)
             repo = Git.Repository(internalOntologyUrl)
+            fetching = repo.remotes[0].fetch() # There is always just one remote configured anyway.
+            print("Updated Objects: " + str(fetching.total_objects))
         # Creates a folder for the git-Repository based on the hash of the repository URL.
         else:
             if(path.exists(internalOntologyUrl) == False):
@@ -111,7 +113,10 @@ class CalculationManager:
                                     internalOntologyUrl, checkout_branch=branch)
                 self.logger.debug("Repository cloned at " +  internalOntologyUrl + "_packed.tar.gz")
             repository = Repository.objects.create(repository = repositoryUrl)
-            
+        
+        # This extremly ugly thing down below is necessary to set the head to the latest remote version. Otherwise, the fetch
+        # Downloads the data but stays on the old position, thus preventing the crawler to get the new data.
+        repo.reset(repo.references.objects[len(repo.references.objects)-1].target, Git.GIT_RESET_HARD)
         
         index = repo.index
         index.read()
@@ -149,9 +154,9 @@ class CalculationManager:
                     "analysableOntologies": ontologiesToBeAnalyzed, "analyzedOntologies": analyzedOntologies}
                 currentJob.save_meta()
 
-        repository.wholeRepositoryAnalyzed = True
-        del Git
-        del repo
+        repository.wholeRepositoryAnalyzed = True # A marker in the Database that all Files in it have been analyzed.
+        
+        repo.free() # Unlockes the File so it can be deleted.
         file = shutil.make_archive(internalOntologyUrl+"_packed", "zip", internalOntologyUrl)
         with open(file, "rb") as packed:
             repository.gitRepositoryFile.save(internalOntologyUrl, File(packed))
@@ -187,6 +192,7 @@ class CalculationManager:
             ontologyFile = OntologyFile.objects.create(repository = repository, fileName=objectLocation)
             alreadyExistingCommits = []
         # Iterates through the Repository, finding the relevant Commits based on paths
+        
         for commit in repo.walk(repo.head.target, Git.GIT_SORT_TOPOLOGICAL | Git.GIT_SORT_REVERSE):
             obj = self._getFittingObject(objectLocation, commit.tree)
             if obj != None:
@@ -232,7 +238,8 @@ class CalculationManager:
                     try:
                         opiMetrics = opi.opiOntologyRequest(
                             obj.data, ontologySize=obj.size, classMetrics=classMetrics, reasoner=reasoner)
-                        opiMetrics.update(opiMetrics.pop("GeneralOntologyMetrics"))
+                        if "GeneralOntologyMetrics" in opiMetrics:
+                            opiMetrics.update(opiMetrics.pop("GeneralOntologyMetrics"))
                         returnObject.update(opiMetrics)
                         self.logger.debug("Ontology Analyzed Successfully")
                     except IOError:
