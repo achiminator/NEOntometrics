@@ -1,20 +1,37 @@
-from doctest import debug_script
-from fileinput import filename
-from urllib.parse import urlparse
 from django.conf import settings
-import graphene
+import graphene, django_filters
 from graphene import relay
 from rest.CalculationManager import CalculationManager
 from rest.CalculationHelper import GitUrlParser
-from rest.dbHandler import RepositoryFilter
-import rest.metricOntologyHandler
-import rest.queueInformation
+import rest.metricOntologyHandler, rest.queueInformation
 from graphene_django import DjangoObjectType
 from .models import Repository, OntologyFile, Commit
 from django.db.models import Count
 import graphene_django.filter as filter
 
 
+class RepositoryFilter(django_filters.FilterSet):
+    """A custom django-repository filter. Filters the Repository for the filenames and Repository names that are part of a git-url
+
+    Args:
+        django_filters (_type_): 
+
+    Returns:
+        django_filter.queryset.filter: A django-filter set for filtering django Models
+"""
+    repository = django_filters.CharFilter(field_name="repository", method="repoFilter", required=True)
+    fileName = django_filters.CharFilter(field_name="fileName", method="fileFilter")
+    
+
+    def repoFilter(self, queryset, name, value):
+        urlObject = GitUrlParser()
+        urlObject.parse(value)
+        return queryset.filter(repository = urlObject.repository)
+        
+    def fileFilter(self, queryset, name, value):
+        urlObject = GitUrlParser()
+        urlObject.parse(value)
+        return queryset.filter(fileName = urlObject.file)
 
 class QueueInformationNode(graphene.ObjectType):
     """Gets information on the status of an ontology in the system, meaning if it already calcualted,

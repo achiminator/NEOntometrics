@@ -5,11 +5,10 @@ import logging
 import copy, requests
 from datetime import datetime
 from rest.CalculationHelper import GitHelper, GitUrlParser
-from rest.models import Commit, Repository, OntologyFile, ClassMetrics
+from rest.models import Commit, Repository, OntologyFile
 from rest.serializers import DBCommitsInRepositorySerializer
 from rest.opiHandler import OpiHandler
 from rq import job
-from rest.dbHandler import DBHandler
 import django_rq
 import rq
 import shutil

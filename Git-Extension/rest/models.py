@@ -1,5 +1,3 @@
-from logging import exception
-from xml.sax.handler import property_encoding
 from django.db import models
 from rest.metricOntologyHandler import ontologyhandler
 import re

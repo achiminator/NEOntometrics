@@ -22,11 +22,8 @@ from rest.graphql import schema
 from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = [
- #   path('', RedirectView.as_view(url="http://www.google.com", permanent=False)),
     path('', RedirectView.as_view(url="graphql", permanent=False)),
     path('admin/', admin.site.urls),
-    path('api', views.CalculateMetric.as_view()),
-    path('git', views.CalculateGitMetric.as_view()),
     path('metricexplorer', views.MetricExplorer.as_view()),
     path('django-rq/', include('django_rq.urls')),
     path('downloadOntology/<int:pk>', views.DownloadOntologyFile.as_view()),

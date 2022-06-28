@@ -1,10 +1,5 @@
-from json import JSONDecoder
-import json
 import requests as requestsLib
 from django.conf import settings
-import xmltodict
-import sys
-
 
 class OpiHandler:
     """Class for querying the Ontology Programming Interface (OPI)"""
