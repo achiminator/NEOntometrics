@@ -251,6 +251,31 @@ class CalculationManager:
                     if not Commit.objects.filter(metricSource=ontologyFile, CommitID = commit.hex, reasonerActive = reasoner ).exists():
                         Commit.objects.create(metricSource = ontologyFile, **returnObject)
 
+    def downloadSpecificOntologyFile(self, pkCommit: int)->dict:
+        """Retrieves a specific file of a specific commit from a repository for download.
+
+        Args:
+            pkCommit (int): ID of the Commit in the databse
+
+        Returns:
+            dict: Dict with the name of the file as the key and the value is the data.
+        """
+        if not(Commit.objects.filter(id=pkCommit).exists()):
+            return None
+        
+        commit = Commit.objects.get(id=pkCommit)
+        ontology = commit.metricSource
+        repository = ontology.repository
+        internalOntologyUrl = "ontologies/" + str(hash(commit.CommitID))
+        shutil.copy(repository.gitRepositoryFile.path, internalOntologyUrl+ "_packed.zip")
+        shutil.unpack_archive( internalOntologyUrl + "_packed.zip", internalOntologyUrl)
+        gitRepo = Git.Repository(internalOntologyUrl)
+        ontologyFile = self._getFittingObject(ontology.fileName, gitRepo.get(commit.CommitID).tree)
+        returnVal = {ontologyFile.name: ontologyFile.data}
+        returnVal = copy.deepcopy(returnVal) # Deep copy is needed to be able to remove the ontology files before deletion.
+        gitRepo.free()
+        shutil.rmtree(internalOntologyUrl, ignore_errors=True)
+        return returnVal
         
     def _getFittingObject(self, searchObj, commitTree):
         """Finds specific File in git-commit-Object

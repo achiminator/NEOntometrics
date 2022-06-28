@@ -1,4 +1,5 @@
-from django.http import JsonResponse
+from ssl import ALERT_DESCRIPTION_PROTOCOL_VERSION
+from django.http import HttpResponse, JsonResponse
 import rest.metricOntologyHandler
 from rest.CalculationManager import CalculationManager
 from rest.opiHandler import OpiHandler
@@ -47,6 +48,15 @@ class MetricExplorer(APIView):
     def get(self, request, format=None):
         explorer = rest.metricOntologyHandler.ontologyhandler.getMetricExplorer()
         return(Response(explorer))
+class DownloadOntologyFile(APIView):
+    def get(self, request, pk, format=None):
+        file = CalculationManager().downloadSpecificOntologyFile(pk)
+        for ontologyName, content in file.items():
+            response = HttpResponse(content, content_type='text/plain')
+            response['Content-Disposition'] = f'attachment; filename={ontologyName}'
+            # response.write(file.values[0])
+            return response
+
 
 
 class MetricQueryViewSet(viewsets.ReadOnlyModelViewSet):

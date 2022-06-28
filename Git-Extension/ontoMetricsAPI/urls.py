@@ -29,7 +29,7 @@ urlpatterns = [
     path('git', views.CalculateGitMetric.as_view()),
     path('metricexplorer', views.MetricExplorer.as_view()),
     path('django-rq/', include('django_rq.urls')),
-    #path("graphiql", GraphQLView.as_view(graphiql=True, schema=schema)),
+    path('downloadOntology/<int:pk>', views.DownloadOntologyFile.as_view()),
     path('newsletter/', include('newsletter.urls')),
     path("graphql", csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),
 ]
