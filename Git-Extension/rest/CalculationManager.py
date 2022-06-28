@@ -1,4 +1,6 @@
 import os
+from threading import local
+from django.conf import settings
 import pygit2 as Git
 from os import path
 import logging
@@ -26,9 +28,6 @@ class CalculationManager:
         jobId = GitHelper.serializeJobId(url)
         if(url.repository == ""):
             django_rq.enqueue(calculationManager.ontologyFileWORepo, url, reasonerSelected, job_id=jobId)
-        elif url.file != '':
-            metrics = django_rq.enqueue(calculationManager.getObject, repositoryUrl=url.repository, objectLocation=url.file,
-                                        branch=url.branch, classMetrics=classMetrics, reasoner=reasonerSelected,  job_id=jobId)
         # If no file is given, analyze the whole REPO
         else:
             metrics = django_rq.enqueue(calculationManager.getObjects, repositoryUrl=url.repository,
@@ -38,50 +37,50 @@ class CalculationManager:
 
     @django_rq.job
     def ontologyFileWORepo(self, url: GitUrlParser, reasonerSelected: bool):
-        """Analyze a single ontology file that is not bound to a repository
+        """Analyze a single ontology file that is **not** bound to a repository
 
         Args:
             url (GitHelper.GitUrlParser): The GitHelper object that contains information regarding the ontoloy file source
             reasonerSelected (bool): Depicts if the metrics are calculated using a reasoner or not.
         """
-        db = DBHandler()
-        getOntologyResponse = requests.get("http://" + url.file)
-        ontology = getOntologyResponse.text.replace("\n", "")
+        returnObject = {}
+        try:
+            getOntologyResponse = requests.get("http://" + url.file, timeout=settings.SINGLEONTOLOGYRETRIEVETIMOUT)
+            ontology = getOntologyResponse.text.replace("\n", "")
+            returnObject["Size"] =len(getOntologyResponse.content)
+        except:
+            returnObject["Size"] = 0
+            returnObject["ReadingError"] = "Ontology Source not Available"
         opi = OpiHandler()
-        metrics = opi.opiOntologyRequest(
-            ontologyString=ontology, classMetrics=False, ontologySize=len(getOntologyResponse.content), reasoner=reasonerSelected)
-        db.writeInDB(file=url.file, repo=url.repository,
-                     metricsDict=metrics, wholeRepo=0)
-
-    @django_rq.job
-    def getObject(self, repositoryUrl: str, objectLocation: str, branch=None, reasoner: bool = False, classMetrics=False) -> dict:
-        """Analyses one ontology-file for evolutional ontology metrics
-
-        Args:
-            repositoryUrl (string): URL to remote Repository
-            objectLocation (string): relative path to targeted ontology file in Repository
-            branch (str, optional): selected branch. Defaults to "None".
-            classMetrics (bool, optional): Enables the calculation of Class Metrics (Computational Expensive). Defaults to False.
-            reasoner (bool, optional): selects that the calcualtion engine runs on a reasoned ontology.
-
-        Returns:
-            dict: Evolutional Ontology Metrics
-        """
         
+        
+        returnObject["reasonerActive"] = reasonerSelected
+        if "ontology" in locals():
+            try:
+                opiMetrics = opi.opiOntologyRequest(
+                    ontologyString=ontology, classMetrics=False, ontologySize=returnObject["Size"] , reasoner=reasonerSelected)
+                if "GeneralOntologyMetrics" in opiMetrics:
+                    opiMetrics.update(opiMetrics.pop("GeneralOntologyMetrics"))
+                    returnObject.update(opiMetrics)
+                    self.logger.debug("Ontology Analyzed Successfully")
+            except IOError:
+                # A reading Error occurs, e.g., if an ontology does not conform to a definied ontology standard and cannot be parsed
+                self.logger.warning(
+                    "Ontology {0} not Readable ".format(url.file))
+                
+                returnObject["ReadingError"] = "Ontology not Readable"
+        
+        ontologyFile = OntologyFile.objects.filter(fileName=url.file)
+        if not ontologyFile.exists():
+            ontologyFile = OntologyFile.objects.create(fileName=url.file)
+        else:
+            ontologyFile = ontologyFile[0]
+        commit = Commit.objects.filter(metricSource=ontologyFile, reasonerActive = reasonerSelected)
+        if not commit.exists():
+            Commit.objects.create(metricSource = ontologyFile, **returnObject)
+        else:
+            commit = Commit(metricSource = ontologyFile, **returnObject, pk=commit[0].id).save()
             
-        
-        # Creates a folder for the git-Repository based on the hash of the repository URL.
-        internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))
-        if(path.exists(internalOntologyUrl) == False):
-            repo = Git.clone_repository("https://" + repositoryUrl,
-                                 internalOntologyUrl, checkout_branch=branch)
-            self.logger.debug("Repository cloned at " + internalOntologyUrl)
-
-        repo = Git.Repository(internalOntologyUrl)
-        metrics = self.getOntologyMetrics(
-            objectLocation, classMetrics, reasoner, internalOntologyUrl, repositoryUrl, branch, repo)
-        shutil.rmtree(internalOntologyUrl, ignore_errors=True)
-        return(True)
 
     @django_rq.job
     def getObjects(self, repositoryUrl: str,  branch=None, classMetrics=False, reasoner=False) -> dict:
