@@ -188,24 +188,37 @@ class CalculationManager:
             alreadyExistingCommits =  DBCommitsInRepositorySerializer.flattenReponse(DBCommitsInRepositorySerializer(repository).data)
         else:
             ontologyFile = OntologyFile.objects.create(repository = repository, fileName=objectLocation)
-            alreadyExistingCommits = []
+            alreadyExistingCommits = {}
         # Iterates through the Repository, finding the relevant Commits based on paths
         
-        for commit in repo.walk(repo.head.target, Git.GIT_SORT_TOPOLOGICAL | Git.GIT_SORT_REVERSE):
-            obj = self._getFittingObject(objectLocation, commit.tree)
-            if obj != None:
-                if(formerObj != obj):
-                    formerObj = obj
-                    commitList.append(commit)
+        for reference in repo.listall_reference_objects():
+            if reference.type != 1 or reference.shorthand not in repo.branches.remote: # Only analyze non symbolic branches and such that are from the remote orign.
+                continue
+            print(reference.shorthand)
+            repo.checkout(reference)
+            for commit in repo.walk(repo.head.target, Git.GIT_SORT_TOPOLOGICAL | Git.GIT_SORT_REVERSE):
+                obj = self._getFittingObject(objectLocation, commit.tree)
+                if obj != None:
+                    if(formerObj != obj):
+                        formerObj = obj
+                        if(commit not in commitList):
+                            commitList.append(commit)
 
         # Sorting the Commits based on TIME, not on PARENTS, thus making the list ready for further filtering
         commitList.sort(
             key=lambda commit: datetime.fromtimestamp(commit.commit_time))
         formerObj = None
         commitCounter = 0
-        
         for commit in commitList:
-            if commit.hex in alreadyExistingCommits:
+            branches = repo.branches.with_commit(commit)
+            branches = [branch for branch in branches if branch in repo.branches.remote and "HEAD" not in branch]
+            if commit.hex in alreadyExistingCommits.keys():
+                if alreadyExistingCommits.get(commit.hex) != branches:
+                    commitDBEntry = Commit.objects.filter(metricSource = ontologyFile, CommitID = commit.hex)
+                    if commitDBEntry.exists():
+                        commitDBEntry = commitDBEntry[0]
+                        commitDBEntry.branch = branches
+                        commitDBEntry.save()
                 continue
             commitCounter += 1
             job = rq.job.get_current_job()
@@ -216,8 +229,7 @@ class CalculationManager:
             job.save_meta()
             obj = self._getFittingObject(objectLocation, commit.tree)
             if obj != None:
-                if(formerObj != obj):
-                    branches = repo.branches.with_commit(commit)
+                if(formerObj != obj):     
                     formerObj = obj
                     returnObject = {}
                     # Commit-Metadata 
@@ -229,6 +241,7 @@ class CalculationManager:
                     returnObject["AuthorEmail"] = commit.author.email
                     returnObject["CommitterName"] = commit.committer.name
                     returnObject["CommiterEmail"] = commit.committer.email
+                    returnObject["branch"] = branches
                     
                     self.logger.debug(
                         "Date: " + str(returnObject["CommitTime"]))
@@ -248,6 +261,8 @@ class CalculationManager:
                         returnObject["ReadingError"] = "Ontology not Readable"
                     if not Commit.objects.filter(metricSource=ontologyFile, CommitID = commit.hex, reasonerActive = reasoner ).exists():
                         Commit.objects.create(metricSource = ontologyFile, **returnObject)
+
+
 
     def downloadSpecificOntologyFile(self, pkCommit: int)->dict:
         """Retrieves a specific file of a specific commit from a repository for download.

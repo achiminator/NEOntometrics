@@ -8,11 +8,16 @@ class CommitSerializer(serializers.ModelSerializer):
         model = Commit
         fields = '__all__'
 
+
+class CommitIDBranchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Commit
+        fields = ["CommitID", "branch"]
 class CommitIDsInOntologySerializers(serializers.ModelSerializer):
     """Internally used to access the nested CommitIDs in the ontology by the DBCommitsInRepository Serializer
 
-    """#
-    commit = serializers.SlugRelatedField(many=True, read_only=True, slug_field="CommitID")
+    """
+    commit = CommitIDBranchSerializer(many= True)
     class Meta:
         model = OntologyFile
         fields=["commit"]
@@ -32,12 +37,14 @@ class DBCommitsInRepositorySerializer(serializers.ModelSerializer):
             commitList (OrderedDict): Input of DBCommitsInRepositorySerializer instance .data
 
         Returns:
-            list: Unique Commit IDs
+            dict: CommitIDs for a file and the corresponding branches. The branches are 
+            necessary for an additional check for change. The metrics are stable, however the brancehs can vary
+            due to merges.
         """
         commitList  = commitList["ontologyfile_set"]
-        existingCommitIDs = []
+        existingCommitIDs = {}
         for element in commitList:
-            for commitID in element["commit"]:
-                if commitID not in existingCommitIDs:
-                    existingCommitIDs.append(commitID)
+            for commit in element["commit"]:
+                if commit["CommitID"] not in existingCommitIDs:
+                    existingCommitIDs.update({commit["CommitID"]: eval(commit["branch"])})
         return existingCommitIDs
