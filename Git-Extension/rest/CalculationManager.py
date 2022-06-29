@@ -138,14 +138,11 @@ class CalculationManager:
                 logging.debug("Analyse Ontology: "+item.path)
                 
                 if(reasoner):
-                    self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, repository=repository, reasoner=False,
-                        internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo)
-                    self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, repository=repository, reasoner=True,
-                        internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo)
+                    self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, repository=repository, reasoner=False, repo=repo)
+                    self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, repository=repository, reasoner=True, repo=repo)
 
                 else:
-                    self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, repository=repository, reasoner=False,
-                        internalOntologyUrl=internalOntologyUrl, remoteLocation=repositoryUrl, branch=branch, repo=repo)
+                    self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, repository=repository, reasoner=False, repo=repo)
 
                 analyzedOntologies += 1
                 currentJob.meta = {
@@ -162,7 +159,7 @@ class CalculationManager:
         os.remove(file)
         return(True)
 
-    def getOntologyMetrics(self, objectLocation: str, classMetrics: bool, reasoner: bool, repository: Repository, internalOntologyUrl: str, remoteLocation: str, branch: str, repo: Git.Repository) -> dict:
+    def getOntologyMetrics(self, objectLocation: str, classMetrics: bool, reasoner: bool, repository: Repository, repo: Git.Repository) -> dict:
         """Calculates Evolutional Ontology-Metrics for one ontology file and stores them into a database
 
         Args:
@@ -208,25 +205,42 @@ class CalculationManager:
         commitList.sort(
             key=lambda commit: datetime.fromtimestamp(commit.commit_time))
         formerObj = None
-        commitCounter = 0
+        commitCounter = 0  # The counter is merely for reporting progress.
         for commit in commitList:
+            renamedFrom = None
+            # The branches are needed a couple of lines later
             branches = repo.branches.with_commit(commit)
             branches = [branch for branch in branches if branch in repo.branches.remote and "HEAD" not in branch]
-            if commit.hex in alreadyExistingCommits.keys():
-                if alreadyExistingCommits.get(commit.hex) != branches:
+            if commit.hex in alreadyExistingCommits.keys(): # The branches that are already in the database do not need to be analyzed again 
+                if alreadyExistingCommits.get(commit.hex) != branches: # However, the branches can change (due to commits). So we check if we need to adapt the branches.
                     commitDBEntry = Commit.objects.filter(metricSource = ontologyFile, CommitID = commit.hex)
                     if commitDBEntry.exists():
                         commitDBEntry = commitDBEntry[0]
                         commitDBEntry.branch = branches
                         commitDBEntry.save()
                 continue
+
+            deltasToPrevious = [delta.delta for delta in repo.diff(a=commit.parents[0], b=commit, cached=False)]
+            previousDelta = None
+            for delta in deltasToPrevious:
+                if(delta.status == Git.GIT_DELTA_RENAMED):
+                    if(objectLocation == delta.new_file.path):
+                        renamedFrom =  delta.old_file.path
+                if (previousDelta != None):
+                    # Mostly, the algorithm does not rightfully detect an item as renamed, but as deleted and added again. If both have the same size, we assume a Rename Event.
+                    if (previousDelta.status == Git.GIT_DELTA_DELETED and delta.status == Git.GIT_DELTA_ADDED and previousDelta.old_file.size == delta.new_file.size):
+                        renamedFrom =  previousDelta.old_file.path
+                previousDelta = delta
+
+            # Attach progress reports to the scheduler-database (REDIS)
             commitCounter += 1
             job = rq.job.get_current_job()
-            job.meta.update({
+            job.meta.update({ 
                 "commitsForThisOntology": len(commitList),
                 "ananlyzedCommits": commitCounter
             })
             job.save_meta()
+
             obj = self._getFittingObject(objectLocation, commit.tree)
             if obj != None:
                 if(formerObj != obj):     
@@ -242,6 +256,7 @@ class CalculationManager:
                     returnObject["CommitterName"] = commit.committer.name
                     returnObject["CommiterEmail"] = commit.committer.email
                     returnObject["branch"] = branches
+                    returnObject["renamedFrom"] = renamedFrom
                     
                     self.logger.debug(
                         "Date: " + str(returnObject["CommitTime"]))

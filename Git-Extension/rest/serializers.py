@@ -31,7 +31,7 @@ class DBCommitsInRepositorySerializer(serializers.ModelSerializer):
         fields = ["ontologyfile_set"]
     def flattenReponse(commitList:OrderedDict):
         """The results from the serializer are highly structured. However, we are just interested in a 
-        general list of all previously analyzed commits. This method extracts the List of unique CommitIDs
+        general dict of all previously analyzed commits and branches. This method extracts a dict of unique CommitIDs with the corresponding branches
 
         Args:
             commitList (OrderedDict): Input of DBCommitsInRepositorySerializer instance .data

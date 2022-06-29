@@ -29,6 +29,7 @@ class Commit(models.Model):
     CommitterName = models.TextField(max_length=150, default=None, null=True)
     Size = models.PositiveIntegerField(default = None, null=True)
     branch = models.TextField(default=None, null=True)
+    renamedFrom = models.TextField(default=None, null=True)
     ReadingError = models.TextField(default=False)
     absoluteBreadth = models.PositiveBigIntegerField(default = None, null=True)
     absoluteDepth = models.PositiveBigIntegerField(default = None, null=True)

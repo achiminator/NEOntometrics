@@ -63,7 +63,8 @@ class QueueInformation:
                 q2 = []
                 for element in query:
                     q2.append(OntologyFile.objects.filter(repository = element, fileName = self.url.file))
-                query = q2
+                if(query.count() > 0):
+                    query = q2
             else:
                 throw: DatabaseError("No given Data in the Database")
             if(query.count() > 0):
