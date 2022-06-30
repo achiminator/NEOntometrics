@@ -6,7 +6,7 @@ from rest.CalculationHelper import GitUrlParser
 import rest.metricOntologyHandler, rest.queueInformation
 from graphene_django import DjangoObjectType
 from .models import Repository, OntologyFile, Commit
-from django.db.models import Count
+from django.db.models import Count, F
 import graphene_django.filter as filter
 
 
@@ -57,7 +57,7 @@ class RepositoryInformationNode(graphene.ObjectType):
     """
     repository = graphene.String(description="The repository (including all its files)")
     analyzedOntologyCommits = graphene.Int(description="The number of file-commits analyzed in this repository. Summed up all analyzed commits for every file.")
-
+    ontologyFiles = graphene.Int(description="The number of ontology files of a repository")
 
 class CommitNode(DjangoObjectType):
     """The calculated Metrics for a ontology file. It is nested in a repository node.
@@ -181,8 +181,9 @@ class Query(graphene.ObjectType):
     repositoriesInformation = graphene.List(RepositoryInformationNode, description="Prints out the repositories already calculated in the database.")
 
     def resolve_repositoriesInformation(root, info):
-        resp = Repository.objects.values("repository").annotate(analyzedOntologyCommits=Count("metrics")).order_by("-analyzedOntologyCommits")
-        return resp
+        v = Commit.objects.select_related("metricSource__repository")
+        v = v.values(repository = F("metricSource__repository__repository")).annotate(ontologyFiles=Count("metricSource__fileName",distinct=True), nalyzedOntologyCommits=Count("CommitID")).filter(repository__isnull = False)
+        return v
 
     def resolve_queueInformation(root, info, url):
         """Gathers the information on the queue of the file.
