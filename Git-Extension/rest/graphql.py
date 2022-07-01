@@ -93,9 +93,6 @@ class CommitNode(DjangoObjectType):
 
 class OntologyNode(DjangoObjectType):
     """Contains the basic information on the ontology file.
-
-    Args:
-        DjangoObjectType (_type_): _description_
     """
     class Meta:
         model = OntologyFile
@@ -182,7 +179,7 @@ class Query(graphene.ObjectType):
 
     def resolve_repositoriesInformation(root, info):
         v = Commit.objects.select_related("metricSource__repository")
-        v = v.values(repository = F("metricSource__repository__repository")).annotate(ontologyFiles=Count("metricSource__fileName",distinct=True), nalyzedOntologyCommits=Count("CommitID")).filter(repository__isnull = False)
+        v = v.values(repository = F("metricSource__repository__repository")).annotate(ontologyFiles=Count("metricSource__fileName",distinct=True), analyzedOntologyCommits=Count("CommitID")).filter(repository__isnull = False)
         return v
 
     def resolve_queueInformation(root, info, url):
