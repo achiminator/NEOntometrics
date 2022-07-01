@@ -68,8 +68,7 @@ class _CalculationViewState extends State<CalculationView> {
                           }))),
             ),
             SizedBox(
-
-              width: 190,
+                width: 190,
                 child: OutlinedButton(
                   onHover: (value) => MaterialStateMouseCursor.clickable,
                   onPressed: () => downloadMetricFile(activeMetricFile),
@@ -85,7 +84,9 @@ class _CalculationViewState extends State<CalculationView> {
         body: metricWidgetBuilder(activeMetricFile));
   }
 
-  List<DropdownMenuItem<int>> getAvailableFileNames(RepositoryData repositoryData) {
+  /// Extracts the file names of the ontology for the drop down menue.
+  List<DropdownMenuItem<int>> getAvailableFileNames(
+      RepositoryData repositoryData) {
     List<DropdownMenuItem<int>> ontologyFiles = [];
     int counter = 0;
     for (OntologyData ontologyData in repositoryData.ontologyFiles) {
@@ -146,6 +147,7 @@ class _CalculationViewState extends State<CalculationView> {
     ));
   }
 
+  /// Initiates a .csv download of the displayed ontology metrics.
   downloadMetricFile(int activeMetricFile) {
     var metricDataForOntologyFile =
         widget.repositoryData.ontologyFiles[activeMetricFile].metrics;

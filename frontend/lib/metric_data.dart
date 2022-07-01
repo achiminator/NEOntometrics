@@ -2,6 +2,7 @@ import 'dart:convert';
 import "settings.dart";
 import 'package:http/http.dart' as http;
 
+/// Containing all the information for the Metric Explorer Page.
 class MetricExplorerItem {
   ///Flattens the Hierachy of the hierachical structure of the [MetricExplorerItem]. The element onlyCalculatableClasses
   // asks if only such elmeents are shown, that are possible to calculate.
@@ -105,10 +106,15 @@ class MetricExplorerItemFactory {
   }
 }
 
+///Class for storing the calculated metrics
+///
+///The constructor unnpacks the GraphQL response, and the object is used by the detailedView for further
+///displaying of the calculated values.
 class RepositoryData {
+  /// Unpack the GraphQL reponse and create an object containing the ontology metrics with the constructor.
   RepositoryData(Map<String, dynamic>? graphqlInput) {
-    // Unpack the GraphQL reponse and create an object containing the ontology metrics.
-    Map<String, dynamic> root = graphqlInput?["getRepository"]["edges"][0]["node"];
+    Map<String, dynamic> root =
+        graphqlInput?["getRepository"]["edges"][0]["node"];
     repository = root["repository"] ?? "";
     for (Map<String, dynamic> fileNode in root["ontologyfile_set"]?["edges"]) {
       Map<String, dynamic> file = fileNode["node"];
@@ -121,13 +127,25 @@ class RepositoryData {
       ontologyFiles.add(OntologyData(file["id"], file["fileName"], commits));
     }
   }
+
+  /// The Name (or URL) of the given repository
   String repository = "";
+
+  /// The various calculated ontology files, thus their ID for identification, their name in the
+  /// repository and a list of Key, Value pairs for the given metrics
   var ontologyFiles = <OntologyData>[];
 }
 
+/// Contains information and metrics of one ontology.
 class OntologyData {
   OntologyData(this.id, this.fileName, this.metrics);
+
+  /// Used later on for identifying a specific commit (e.g., to download a file.)
   String id;
+
+  /// The name and relative location of the file in the repo.
   String fileName;
+
+  /// The Ontology Metrics.
   List<Map<String, dynamic>> metrics;
 }
