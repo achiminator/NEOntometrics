@@ -1124,7 +1124,6 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Knowledge_Coverage_and_Popularity_Measures">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl"/>
-        <owl:disjointWith rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Structural_Ontology_Measures"/>
     </owl:Class>
     
 
@@ -3992,7 +3991,6 @@ m = n_m / n_s where n_m is the cardinality of M and n_s is the cardinalty of S( 
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Quality_Dimensions">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Dimension"/>
-        <owl:disjointWith rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Structural"/>
     </owl:Class>
     
 
@@ -6079,92 +6077,9 @@ SD = H/C</neontometrics:MetricDefinition>
     <rdf:Description>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
         <owl:members rdf:parseType="Collection">
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Annotation_Assertions"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Annotation_Property_Domain_Declarations"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Annotation_Property_Range_Declarations"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Annotations_On_Ontology"/>
-        </owl:members>
-    </rdf:Description>
-    <rdf:Description>
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
-        <owl:members rdf:parseType="Collection">
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Asymmetric_Object_Properties"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Disjoint_Object_Properties"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Equivalent_Object_Properties"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Functional_Object_Properties"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Inverse_Object_Properties"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Inversefunctional_Object_Properties"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Irreflexive_Object_Properties"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Object_Property_Domain_Declarations"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Object_Property_Range_Declarations"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Reflexive_Object_Properties"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Object_Properties"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Property_Chain_Of_Count"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Symmetric_Object_Properties"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Transitive_Object_Properties"/>
-        </owl:members>
-    </rdf:Description>
-    <rdf:Description>
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
-        <owl:members rdf:parseType="Collection">
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Class_Assertions"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Data_Property_Assertions"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Different_Individuals"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Negative_Data_Property_Assertions"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Negative_Object_Property_Assertions"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Object_Property_Assertions"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Same_Individuals"/>
-        </owl:members>
-    </rdf:Description>
-    <rdf:Description>
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
-        <owl:members rdf:parseType="Collection">
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Data_Property_Domain_Declarations"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Data_Property_Range_Declarations"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Disjoint_Data_Properties"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Equivalent_Data_Properties"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Functional_Data_Properties"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Data_Properties"/>
-        </owl:members>
-    </rdf:Description>
-    <rdf:Description>
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
-        <owl:members rdf:parseType="Collection">
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Average_Breath"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Average_Depth"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Breath_Variance"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Maximum_Breath"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Maximum_Depth"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Minimum_Breath"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Minimum_Depth"/>
-        </owl:members>
-    </rdf:Description>
-    <rdf:Description>
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
-        <owl:members rdf:parseType="Collection">
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Direct_Popularity"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Number_Of_Classes"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Number_Of_Individuals"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Number_Of_Properties"/>
-        </owl:members>
-    </rdf:Description>
-    <rdf:Description>
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
-        <owl:members rdf:parseType="Collection">
             <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Likability"/>
             <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Pleasure"/>
             <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Trust"/>
-        </owl:members>
-    </rdf:Description>
-    <rdf:Description>
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
-        <owl:members rdf:parseType="Collection">
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Fanout_of_Non-Leaf_Classes_(AF-NL)"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Fanout_of_Root_Class_(AF-R)"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Fanout_per_Class_(AF-C)"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Properties_per_Class_(AP-C)"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Maximum_Depth_of_Inheritance_Tree_(MaxDIT)"/>
-            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Number_of_Properties_(NOP)"/>
         </owl:members>
     </rdf:Description>
 </rdf:RDF>
