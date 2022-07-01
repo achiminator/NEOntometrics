@@ -39,9 +39,10 @@ class _CalculationEngineState extends State<CalculationEngine> {
         padding: const EdgeInsets.all(20),
         child: Column(children: [
           SizedBox(
-            height:310,
+            height: 310,
             width: 1200,
-            child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            child:
+                Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
               Expanded(
                 child: Container(
                     height: 100,
@@ -124,8 +125,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
                     future: widget.metricData,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState != ConnectionState.done) {
-                        return const Center(
-                            child: RefreshProgressIndicator());
+                        return const Center(child: RefreshProgressIndicator());
                       } else {
                         return (Container(
                           padding: const EdgeInsets.all(20.0),
@@ -145,7 +145,8 @@ class _CalculationEngineState extends State<CalculationEngine> {
                         padding: const EdgeInsets.only(right: 25),
                         child: OutlinedButton(
                             onPressed: () {
-                              var dialog = const Dialog();
+                              var dialog =
+                                  const AlreadyCalculatedSelectionOverlay();
                               showDialog(
                                       barrierDismissible: true,
                                       context: context,
@@ -163,8 +164,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
                       Expanded(
                         child: TextFormField(
                           //This is the textfield. It triggers the analysis.
-                          autovalidateMode:
-                              AutovalidateMode.onUserInteraction,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
                           controller: urlController,
                           decoration: InputDecoration(
                               suffixIcon: IconButton(
@@ -203,60 +203,60 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                           false) {
                                         showDialog(
                                             context: context,
-                                            builder:
-                                                (BuildContext context) =>
-                                                    AlertDialog(
-                                                      title: const Text(
-                                                          "Data not yet in Database"),
-                                                      content: Text(
-                                                          "There is no data yet in the system. Would you like to calculate ontology metrics for the given URL?\n${urlController.text}"),
-                                                      actions: [
-                                                        TextButton(
-                                                            child: const Text(
-                                                                "Yes, Put in Queue"),
-                                                            onPressed: () {
-                                                              response = graphQL
-                                                                  .putInQueue(
-                                                                      urlController
-                                                                          .text,
-                                                                      reasoner);
-                                                              response.then(
-                                                                  (jsonResponse) {
-                                                                if (jsonResponse
-                                                                    .hasException) {
-                                                                  displayErrorSnackBar(
-                                                                      jsonResponse
-                                                                          .exception
-                                                                          .toString(),
-                                                                      context);
-                                                                }
-                                                                //  else if (jsonResponse
-                                                                //         .data?["update_queueInfo"][
-                                                                //     "error"]??false) {
-                                                                //   displayErrorSnackBar(
-                                                                //       jsonResponse
-                                                                //               .data?["update_queueInfo"][
-                                                                //           "errorMessage"],
-                                                                //       context);
-                                                                // }
-                                                                else {
-                                                                  progressSnackBar(
-                                                                      jsonResponse.data?["update_queueInfo"]
-                                                                          [
-                                                                          "queueInfo"]);
-                                                                }
-                                                              });
-                                                              Navigator.pop(
+                                            builder: (BuildContext context) =>
+                                                AlertDialog(
+                                                  title: const Text(
+                                                      "Data not yet in Database"),
+                                                  content: Text(
+                                                      "There is no data yet in the system. Would you like to calculate ontology metrics for the given URL?\n${urlController.text}"),
+                                                  actions: [
+                                                    TextButton(
+                                                        child: const Text(
+                                                            "Yes, Put in Queue"),
+                                                        onPressed: () {
+                                                          response = graphQL
+                                                              .putInQueue(
+                                                                  urlController
+                                                                      .text,
+                                                                  reasoner);
+                                                          response.then(
+                                                              (jsonResponse) {
+                                                            if (jsonResponse
+                                                                .hasException) {
+                                                              displayErrorSnackBar(
+                                                                  jsonResponse
+                                                                      .exception
+                                                                      .toString(),
                                                                   context);
-                                                            }),
-                                                        TextButton(
-                                                            child: const Text(
-                                                                "Abort"),
-                                                            onPressed: () =>
-                                                                Navigator.pop(
-                                                                    context))
-                                                      ],
-                                                    ));
+                                                            }
+                                                            //  else if (jsonResponse
+                                                            //         .data?["update_queueInfo"][
+                                                            //     "error"]??false) {
+                                                            //   displayErrorSnackBar(
+                                                            //       jsonResponse
+                                                            //               .data?["update_queueInfo"][
+                                                            //           "errorMessage"],
+                                                            //       context);
+                                                            // }
+                                                            else {
+                                                              progressSnackBar(jsonResponse
+                                                                          .data?[
+                                                                      "update_queueInfo"]
+                                                                  [
+                                                                  "queueInfo"]);
+                                                            }
+                                                          });
+                                                          Navigator.pop(
+                                                              context);
+                                                        }),
+                                                    TextButton(
+                                                        child:
+                                                            const Text("Abort"),
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                context))
+                                                  ],
+                                                ));
                                       } else if (graphQlResponse
                                                   .data?["queueInformation"]
                                               ?["taskFinished"] ==
@@ -272,7 +272,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                         String graphQlQueryAppender = graphQL
                                             .selectedMetrics2GraphQLInsertion(
                                                 selectedElementsForCalculation);
-        
+
                                         Future<QueryResult<dynamic>>
                                             futureResonse =
                                             graphQL.getMetricsFromAPI(
@@ -287,17 +287,14 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                                 context);
                                           } else {
                                             EasyLoading.dismiss();
-                                            Navigator.push(
-                                                context,
+                                            Navigator.push(context,
                                                 MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        CalculationView(
-                                                            graphQlResponse
-                                                                        .data?[
-                                                                    "getRepository"]
-                                                                ["edges"],
-                                                            urlController
-                                                                .text)));
+                                                    builder: (context) {
+                                              
+                                              return CalculationView(RepositoryData(
+                                                  graphQlResponse.data),
+                                                  urlController.text);
+                                            }));
                                           }
                                         });
                                         EasyLoading.show(
@@ -435,8 +432,8 @@ class _CalculationEngineState extends State<CalculationEngine> {
   }
 }
 
-class Dialog extends StatelessWidget {
-  const Dialog({
+class AlreadyCalculatedSelectionOverlay extends StatelessWidget {
+  const AlreadyCalculatedSelectionOverlay({
     Key? key,
   }) : super(key: key);
 
@@ -461,9 +458,22 @@ class Dialog extends StatelessWidget {
                 child: Row(
                   children: [
                     Expanded(child: Text(element["repository"])),
-                    Text(
-                      element["analyzedOntologyCommits"].toString(),
-                      textAlign: TextAlign.right,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      child: Chip(
+                        label: Text(
+                          element["ontologyFiles"].toString() + " ",
+                          textAlign: TextAlign.right,
+                        ),
+                        avatar: const Icon(Icons.filter_none),
+                      ),
+                    ),
+                    Chip(
+                      label: Text(
+                        element["analyzedOntologyCommits"].toString(),
+                        textAlign: TextAlign.right,
+                      ),
+                      avatar: const Icon(Icons.network_ping),
                     ),
                   ],
                 ),

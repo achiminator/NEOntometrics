@@ -2,20 +2,22 @@ import 'dart:convert';
 import "settings.dart";
 import 'package:http/http.dart' as http;
 
-
 class MetricExplorerItem {
-  ///Flattens the Hierachy of the hierachical structure of the [MetricExplorerItem]. The element onlyCalculatableClasses 
+  ///Flattens the Hierachy of the hierachical structure of the [MetricExplorerItem]. The element onlyCalculatableClasses
   // asks if only such elmeents are shown, that are possible to calculate.
   static List<MetricExplorerItem> getLeafItems(MetricExplorerItem input,
       {bool onlyCalculatableClasses = false}) {
     List<MetricExplorerItem> leafItems = [];
     if (input.subClass.isEmpty) {
-      if (!onlyCalculatableClasses || input.calculation != "" || input.implentationName != "") {
+      if (!onlyCalculatableClasses ||
+          input.calculation != "" ||
+          input.implentationName != "") {
         leafItems.add(input);
       }
     } else {
       for (var item in input.subClass) {
-        leafItems.addAll(getLeafItems(input = item, onlyCalculatableClasses: true));
+        leafItems
+            .addAll(getLeafItems(input = item, onlyCalculatableClasses: true));
       }
     }
 
@@ -50,7 +52,7 @@ class MetricExplorerItemFactory {
         await http.get(Uri.parse("${Settings().apiUrl}/metricexplorer"));
     final dynamic body;
     List<MetricExplorerItem> metricExplorerItems = [];
-    if (response.statusCode != 200) { 
+    if (response.statusCode != 200) {
       throw Exception(
           "Connection to Ontology-Endpoint was not Successfull (internal error)");
     } else {
@@ -101,4 +103,31 @@ class MetricExplorerItemFactory {
     metricExplorerItem.addAll(metricExplorerItemWithoutSubclasses);
     return metricExplorerItem;
   }
+}
+
+class RepositoryData {
+  RepositoryData(Map<String, dynamic>? graphqlInput) {
+    // Unpack the GraphQL reponse and create an object containing the ontology metrics.
+    Map<String, dynamic> root = graphqlInput?["getRepository"]["edges"][0]["node"];
+    repository = root["repository"] ?? "";
+    for (Map<String, dynamic> fileNode in root["ontologyfile_set"]?["edges"]) {
+      Map<String, dynamic> file = fileNode["node"];
+      var commits = <Map<String, dynamic>>[];
+      var metrics = <String, dynamic>{};
+      for (Map<String, dynamic> commitNode in file["commit"]["edges"]) {
+        metrics.addAll(commitNode["node"]);
+        commits.add(metrics);
+      }
+      ontologyFiles.add(OntologyData(file["id"], file["fileName"], commits));
+    }
+  }
+  String repository = "";
+  var ontologyFiles = <OntologyData>[];
+}
+
+class OntologyData {
+  OntologyData(this.id, this.fileName, this.metrics);
+  String id;
+  String fileName;
+  List<Map<String, dynamic>> metrics;
 }

@@ -56,6 +56,7 @@ class GraphQLHandler {
 {
   repositoriesInformation {
     repository
+    ontologyFiles
     analyzedOntologyCommits
   }
 }""";
@@ -88,30 +89,38 @@ class GraphQLHandler {
   Future<QueryResult<dynamic>> getMetricsFromAPI(
       String url, String graphQlQueryAppender) {
     var graphQlMetricQuery = """{
-  getRepository (repository: "$url") {
+  getRepository(repository: "https://github.com/achiminator/TestOnto") {
     edges {
       node {
         repository
-        fileName
-        metrics {
+        ontologyfile_set {
           edges {
             node {
-              CommitTime
-              CommitMessage
-              AuthorEmail
-              AuthorName
-              CommiterEmail
-              CommitterName
-              Size
-              ReadingError
-              $graphQlQueryAppender
+              id
+              fileName
+              branch
+              commit {
+                edges {
+                  node {
+                    CommitTime
+                    CommitMessage
+                    AuthorEmail
+                    AuthorName
+                    CommiterEmail
+                    CommitterName
+                    Size
+                    ReadingError
+                    $graphQlQueryAppender
+                  }
                 }
               }
             }
           }
         }
       }
-    }""";
+    }
+  }
+}""";
     var futureResonse =
         _graphQlClient.query(QueryOptions(fetchPolicy: FetchPolicy.networkOnly, document: parseString(graphQlMetricQuery)));
     return futureResonse;
