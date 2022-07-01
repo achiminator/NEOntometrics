@@ -106,7 +106,7 @@ class _CalculationViewState extends State<CalculationView> {
     List<DataRow> tableRows = [];
     OntologyData metricDataForOntologyFile =
         widget.repositoryData.ontologyFiles[activeFile];
-    var metricsForOntologyFile = metricDataForOntologyFile.metrics;
+    var metricsForOntologyFile = metricDataForOntologyFile.getDisplayMetrics();
     if (metricDataForOntologyFile.metrics.isEmpty) {
       return Center(
           child: Container(

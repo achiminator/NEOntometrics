@@ -118,13 +118,18 @@ class RepositoryData {
     repository = root["repository"] ?? "";
     for (Map<String, dynamic> fileNode in root["ontologyfile_set"]?["edges"]) {
       Map<String, dynamic> file = fileNode["node"];
-      var commits = <Map<String, dynamic>>[];
+      var commits = <Map<String, String>>[];
       var metrics = <String, dynamic>{};
+      var metricsConverted = <String, String>{};
       for (Map<String, dynamic> commitNode in file["commit"]["edges"]) {
         metrics.addAll(commitNode["node"]);
-        commits.add(metrics);
+        for (var key in metrics.keys){
+          metricsConverted[key] = metrics[key].toString();
+        }
+        commits.add(metricsConverted);
+        
       }
-      ontologyFiles.add(OntologyData(file["id"], file["fileName"], commits));
+      ontologyFiles.add(OntologyData(file["fileName"], commits));
     }
   }
 
@@ -138,14 +143,47 @@ class RepositoryData {
 
 /// Contains information and metrics of one ontology.
 class OntologyData {
-  OntologyData(this.id, this.fileName, this.metrics);
-
-  /// Used later on for identifying a specific commit (e.g., to download a file.)
-  String id;
+  OntologyData(this.fileName, this.metrics);
 
   /// The name and relative location of the file in the repo.
   String fileName;
 
   /// The Ontology Metrics.
-  List<Map<String, dynamic>> metrics;
+  List<Map<String, String>> metrics;
+
+  /// Prints the ontology metrics prettyfied.
+  List<Map<String, String>> getDisplayMetrics() {
+    var returnList = <Map<String, String>>[];
+    for (var metric in metrics) {
+      var returnMap = <String, String>{};
+      for (var metricName in metric.keys) {
+        var newResult = "";
+        if (metricName == "pk") {
+          continue;
+        }
+        if (metricName == "CommitTime") {
+          newResult = metric[metricName]!.split("+")[0];
+        } else {
+          newResult = metric[metricName]!.split("+")[0];
+        }
+
+        var newMetricName = "";
+        var firstChar = true;
+        for (var char in metricName.split("")) {
+          if (firstChar) {
+            newMetricName += char.toUpperCase();
+            firstChar = false;
+            continue;
+          }
+          if (char.toUpperCase() == char) {
+            newMetricName += " ";
+          }
+          newMetricName += char;
+        }
+        returnMap.addAll({newMetricName: newResult});
+      }
+      returnList.add(returnMap);
+    }
+    return returnList;
+  }
 }

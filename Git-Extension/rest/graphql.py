@@ -65,6 +65,7 @@ class CommitNode(DjangoObjectType):
     """
     # This part publishes the calculated Metrics (see the function in the model) to the GraphQL-Endpoint
     metrics = rest.metricOntologyHandler.ontologyhandler.getMetricDict()
+    pk = graphene.Int(source="pk")
     for element in metrics:
         if(len(element["metricCalculation"]) > 0):
             description = element["metricDefinition"] if len(element["metricDefinition"]) > 0 else element["metricDescription"]
@@ -85,8 +86,8 @@ class CommitNode(DjangoObjectType):
     class Meta:
         model = Commit
         filter_fields = {"reasonerActive": ["exact"]}
-        #fields = "__all__"
-        exclude = ["id", "commit"]
+        fields = "__all__"
+        # exclude = ["id", "commit"]
         
         interfaces = (relay.Node, )
 

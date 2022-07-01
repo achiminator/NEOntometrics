@@ -102,6 +102,7 @@ class GraphQLHandler {
               commit {
                 edges {
                   node {
+                    pk
                     CommitTime
                     CommitMessage
                     AuthorEmail
