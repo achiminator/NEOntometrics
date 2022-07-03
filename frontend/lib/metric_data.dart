@@ -123,11 +123,10 @@ class RepositoryData {
       var metricsConverted = <String, String>{};
       for (Map<String, dynamic> commitNode in file["commit"]["edges"]) {
         metrics.addAll(commitNode["node"]);
-        for (var key in metrics.keys){
+        for (var key in metrics.keys) {
           metricsConverted[key] = metrics[key].toString();
         }
         commits.add(metricsConverted);
-        
       }
       ontologyFiles.add(OntologyData(file["fileName"], commits));
     }
@@ -151,6 +150,15 @@ class OntologyData {
   /// The Ontology Metrics.
   List<Map<String, String>> metrics;
 
+  String getPKFromCommit(String CommitID) {
+    for (var item in metrics) {
+      if (item["CommitID"] == CommitID) {
+        return item["pk"] as String;
+      }
+    }
+    return "0";
+  }
+
   /// Prints the ontology metrics prettyfied.
   List<Map<String, String>> getDisplayMetrics() {
     var returnList = <Map<String, String>>[];
@@ -160,8 +168,10 @@ class OntologyData {
         var newResult = "";
         if (metricName == "pk") {
           continue;
-        }
-        if (metricName == "CommitTime") {
+        } else if (metricName == "CommitID") {
+          returnMap.addAll({"Commit ID": metric[metricName]??""});
+          continue;
+        } else if (metricName == "CommitTime") {
           newResult = metric[metricName]!.split("+")[0];
         } else {
           newResult = metric[metricName]!.split("+")[0];

@@ -104,6 +104,7 @@ class GraphQLHandler {
                   node {
                     pk
                     CommitTime
+                    CommitID
                     CommitMessage
                     AuthorEmail
                     AuthorName

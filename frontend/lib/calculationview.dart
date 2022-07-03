@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
 import 'package:download/download.dart';
 import 'package:neonto_frontend/metric_data.dart';
+import 'package:neonto_frontend/settings.dart';
+import 'dart:html' as html;
+
 
 class CalculationView extends StatefulWidget {
   final RepositoryData repositoryData;
@@ -106,7 +109,6 @@ class _CalculationViewState extends State<CalculationView> {
     List<DataRow> tableRows = [];
     OntologyData metricDataForOntologyFile =
         widget.repositoryData.ontologyFiles[activeFile];
-    var metricsForOntologyFile = metricDataForOntologyFile.getDisplayMetrics();
     if (metricDataForOntologyFile.metrics.isEmpty) {
       return Center(
           child: Container(
@@ -125,13 +127,25 @@ class _CalculationViewState extends State<CalculationView> {
                 ),
               )));
     }
-    for (Map<String, dynamic> metricForOntologyFile in metricsForOntologyFile) {
+    for (Map<String, dynamic> metricForOntologyFile
+        in metricDataForOntologyFile.getDisplayMetrics()) {
       if (columns.isEmpty) {
+        columns.add(const DataColumn(label: Text("File")));
         for (String key in metricForOntologyFile.keys) {
           columns.add(DataColumn(label: Text(key)));
         }
       }
       List<DataCell> cells = [];
+      cells.add(DataCell(IconButton(
+        onPressed: () => html.window.open(
+            Settings().apiUrl +
+                "/downloadOntology/" +
+                metricDataForOntologyFile
+                    .getPKFromCommit(metricForOntologyFile["Commit ID"]),
+            "Download"),
+        icon: const Icon(Icons.download),
+        tooltip: "Download the ontology file.",
+      )));
       for (var metric in metricForOntologyFile.values) {
         cells.add(DataCell(Text(metric.toString())));
       }
