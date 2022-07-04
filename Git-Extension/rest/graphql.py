@@ -42,7 +42,7 @@ class QueueInformationNode(graphene.ObjectType):
     taskStarted = graphene.Boolean(description="Is True if the calculation task has already started")
     queuePosition = graphene.Int(description="The current position in the calculation backlog. Gets calculated if it reaches 0")
     analyzedCommits = graphene.Int(description="Information on the current state of the repository calculation. The number of analyzed commits for a given repository file. If is not yet started, the value remains Null.")
-    commitsForThisOntology = graphene.Int(description="Information on the current state of the repository calculation. The number of commits that the given ontology in the repository has. If is not yet started, the value remains Null.")
+    totalCommits = graphene.Int(description="Information on the current state of the repository calculation. The number of commits that the repository has. If is not yet started, the value remains Null.")
     analyzedOntologies = graphene.Int(description="Information on the current state of the repository calculation. The number of already analyzed ontologies in the repository. If is not yet started, the value remains Null.")
     analysableOntologies = graphene.Int(description="Information on the current state of the repository calculation. the number of ontologies that are getting analyzed in the repository. If is not yet started, the value remains Null.")
     url = graphene.String(description="The requested URL.")
@@ -148,7 +148,7 @@ class QueueMutation(graphene.Mutation):
             taskStarted=queueInfo.taskStarted,
             queuePosition=queueInfo.queuePosition,
             analyzedCommits=queueInfo.analyzedCommits,
-            commitsForThisOntology=queueInfo.commitsForThisOntology,
+            commitsForThisOntology=queueInfo.totalCommits,
             analyzedOntologies=queueInfo.analyzedOntologies,
             analysableOntologies=queueInfo.analysableOntologies,
             url=queueInfo.url.url,
@@ -197,7 +197,7 @@ class Query(graphene.ObjectType):
             taskStarted=queueInfo.taskStarted,
             queuePosition=queueInfo.queuePosition,
             analyzedCommits=queueInfo.analyzedCommits,
-            commitsForThisOntology=queueInfo.commitsForThisOntology,
+            totalCommits=queueInfo.totalCommits,
             analyzedOntologies=queueInfo.analyzedOntologies,
             analysableOntologies=queueInfo.analysableOntologies,
             url=queueInfo.url.url,

@@ -18,7 +18,7 @@ class QueueInformation:
     urlInSystem = False
     analyzedOntologies = None
     analysableOntologies = None
-    commitsForThisOntology = None#
+    totalCommits = None
     analyzedCommits = None
 
     def __init__(self, urlString: str) -> dict:
@@ -40,7 +40,7 @@ class QueueInformation:
             if "analysableOntologies" in selfprogress:
                 self.analysableOntologies = selfprogress["analysableOntologies"]
             if "commitsForThisOntology" in selfprogress:
-                self.commitsForThisOntology = selfprogress["commitsForThisOntology"]
+                self.totalCommits = selfprogress["totalCommits"]
             if "ananlyzedCommits" in selfprogress:
                 self.analyzedCommits = selfprogress["ananlyzedCommits"]
 

@@ -83,7 +83,7 @@ class CalculationManager:
             
 
     @django_rq.job
-    def getObjects(self, repositoryUrl: str,  branch=None, classMetrics=False, reasoner=False) -> dict:
+    def getObjects(self, repositoryUrl: str,  classMetrics=False, reasoner=False) -> dict:
         """Analysis all ontology files in a git Repository
 
         Args:
@@ -97,7 +97,7 @@ class CalculationManager:
         """
         repo = None
         internalOntologyUrl = "ontologies/" + str(hash(repositoryUrl))
-        if Repository.objects.filter(repository = repositoryUrl).exists():
+        if Repository.objects.filter(repository = repositoryUrl).exists() and Repository.objects.get(repository = repositoryUrl).wholeRepositoryAnalyzed == True:
             repository = Repository.objects.get(repository = repositoryUrl)
             shutil.copy(repository.gitRepositoryFile.path, internalOntologyUrl+ "_packed.zip")
             shutil.unpack_archive( internalOntologyUrl + "_packed.zip", internalOntologyUrl)
@@ -106,48 +106,142 @@ class CalculationManager:
             print("Updated Objects: " + str(fetching.total_objects))
         # Creates a folder for the git-Repository based on the hash of the repository URL.
         else:
+            if Repository.objects.filter(repository = repositoryUrl).exists() and Repository.objects.get(repository = repositoryUrl).wholeRepositoryAnalyzed == False:
+                Repository.objects.get(repository = repositoryUrl).delete()
+                
             if(path.exists(internalOntologyUrl) == False):
                 repo = Git.clone_repository("http://" + repositoryUrl,
-                                    internalOntologyUrl, checkout_branch=branch)
+                                    internalOntologyUrl)
                 self.logger.debug("Repository cloned at " +  internalOntologyUrl + "_packed.tar.gz")
             repository = Repository.objects.create(repository = repositoryUrl)
         
         # This extremly ugly thing down below is necessary to set the head to the latest remote version. Otherwise, the fetch
         # Downloads the data but stays on the old position, thus preventing the crawler to get the new data.
         repo.reset(repo.references.objects[len(repo.references.objects)-1].target, Git.GIT_RESET_HARD)
-        
-        index = repo.index
-        index.read()
-        
-
 
         # This part is for counting how much ontologies are to be calculated in this repository
         currentJob = rq.job.get_current_job()
-        ontologiesToBeAnalyzed = 0
         analyzedOntologies = 0
-        for item in index:
-            if(item.path.endswith((".ttl", ".owl", ".rdf"))):
-                ontologiesToBeAnalyzed += 1
-        currentJob.meta = {"analysableOntologies": ontologiesToBeAnalyzed,
-                           "analyzedOntologies": analyzedOntologies}
+
+
         currentJob.save_meta()
         
-        for item in index:
-            if(item.path.endswith((".ttl", ".owl", ".rdf"))):
-                self.logger.debug("Analyse Ontology: "+item.path)
-                logging.debug("Analyse Ontology: "+item.path)
-                
-                if(reasoner):
-                    self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, repository=repository, reasoner=False, repo=repo)
-                    self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, repository=repository, reasoner=True, repo=repo)
+        opi = OpiHandler()
 
-                else:
-                    self.getOntologyMetrics(objectLocation=item.path, classMetrics=classMetrics, repository=repository, reasoner=False, repo=repo)
+        formerObj = {}
+        commitList = []
+        itemPaths = []
+        itemList = []
+        for reference in repo.listall_reference_objects():
+            if reference.type != 1 or reference.shorthand not in repo.branches.remote: # Only analyze non symbolic branches and such that are from the remote orign.
+                continue
+            print(reference.shorthand)
+            repo.checkout(reference)
+            for commit in repo.walk(repo.head.target, Git.GIT_SORT_TOPOLOGICAL | Git.GIT_SORT_REVERSE):
+                for item in repo.index:
+                    if not (item.path.endswith((".ttl", ".owl", ".rdf"))):
+                        continue
+                    if(formerObj.get(item.path) != item.id.hex):
+                        formerObj[copy.deepcopy(item.id.hex)] = copy.deepcopy(item.id.hex)
+                        if(commit not in commitList):
+                            commitList.append(commit)
+                        if(item.path not in itemPaths):
+                            itemPaths.append(copy.deepcopy(item.path))
+                        if(item.id.hex not in itemList):
+                            itemList.append(copy.deepcopy(item.id.hex))
+            
+        
+        
 
+            
+        ontologyDBObjects = []
+        for ontologyPath in itemPaths:
+            if OntologyFile.objects.filter(fileName = ontologyPath, repository=repository).exists():
+                ontologyDBObjects.append(OntologyFile.objects.get(fileName = ontologyPath, repository=repository))
+                alreadyExistingCommits =  DBCommitsInRepositorySerializer.flattenReponse(DBCommitsInRepositorySerializer(repository).data)
+            else:
+                ontologyDBObjects.append(OntologyFile.objects.create(repository = repository, fileName=ontologyPath))
+                alreadyExistingCommits = {}
+
+        # Iterates through the Repository, finding the relevant Commits based on paths
+        for commit in commitList:
+            analyzedOntologies =0
+            for ontologyDBObject in ontologyDBObjects:
+                if ontologyDBObject.fileName not in commit.tree:
+                    continue
                 analyzedOntologies += 1
-                currentJob.meta = {
-                    "analysableOntologies": ontologiesToBeAnalyzed, "analyzedOntologies": analyzedOntologies}
-                currentJob.save_meta()
+                currentJob.meta = {"analysableOntologies": len(itemPaths),
+                           "analyzedOntologies": analyzedOntologies}
+                commitCounter = 0
+                renamedFrom = None
+                # The branches are needed a couple of lines later
+                branches = repo.branches.with_commit(commit)
+                branches = [branch for branch in branches if branch in repo.branches.remote and "HEAD" not in branch]
+                if commit.hex in alreadyExistingCommits.keys(): # The branches that are already in the database do not need to be analyzed again 
+                    if alreadyExistingCommits.get(commit.hex) != branches: # However, the branches can change (due to commits). So we check if we need to adapt the branches.
+                        commitDBEntry = Commit.objects.filter(metricSource = ontologyDBObject, CommitID = commit.hex)
+                        if commitDBEntry.exists():
+                            commitDBEntry = commitDBEntry[0]
+                            commitDBEntry.branch = branches
+                            commitDBEntry.save()
+                    continue
+                if len(commit.parents) > 0:
+                    deltasToPrevious = [delta.delta for delta in repo.diff(a=commit.parents[0], b=commit, cached=False)]
+                    previousDelta = None
+                    for delta in deltasToPrevious:
+                        if(delta.status == Git.GIT_DELTA_RENAMED):
+                            if(ontologyDBObject.fileName == delta.new_file.path):
+                                renamedFrom =  delta.old_file.path
+                        if (previousDelta != None):
+                            # Mostly, the algorithm does not rightfully detect an item as renamed, but as deleted and added again. If both have the same size, we assume a Rename Event.
+                            if (previousDelta.status == Git.GIT_DELTA_DELETED and delta.status == Git.GIT_DELTA_ADDED and previousDelta.old_file.size == delta.new_file.size):
+                                renamedFrom =  previousDelta.old_file.path
+                        previousDelta = delta
+
+                # Attach progress reports to the scheduler-database (REDIS)
+                commitCounter += 1
+                job = rq.job.get_current_job()
+                job.meta.update({ 
+                    "totalCommits": len(commitList),
+                    "ananlyzedCommits": commitCounter
+                })
+                job.save_meta()
+
+                obj = self._getFittingObject(ontologyDBObject.fileName, commit.tree)
+                if obj != None:
+                    if(formerObj != obj):     
+                        formerObj = obj
+                        returnObject = {}
+                        # Commit-Metadata 
+                        returnObject["CommitTime"] = datetime.fromtimestamp(
+                            commit.commit_time)
+                        returnObject["CommitID"] = commit.hex    
+                        returnObject["CommitMessage"] = commit.message
+                        returnObject["AuthorName"] = commit.author.name
+                        returnObject["AuthorEmail"] = commit.author.email
+                        returnObject["CommitterName"] = commit.committer.name
+                        returnObject["CommiterEmail"] = commit.committer.email
+                        returnObject["branch"] = branches
+                        returnObject["renamedFrom"] = renamedFrom
+                        
+                        self.logger.debug(
+                            "Date: " + str(returnObject["CommitTime"]))
+                        self.logger.debug("Commit:" + commit.message)
+                        try:
+                            opiMetrics = opi.opiOntologyRequest(
+                                obj.data, ontologySize=obj.size, classMetrics=classMetrics, reasoner=reasoner)
+                            if "GeneralOntologyMetrics" in opiMetrics:
+                                opiMetrics.update(opiMetrics.pop("GeneralOntologyMetrics"))
+                            returnObject.update(opiMetrics)
+                            self.logger.debug("Ontology Analyzed Successfully")
+                        except IOError:
+                            # A reading Error occurs, e.g., if an ontology does not conform to a definied ontology standard and cannot be parsed
+                            self.logger.warning(
+                                "Ontology {0} not Readable ".format(obj.name))
+                            returnObject["Size"] = obj.size
+                            returnObject["ReadingError"] = "Ontology not Readable"
+                        if not Commit.objects.filter(metricSource=ontologyDBObject, CommitID = commit.hex, reasonerActive = reasoner ).exists():
+                            Commit.objects.create(metricSource = ontologyDBObject, **returnObject)
 
         repository.wholeRepositoryAnalyzed = True # A marker in the Database that all Files in it have been analyzed.
         
@@ -159,124 +253,7 @@ class CalculationManager:
         os.remove(file)
         return(True)
 
-    def getOntologyMetrics(self, objectLocation: str, classMetrics: bool, reasoner: bool, repository: Repository, repo: Git.Repository) -> dict:
-        """Calculates Evolutional Ontology-Metrics for one ontology file and stores them into a database
-
-        Args:
-            objectLocation (string): relative path of requested file in Repository
-            classMetrics (bool): Enable or Disable calculation of ClassMetrics
-            internalOntologyUrl (string): URL to cloned Repository stored locally on the machine
-            remoteLocation (string): URL to the originating repository (For documentation purposes in DB)
-            branch (string): Branch to work in
-            repo (pygit2.Repository): the pygit2 Repository
-
-        Returns:
-            dict: Repository with evolutional ontology-Metrics
-        """
-
-        # Read the index of the repo for accessing the files
-        index = repo.index
-        index.read()
-        opi = OpiHandler()
-        formerObj = None
-        commitList = []
-        if OntologyFile.objects.filter(fileName = objectLocation, repository=repository).exists():
-            ontologyFile = OntologyFile.objects.get(fileName = objectLocation, repository=repository)
-            alreadyExistingCommits =  DBCommitsInRepositorySerializer.flattenReponse(DBCommitsInRepositorySerializer(repository).data)
-        else:
-            ontologyFile = OntologyFile.objects.create(repository = repository, fileName=objectLocation)
-            alreadyExistingCommits = {}
-        # Iterates through the Repository, finding the relevant Commits based on paths
-        
-        for reference in repo.listall_reference_objects():
-            if reference.type != 1 or reference.shorthand not in repo.branches.remote: # Only analyze non symbolic branches and such that are from the remote orign.
-                continue
-            print(reference.shorthand)
-            repo.checkout(reference)
-            for commit in repo.walk(repo.head.target, Git.GIT_SORT_TOPOLOGICAL | Git.GIT_SORT_REVERSE):
-                obj = self._getFittingObject(objectLocation, commit.tree)
-                if obj != None:
-                    if(formerObj != obj):
-                        formerObj = obj
-                        if(commit not in commitList):
-                            commitList.append(commit)
-
-        # Sorting the Commits based on TIME, not on PARENTS, thus making the list ready for further filtering
-        commitList.sort(
-            key=lambda commit: datetime.fromtimestamp(commit.commit_time))
-        formerObj = None
-        commitCounter = 0  # The counter is merely for reporting progress.
-        for commit in commitList:
-            renamedFrom = None
-            # The branches are needed a couple of lines later
-            branches = repo.branches.with_commit(commit)
-            branches = [branch for branch in branches if branch in repo.branches.remote and "HEAD" not in branch]
-            if commit.hex in alreadyExistingCommits.keys(): # The branches that are already in the database do not need to be analyzed again 
-                if alreadyExistingCommits.get(commit.hex) != branches: # However, the branches can change (due to commits). So we check if we need to adapt the branches.
-                    commitDBEntry = Commit.objects.filter(metricSource = ontologyFile, CommitID = commit.hex)
-                    if commitDBEntry.exists():
-                        commitDBEntry = commitDBEntry[0]
-                        commitDBEntry.branch = branches
-                        commitDBEntry.save()
-                continue
-
-            deltasToPrevious = [delta.delta for delta in repo.diff(a=commit.parents[0], b=commit, cached=False)]
-            previousDelta = None
-            for delta in deltasToPrevious:
-                if(delta.status == Git.GIT_DELTA_RENAMED):
-                    if(objectLocation == delta.new_file.path):
-                        renamedFrom =  delta.old_file.path
-                if (previousDelta != None):
-                    # Mostly, the algorithm does not rightfully detect an item as renamed, but as deleted and added again. If both have the same size, we assume a Rename Event.
-                    if (previousDelta.status == Git.GIT_DELTA_DELETED and delta.status == Git.GIT_DELTA_ADDED and previousDelta.old_file.size == delta.new_file.size):
-                        renamedFrom =  previousDelta.old_file.path
-                previousDelta = delta
-
-            # Attach progress reports to the scheduler-database (REDIS)
-            commitCounter += 1
-            job = rq.job.get_current_job()
-            job.meta.update({ 
-                "commitsForThisOntology": len(commitList),
-                "ananlyzedCommits": commitCounter
-            })
-            job.save_meta()
-
-            obj = self._getFittingObject(objectLocation, commit.tree)
-            if obj != None:
-                if(formerObj != obj):     
-                    formerObj = obj
-                    returnObject = {}
-                    # Commit-Metadata 
-                    returnObject["CommitTime"] = datetime.fromtimestamp(
-                        commit.commit_time)
-                    returnObject["CommitID"] = commit.hex    
-                    returnObject["CommitMessage"] = commit.message
-                    returnObject["AuthorName"] = commit.author.name
-                    returnObject["AuthorEmail"] = commit.author.email
-                    returnObject["CommitterName"] = commit.committer.name
-                    returnObject["CommiterEmail"] = commit.committer.email
-                    returnObject["branch"] = branches
-                    returnObject["renamedFrom"] = renamedFrom
-                    
-                    self.logger.debug(
-                        "Date: " + str(returnObject["CommitTime"]))
-                    self.logger.debug("Commit:" + commit.message)
-                    try:
-                        opiMetrics = opi.opiOntologyRequest(
-                            obj.data, ontologySize=obj.size, classMetrics=classMetrics, reasoner=reasoner)
-                        if "GeneralOntologyMetrics" in opiMetrics:
-                            opiMetrics.update(opiMetrics.pop("GeneralOntologyMetrics"))
-                        returnObject.update(opiMetrics)
-                        self.logger.debug("Ontology Analyzed Successfully")
-                    except IOError:
-                        # A reading Error occurs, e.g., if an ontology does not conform to a definied ontology standard and cannot be parsed
-                        self.logger.warning(
-                            "Ontology {0} not Readable ".format(obj.name))
-                        returnObject["Size"] = obj.size
-                        returnObject["ReadingError"] = "Ontology not Readable"
-                    if not Commit.objects.filter(metricSource=ontologyFile, CommitID = commit.hex, reasonerActive = reasoner ).exists():
-                        Commit.objects.create(metricSource = ontologyFile, **returnObject)
-
+    
 
 
     def downloadSpecificOntologyFile(self, pkCommit: int)->dict:
