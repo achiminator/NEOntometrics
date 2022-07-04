@@ -100,8 +100,9 @@ RQ_QUEUES = {
     }
 }
 
+SINGLEONTOLOGYRETRIEVETIMOUT = 100 # Timeout until the download of a single ontology file gets aborted.
 # The URL of the OPI (Ontology Programming Interface)
-OPI = "opi:8080" if bool(os.environ.get("inDocker", False)) else "localhost:8080/ROOT"
+OPI = "opi:8080" if bool(os.environ.get("inDocker", False)) else "localhost:8085"  #"localhost:8080/ROOT"
 OPITIMEOUT = 800 # Seconds until a connection request to OPI times out.
 OPIRETRIES = 1 # How often the service is allows to give OPI another try.
 
@@ -218,7 +219,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'http://neontometrics.informatik.uni-rostock.de/djangostatic/' 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # The standard mysql driver of django depends on a C++ Extension.
