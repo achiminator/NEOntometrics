@@ -39,7 +39,7 @@ class QueueInformation:
                 self.analyzedOntologies = selfprogress["analyzedOntologies"]
             if "analysableOntologies" in selfprogress:
                 self.analysableOntologies = selfprogress["analysableOntologies"]
-            if "commitsForThisOntology" in selfprogress:
+            if "totalCommits" in selfprogress:
                 self.totalCommits = selfprogress["totalCommits"]
             if "ananlyzedCommits" in selfprogress:
                 self.analyzedCommits = selfprogress["ananlyzedCommits"]

@@ -41,7 +41,9 @@ services:
     environment:
       db_password: 'KMmsWrwRBBeQLXDO'
       inDocker: "True"
-
+    volumes:
+      - gitStorage:/code/repositoryCollection:ro
+  
   neontometrics_worker:
     restart: always
     image: neontometrics:latest
@@ -56,7 +58,9 @@ services:
       db_password: 'KMmsWrwRBBeQLXDO'
       isWorker: "True"
       inDocker: "True"
-
+    volumes:
+      - gitStorage:/code/repositoryCollection:rw
+      
   # the REST-Calculation Engine
   opi:
     ports:
@@ -97,4 +101,4 @@ services:
       - neontometricsdb:/var/lib/mysql
 volumes:
   neontometricsdb:
-  djangostatic:
+  gitStorage:

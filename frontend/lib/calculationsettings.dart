@@ -336,7 +336,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
               "Calculation not yet finished${(queueInformation["taskIsStarted"] == true) ? ", but started and currently in Progress." : ""}. Queue position: ${queueInformation["queuePosition"]}"),
           //The progress bar for the current state of analyzed ontologies shall only appear
           //if the data is in the json response.
-          subtitle: (queueInformation["commitsForThisOntology"] ?? false)
+          subtitle: (queueInformation["totalCommits"] ?? false)
               ? ProgressBarIndicator(jsonResponse: queueInformation)
               : null,
         ));

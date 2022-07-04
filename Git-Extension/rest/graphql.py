@@ -180,7 +180,8 @@ class Query(graphene.ObjectType):
 
     def resolve_repositoriesInformation(root, info):
         v = Commit.objects.select_related("metricSource__repository")
-        v = v.values(repository = F("metricSource__repository__repository")).annotate(ontologyFiles=Count("metricSource__fileName",distinct=True), analyzedOntologyCommits=Count("CommitID")).filter(repository__isnull = False)
+        v = v.values(allAnalyzed = F("metricSource__repository__wholeRepositoryAnalyzed"), repository = F("metricSource__repository__repository")).annotate(ontologyFiles=Count("metricSource__fileName",distinct=True), analyzedOntologyCommits=Count("CommitID")).filter(repository__isnull = False, allAnalyzed=True)
+
         return v
 
     def resolve_queueInformation(root, info, url):

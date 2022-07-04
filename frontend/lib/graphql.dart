@@ -26,25 +26,23 @@ class GraphQLHandler {
     }""")));
     return response;
   }
-  Future<QueryResult<dynamic>> putInQueue(String url, bool reasoner) {
+  Future<QueryResult<dynamic>> putInQueue(String url, bool reasoner, {bool update = false}) {
     var mutation = """mutation{
   update_queueInfo(
     reasoner: $reasoner
     url: "$url"
-  ) {
+    update: $update
+      ) {
     error
     errorMessage
     queueInfo {
-      urlInSystem
-      taskFinished
-      taskStarted
-      queuePosition
-      url
-      repository
-      service
-      fileName 
-      error
-      errorMessage
+        urlInSystem
+        taskFinished
+        taskStarted
+        queuePosition
+        repository
+        error
+        errorMessage
     }
   }
 }""";
