@@ -22,23 +22,76 @@ For the asynchronous Scheduling, it is further necessary to run a REDIS-Database
 If a redis instance is up and running, you can start the application. First start the `pipenv shell`, then the main django instance through `py manage.py runserver`. As a last step (*if the async-behavior is not disabled by setting the flag in the `settings.py`-file* ), the worker needs to be started by `py manage.py rqworker`. Please be aware that the worker does not function in a windows environment. However, it functions under `WSL`. `py manage.py rqstats` gives you information on the current load of the system (*number of jobs in the queue, number of workers*)
 
 
-## Using
+## Using GraphQL Endpoint
+The Endpoint is available on localhost:8086/graphql. Use the interactive GraphQL documentation to learn how what kind of analysis is possible. A sample query for an ontology is shown down below.
 
-### Input Parameters
-The git-extension is written in python and takes in a Get-Request pointing to the Ontology repository and the target file. The Request looks the following:
-
-`http://localhost:8000/git?classMetrics=True &url=https://github.com/ESIPFed/sweet/blob/master/src/humanCommerce.ttl`
-
-- The `URL`- parameter is always necessary. It points to a whole repository or a specific file within a repository.
-- `classMetrics` is a boolean value indicating whether the ClassMetrics are calculated. Can be omitted and is `false` by default. The calculation is ressource-intensive and increases heavily the response-time
-
-If the target has been analyzed before, the metric is retrieved from the database and directly displayed. Otherwise, a new calculation job is put into the queue and the rest-interface returns information on the upcomming job - especially the `queuePosition` is interesting, as it indicates how many jobs are to be done before the own job is getting calculated.
-
-
-`{
-    "taskedFinished": false,
-    "queuePosition": 0,
-    "url": "https://github.com/ESIPFed/sweet/",
-    "repository": "/ESIPFed/sweet",
-    "service": "github.com"
-}`
+    getRepository(repository: "https://github.com/kbarber/puppet-ontologies") {
+        edges {
+            node {
+                created
+                repository
+                fileName
+                branch
+                wholeRepositoryAnalyzed
+                metrics {
+                    edges {
+                        node {
+                            CommitTime
+                            CommitID
+                            CommitMessage
+                            AuthorEmail
+                            AuthorName
+                            CommiterEmail
+                            CommitterName
+                            Size
+                            ReadingError
+                            axioms
+                            classes
+                            individuals
+                            logicalAxioms
+                            subClassOfAxioms
+                            anonymousClasses
+                            generalAnnotationAxioms
+                            hiddengciCount
+                            inverseFunctionalObjectPropertyAxioms
+                            inverseObjectPropertyAxioms
+                            irreflexiveObjectPropertyAxioms
+                            objectProperties
+                            objectPropertiesOnClasses
+                            objectPropertyAssertionaxioms
+                            objectPropertyDomainAxioms
+                            objectPropertyRangeAxioms
+                            OQual_Absolute_Breath
+                            OQual_Absolute_Depth
+                            OQual_Absolute_Leaf_Cardinality
+                            OQual_Absolute_Sibling_Cardinality
+                            OQual_Anonymous_classes_ratio
+                            OQual_Average_Breath
+                            OQual_Average_Depth
+                            OQual_Average_Sibling_FanOutness
+                            OQual_Axiomclass_ratio
+                            OQual_Class_relation_ratio
+                            OQual_Generic_complexity
+                            OQual_Inverse_relations_ratio
+                            OQual_Maximal_Breath
+                            OQual_Maximal_Depth
+                            OQual_Maximal_Leaf_FanOutness
+                            OQual_Maximal_Sibling_FanOutness
+                            OntoQA_Attribute_Richness
+                            OntoQA_Class_Inheritance_Richness
+                            OntoQA_Class_Utilization
+                            OntoQA_Cohesion
+                            OntoQA_Inheritance_Richness
+                            OntoQA_Relationship_Diversity
+                            OntoQA_Relationship_Richness
+                            OntoQA_Schema_Deepness
+                            ComplexityMetrics_Average_Paths_Per_Concept
+                            ComplexityMetrics_Average_Relationships_Per_Concept 
+                
+                        }
+                    }
+                }
+            }
+            }
+        }
+    }

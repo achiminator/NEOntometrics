@@ -151,7 +151,7 @@ public class GraphMetric extends MetricCalculations implements Callable<GraphMet
 	    superClassCount += superClassesofOwlClass.size();
 	    if(superClassesofOwlClass.size() > maxSuperClassOfAClass)
 		maxSuperClassOfAClass = superClassesofOwlClass.size();
-	    if(owlClass.getIndividualsInSignature().size() > 0)
+	    if(EntitySearcher.getIndividuals(owlClass, ontology).size()> 0 && !owlClass.isOWLThing())
 		classesWithIndividuals++;
 	    if ((superClassesofOwlClass.size() < 1 // add a class as a root class if it does not have any superclasses
 		    || superClassesofOwlClass.contains(new OWLDataFactoryImpl().getOWLThing())) // or if it is a

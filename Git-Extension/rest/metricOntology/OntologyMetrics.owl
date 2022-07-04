@@ -507,6 +507,18 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
     
 
 
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Classes_In_Cycles -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Classes_In_Cycles">
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Graph_Metrics"/>
+        <neontometrics:MetricDefinition>The number of classes in cycles</neontometrics:MetricDefinition>
+        <neontometrics:MetricDescription>Cycles are subclass relationships like A subClassOf B; B subClassOf C, C subClassOf A. This metrics counts the number of classes in these kind of cycles.</neontometrics:MetricDescription>
+        <neontometrics:MetricInterpretation>Cycles are ususally bad ontology design. Please note that the occurence of cycles in the ontology prevents a lot of further calculations (e.g., how to measure depth of there are cyclic sub class relationships. Further, most reasoners cannot work with cycles in the ontology, thus detecting (rightfully so) inconsistencies.</neontometrics:MetricInterpretation>
+        <rdfs:seeAlso rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Number_of_Cycles"/>
+    </owl:Class>
+    
+
+
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Classes_That_Share_A_Relation -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Classes_That_Share_A_Relation">
@@ -611,7 +623,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#divisor"/>
-                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Number_of_Paths"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Paths_Overall"/>
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
@@ -660,6 +672,177 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
     
 
 
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_Average_Path_Length -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_Average_Path_Length">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#divisor"/>
+                        <owl:allValuesFrom>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#sum"/>
+                                <owl:allValuesFrom>
+                                    <owl:Class>
+                                        <owl:intersectionOf rdf:parseType="Collection">
+                                            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Subclasses_Of_Thing"/>
+                                            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Super_Classes"/>
+                                        </owl:intersectionOf>
+                                    </owl:Class>
+                                </owl:allValuesFrom>
+                            </owl:Restriction>
+                        </owl:allValuesFrom>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Total_Depth"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
+        <neontometrics:MetricDefinition>The average path length of the ontology.</neontometrics:MetricDefinition>
+        <neontometrics:MetricInterpretation>Please note that the number of pathes is understood in this paper as the number of connections of all concepts to the root classes. For our calculation engine, that is equivalent to the number of Superclasses (As it states how many connections there are to the top) plus the number of subclasses of thing. The latter is necessary as these metrics would not  otherwise be counted as they have no superclasses. But for the given metric framework, these top level concepts are counted as the first hierachical level</neontometrics:MetricInterpretation>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_Average_Paths_Per_Concept -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_Average_Paths_Per_Concept">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#divisor"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
+                        <owl:allValuesFrom>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#sum"/>
+                                <owl:allValuesFrom>
+                                    <owl:Class>
+                                        <owl:intersectionOf rdf:parseType="Collection">
+                                            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Subclasses_Of_Thing"/>
+                                            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Super_Classes"/>
+                                        </owl:intersectionOf>
+                                    </owl:Class>
+                                </owl:allValuesFrom>
+                            </owl:Restriction>
+                        </owl:allValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
+        <neontometrics:MetricInterpretation>Average Paths Per Concept must be equal to or greater than 1 (each concept must have a parent except for the most general concept). If =1 then the ontology is a tree. Multi relation cocepts multi relation concepts(higher &quot;average relationships per concept ratio ratio) result in gy higher ρ ratio for an ontology
+
+Please note that the number of pathes is understood in this paper as the number of connections of all concepts to the root classes. For our calculation engine, that is equivalent to the number of Superclasses (As it states how many connections there are to the top) plus the number of subclasses of thing. The latter is necessary as these metrics would not  otherwise be counted as they have no superclasses. But for the given metric framework, these top level concepts are counted as the first hierachical level</neontometrics:MetricInterpretation>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_Average_Relationships_Per_Concept -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_Average_Relationships_Per_Concept">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#divisor"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Object_Property_Assertions"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
+        <neontometrics:MetricDefinition>The average relations per concept in an ontology</neontometrics:MetricDefinition>
+        <neontometrics:MetricDescription>Indicates the average connectivity degree of a concept</neontometrics:MetricDescription>
+        <neontometrics:MetricInterpretation>MetricInterpretation &quot;Please note that the number of pathes is understood in this paper as the number of connections of all concepts to the root classes. For our calculation engine, that is equivalent to the number of Superclasses (As it states how many connections there are to the top) plus the number of subclasses of thing. The latter is necessary as these metrics would not  otherwise be counted as they have no superclasses. But for the given metric framework, these top level concepts are counted as the first hierachical level&quot;</neontometrics:MetricInterpretation>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_Max_Path_Length -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_Max_Path_Length">
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
+                <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Maximum_Depth"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_TNOC -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_TNOC">
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
+                <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
+        <neontometrics:MetricDefinition>Total Number Of Concepts: The number of concepts in the set.</neontometrics:MetricDefinition>
+        <neontometrics:MetricInterpretation>As ontology consists of concepts and relations, TNOC and TNOR are the two basic attributes of ontology, we can see the change of basic size of an ontology by analyzing these two attributes. As path consists of relations and can reflect the inner structure and hierarchy of ontology,</neontometrics:MetricInterpretation>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_TNOP -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_TNOP">
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
+                <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Paths_Overall"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
+        <neontometrics:MetricDefinition>Total number of Paths: The sum of paths of each concept.</neontometrics:MetricDefinition>
+        <neontometrics:MetricDescription>A path is a distinct trace in direct acyclic graph from a specific particular concept to the most general concept in the ontology, which is the concept without any parent or superclass(</neontometrics:MetricDescription>
+        <neontometrics:MetricInterpretation>TNOP represents an ontology’s hierarchical
+complexity and its value is proportionate to difficulties in navigating and visualizing the ontology[</neontometrics:MetricInterpretation>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_TNOR -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_TNOR">
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
+                <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Class_Declarations"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
+        <neontometrics:MetricDefinition>Total Number Of Relations: The sum of the number of relations of each concept in an ontology.</neontometrics:MetricDefinition>
+        <neontometrics:MetricInterpretation>As ontology consists of concepts and relations, TNOC and TNOR are the two basic attributes of ontology, we can see the change of basic size of an ontology by analyzing these two attributes. As path consists of relations and can reflect the inner structure and hierarchy of ontology,</neontometrics:MetricInterpretation>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics">
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Frameworks"/>
+        <rdfs:seeAlso>Yang, Zhe; Zhang, Dalu; Ye, Chuan (2006): Ontology Analysis on Complexity and Evolution Based on Conceptual Model. In Ulf Leser (Ed.): Data integration in the life sciences. Third international workshop, DILS 2006, Hinxton, UK, July 20 - 22, 2006 ; proceedings, vol. 4075. Berlin: Springer (Lecture notes in computer science Lecture notes in bioinformatics, 4075), pp. 216–223.</rdfs:seeAlso>
+    </owl:Class>
+    
+
+
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Computational_Complexity -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Computational_Complexity">
@@ -682,6 +865,23 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Conditioned_Metrics">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Basic_Metrics"/>
         <neontometrics:MetricDescription>Metrics that count just a subset of all available metrics (Under a specific conditiion)</neontometrics:MetricDescription>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Connected_Graphs -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Connected_Graphs">
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Graph_Metrics"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
+                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numberOfConnectedGraphs"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <neontometrics:MetricDefinition>Measures the number of independent graphs in an ontology.</neontometrics:MetricDefinition>
+        <neontometrics:MetricDescription>At times, an ontology does not only contain one large, interconnected graph, but &quot;islands&quot; that are independent from each other. This metric does measure if the subclasses of root classes are connected with each other (through object properties). If not, it shows how much graphs (graphs that start on root level) are isolated.</neontometrics:MetricDescription>
+        <neontometrics:MetricInterpretation>Ontologies can get quite large. If there are &quot;islands&quot; within an ontology, it can make sense to seperate these into seperate ontology files, to reduce complexity.</neontometrics:MetricInterpretation>
     </owl:Class>
     
 
@@ -1491,6 +1691,15 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
     
 
 
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Max_Path_Length -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Max_Path_Length">
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Path_Metrics"/>
+        <neontometrics:MetricDescription>The longest Path from root to a leaf class.</neontometrics:MetricDescription>
+    </owl:Class>
+    
+
+
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Maximum_Breath -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Maximum_Breath">
@@ -1627,35 +1836,6 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
     
 
 
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Number_of_Classes_In_Cycles -->
-
-    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Number_of_Classes_In_Cycles">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Graph_Metrics"/>
-        <neontometrics:MetricDefinition>The number of classes in cycles</neontometrics:MetricDefinition>
-        <neontometrics:MetricDescription>Cycles are subclass relationships like A subClassOf B; B subClassOf C, C subClassOf A. This metrics counts the number of classes in these kind of cycles.</neontometrics:MetricDescription>
-        <neontometrics:MetricInterpretation>Cycles are ususally bad ontology design. Please note that the occurence of cycles in the ontology prevents a lot of further calculations (e.g., how to measure depth of there are cyclic sub class relationships. Further, most reasoners cannot work with cycles in the ontology, thus detecting (rightfully so) inconsistencies.</neontometrics:MetricInterpretation>
-        <rdfs:seeAlso rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Number_of_Cycles"/>
-    </owl:Class>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Number_of_Connected_Graphs -->
-
-    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Number_of_Connected_Graphs">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Graph_Metrics"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
-                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numberOfConnectedGraphs"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <neontometrics:MetricDefinition>Measures the number of independent graphs in an ontology.</neontometrics:MetricDefinition>
-        <neontometrics:MetricDescription>At times, an ontology does not only contain one large, interconnected graph, but &quot;islands&quot; that are independent from each other. This metric does measure if the subclasses of root classes are connected with each other (through object properties). If not, it shows how much graphs (graphs that start on root level) are isolated.</neontometrics:MetricDescription>
-        <neontometrics:MetricInterpretation>Ontologies can get quite large. If there are &quot;islands&quot; within an ontology, it can make sense to seperate these into seperate ontology files, to reduce complexity.</neontometrics:MetricInterpretation>
-    </owl:Class>
-    
-
-
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Number_of_Cycles -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Number_of_Cycles">
@@ -1670,21 +1850,6 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
         <neontometrics:MetricDescription>Cycles are subclass relationships like A subClassOf B; B subClassOf C, C subClassOf A. This metrics counts the number of existing cycles.</neontometrics:MetricDescription>
         <neontometrics:MetricInterpretation>Cycles are ususally bad ontology design. Please note that the occurence of cycles in the ontology prevents a lot of further calculations (e.g., how to measure depth of there are cyclic sub class relationships. Further, most reasoners cannot work with cycles in the ontology, thus detecting (rightfully so) inconsistencies.</neontometrics:MetricInterpretation>
         <rdfs:seeAlso rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Number_Of_Classes_In_Cycles"/>
-    </owl:Class>
-    
-
-
-    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Number_of_Paths -->
-
-    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Number_of_Paths">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Graph_Metrics"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
-                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#pathsToLeafClasses"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <neontometrics:MetricDefinition>Number of distinct paths from leaf classes to the root classes</neontometrics:MetricDefinition>
     </owl:Class>
     
 
@@ -2452,7 +2617,7 @@ class.</neontometrics:MetricDefinition>
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
-                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Number_of_Paths"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Paths_Overall"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
@@ -3313,7 +3478,7 @@ Different ontologies with subjective features and particular perspective on the 
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
-                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Number_of_Paths"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Paths_Overall"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
@@ -3662,7 +3827,7 @@ understood, manipulated, and exploited.</neontometrics:MetricDescription>
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
-                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Number_of_Classes_In_Cycles"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes_In_Cycles"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
@@ -3954,7 +4119,7 @@ ordering criteria that are assumed as quality indicators</neontometrics:MetricDe
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
-                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Number_of_Connected_Graphs"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Connected_Graphs"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
@@ -4586,7 +4751,7 @@ RU(Ci) = IREL(Ci) / CREL(Ci)</neontometrics:MetricDefinition>
         <owl:equivalentClass>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
-                <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Number_of_Connected_Graphs"/>
+                <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Connected_Graphs"/>
             </owl:Restriction>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Knowledgebase_Metrics"/>
@@ -4774,6 +4939,29 @@ SD = H/C</neontometrics:MetricDefinition>
 - Let -&gt; be a mapping from set Ci ,to Cj such that Ci -&gt; Cj if class Cj is a subclass of class Ci
 - Let &amp; be a mapping from set Ci to set Pj such that Ci &amp; Pj if class Ci includes property Pj as part of its definition.</neontometrics:MetricDefinition>
         <rdfs:seeAlso>Orme, Anthony Mark; Yao, Haining; Etzkorn, Letha H. (2007): Indicating ontology data quality, stability, and completeness throughout ontology evolution. In Journal of Software Maintenance and Evolution 19 (1), pp. 49–75. DOI: 10.1002/smr.341.</rdfs:seeAlso>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Path_Metrics -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Path_Metrics">
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Graph_Metrics"/>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Paths_Overall -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Paths_Overall">
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Path_Metrics"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
+                <owl:hasValue rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#pathsToLeafClasses"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <neontometrics:MetricDefinition>Number of distinct paths from leaf classes to the root classes</neontometrics:MetricDefinition>
     </owl:Class>
     
 

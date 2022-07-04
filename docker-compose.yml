@@ -8,15 +8,30 @@ services:
     ports:
      - '6379:6379'
 
+
+  # Creates the tables necessary in the database
+  migrateDB:
+    restart: "no"
+    build:
+      dockerfile: Dockerfile
+      context: ./Git-Extension
+    image: neontometrics:latest
+    depends_on:
+      - neontometrics_db
+    environment:
+      db_password: 'KMmsWrwRBBeQLXDO'
+      inDocker: "True"
+    command: bash -c "python manage.py makemigrations rest --noinput && python manage.py migrate"
+
   # This is the main application for the git metric aggregation
   neontometricsapi:
     restart: always
-    container_name: neontometricsapi
-    image: neontometrics
+    container_name: neontometrics
+    image: neontometrics:latest
     # The starting of the mySQL-Database takes longer than the start up of the django webapp.
 
     # Wait-for-it.sh ensures that the database is up and running before starting django.
-    command: "python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "python manage.py runserver 0.0.0.0:8000"
     #command: 'python manage.py runserver 0.0.0.0:8000' 
     ports:
       - '8086:8000'
@@ -29,7 +44,7 @@ services:
 
   neontometrics_worker:
     restart: always
-    image: neontometrics
+    image: neontometrics:latest
     command: python manage.py rqworker
     deploy:
       replicas: 4
@@ -52,7 +67,7 @@ services:
       JVM_OPTS: -Xmx12g -Xms12g -XX:MaxPermSize=2g
     build:
       context: ./Opi
-    image: opi
+    image: opi:latest
 
   # The flutter Frontend
   frontend:
@@ -62,20 +77,9 @@ services:
     container_name: neontometricsfrontend
     build:
       context: ./frontend
-    image: neontometricsfrontend
-
-  # Creates the tables necessary in the database
-  migrateDB:
-    restart: "no"
-    build:
-      context: ./Git-Extension
-    image: neontometrics
-    depends_on:
-      - neontometrics_db
-    environment:
-      db_password: 'KMmsWrwRBBeQLXDO'
-      inDocker: "True"
-    command: bash -c "python manage.py makemigrations rest --noinput && python manage.py migrate"
+    volumes:
+     - ./Git-Extension/staticfiles:/web/djangostatic:ro
+    image: neontometricsfrontend:latest
 
   # The Database for metric documentation
   neontometrics_db:
@@ -93,3 +97,4 @@ services:
       - neontometricsdb:/var/lib/mysql
 volumes:
   neontometricsdb:
+  djangostatic:
