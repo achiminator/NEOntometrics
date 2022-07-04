@@ -19,7 +19,7 @@ class GraphQLHandler {
         error
         errorMessage
         analyzedCommits
-        commitsForThisOntology
+        totalCommits
         analyzedOntologies
         analysableOntologies
       }

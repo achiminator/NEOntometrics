@@ -525,13 +525,13 @@ class ProgressBarIndicator extends StatelessWidget {
         Row(children: [
           Expanded(
             child: Text(
-                "Analyzed ${jsonResponse["analyzedCommits"]} of ${jsonResponse["commitsForThisOntology"]} Commits of this ontology:  "),
+                "Analyzed ${jsonResponse["analyzedCommits"]} of ${jsonResponse["totalCommits"]} Commits of this ontology:  "),
           ),
           Expanded(
               flex: 3,
               child: LinearProgressIndicator(
                 value: jsonResponse["analyzedCommits"] /
-                    jsonResponse["commitsForThisOntology"],
+                    jsonResponse["totalCommits"],
                 minHeight: 5,
               ))
         ])
