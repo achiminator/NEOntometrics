@@ -1,3 +1,4 @@
+from pydoc import describe
 from django.conf import settings
 import graphene, django_filters
 from graphene import relay
@@ -39,6 +40,7 @@ class QueueInformationNode(graphene.ObjectType):
     """
     urlInSystem = graphene.Boolean(description="Is False, if the repository is not known to the system at all.")
     taskFinished = graphene.Boolean(description="Is True if the repository is fully analyzed and stored in the database")
+    performsUpdate = graphene.Boolean(description="Whether an object is already finished with analyzing and performing an update")
     taskStarted = graphene.Boolean(description="Is True if the calculation task has already started")
     queuePosition = graphene.Int(description="The current position in the calculation backlog. Gets calculated if it reaches 0")
     analyzedCommits = graphene.Int(description="Information on the current state of the repository calculation. The number of analyzed commits for a given repository file. If is not yet started, the value remains Null.")
@@ -49,7 +51,7 @@ class QueueInformationNode(graphene.ObjectType):
     repository = graphene.String(description="The requested repository")
     service = graphene.String(description="The underlying service on where the repository/ontology can be found.")
     fileName = graphene.String()
-    error = graphene.Boolean(description="Whether a fatal error occured during repository/ontology analysis.")
+    error = graphene.Boolean(description="Whether an error occured during repository/ontology analysis.")
     errorMessage = graphene.String(description="The detailed Error-Message for a given Error.")
 
 class RepositoryInformationNode(graphene.ObjectType):
@@ -141,14 +143,17 @@ class QueueMutation(graphene.Mutation):
             CalculationManager.putInQueue(
                 url=urlObject,  reasonerSelected=reasoner)
             queueInfo = rest.queueInformation.QueueInformation(urlObject.url)
+            self.error = False
+            self.errorMessage = ""
 
         queueInfo = QueueInformationNode(
             urlInSystem=queueInfo.urlInSystem,
+            performsUpdate=queueInfo.performsUpdate,
             taskFinished=queueInfo.taskFinished,
             taskStarted=queueInfo.taskStarted,
             queuePosition=queueInfo.queuePosition,
             analyzedCommits=queueInfo.analyzedCommits,
-            commitsForThisOntology=queueInfo.totalCommits,
+            totalCommits=queueInfo.totalCommits,
             analyzedOntologies=queueInfo.analyzedOntologies,
             analysableOntologies=queueInfo.analysableOntologies,
             url=queueInfo.url.url,

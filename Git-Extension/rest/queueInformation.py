@@ -16,6 +16,7 @@ class QueueInformation:
     error = False
     errorMessage = ""
     urlInSystem = False
+    performsUpdate = False
     analyzedOntologies = None
     analysableOntologies = None
     totalCommits = None
@@ -32,6 +33,10 @@ class QueueInformation:
             jobPosition = django_rq.get_queue().get_job_position(job)
             self.taskFinished = False
             self.urlInSystem = True
+            if Repository.objects.filter(repository=self.url.repository).exists():
+                # If the flag "WholeRepositoryAnalyzed" is set AND the repository is in the queue, then it must perform an update. Thus we set flag.
+                self.performsUpdate = Repository.objects.get(repository=self.url.repository).wholeRepositoryAnalyzed
+
             self.taskStarted = job in django_rq.get_queue().started_job_registry
             self.queuePosition = jobPosition if jobPosition != None else 0
             selfprogress = job.get_meta()
