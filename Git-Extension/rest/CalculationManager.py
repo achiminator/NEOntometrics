@@ -217,7 +217,7 @@ class CalculationManager:
                         returnObject["CommitTime"] = datetime.fromtimestamp(
                             commit.commit_time)
                         returnObject["CommitID"] = commit.hex    
-                        returnObject["CommitMessage"] = commit.message
+                        returnObject["CommitMessage"] = commit.message.rstrip("\n")
                         returnObject["AuthorName"] = commit.author.name
                         returnObject["AuthorEmail"] = commit.author.email
                         returnObject["CommitterName"] = commit.committer.name
