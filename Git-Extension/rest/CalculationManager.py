@@ -138,17 +138,18 @@ class CalculationManager:
             print(reference.shorthand)
             repo.checkout(reference)
             for commit in repo.walk(repo.head.target, Git.GIT_SORT_TOPOLOGICAL | Git.GIT_SORT_REVERSE):
-                for item in repo.index:
-                    if not (item.path.endswith((".ttl", ".owl", ".rdf"))):
+                ontologiesInCommit = self._getOntologyPathsInTree("", commit.tree)
+                for ontologyPath, hexID in ontologiesInCommit.items():
+                    if not (ontologyPath.endswith((".ttl", ".owl", ".rdf"))):
                         continue
-                    if(formerObj.get(item.path) != item.id.hex):
-                        formerObj[copy.deepcopy(item.id.hex)] = copy.deepcopy(item.id.hex)
+                    if(formerObj.get(ontologyPath) != hexID):
+                        formerObj[copy.deepcopy(ontologyPath)] = copy.deepcopy(hexID)
                         if(commit not in commitList):
                             commitList.append(commit)
-                        if(item.path not in itemPaths):
-                            itemPaths.append(copy.deepcopy(item.path))
-                        if(item.id.hex not in itemList):
-                            itemList.append(copy.deepcopy(item.id.hex))
+                        if(ontologyPath not in itemPaths):
+                            itemPaths.append(copy.deepcopy(ontologyPath))
+                        if(hexID not in itemList):
+                            itemList.append(copy.deepcopy(hexID))
             
         
         
@@ -165,9 +166,9 @@ class CalculationManager:
 
         # Iterates through the Repository, finding the relevant Commits based on paths
         for commit in commitList:
-            analyzedOntologies =0
+            analyzedOntologies =0 
             for ontologyDBObject in ontologyDBObjects:
-                if ontologyDBObject.fileName not in commit.tree:
+                if ontologyDBObject.fileName not in self._getOntologyPathsInTree("", commit.tree).keys():
                     continue
                 analyzedOntologies += 1
                 currentJob.meta = {"analysableOntologies": len(itemPaths),
@@ -281,7 +282,28 @@ class CalculationManager:
         gitRepo.free()
         shutil.rmtree(internalOntologyUrl, ignore_errors=True)
         return returnVal
-        
+
+    def _getOntologyPathsInTree(self, currentLocation:str, tree)->dict:
+        """Collects all files with the given relative paths of a commit tree
+
+        Args:
+            currentLocation (str): The current location. Needed for recursion. Start it with "" when running
+            tree (_type_): The input pygit2 commit.tree
+
+        Returns:
+            dict: dict in the form of {path: hexID} of the files.
+        """
+        ontologies = {}
+        for element in tree:
+            if element.type_str == "blob":
+                ontologies.update({currentLocation + "/" +element.name: element.hex}) if len(currentLocation) > 0 else ontologies.update({element.name: element.hex}) 
+            elif element.type_str == "tree":
+                if len (currentLocation) > 0:
+                    ontologies.update(self._getOntologyPathsInTree(currentLocation=currentLocation + "/" + element.name, tree=element))
+                else:
+                    ontologies.update(self._getOntologyPathsInTree(currentLocation=element.name, tree=element))
+        return ontologies
+    
     def _getFittingObject(self, searchObj, commitTree):
         """Finds specific File in git-commit-Object
 

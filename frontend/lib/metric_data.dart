@@ -126,7 +126,7 @@ class RepositoryData {
         for (var key in metrics.keys) {
           metricsConverted[key] = metrics[key].toString();
         }
-        commits.add(metricsConverted);
+        commits.add(Map.from(metricsConverted));
       }
       ontologyFiles.add(OntologyData(file["fileName"], commits));
     }
@@ -197,7 +197,7 @@ class OntologyData {
     return returnList;
   }
 }
-
+/// Represents the QueueInformation Query for the status on a update or analyzing operation (if applicable)
 class QueueInformation {
   QueueInformation(Map<String, dynamic>? graphQLInput) :
     taskFinished = graphQLInput?["queueInformation"]?["taskFinished"] ?? false,
