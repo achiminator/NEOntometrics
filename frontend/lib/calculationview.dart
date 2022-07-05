@@ -180,15 +180,11 @@ class _CalculationViewState extends State<CalculationView> {
                 ),
               )));
     }
+    bool firstRow = true;
     for (Map<String, dynamic> metricForOntologyFile
         in metricDataForOntologyFile.getDisplayMetrics()) {
-      if (columns.isEmpty) {
-        columns.add(const DataColumn(label: Text("File")));
-        for (String key in metricForOntologyFile.keys) {
-          columns.add(DataColumn(label: Text(key)));
-        }
-      }
       List<DataCell> cells = [];
+      //Add Download Button
       cells.add(DataCell(IconButton(
         onPressed: () => html.window.open(
             Settings().apiUrl +
@@ -199,9 +195,36 @@ class _CalculationViewState extends State<CalculationView> {
         icon: const Icon(Icons.download),
         tooltip: "Download the ontology file.",
       )));
-      for (var metric in metricForOntologyFile.values) {
-        cells.add(DataCell(Text(metric.toString())));
+
+      for (String key in metricForOntologyFile.keys) {
+        if (columns.isEmpty) {
+          columns.add(const DataColumn(label: Text("File")));
+        }
+        if (firstRow) {
+          columns.add(DataColumn(label: Text(key)));
+        }
+        if (key == "Commit Message" &&
+            metricForOntologyFile[key].toString().contains("\n")) {
+          cells.add(DataCell(Tooltip(
+              message: metricForOntologyFile[key].toString(),
+              textStyle: const TextStyle(fontSize: 15, color: Colors.black),
+              preferBelow: true,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(
+                      width: 2,
+                      color: Colors
+                          .grey)), //borderRadius: BorderRadius.all(Radius.circular(1))),
+              //waitDuration: const Duration(milliseconds: 300),
+              child: Text(
+                metricForOntologyFile[key].toString(),
+                maxLines: 1,
+              ))));
+        } else {
+          cells.add(DataCell(Text(metricForOntologyFile[key].toString())));
+        }
       }
+      firstRow = false;
       tableRows.add(DataRow(cells: cells));
     }
     var data = TableData(tableRows);
