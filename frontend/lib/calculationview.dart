@@ -5,7 +5,6 @@ import 'package:neonto_frontend/metric_data.dart';
 import 'package:neonto_frontend/settings.dart';
 import 'dart:html' as html;
 
-
 class CalculationView extends StatefulWidget {
   final RepositoryData repositoryData;
   final String ontologyName;
@@ -36,6 +35,8 @@ class TableData extends DataTableSource {
 }
 
 class _CalculationViewState extends State<CalculationView> {
+  /// indicates whether the ontology is currently in the update-queue. -1 Indicates that it is not.
+  int updateStatus = -1;
   int activeMetricFile = 0;
 
   final scrollController = ScrollController();
@@ -70,21 +71,48 @@ class _CalculationViewState extends State<CalculationView> {
                             activeMetricFile = value as int;
                           }))),
             ),
-            SizedBox(
-                width: 190,
-                child: OutlinedButton(
-                  onHover: (value) => MaterialStateMouseCursor.clickable,
-                  onPressed: () => downloadMetricFile(activeMetricFile),
-                  child: ListTile(
-                    iconColor: Theme.of(context).colorScheme.onPrimary,
-                    textColor: Theme.of(context).colorScheme.onPrimary,
-                    title: const Text("Download"),
-                    leading: const Icon(Icons.download),
-                  ),
-                ))
+            updateIcon(),
+            IconButton(
+              onPressed: () => downloadMetricFile(activeMetricFile),
+              tooltip: "Download the displayed Metrics as a .csv",
+              icon: const Icon(Icons.download),
+            ),
           ],
         )),
         body: metricWidgetBuilder(activeMetricFile));
+  }
+
+  Widget updateIcon() {
+    if (updateStatus == -1) {
+      return IconButton(
+        onPressed: () => setState(() {
+          updateStatus++;
+        }),
+        tooltip: "Put the metrics update into the queue.",
+        icon: const Icon(Icons.update),
+      );
+    } else {
+      return Tooltip(
+        message: "The Metrics are currently in the queue for updating. Queueposition: $updateStatus",
+        child: Stack(
+          children: [
+          IconButton(
+            onPressed: () => setState(() {
+              updateStatus++;
+            }),
+            icon: const Icon(Icons.update_disabled),
+          ),
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+                color: Theme.of(context).secondaryHeaderColor,
+                borderRadius: const BorderRadius.all(Radius.circular(12))),
+            alignment: Alignment.bottomRight,
+            child: Text(updateStatus.toString(), textAlign: TextAlign.end, style: TextStyle(color: Theme.of(context).primaryColorDark, fontSize: 10)),
+          )
+        ]),
+      );
+    }
   }
 
   /// Extracts the file names of the ontology for the drop down menue.

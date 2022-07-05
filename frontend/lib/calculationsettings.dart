@@ -82,44 +82,46 @@ class _CalculationEngineState extends State<CalculationEngine> {
                     ),
                   ),
                   SizedBox(
-                    child: SwitchListTile(
-                        value: reasoner,
-                        secondary: const Icon(Icons.auto_graph),
-                        contentPadding:
-                            const EdgeInsets.symmetric(horizontal: 50),
-                        title: const Text("Reasoner Active"),
-                        onChanged: (value) {
-                          if (value == true) {
-                            var dialog = AlertDialog(
-                              title: const ListTile(
-                                  leading: Icon(Icons.warning),
-                                  title: Text("Activating Reasoner")),
-                              content: Text(
-                                  "On larger ontologies, the reasoning takes a large amount of time. On ontologies > ${Settings().reasoningLimit}, the reasoning is deactivated. We recommend the reasoning capabilities just for smaller ontologies and repositories."),
-                              actions: [
-                                TextButton(
-                                  child: const Text("Yes, active reasoning"),
-                                  onPressed: () {
-                                    setState(() {
-                                      reasoner = true;
-                                    });
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                                TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text("Abort"))
-                              ],
-                            );
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) => dialog);
-                          } else {
-                            setState(() {
-                              reasoner = value;
-                            });
-                          }
-                        }),
+                    child: RepaintBoundary(
+                      child: SwitchListTile(
+                          value: reasoner,
+                          secondary: const Icon(Icons.auto_graph),
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 50),
+                          title: const Text("Reasoner Active"),
+                          onChanged: (value) {
+                            if (value == true) {
+                              var dialog = AlertDialog(
+                                title: const ListTile(
+                                    leading: Icon(Icons.warning),
+                                    title: Text("Activating Reasoner")),
+                                content: Text(
+                                    "On larger ontologies, the reasoning takes a large amount of time. On ontologies > ${Settings().reasoningLimit}, the reasoning is deactivated. We recommend the reasoning capabilities just for smaller ontologies and repositories."),
+                                actions: [
+                                  TextButton(
+                                    child: const Text("Yes, active reasoning"),
+                                    onPressed: () {
+                                      setState(() {
+                                        reasoner = true;
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text("Abort"))
+                                ],
+                              );
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) => dialog);
+                            } else {
+                              setState(() {
+                                reasoner = value;
+                              });
+                            }
+                          }),
+                    ),
                   ),
                   FutureBuilder(
                     future: widget.metricData,
@@ -397,23 +399,25 @@ class _CalculationEngineState extends State<CalculationEngine> {
             children: (List<MetricExplorerItem> data) {
               List<Widget> chips = [];
               for (MetricExplorerItem item in data) {
-                chips.add(Tooltip(
-                    message: (item.definition) != ""
-                        ? item.definition
-                        : item.description,
-                    child: FilterChip(
-                      label: Text(item.itemName),
-                      selected: selectedElementsForCalculation.contains(item),
-                      onSelected: (bool value) {
-                        setState(() {
-                          if (value) {
-                            selectedElementsForCalculation.add(item);
-                          } else {
-                            selectedElementsForCalculation.remove(item);
-                          }
-                        });
-                      },
-                    )));
+                chips.add(RepaintBoundary(
+                  child: Tooltip(
+                      message: (item.definition) != ""
+                          ? item.definition
+                          : item.description,
+                      child: FilterChip(
+                        label: Text(item.itemName),
+                        selected: selectedElementsForCalculation.contains(item),
+                        onSelected: (bool value) {
+                          setState(() {
+                            if (value) {
+                              selectedElementsForCalculation.add(item);
+                            } else {
+                              selectedElementsForCalculation.remove(item);
+                            }
+                          });
+                        },
+                      )),
+                ));
               }
               return chips;
             }(leafElements),

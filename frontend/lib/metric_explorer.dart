@@ -203,14 +203,14 @@ class _MetricExplorerState extends State<MetricExplorer> {
       }
     }
 
-    var expansionPanelList = ExpansionPanelList(
+    var expansionPanelList = RepaintBoundary(child:ExpansionPanelList(
       expansionCallback: (panelIndex, isExpanded) {
         setState(() {
           items[panelIndex].toggled = !isExpanded;
         });
       },
       children: panelList,
-    );
+    ));
     List<Widget> returnList = [];
     returnList.add(expansionPanelList);
     returnList.addAll(leafitems);
