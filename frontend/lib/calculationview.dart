@@ -44,11 +44,12 @@ class TableData extends DataTableSource {
 class _CalculationViewState extends State<CalculationView> {
   /// indicates whether the ontology is currently in the update-queue. Null indicates that it is not.
   int activeMetricFile = 0;
-  QueueInformation? queueInformation;
+
+  /// The information on the queue are dynamic and can be altered if we trigger an update.
+  late QueueInformation queueInformation = widget.queueInformation;
   final scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
-    queueInformation ??= widget.queueInformation;
     return Scaffold(
         appBar: AppBar(
             title: Row(
@@ -89,8 +90,10 @@ class _CalculationViewState extends State<CalculationView> {
         body: metricWidgetBuilder(activeMetricFile));
   }
 
+  /// The widget for updating the metrics. Calls [GraphQLHandler.putInQueue] and displays
+  /// the corresponding [Snacks()] later on.
   Widget updateIcon() {
-    if (queueInformation!.queuePosition == null) {
+    if (queueInformation.queuePosition == null) {
       return IconButton(
         onPressed: () => GraphQLHandler()
             .putInQueue(widget.repositoryName, widget.reasonerSelected,
@@ -101,9 +104,10 @@ class _CalculationViewState extends State<CalculationView> {
                 .displayErrorSnackBar(value.exception.toString(), context);
           } else {
             setState(() {
-              queueInformation = QueueInformation(value.data?["update_queueInfo"]);
+              queueInformation =
+                  QueueInformation(value.data?["update_queueInfo"]);
             });
-            Snacks(context).progressSnackBar(queueInformation!);
+            Snacks(context).progressSnackBar(queueInformation);
           }
         }),
         tooltip: "Put the metrics update into the queue.",
@@ -112,11 +116,11 @@ class _CalculationViewState extends State<CalculationView> {
     } else {
       return Tooltip(
         message:
-            "The Metrics are currently in the queue for updating. Queueposition: ${queueInformation?.queuePosition}",
+            "The Metrics are currently in the queue for updating. Queueposition: ${queueInformation.queuePosition}",
         child: Stack(children: [
           IconButton(
             onPressed: () => setState(() {
-              Snacks(context).progressSnackBar(queueInformation!);
+              Snacks(context).progressSnackBar(queueInformation);
             }),
             icon: const Icon(Icons.update_disabled),
           ),
@@ -126,7 +130,7 @@ class _CalculationViewState extends State<CalculationView> {
                 color: Theme.of(context).secondaryHeaderColor,
                 borderRadius: const BorderRadius.all(Radius.circular(12))),
             alignment: Alignment.bottomRight,
-            child: Text(queueInformation!.queuePosition.toString(),
+            child: Text(queueInformation.queuePosition.toString(),
                 textAlign: TextAlign.end,
                 style: TextStyle(
                     color: Theme.of(context).primaryColorDark, fontSize: 10)),
