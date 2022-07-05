@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:neonto_frontend/markdown_handler.dart';
 import 'dart:html' as html;
 
-import 'package:neonto_frontend/settings.dart';
-
 //import 'markdown_handler.dart';
 class IndexPage extends StatelessWidget {
   const IndexPage({Key? key}) : super(key: key);

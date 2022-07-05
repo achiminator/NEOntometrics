@@ -11,7 +11,7 @@ class QueueInformation:
 
     taskFinished = None
     taskStarted = None
-    queuePosition = -1
+    queuePosition = None
     url = None
     error = False
     errorMessage = ""

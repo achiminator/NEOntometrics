@@ -150,9 +150,9 @@ class OntologyData {
   /// The Ontology Metrics.
   List<Map<String, String>> metrics;
 
-  String getPKFromCommit(String CommitID) {
+  String getPKFromCommit(String commitID) {
     for (var item in metrics) {
-      if (item["CommitID"] == CommitID) {
+      if (item["CommitID"] == commitID) {
         return item["pk"] as String;
       }
     }

@@ -43,7 +43,7 @@ class GraphQLHandler {
       ) {
     error
     errorMessage
-    queueInfo {
+    queueInformation {
         urlInSystem
         taskFinished
         taskStarted

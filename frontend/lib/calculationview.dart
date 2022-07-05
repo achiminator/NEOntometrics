@@ -5,14 +5,16 @@ import 'package:neonto_frontend/metric_data.dart';
 import 'package:neonto_frontend/settings.dart';
 import 'dart:html' as html;
 
+import 'graphql.dart';
 import 'notifications.dart';
 
 class CalculationView extends StatefulWidget {
   final RepositoryData repositoryData;
-  final String ontologyName;
+  final String repositoryName;
   final QueueInformation queueInformation;
-  const CalculationView(
-      this.repositoryData, this.ontologyName, this.queueInformation,
+  final bool reasonerSelected;
+  const CalculationView(this.repositoryData, this.repositoryName,
+      this.queueInformation, this.reasonerSelected,
       {Key? key})
       : super(key: key);
 
@@ -41,13 +43,12 @@ class TableData extends DataTableSource {
 
 class _CalculationViewState extends State<CalculationView> {
   /// indicates whether the ontology is currently in the update-queue. Null indicates that it is not.
-  int? updateStatus;
   int activeMetricFile = 0;
-
+  QueueInformation? queueInformation;
   final scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
-    updateStatus = widget.queueInformation.queuePosition;
+    queueInformation ??= widget.queueInformation;
     return Scaffold(
         appBar: AppBar(
             title: Row(
@@ -58,7 +59,7 @@ class _CalculationViewState extends State<CalculationView> {
                   iconColor: Theme.of(context).colorScheme.onPrimary,
                   textColor: Theme.of(context).colorScheme.onPrimary,
                   title: const Text("Metric View"),
-                  subtitle: Text(widget.ontologyName),
+                  subtitle: Text(widget.repositoryName),
                   leading: const Icon(Icons.add_chart_outlined),
                 )),
             Expanded(
@@ -89,10 +90,21 @@ class _CalculationViewState extends State<CalculationView> {
   }
 
   Widget updateIcon() {
-    if (updateStatus == null) {
+    if (queueInformation!.queuePosition == null) {
       return IconButton(
-        onPressed: () => setState(() {
-          updateStatus = updateStatus! +1;
+        onPressed: () => GraphQLHandler()
+            .putInQueue(widget.repositoryName, widget.reasonerSelected,
+                update: true)
+            .then((value) {
+          if (value.hasException) {
+            Snacks(context)
+                .displayErrorSnackBar(value.exception.toString(), context);
+          } else {
+            setState(() {
+              queueInformation = QueueInformation(value.data?["update_queueInfo"]);
+            });
+            Snacks(context).progressSnackBar(queueInformation!);
+          }
         }),
         tooltip: "Put the metrics update into the queue.",
         icon: const Icon(Icons.update),
@@ -100,11 +112,11 @@ class _CalculationViewState extends State<CalculationView> {
     } else {
       return Tooltip(
         message:
-            "The Metrics are currently in the queue for updating. Queueposition: $updateStatus",
+            "The Metrics are currently in the queue for updating. Queueposition: ${queueInformation?.queuePosition}",
         child: Stack(children: [
           IconButton(
             onPressed: () => setState(() {
-               Snacks(context).progressSnackBar(widget.queueInformation);
+              Snacks(context).progressSnackBar(queueInformation!);
             }),
             icon: const Icon(Icons.update_disabled),
           ),
@@ -114,7 +126,7 @@ class _CalculationViewState extends State<CalculationView> {
                 color: Theme.of(context).secondaryHeaderColor,
                 borderRadius: const BorderRadius.all(Radius.circular(12))),
             alignment: Alignment.bottomRight,
-            child: Text(updateStatus.toString(),
+            child: Text(queueInformation!.queuePosition.toString(),
                 textAlign: TextAlign.end,
                 style: TextStyle(
                     color: Theme.of(context).primaryColorDark, fontSize: 10)),
@@ -194,7 +206,6 @@ class _CalculationViewState extends State<CalculationView> {
       showFirstLastButtons: true,
       source: data,
       columns: columns,
-      //rows: tableRows,
     ));
   }
 

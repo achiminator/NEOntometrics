@@ -1,11 +1,7 @@
-import 'dart:collection';
-
 import 'package:neonto_frontend/settings.dart';
-
 import "calculationview.dart";
 import "graphql.dart";
 import 'package:graphql/client.dart';
-
 import 'package:flutter/material.dart';
 import 'package:neonto_frontend/markdown_handler.dart';
 import 'package:neonto_frontend/metric_data.dart';
@@ -280,7 +276,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                               return CalculationView(
                                                   RepositoryData(
                                                       graphQlResponse.data),
-                                                  urlController.text, queueInformation);
+                                                  urlController.text, queueInformation, reasoner);
                                             }));
                                           }
                                         });

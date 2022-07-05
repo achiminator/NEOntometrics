@@ -126,7 +126,7 @@ class QueueMutation(graphene.Mutation):
 
     error = graphene.Boolean(description="True if altering the queue was not successful.")
     errorMessage = graphene.String(description="Detailed information on an unsuccessful queue mutation.")
-    queueInfo = graphene.Field(QueueInformationNode)
+    queueInformation = graphene.Field(QueueInformationNode)
 
     @classmethod
     def mutate(self, root, info, url, reasoner, update):
@@ -169,7 +169,7 @@ class QueueMutation(graphene.Mutation):
             errorMessage=queueInfo.errorMessage
         )
 
-        return QueueMutation(queueInfo=queueInfo, error=self.error, errorMessage=self.errorMessage)
+        return QueueMutation(queueInformation=queueInfo, error=self.error, errorMessage=self.errorMessage)
 
 
 class Mutation(graphene.ObjectType):
