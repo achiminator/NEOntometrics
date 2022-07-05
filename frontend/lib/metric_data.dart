@@ -169,7 +169,7 @@ class OntologyData {
         if (metricName == "pk") {
           continue;
         } else if (metricName == "CommitID") {
-          returnMap.addAll({"Commit ID": metric[metricName]??""});
+          returnMap.addAll({"Commit ID": metric[metricName] ?? ""});
           continue;
         } else if (metricName == "CommitTime") {
           newResult = metric[metricName]!.split("+")[0];
@@ -196,4 +196,31 @@ class OntologyData {
     }
     return returnList;
   }
+}
+
+class QueueInformation {
+  QueueInformation(Map<String, dynamic>? graphQLInput) :
+    taskFinished = graphQLInput?["queueInformation"]?["taskFinished"] ?? false,
+    performsUpdate = graphQLInput?["queueInformation"]?["performsUpdate"] ?? false,
+    taskStarted = graphQLInput?["queueInformation"]?["taskStarted"] ?? false,
+    urlInSystem = graphQLInput?["queueInformation"]?["urlInSystem"] ?? false,
+    error = graphQLInput?["queueInformation"]?["error"] ?? true,
+    errorMessage = graphQLInput?["queueInformation"]?["errorMessage"] ?? "Error While retrieving the Data",
+    analyzedCommits = graphQLInput?["queueInformation"]?["analyzedCommits"],
+    totalCommits = graphQLInput?["queueInformation"]?["totalCommits"] ,
+    analyzedOntologies = graphQLInput?["queueInformation"]?["analyzedOntologies"] ,
+    analyzsableOntologies = graphQLInput?["queueInformation"]?["analysableOntologies"] ,
+    queuePosition = graphQLInput?["queueInformation"]?["queuePosition"];
+  
+  bool taskStarted;
+  bool taskFinished;
+  bool urlInSystem;
+  bool performsUpdate;
+  bool error;
+  String errorMessage;
+  int? queuePosition;
+  int? analyzedCommits;
+  int? totalCommits;
+  int? analyzedOntologies;
+  int? analyzsableOntologies;
 }

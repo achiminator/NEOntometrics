@@ -5,10 +5,15 @@ import 'package:neonto_frontend/metric_data.dart';
 import 'package:neonto_frontend/settings.dart';
 import 'dart:html' as html;
 
+import 'notifications.dart';
+
 class CalculationView extends StatefulWidget {
   final RepositoryData repositoryData;
   final String ontologyName;
-  const CalculationView(this.repositoryData, this.ontologyName, {Key? key})
+  final QueueInformation queueInformation;
+  const CalculationView(
+      this.repositoryData, this.ontologyName, this.queueInformation,
+      {Key? key})
       : super(key: key);
 
   @override
@@ -35,13 +40,14 @@ class TableData extends DataTableSource {
 }
 
 class _CalculationViewState extends State<CalculationView> {
-  /// indicates whether the ontology is currently in the update-queue. -1 Indicates that it is not.
-  int updateStatus = -1;
+  /// indicates whether the ontology is currently in the update-queue. Null indicates that it is not.
+  int? updateStatus;
   int activeMetricFile = 0;
 
   final scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
+    updateStatus = widget.queueInformation.queuePosition;
     return Scaffold(
         appBar: AppBar(
             title: Row(
@@ -83,22 +89,22 @@ class _CalculationViewState extends State<CalculationView> {
   }
 
   Widget updateIcon() {
-    if (updateStatus == -1) {
+    if (updateStatus == null) {
       return IconButton(
         onPressed: () => setState(() {
-          updateStatus++;
+          updateStatus = updateStatus! +1;
         }),
         tooltip: "Put the metrics update into the queue.",
         icon: const Icon(Icons.update),
       );
     } else {
       return Tooltip(
-        message: "The Metrics are currently in the queue for updating. Queueposition: $updateStatus",
-        child: Stack(
-          children: [
+        message:
+            "The Metrics are currently in the queue for updating. Queueposition: $updateStatus",
+        child: Stack(children: [
           IconButton(
             onPressed: () => setState(() {
-              updateStatus++;
+               Snacks(context).progressSnackBar(widget.queueInformation);
             }),
             icon: const Icon(Icons.update_disabled),
           ),
@@ -108,7 +114,10 @@ class _CalculationViewState extends State<CalculationView> {
                 color: Theme.of(context).secondaryHeaderColor,
                 borderRadius: const BorderRadius.all(Radius.circular(12))),
             alignment: Alignment.bottomRight,
-            child: Text(updateStatus.toString(), textAlign: TextAlign.end, style: TextStyle(color: Theme.of(context).primaryColorDark, fontSize: 10)),
+            child: Text(updateStatus.toString(),
+                textAlign: TextAlign.end,
+                style: TextStyle(
+                    color: Theme.of(context).primaryColorDark, fontSize: 10)),
           )
         ]),
       );

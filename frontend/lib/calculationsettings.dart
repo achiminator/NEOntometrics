@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:neonto_frontend/settings.dart';
 
 import "calculationview.dart";
@@ -8,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:neonto_frontend/markdown_handler.dart';
 import 'package:neonto_frontend/metric_data.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+
+import 'notifications.dart';
 
 class CalculationEngine extends StatefulWidget {
   final Future<List<MetricExplorerItem>> metricData;
@@ -172,7 +176,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
                               suffixIcon: IconButton(
                                 onPressed: () {
                                   if (urlController.text == "") {
-                                    displayErrorSnackBar(
+                                    Snacks(context).displayErrorSnackBar(
                                         "No valid ontology given. Please enter an URL to a valid Ontology.",
                                         context);
                                   } else {
@@ -182,95 +186,76 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                             .queueFromAPI(urlController.text);
                                     response.then((graphQlResponse) {
                                       if (graphQlResponse.hasException) {
-                                        displayErrorSnackBar(
+                                        Snacks(context).displayErrorSnackBar(
                                             graphQlResponse.exception
                                                 .toString(),
                                             context);
                                       }
-                                      if (graphQlResponse
-                                                  .data?["queueInformation"]
-                                              ?["error"] ==
-                                          true) {
-                                        displayErrorSnackBar(
-                                            graphQlResponse
-                                                    .data?["queueInformation"]
-                                                ?["errorMessage"],
+                                      var queueInformation = QueueInformation(
+                                          graphQlResponse.data);
+                                      if (queueInformation.error) {
+                                        Snacks(context).displayErrorSnackBar(
+                                            queueInformation.errorMessage,
                                             context);
                                       }
                                       // The reponse urlInSystem = False states that there is no information on the given ontology already stored in the system.
                                       // Thus, we ask the user if we shall put it into the queue.
-                                      else if (graphQlResponse
-                                                  .data?["queueInformation"]
-                                              ?["urlInSystem"] ==
-                                          false) {
+                                      else if (!queueInformation.urlInSystem) {
                                         showDialog(
                                             context: context,
-                                            builder: (BuildContext context) =>
-                                                AlertDialog(
-                                                  title: const Text(
-                                                      "Data not yet in Database"),
-                                                  content: Text(
-                                                      "There is no data yet in the system. Would you like to calculate ontology metrics for the given URL?\n${urlController.text}"),
-                                                  actions: [
-                                                    TextButton(
-                                                        child: const Text(
-                                                            "Yes, Put in Queue"),
-                                                        onPressed: () {
-                                                          response = graphQL
-                                                              .putInQueue(
-                                                                  urlController
-                                                                      .text,
-                                                                  reasoner);
-                                                          response.then(
-                                                              (jsonResponse) {
-                                                            if (jsonResponse
-                                                                .hasException) {
-                                                              displayErrorSnackBar(
-                                                                  jsonResponse
-                                                                      .exception
-                                                                      .toString(),
+                                            builder:
+                                                (BuildContext context) =>
+                                                    AlertDialog(
+                                                      title: const Text(
+                                                          "Data not yet in Database"),
+                                                      content: Text(
+                                                          "There is no data yet in the system. Would you like to calculate ontology metrics for the given URL?\n${urlController.text}"),
+                                                      actions: [
+                                                        TextButton(
+                                                            child: const Text(
+                                                                "Yes, Put in Queue"),
+                                                            onPressed: () {
+                                                              response = graphQL
+                                                                  .putInQueue(
+                                                                      urlController
+                                                                          .text,
+                                                                      reasoner);
+                                                              response.then(
+                                                                  (jsonResponse) {
+                                                                if (jsonResponse
+                                                                    .hasException) {
+                                                                  Snacks(context).displayErrorSnackBar(
+                                                                      jsonResponse
+                                                                          .exception
+                                                                          .toString(),
+                                                                      context);
+                                                                } else {
+                                                                  Snacks(context).progressSnackBar(
+                                                                      QueueInformation(
+                                                                          jsonResponse
+                                                                              .data?["update_queueInfo"]));
+                                                                }
+                                                              });
+                                                              Navigator.pop(
                                                                   context);
-                                                            }
-                                                            //  else if (jsonResponse
-                                                            //         .data?["update_queueInfo"][
-                                                            //     "error"]??false) {
-                                                            //   displayErrorSnackBar(
-                                                            //       jsonResponse
-                                                            //               .data?["update_queueInfo"][
-                                                            //           "errorMessage"],
-                                                            //       context);
-                                                            // }
-                                                            else {
-                                                              progressSnackBar(jsonResponse
-                                                                          .data?[
-                                                                      "update_queueInfo"]
-                                                                  [
-                                                                  "queueInfo"]);
-                                                            }
-                                                          });
-                                                          Navigator.pop(
-                                                              context);
-                                                        }),
-                                                    TextButton(
-                                                        child:
-                                                            const Text("Abort"),
-                                                        onPressed: () =>
-                                                            Navigator.pop(
-                                                                context))
-                                                  ],
-                                                ));
-                                      } else if (graphQlResponse
-                                                  .data?["queueInformation"]
-                                              ?["taskFinished"] ==
-                                          false) {
-                                        progressSnackBar(graphQlResponse
-                                            .data?["queueInformation"]);
+                                                            }),
+                                                        TextButton(
+                                                            child: const Text(
+                                                                "Abort"),
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    context))
+                                                      ],
+                                                    ));
+                                      } else if (!queueInformation
+                                              .taskFinished &&
+                                          !queueInformation.performsUpdate) {
+                                        Snacks(context).progressSnackBar(queueInformation);
                                       }
                                       // If the first query on the queue information state that the metrics are already in the ontology file,
                                       // then, retrieve the date with another GraphQL query.F
-                                      else if (graphQlResponse
-                                              .data?["queueInformation"]
-                                          ?["taskFinished"]) {
+                                      else if (queueInformation.taskFinished ||
+                                          queueInformation.performsUpdate) {
                                         String graphQlQueryAppender = graphQL
                                             .selectedMetrics2GraphQLInsertion(
                                                 selectedElementsForCalculation);
@@ -283,7 +268,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                         futureResonse.then((graphQlResponse) {
                                           if (graphQlResponse.hasException) {
                                             EasyLoading.dismiss();
-                                            displayErrorSnackBar(
+                                            Snacks(context).displayErrorSnackBar(
                                                 graphQlResponse.exception
                                                     .toString(),
                                                 context);
@@ -292,10 +277,10 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                             Navigator.push(context,
                                                 MaterialPageRoute(
                                                     builder: (context) {
-                                              
-                                              return CalculationView(RepositoryData(
-                                                  graphQlResponse.data),
-                                                  urlController.text);
+                                              return CalculationView(
+                                                  RepositoryData(
+                                                      graphQlResponse.data),
+                                                  urlController.text, queueInformation);
                                             }));
                                           }
                                         });
@@ -324,44 +309,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
         ]));
   }
 
-  void progressSnackBar(Map<String, dynamic> queueInformation) {
-    SnackBar snack = SnackBar(
-        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-        duration: const Duration(seconds: 10),
-        content: ListTile(
-          iconColor: Theme.of(context).colorScheme.onSecondary,
-          textColor: Theme.of(context).colorScheme.onSecondary,
-          leading: (queueInformation["taskIsStarted"] == true)
-              ? const Icon(Icons.wb_incandescent_sharp)
-              : const Icon(Icons.query_builder),
-          title: Text(
-              "Calculation not yet finished${(queueInformation["taskIsStarted"] == true) ? ", but started and currently in Progress." : ""}. Queue position: ${queueInformation["queuePosition"]}"),
-          //The progress bar for the current state of analyzed ontologies shall only appear
-          //if the data is in the json response.
-          subtitle: (queueInformation["totalCommits"] ?? false)
-              ? ProgressBarIndicator(jsonResponse: queueInformation)
-              : null,
-        ));
-    ScaffoldMessenger.of(context).showSnackBar(snack);
-  }
 
-  void displayErrorSnackBar(String message, BuildContext context,
-      {String subMessage = ""}) {
-    var snack = SnackBar(
-      content: ListTile(
-        iconColor: Theme.of(context).colorScheme.onError,
-        textColor: Theme.of(context).colorScheme.onError,
-        title: Text("Error:  $subMessage"),
-        leading: const Icon(Icons.warning_amber),
-        subtitle: Text(message),
-      ),
-      backgroundColor: Theme.of(context).colorScheme.error,
-      duration: const Duration(seconds: 10),
-      padding: const EdgeInsets.all(20),
-      dismissDirection: DismissDirection.vertical,
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snack);
-  }
 
   /// Takes the root element of the [List<MetricExplorerItem>] after the return call.
   /// First extracts the elemental metrics, afterwards iterates over all other subClasses.
@@ -500,46 +448,3 @@ class AlreadyCalculatedSelectionOverlay extends StatelessWidget {
   }
 }
 
-class ProgressBarIndicator extends StatelessWidget {
-  const ProgressBarIndicator({
-    Key? key,
-    required this.jsonResponse,
-  }) : super(key: key);
-
-  final Map<String, dynamic> jsonResponse;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 40,
-      child: Column(children: [
-        Row(children: [
-          Expanded(
-            child: Text(
-                "Analyzed ${jsonResponse["analyzedOntologies"]} of ${jsonResponse["analysableOntologies"]} ontologies:  "),
-          ),
-          Expanded(
-              flex: 3,
-              child: LinearProgressIndicator(
-                value: jsonResponse["analyzedOntologies"] /
-                    jsonResponse["analysableOntologies"],
-                minHeight: 6,
-              ))
-        ]),
-        Row(children: [
-          Expanded(
-            child: Text(
-                "Analyzed ${jsonResponse["analyzedCommits"]} of ${jsonResponse["totalCommits"]} Commits of this ontology:  "),
-          ),
-          Expanded(
-              flex: 3,
-              child: LinearProgressIndicator(
-                value: jsonResponse["analyzedCommits"] /
-                    jsonResponse["totalCommits"],
-                minHeight: 5,
-              ))
-        ])
-      ]),
-    );
-  }
-}

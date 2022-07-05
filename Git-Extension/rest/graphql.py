@@ -136,15 +136,20 @@ class QueueMutation(graphene.Mutation):
 
         if queueInfo.urlInSystem and update == False:
             self.error = True
-            self.errorMessage = "URL is already in System"
+            self.errorMessage = "URL is already in the Queue"
         else:
             urlObject = GitUrlParser()
             urlObject.parse(url)
-            CalculationManager.putInQueue(
-                url=urlObject,  reasonerSelected=reasoner)
             queueInfo = rest.queueInformation.QueueInformation(urlObject.url)
-            self.error = False
-            self.errorMessage = ""
+            if queueInfo.performsUpdate == True:
+                self.error = False
+                self.errorMessage = "URL is already in the Queue"
+            else:
+                CalculationManager.putInQueue(
+                    url=urlObject,  reasonerSelected=reasoner)
+                queueInfo = rest.queueInformation.QueueInformation(urlObject.url)
+                self.error = False
+                self.errorMessage = ""
 
         queueInfo = QueueInformationNode(
             urlInSystem=queueInfo.urlInSystem,
@@ -204,6 +209,7 @@ class Query(graphene.ObjectType):
             queuePosition=queueInfo.queuePosition,
             analyzedCommits=queueInfo.analyzedCommits,
             totalCommits=queueInfo.totalCommits,
+            performsUpdate=queueInfo.performsUpdate,
             analyzedOntologies=queueInfo.analyzedOntologies,
             analysableOntologies=queueInfo.analysableOntologies,
             url=queueInfo.url.url,
