@@ -14,6 +14,7 @@ from rq import job
 import django_rq
 import rq
 import shutil
+import pytz
 from django.core.files import File
 
 
@@ -210,7 +211,7 @@ class CalculationManager:
                     returnObject = {}
                     # Commit-Metadata 
                     returnObject["CommitTime"] = datetime.fromtimestamp(
-                        commit.commit_time)
+                        commit.commit_time, tz=pytz.timezone("utc"))
                     returnObject["CommitID"] = commit.hex    
                     returnObject["CommitMessage"] = commit.message.rstrip("\n")
                     returnObject["AuthorName"] = commit.author.name
