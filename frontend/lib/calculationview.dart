@@ -220,7 +220,7 @@ class _CalculationViewState extends State<CalculationView> {
                 metricForOntologyFile[key].toString(),
                 maxLines: 1,
               ))));
-        } else {
+        } else {6
           cells.add(DataCell(Text(metricForOntologyFile[key].toString())));
         }
       }

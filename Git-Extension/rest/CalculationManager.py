@@ -128,10 +128,10 @@ class CalculationManager:
         
         opi = OpiHandler()
 
-        formerObj = {}
+        
         commitList = []
         itemPaths = []
-        itemList = []
+        
         for reference in repo.listall_reference_objects():
             if reference.type != 1 or reference.shorthand not in repo.branches.remote: # Only analyze non symbolic branches and such that are from the remote orign.
                 continue
@@ -142,18 +142,10 @@ class CalculationManager:
                 for ontologyPath, hexID in ontologiesInCommit.items():
                     if not (ontologyPath.endswith((".ttl", ".owl", ".rdf"))):
                         continue
-                    if(formerObj.get(ontologyPath) != hexID):
-                        formerObj[copy.deepcopy(ontologyPath)] = copy.deepcopy(hexID)
-                        if(commit not in commitList):
-                            commitList.append(commit)
-                        if(ontologyPath not in itemPaths):
-                            itemPaths.append(copy.deepcopy(ontologyPath))
-                        if(hexID not in itemList):
-                            itemList.append(copy.deepcopy(hexID))
-            
-        
-        
-
+                    if(commit not in commitList):
+                        commitList.append(commit)
+                    if(ontologyPath not in itemPaths):
+                        itemPaths.append(copy.deepcopy(ontologyPath))
             
         ontologyDBObjects = []
         for ontologyPath in itemPaths:
@@ -163,9 +155,16 @@ class CalculationManager:
             else:
                 ontologyDBObjects.append(OntologyFile.objects.create(repository = repository, fileName=ontologyPath))
                 alreadyExistingCommits = {}
-
+        commitCounter = 0
+        alreadyCalculatedHex = []
+        job = rq.job.get_current_job()
         # Iterates through the Repository, finding the relevant Commits based on paths
         for commit in commitList:
+            commitCounter += 1
+            job.meta.update({ 
+                "totalCommits": len(commitList),
+                "ananlyzedCommits": commitCounter
+            })
             analyzedOntologies =0 
             for ontologyDBObject in ontologyDBObjects:
                 if ontologyDBObject.fileName not in self._getOntologyPathsInTree("", commit.tree).keys():
@@ -173,7 +172,12 @@ class CalculationManager:
                 analyzedOntologies += 1
                 currentJob.meta = {"analysableOntologies": len(itemPaths),
                            "analyzedOntologies": analyzedOntologies}
-                commitCounter = 0
+                job.save_meta()
+
+                obj = self._getFittingObject(ontologyDBObject.fileName, commit.tree)
+                if(obj == None or obj.hex  in alreadyCalculatedHex):
+                    continue
+
                 renamedFrom = None
                 # The branches are needed a couple of lines later
                 branches = repo.branches.with_commit(commit)
@@ -200,49 +204,41 @@ class CalculationManager:
                         previousDelta = delta
 
                 # Attach progress reports to the scheduler-database (REDIS)
-                commitCounter += 1
-                job = rq.job.get_current_job()
-                job.meta.update({ 
-                    "totalCommits": len(commitList),
-                    "ananlyzedCommits": commitCounter
-                })
-                job.save_meta()
-
-                obj = self._getFittingObject(ontologyDBObject.fileName, commit.tree)
+                
                 if obj != None:
-                    if(formerObj != obj):     
-                        formerObj = obj
-                        returnObject = {}
-                        # Commit-Metadata 
-                        returnObject["CommitTime"] = datetime.fromtimestamp(
-                            commit.commit_time)
-                        returnObject["CommitID"] = commit.hex    
-                        returnObject["CommitMessage"] = commit.message.rstrip("\n")
-                        returnObject["AuthorName"] = commit.author.name
-                        returnObject["AuthorEmail"] = commit.author.email
-                        returnObject["CommitterName"] = commit.committer.name
-                        returnObject["CommiterEmail"] = commit.committer.email
-                        returnObject["branch"] = branches
-                        returnObject["renamedFrom"] = renamedFrom
-                        
-                        self.logger.debug(
-                            "Date: " + str(returnObject["CommitTime"]))
-                        self.logger.debug("Commit:" + commit.message)
-                        try:
-                            opiMetrics = opi.opiOntologyRequest(
-                                obj.data, ontologySize=obj.size, classMetrics=classMetrics, reasoner=reasoner)
-                            if "GeneralOntologyMetrics" in opiMetrics:
-                                opiMetrics.update(opiMetrics.pop("GeneralOntologyMetrics"))
-                            returnObject.update(opiMetrics)
-                            self.logger.debug("Ontology Analyzed Successfully")
-                        except IOError:
-                            # A reading Error occurs, e.g., if an ontology does not conform to a definied ontology standard and cannot be parsed
-                            self.logger.warning(
-                                "Ontology {0} not Readable ".format(obj.name))
-                            returnObject["Size"] = obj.size
-                            returnObject["ReadingError"] = "Ontology not Readable"
-                        if not Commit.objects.filter(metricSource=ontologyDBObject, CommitID = commit.hex, reasonerActive = reasoner ).exists():
-                            Commit.objects.create(metricSource = ontologyDBObject, **returnObject)
+                    alreadyCalculatedHex.append(obj.hex)
+                    returnObject = {}
+                    # Commit-Metadata 
+                    returnObject["CommitTime"] = datetime.fromtimestamp(
+                        commit.commit_time)
+                    returnObject["CommitID"] = commit.hex    
+                    returnObject["CommitMessage"] = commit.message.rstrip("\n")
+                    returnObject["AuthorName"] = commit.author.name
+                    returnObject["AuthorEmail"] = commit.author.email
+                    returnObject["CommitterName"] = commit.committer.name
+                    returnObject["CommiterEmail"] = commit.committer.email
+                    returnObject["branch"] = branches
+                    returnObject["renamedFrom"] = renamedFrom
+                    
+                    self.logger.debug(
+                        "Date: " + str(returnObject["CommitTime"]))
+                    self.logger.debug("Commit:" + commit.message)
+                    try:
+                        print(f"opirequest-Hex: {commit.hex} -Size: {obj.size} -repo: {repositoryUrl} -file: {ontologyDBObject.fileName}")
+                        opiMetrics = opi.opiOntologyRequest(
+                            obj.data, ontologySize=obj.size, classMetrics=classMetrics, reasoner=reasoner)
+                        if "GeneralOntologyMetrics" in opiMetrics:
+                            opiMetrics.update(opiMetrics.pop("GeneralOntologyMetrics"))
+                        returnObject.update(opiMetrics)
+                        self.logger.debug("Ontology Analyzed Successfully")
+                    except IOError:
+                        # A reading Error occurs, e.g., if an ontology does not conform to a definied ontology standard and cannot be parsed
+                        self.logger.warning(
+                            "Ontology {0} not Readable ".format(obj.name))
+                        returnObject["Size"] = obj.size
+                        returnObject["ReadingError"] = "Ontology not Readable"
+                    if not Commit.objects.filter(metricSource=ontologyDBObject, CommitID = commit.hex, reasonerActive = reasoner ).exists():
+                        Commit.objects.create(metricSource = ontologyDBObject, **returnObject)
 
         repository.wholeRepositoryAnalyzed = True # A marker in the Database that all Files in it have been analyzed.
         
