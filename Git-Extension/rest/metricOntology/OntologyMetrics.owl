@@ -8,7 +8,11 @@
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:neontometrics="http://neontometrics.informatik.informatik.uni-rostock.de#"
      xmlns:untitled-ontology-261="http://www.semanticweb.org/achim/ontologies/2021/8/untitled-ontology-261#">
-    <owl:Ontology rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de"/>
+    <owl:Ontology rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de">
+        <rdfs:comment>An ontology for describing ontology metrics. It contains the underlying information of the NEOntometrics application by connecting database and calculation values with background information and proposed metric frameworks.</rdfs:comment>
+        <rdfs:comment>The individuals stored in this ontology correspond to metric values that are calculated and stored in the database. They are connected to subclasses from the class Elemental Metrics. These kind of metrics describe atomic measurements for assessing ontologies. The elemental metrics are then connected by mathematical relations to subclasses of &quot;Quality Frameworks&quot;. These frameworks represent metric calculations as proposed in the literature.</rdfs:comment>
+        <rdfs:label>NEOntometrics Ontology Metrics Ontology.</rdfs:label>
+    </owl:Ontology>
     
 
 
@@ -62,6 +66,9 @@
 
     <owl:ObjectProperty rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#QualityImplication">
         <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <neontometrics:MetricDefinition>Connects ontology metrics to quality implications.</neontometrics:MetricDefinition>
+        <neontometrics:MetricDescription>Some of the frameworks not only propose ontology metrics, but also connect these metrics to quality dimensions like &quot;Maintainablility&quot; or &quot;Reusability&quot;. The implications are mapped using these connections.</neontometrics:MetricDescription>
+        <neontometrics:MetricInterpretation>Not yet implemented in NEOntometrics.</neontometrics:MetricInterpretation>
     </owl:ObjectProperty>
     
 
@@ -71,6 +78,7 @@
     <owl:ObjectProperty rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#affectsNegative">
         <rdfs:subPropertyOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#QualityImplication"/>
         <owl:inverseOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#negativeAffectedBy"/>
+        <neontometrics:MetricDefinition>states that a metric negatively affects a quality dimension.</neontometrics:MetricDefinition>
     </owl:ObjectProperty>
     
 
@@ -81,6 +89,7 @@
         <rdfs:subPropertyOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#QualityImplication"/>
         <owl:inverseOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#positiveAffectedBy"/>
         <owl:propertyDisjointWith rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#positiveAffectedBy"/>
+        <neontometrics:MetricDefinition>states that a metric positively affects a quality dimension.</neontometrics:MetricDefinition>
     </owl:ObjectProperty>
     
 
@@ -88,6 +97,8 @@
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#calculatedBy -->
 
     <owl:ObjectProperty rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#calculatedBy">
+        <rdfs:domain rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Frameworks"/>
+        <rdfs:range rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Elemental_Metrics"/>
         <neontometrics:MetricDescription>The relation asserts how a metric is decomositioned into the essential Metrics</neontometrics:MetricDescription>
     </owl:ObjectProperty>
     
@@ -97,6 +108,8 @@
 
     <owl:ObjectProperty rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric">
         <rdfs:subPropertyOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#calculatedBy"/>
+        <neontometrics:MetricDefinition>States that a metric directly uses the given Elemental Metrics.</neontometrics:MetricDefinition>
+        <neontometrics:MetricDescription>An Example for this property is oquals &quot;Maximum Depth&quot; measurement. While it originates from a framework, it does not propose a ratio between two measurements, but directly reuses the Elemental_Metric &quot;maximum depth&quot;.</neontometrics:MetricDescription>
     </owl:ObjectProperty>
     
 
@@ -116,6 +129,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
 
     <owl:ObjectProperty rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#divisor">
         <rdfs:subPropertyOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#division"/>
+        <neontometrics:MetricDefinition>The Divisor in a fraction.</neontometrics:MetricDefinition>
         <rdfs:seeAlso rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#division"/>
     </owl:ObjectProperty>
     
@@ -123,7 +137,11 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy -->
 
-    <owl:ObjectProperty rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy"/>
+    <owl:ObjectProperty rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#implementedBy">
+        <rdfs:domain rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Elemental_Metrics"/>
+        <rdfs:range rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Individuals"/>
+        <neontometrics:MetricDefinition>Points from the elemental metrics to the individuals representing the actual measurements in database and calculation engine.</neontometrics:MetricDefinition>
+    </owl:ObjectProperty>
     
 
 
@@ -131,6 +149,8 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
 
     <owl:ObjectProperty rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#minuend">
         <rdfs:subPropertyOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#subtraction"/>
+        <neontometrics:MetricDefinition>The minuend in a substraction.</neontometrics:MetricDefinition>
+        <rdfs:seeAlso rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#subtraction"/>
     </owl:ObjectProperty>
     
 
@@ -139,8 +159,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
 
     <owl:ObjectProperty rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#multiplication">
         <rdfs:subPropertyOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#calculatedBy"/>
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <neontometrics:MetricDefinition>Multiplication of two values.</neontometrics:MetricDefinition>
     </owl:ObjectProperty>
     
 
@@ -149,6 +168,9 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
 
     <owl:ObjectProperty rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#negativeAffectedBy">
         <rdfs:subPropertyOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#QualityImplication"/>
+        <rdfs:domain rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Dimension"/>
+        <rdfs:range rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Frameworks"/>
+        <neontometrics:MetricDefinition>States that a quality dimension is negatively affected by a metric.</neontometrics:MetricDefinition>
     </owl:ObjectProperty>
     
 
@@ -157,6 +179,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
 
     <owl:ObjectProperty rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#numerator">
         <rdfs:subPropertyOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#division"/>
+        <neontometrics:MetricDefinition>The Numerator in a fraction.</neontometrics:MetricDefinition>
         <rdfs:seeAlso rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#division"/>
     </owl:ObjectProperty>
     
@@ -166,7 +189,9 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
 
     <owl:ObjectProperty rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#positiveAffectedBy">
         <rdfs:subPropertyOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#QualityImplication"/>
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdfs:domain rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Dimension"/>
+        <rdfs:range rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Frameworks"/>
+        <neontometrics:MetricDefinition>States that a quality dimension is positively affected by a metric.</neontometrics:MetricDefinition>
     </owl:ObjectProperty>
     
 
@@ -175,7 +200,8 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
 
     <owl:ObjectProperty rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#similarTo">
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
-        <neontometrics:MetricDescription>Defines that two metrics measures something similar (But not the same)</neontometrics:MetricDescription>
+        <neontometrics:MetricDefinition>Defines that two framework metrics measures something similar (But not the same)</neontometrics:MetricDefinition>
+        <neontometrics:MetricInterpretation>Even though this measurement indeed says that two things measure the same element, saying that they are equivalent in description logic has large side effects, so we use this similarTO relation.</neontometrics:MetricInterpretation>
     </owl:ObjectProperty>
     
 
@@ -193,6 +219,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
 
     <owl:ObjectProperty rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#subtraction">
         <rdfs:subPropertyOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#calculatedBy"/>
+        <neontometrics:MetricDefinition>The relations to handle subtstractions of metrics.</neontometrics:MetricDefinition>
     </owl:ObjectProperty>
     
 
@@ -201,6 +228,8 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
 
     <owl:ObjectProperty rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#subtrahend">
         <rdfs:subPropertyOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#subtraction"/>
+        <neontometrics:MetricDefinition>The subtrahend in a substraction.</neontometrics:MetricDefinition>
+        <rdfs:seeAlso rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#subtraction"/>
     </owl:ObjectProperty>
     
 
@@ -209,6 +238,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
 
     <owl:ObjectProperty rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#sum">
         <rdfs:subPropertyOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#calculatedBy"/>
+        <neontometrics:MetricDefinition>States that two or more metrics are summed up.</neontometrics:MetricDefinition>
     </owl:ObjectProperty>
     
 
@@ -447,6 +477,8 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Basic_Metrics">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Elemental_Metrics"/>
+        <neontometrics:MetricDefinition>The building blocks of every ontology.</neontometrics:MetricDefinition>
+        <neontometrics:MetricDescription>Metrics that measure the very basic constructs every ontology consists of.</neontometrics:MetricDescription>
     </owl:Class>
     
 
@@ -863,7 +895,7 @@ complexity and its value is proportionate to difficulties in navigating and visu
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Conditioned_Metrics -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Conditioned_Metrics">
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Basic_Metrics"/>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Special_Metrics"/>
         <neontometrics:MetricDescription>Metrics that count just a subset of all available metrics (Under a specific conditiion)</neontometrics:MetricDescription>
     </owl:Class>
     
@@ -4947,6 +4979,7 @@ SD = H/C</neontometrics:MetricDefinition>
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Path_Metrics">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Graph_Metrics"/>
+        <neontometrics:MetricDescription>Measurements that are concerned with the various paths in a graph (A path is the structure from the root class to the elements or leafes.)</neontometrics:MetricDescription>
     </owl:Class>
     
 
@@ -4978,7 +5011,7 @@ SD = H/C</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Dimension -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Quality_Dimension">
-        <rdfs:comment>Quality Dimensions. Currently not part of NEOntometrics.</rdfs:comment>
+        <rdfs:comment>Quality Dimensions. Currently not part of NEOntometrics. Some frameworks propose metrics that are connected to quality measurements. These informations are captured in this class.</rdfs:comment>
     </owl:Class>
     
 
@@ -5205,6 +5238,7 @@ SD = H/C</neontometrics:MetricDefinition>
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Special_Metrics">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Elemental_Metrics"/>
+        <neontometrics:MetricDescription>This category collects metrics that cannot be accounted to the other categories.</neontometrics:MetricDescription>
     </owl:Class>
     
 
