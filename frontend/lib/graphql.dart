@@ -9,9 +9,10 @@ class GraphQLHandler {
       link: HttpLink(Settings().apiUrl + "/graphql"),
       cache: GraphQLCache(),
       alwaysRebroadcast: true);
-/// Gather information on the status of a repository or ontologyFile in the backend. Mainly, whether it is already calculated,
-/// already in the queue or if it is finished with its Calculation. the [url] it the input parameter pointing to 
-/// the calculating repo/ontologyFile
+
+  /// Gather information on the status of a repository or ontologyFile in the backend. Mainly, whether it is already calculated,
+  /// already in the queue or if it is finished with its Calculation. the [url] it the input parameter pointing to
+  /// the calculating repo/ontologyFile
   Future<QueryResult<dynamic>> queueFromAPI(String url) {
     var response = _graphQlClient.query(QueryOptions(
         fetchPolicy: FetchPolicy.networkOnly, document: parseString("""{
@@ -22,6 +23,7 @@ class GraphQLHandler {
         queuePosition
         performsUpdate
         repository
+        fileName
         error
         errorMessage
         analyzedCommits
@@ -32,7 +34,8 @@ class GraphQLHandler {
     }""")));
     return response;
   }
-/// Puts data actively into the queue of the backend. Returns the current state of the task.
+
+  /// Puts data actively into the queue of the backend. Returns the current state of the task.
   Future<QueryResult<dynamic>> putInQueue(String url, bool reasoner,
       {bool update = false}) {
     var mutation = """mutation{
@@ -49,6 +52,7 @@ class GraphQLHandler {
         taskStarted
         queuePosition
         repository
+        fileName
         error
         errorMessage
     }
@@ -59,7 +63,7 @@ class GraphQLHandler {
     return response;
   }
 
-/// Necessary for the "already Calculated"-button. Queries the available, already calculated repositories.
+  /// Necessary for the "already Calculated"-button. Queries the available, already calculated repositories.
   Future<QueryResult<dynamic>> getRepositoryList() {
     var graphQLQuery = """
 {
@@ -74,8 +78,9 @@ class GraphQLHandler {
         document: parseString(graphQLQuery)));
     return futureResonse;
   }
-/// Takes the selection chips from the [CalculationEngine] class and converts it into items that 
-/// allow filtering for the GraphQL engine.
+
+  /// Takes the selection chips from the [CalculationEngine] class and converts it into items that
+  /// allow filtering for the GraphQL engine.
   String selectedMetrics2GraphQLInsertion(
       Set<MetricExplorerItem> selectedElementsForCalculation) {
     String graphQlQueryAppender = "";
@@ -94,8 +99,9 @@ class GraphQLHandler {
     }
     return graphQlQueryAppender;
   }
-/// calls for the calculated ontology metrics to be displayed in the frontend. Requires the return value of [selectedMetrics2GraphQLInsertion].
-  Future<QueryResult<dynamic>> getMetricsFromAPI(
+
+  /// calls for the calculated ontology metrics to be displayed in the frontend. Requires the return value of [selectedMetrics2GraphQLInsertion].
+  Future<QueryResult<dynamic>> getRepositoryMetricsFromAPI(
       String url, String graphQlQueryAppender) {
     var graphQlMetricQuery = """{
   getRepository(repository: "$url") {
@@ -132,6 +138,43 @@ class GraphQLHandler {
     }
   }
 }""";
+    var futureResonse = _graphQlClient.query(QueryOptions(
+        fetchPolicy: FetchPolicy.networkOnly,
+        document: parseString(graphQlMetricQuery)));
+    return futureResonse;
+  }
+/// Returns Ontology Metrics from a single Ontology File (Not a Repository).
+  Future<QueryResult<dynamic>> getOntologyMetricsFromAPI(
+      String url, String graphQlQueryAppender) {
+    var graphQlMetricQuery = """{
+  getOntologyFile(
+    fileName: "$url"
+  ) {
+    edges {
+      node {
+        fileName
+        commit {
+          edges {
+            node {
+                    pk
+                    CommitTime
+                    CommitID
+                    CommitMessage
+                    AuthorEmail
+                    AuthorName
+                    CommiterEmail
+                    CommitterName
+                    Size
+                    ReadingError
+                    $graphQlQueryAppender
+                              }
+          }
+        }
+      }
+    }
+  }
+}
+""";
     var futureResonse = _graphQlClient.query(QueryOptions(
         fetchPolicy: FetchPolicy.networkOnly,
         document: parseString(graphQlMetricQuery)));

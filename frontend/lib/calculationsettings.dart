@@ -226,10 +226,10 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                                                           .toString(),
                                                                       context);
                                                                 } else {
-                                                                  Snacks(context).progressSnackBar(
-                                                                      QueueInformation(
-                                                                          jsonResponse
-                                                                              .data?["update_queueInfo"]));
+                                                                  Snacks(context)
+                                                                      .progressSnackBar(
+                                                                          QueueInformation(
+                                                                              jsonResponse.data?["update_queueInfo"]));
                                                                 }
                                                               });
                                                               Navigator.pop(
@@ -246,7 +246,8 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                       } else if (!queueInformation
                                               .taskFinished &&
                                           !queueInformation.performsUpdate) {
-                                        Snacks(context).progressSnackBar(queueInformation);
+                                        Snacks(context)
+                                            .progressSnackBar(queueInformation);
                                       }
                                       // If the first query on the queue information state that the metrics are already in the ontology file,
                                       // then, retrieve the date with another GraphQL query.F
@@ -257,17 +258,26 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                                 selectedElementsForCalculation);
 
                                         Future<QueryResult<dynamic>>
-                                            futureResonse =
-                                            graphQL.getMetricsFromAPI(
-                                                urlController.text,
-                                                graphQlQueryAppender);
-                                        futureResonse.then((graphQlResponse) {
+                                            futureResponse;
+                                        if (queueInformation.repository != "") {
+                                          futureResponse = graphQL
+                                              .getRepositoryMetricsFromAPI(
+                                                  queueInformation.repository,
+                                                  graphQlQueryAppender);
+                                        } else {
+                                          futureResponse =
+                                              graphQL.getOntologyMetricsFromAPI(
+                                                  queueInformation.fileName,
+                                                  graphQlQueryAppender);
+                                        }
+                                        futureResponse.then((graphQlResponse) {
                                           if (graphQlResponse.hasException) {
                                             EasyLoading.dismiss();
-                                            Snacks(context).displayErrorSnackBar(
-                                                graphQlResponse.exception
-                                                    .toString(),
-                                                context);
+                                            Snacks(context)
+                                                .displayErrorSnackBar(
+                                                    graphQlResponse.exception
+                                                        .toString(),
+                                                    context);
                                           } else {
                                             EasyLoading.dismiss();
                                             Navigator.push(context,
@@ -276,7 +286,9 @@ class _CalculationEngineState extends State<CalculationEngine> {
                                               return CalculationView(
                                                   RepositoryData(
                                                       graphQlResponse.data),
-                                                  urlController.text, queueInformation, reasoner);
+                                                  urlController.text,
+                                                  queueInformation,
+                                                  reasoner);
                                             }));
                                           }
                                         });
@@ -304,8 +316,6 @@ class _CalculationEngineState extends State<CalculationEngine> {
               )))
         ]));
   }
-
-
 
   /// Takes the root element of the [List<MetricExplorerItem>] after the return call.
   /// First extracts the elemental metrics, afterwards iterates over all other subClasses.
@@ -443,4 +453,3 @@ class AlreadyCalculatedSelectionOverlay extends StatelessWidget {
     //EasyLoading.dismiss();
   }
 }
-

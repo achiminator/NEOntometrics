@@ -113,22 +113,42 @@ class MetricExplorerItemFactory {
 class RepositoryData {
   /// Unpack the GraphQL reponse and create an object containing the ontology metrics with the constructor.
   RepositoryData(Map<String, dynamic>? graphqlInput) {
-    Map<String, dynamic> root =
-        graphqlInput?["getRepository"]["edges"][0]["node"];
-    repository = root["repository"] ?? "";
-    for (Map<String, dynamic> fileNode in root["ontologyfile_set"]?["edges"]) {
-      Map<String, dynamic> file = fileNode["node"];
-      var commits = <Map<String, String>>[];
-      var metrics = <String, dynamic>{};
-      var metricsConverted = <String, String>{};
-      for (Map<String, dynamic> commitNode in file["commit"]["edges"]) {
-        metrics.addAll(commitNode["node"]);
-        for (var key in metrics.keys) {
-          metricsConverted[key] = metrics[key].toString();
+    if (graphqlInput?.containsKey("getRepository") ?? false) {
+      Map<String, dynamic> root =
+          graphqlInput?["getRepository"]["edges"][0]["node"];
+      repository = root["repository"] ?? "";
+      for (Map<String, dynamic> fileNode in root["ontologyfile_set"]
+          ?["edges"]) {
+        Map<String, dynamic> file = fileNode["node"];
+        var commits = <Map<String, String>>[];
+        var metrics = <String, dynamic>{};
+        var metricsConverted = <String, String>{};
+        for (Map<String, dynamic> commitNode in file["commit"]["edges"]) {
+          metrics.addAll(commitNode["node"]);
+          for (var key in metrics.keys) {
+            metricsConverted[key] = metrics[key].toString();
+          }
+          commits.add(Map.from(metricsConverted));
         }
-        commits.add(Map.from(metricsConverted));
+        ontologyFiles.add(OntologyData(file["fileName"], commits));
       }
-      ontologyFiles.add(OntologyData(file["fileName"], commits));
+    }
+    else if (graphqlInput?.containsKey("getOntologyFile") ?? false) {
+      Map<String, dynamic> root =
+          graphqlInput?["getOntologyFile"]["edges"][0]["node"];
+      repository = "Single Ontology File";
+        
+        var commits = <Map<String, String>>[];
+        var metrics = <String, dynamic>{};
+        var metricsConverted = <String, String>{};
+        for (Map<String, dynamic> commitNode in root["commit"]["edges"]) {
+          metrics.addAll(commitNode["node"]);
+          for (var key in metrics.keys) {
+            metricsConverted[key] = metrics[key].toString();
+          }
+          commits.add(Map.from(metricsConverted));
+        }
+        ontologyFiles.add(OntologyData(root["fileName"], commits));
     }
   }
 
@@ -197,27 +217,39 @@ class OntologyData {
     return returnList;
   }
 }
+
 /// Represents the QueueInformation Query for the status on a update or analyzing operation (if applicable)
 class QueueInformation {
-  QueueInformation(Map<String, dynamic>? graphQLInput) :
-    taskFinished = graphQLInput?["queueInformation"]?["taskFinished"] ?? false,
-    performsUpdate = graphQLInput?["queueInformation"]?["performsUpdate"] ?? false,
-    taskStarted = graphQLInput?["queueInformation"]?["taskStarted"] ?? false,
-    urlInSystem = graphQLInput?["queueInformation"]?["urlInSystem"] ?? false,
-    error = graphQLInput?["queueInformation"]?["error"] ?? true,
-    errorMessage = graphQLInput?["queueInformation"]?["errorMessage"] ?? "Error While retrieving the Data",
-    analyzedCommits = graphQLInput?["queueInformation"]?["analyzedCommits"],
-    totalCommits = graphQLInput?["queueInformation"]?["totalCommits"] ,
-    analyzedOntologies = graphQLInput?["queueInformation"]?["analyzedOntologies"] ,
-    analyzsableOntologies = graphQLInput?["queueInformation"]?["analysableOntologies"] ,
-    queuePosition = graphQLInput?["queueInformation"]?["queuePosition"];
-  
+  QueueInformation(Map<String, dynamic>? graphQLInput)
+      : taskFinished =
+            graphQLInput?["queueInformation"]?["taskFinished"] ?? false,
+        performsUpdate =
+            graphQLInput?["queueInformation"]?["performsUpdate"] ?? false,
+        taskStarted =
+            graphQLInput?["queueInformation"]?["taskStarted"] ?? false,
+        urlInSystem =
+            graphQLInput?["queueInformation"]?["urlInSystem"] ?? false,
+        error = graphQLInput?["queueInformation"]?["error"] ?? true,
+        errorMessage = graphQLInput?["queueInformation"]?["errorMessage"] ??
+            "Error While retrieving the Data",
+        analyzedCommits = graphQLInput?["queueInformation"]?["analyzedCommits"],
+        totalCommits = graphQLInput?["queueInformation"]?["totalCommits"],
+        analyzedOntologies =
+            graphQLInput?["queueInformation"]?["analyzedOntologies"],
+        analyzsableOntologies =
+            graphQLInput?["queueInformation"]?["analysableOntologies"],
+        queuePosition = graphQLInput?["queueInformation"]?["queuePosition"],
+        repository = graphQLInput?["queueInformation"]?["repository"] ?? "",
+        fileName = graphQLInput?["queueInformation"]?["fileName"] ?? "";
+
   bool taskStarted;
   bool taskFinished;
   bool urlInSystem;
   bool performsUpdate;
   bool error;
   String errorMessage;
+  String repository;
+  String fileName;
   int? queuePosition;
   int? analyzedCommits;
   int? totalCommits;

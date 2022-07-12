@@ -20,6 +20,7 @@ class QueueInformation:
     analyzedOntologies = None
     analysableOntologies = None
     totalCommits = None
+    ontologyFileOnly = False
     analyzedCommits = None
 
     def __init__(self, urlString: str) -> dict:
@@ -63,6 +64,7 @@ class QueueInformation:
                 query = Repository.objects.filter(repository=self.url.repository)
             elif(self.url.repository == '' and self.url.file != ''):
                 query = OntologyFile.objects.filter(fileName=self.url.file)
+                self.ontologyFileOnly = True
             elif(self.url.repository != '' and self.url.file != ''):
                 query = Repository.objects.filter(repository=self.url.repository)
                 q2 = []

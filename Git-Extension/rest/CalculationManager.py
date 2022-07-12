@@ -80,7 +80,8 @@ class CalculationManager:
         if not commit.exists():
             Commit.objects.create(metricSource = ontologyFile, **returnObject)
         else:
-            commit = Commit(metricSource = ontologyFile, **returnObject, pk=commit[0].id).save()
+            commit = Commit(metricSource = ontologyFile, **returnObject, pk=commit[0].id)
+            commit.save()
             
 
     @django_rq.job
@@ -166,6 +167,7 @@ class CalculationManager:
                 "totalCommits": len(commitList),
                 "ananlyzedCommits": commitCounter
             })
+            job.save_meta()
             analyzedOntologies =0 
             for ontologyDBObject in ontologyDBObjects:
                 if ontologyDBObject.fileName not in self._getOntologyPathsInTree("", commit.tree).keys():

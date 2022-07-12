@@ -185,16 +185,25 @@ class _CalculationViewState extends State<CalculationView> {
         in metricDataForOntologyFile.getDisplayMetrics()) {
       List<DataCell> cells = [];
       //Add Download Button
-      cells.add(DataCell(IconButton(
-        onPressed: () => html.window.open(
-            Settings().apiUrl +
-                "/downloadOntology/" +
-                metricDataForOntologyFile
-                    .getPKFromCommit(metricForOntologyFile["Commit ID"]),
-            "Download"),
-        icon: const Icon(Icons.download),
-        tooltip: "Download the ontology file.",
-      )));
+      if (widget.queueInformation.repository != "") {
+        cells.add(DataCell(IconButton(
+          onPressed: () => html.window.open(
+              Settings().apiUrl +
+                  "/downloadOntology/" +
+                  metricDataForOntologyFile
+                      .getPKFromCommit(metricForOntologyFile["Commit ID"]),
+              "Download"),
+          icon: const Icon(Icons.download),
+          tooltip: "Download the ontology file.",
+        )));
+      } else {
+        cells.add(DataCell(IconButton(
+          onPressed: () => html.window
+              .open("http://" + widget.queueInformation.fileName, "Download"),
+          icon: const Icon(Icons.download),
+          tooltip: "Download the ontology file.",
+        )));
+      }
 
       for (String key in metricForOntologyFile.keys) {
         if (columns.isEmpty) {

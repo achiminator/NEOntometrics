@@ -46,6 +46,7 @@ class QueueInformationNode(graphene.ObjectType):
     analyzedCommits = graphene.Int(description="Information on the current state of the repository calculation. The number of analyzed commits for a given repository file. If is not yet started, the value remains Null.")
     totalCommits = graphene.Int(description="Information on the current state of the repository calculation. The number of commits that the repository has. If is not yet started, the value remains Null.")
     analyzedOntologies = graphene.Int(description="Information on the current state of the repository calculation. The number of already analyzed ontologies in the repository. If is not yet started, the value remains Null.")
+    ontologyFileOnly = graphene.Boolean(description="Wether the given URL ONLY contains an ontology file, without a git-repository.")
     analysableOntologies = graphene.Int(description="Information on the current state of the repository calculation. the number of ontologies that are getting analyzed in the repository. If is not yet started, the value remains Null.")
     url = graphene.String(description="The requested URL.")
     repository = graphene.String(description="The requested repository")
@@ -164,6 +165,7 @@ class QueueMutation(graphene.Mutation):
             url=queueInfo.url.url,
             repository=queueInfo.url.repository,
             service=queueInfo.url.service,
+            ontologyFileOnly = queueInfo.ontologyFileOnly,
             fileName=queueInfo.url.file,
             error=queueInfo.error,
             errorMessage=queueInfo.errorMessage
@@ -183,6 +185,8 @@ class Query(graphene.ObjectType):
     """
     queueInformation = graphene.Field(
         QueueInformationNode, description="Prints out the current status of an object in system. Useful to determine whether the repository is already in the queue, in the database or not known at all.", url=graphene.String(required=True))
+    getOntologyFile = filter.DjangoFilterConnectionField(
+        OntologyNode, description="The Endpoint for querying a SINGLE ontology. If you're interested in a single ontology within a git-Repository, please use the Repository Node.") 
     getRepository = filter.DjangoFilterConnectionField(
         RepositoryNode, description="The entrypoint for gathering metric Data. Contains the main information of an ontology file, the calculated metrics are nested in a \"metrics\" field.",
         filterset_class=RepositoryFilter)
@@ -212,6 +216,7 @@ class Query(graphene.ObjectType):
             performsUpdate=queueInfo.performsUpdate,
             analyzedOntologies=queueInfo.analyzedOntologies,
             analysableOntologies=queueInfo.analysableOntologies,
+            ontologyFileOnly=queueInfo.ontologyFileOnly,
             url=queueInfo.url.url,
             repository=queueInfo.url.repository,
             service=queueInfo.url.service,
