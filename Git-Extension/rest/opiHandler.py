@@ -42,13 +42,6 @@ class OpiHandler:
         # ontologies. This explicit conversion into utf-8 should prevent these problems.
         if(type(ontologyString) == str):
             ontologyString = ontologyString.encode("utf-8")
-        # if (ontologySize > settings.CLASSMETRICSLIMIT and classMetrics and settings.CLASSMETRICSLIMIT > 0):
-        #     classMetrics = False
-        #     error = "Ontology Exceeds " + \
-        #         str(settings.CLASSMETRICSLIMIT) + \
-        #         "b. ClassMetrics deactivated"
-        #     self.logger.warning(
-        #         + "ontoloy to large: " + ontologySize + " - ClassMetrics Deativated")
         if(ontologySize > settings.ONTOLOGYLIMIT and settings.ONTOLOGYLIMIT > 0):
             error += "Ontology Exceeds " + \
                 str(settings.ONTOLOGYLIMIT) + \
