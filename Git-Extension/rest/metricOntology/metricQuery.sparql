@@ -11,17 +11,17 @@
         ?metricCategory a owl:Class . # Hinders that anonomous classes are shown as well
         # Retrieves the metrics that are connected using the "directlyUses"- Object Property
         OPTIONAL {
-            # At first get all equivalence nodes from the metrics
-            ?metric owl:equivalentClass ?eq . {
+            # At first get all subClass nodes before the metrics
+            ?metric rdfs:subClassOf ?subClass . {
                 # Then get the ones that are directly connected to the Elemental_Metrics
-                ?eq owl:onProperty ?property .             
+                ?subClass owl:onProperty ?property .             
                 {
-                    ?eq owl:allValuesFrom ?tmpValue .
+                    ?subClass owl:allValuesFrom ?tmpValue .
                 }
                 # This first Union gathers direct aggregations like sums. It is also used
                 # later on to do the same on more encapsulated levels
                 UNION {
-                    ?eq owl:allValuesFrom _:tmp .
+                    ?subClass owl:allValuesFrom _:tmp .
                     _:tmp owl:intersectionOf _:intersect0 .
                     _:intersect0 rdf:rest*/rdf:first ?tmpValue. 
                 }.
@@ -35,7 +35,7 @@
             }
             UNION {
                 # Afterwards, get the calculated properties, consisting of a calculation method
-                ?eq owl:intersectionOf _:intersect .
+                ?subClass owl:intersectionOf _:intersect .
                 _:intersect  rdf:rest*/rdf:first _:list1. 
                 _:list1 owl:onProperty ?property ;
                     owl:allValuesFrom ?tmpValue .
@@ -74,6 +74,7 @@
         OPTIONAL {	?metric metric:MetricDefinition ?interpretation } .
         BIND ( IF(isBlank(?tmpValue), "seeProperty2", ?afterTmpValue) AS ?value ).
         FILTER (NOT EXISTS{?sub rdfs:subClassOf ?metric})
+        FILTER (!isBlank(?metricCategory ))
        
     }
 ORDER BY ?metric

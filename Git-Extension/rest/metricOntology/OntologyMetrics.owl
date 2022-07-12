@@ -650,7 +650,8 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#CohesionMetrics_ADIT-LN -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#CohesionMetrics_ADIT-LN">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#CohesionMetrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -663,8 +664,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#CohesionMetrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Average Depth of Inheritance Tree of all Leaf Nodes, ADIT-LN is the sum of depths of all paths divided by the total number of paths. A depth is the total number of nodes. A depth is the total number of nodes starting from the root node to the leaf node in a path. The total number of paths in an ontology is all distinct paths from each root node to each leaf node if there exists an inheritance path from the root node to the leaf node. And root node is the first level in each path.</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>cohesion metrics ADIT-LN is a direct measure to count the depth of the inheritance tree for all leaf nodes measurement:
 (classes) in ontologies.</neontometrics:MetricDescription>
@@ -675,13 +675,13 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#CohesionMetrics_NoL -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#CohesionMetrics_NoL">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#CohesionMetrics"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Leaf_Classes"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#CohesionMetrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Number of Leaf Classes (NoL) is the number of leaf classes explicitly defined in the ontology Oi . A leaf class in an ontology means the class has no semantic subclass explicitly defined in the ontology Oi.</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>Count the Leaf Classes in Ontologies</neontometrics:MetricDescription>
     </owl:Class>
@@ -691,13 +691,13 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#CohesionMetrics_NoR -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#CohesionMetrics_NoR">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#CohesionMetrics"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes_With_SubClasses"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#CohesionMetrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Number of Root Classes (NoR) is the number of root classes explicitly defined in the ontology Oi . A root class in an ontology means the class has no semantic super class explicitly defined in the ontology Oi.</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>Count the root nodes (classes) in ontologies</neontometrics:MetricDescription>
     </owl:Class>
@@ -707,7 +707,8 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_Average_Path_Length -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_Average_Path_Length">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -732,8 +733,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The average path length of the ontology.</neontometrics:MetricDefinition>
         <neontometrics:MetricInterpretation>Please note that the number of pathes is understood in this paper as the number of connections of all concepts to the root classes. For our calculation engine, that is equivalent to the number of Superclasses (As it states how many connections there are to the top) plus the number of subclasses of thing. The latter is necessary as these metrics would not  otherwise be counted as they have no superclasses. But for the given metric framework, these top level concepts are counted as the first hierachical level</neontometrics:MetricInterpretation>
     </owl:Class>
@@ -743,7 +743,8 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_Average_Paths_Per_Concept -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_Average_Paths_Per_Concept">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -768,8 +769,7 @@ Do not use the division-class directly!</neontometrics:MetricDefinition>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricInterpretation>Average Paths Per Concept must be equal to or greater than 1 (each concept must have a parent except for the most general concept). If =1 then the ontology is a tree. Multi relation cocepts multi relation concepts(higher &quot;average relationships per concept ratio ratio) result in gy higher ρ ratio for an ontology
 
 Please note that the number of pathes is understood in this paper as the number of connections of all concepts to the root classes. For our calculation engine, that is equivalent to the number of Superclasses (As it states how many connections there are to the top) plus the number of subclasses of thing. The latter is necessary as these metrics would not  otherwise be counted as they have no superclasses. But for the given metric framework, these top level concepts are counted as the first hierachical level</neontometrics:MetricInterpretation>
@@ -780,7 +780,8 @@ Please note that the number of pathes is understood in this paper as the number 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_Average_Relationships_Per_Concept -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_Average_Relationships_Per_Concept">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -793,8 +794,7 @@ Please note that the number of pathes is understood in this paper as the number 
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The average relations per concept in an ontology</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>Indicates the average connectivity degree of a concept</neontometrics:MetricDescription>
         <neontometrics:MetricInterpretation>MetricInterpretation &quot;Please note that the number of pathes is understood in this paper as the number of connections of all concepts to the root classes. For our calculation engine, that is equivalent to the number of Superclasses (As it states how many connections there are to the top) plus the number of subclasses of thing. The latter is necessary as these metrics would not  otherwise be counted as they have no superclasses. But for the given metric framework, these top level concepts are counted as the first hierachical level&quot;</neontometrics:MetricInterpretation>
@@ -805,13 +805,19 @@ Please note that the number of pathes is understood in this paper as the number 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_Max_Path_Length -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_Max_Path_Length">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#similarTo"/>
+                <owl:someValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Maximal_Depth"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Maximum_Depth"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -819,13 +825,13 @@ Please note that the number of pathes is understood in this paper as the number 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_TNOC -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_TNOC">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Total Number Of Concepts: The number of concepts in the set.</neontometrics:MetricDefinition>
         <neontometrics:MetricInterpretation>As ontology consists of concepts and relations, TNOC and TNOR are the two basic attributes of ontology, we can see the change of basic size of an ontology by analyzing these two attributes. As path consists of relations and can reflect the inner structure and hierarchy of ontology,</neontometrics:MetricInterpretation>
     </owl:Class>
@@ -835,13 +841,13 @@ Please note that the number of pathes is understood in this paper as the number 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_TNOP -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_TNOP">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Paths_Overall"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Total number of Paths: The sum of paths of each concept.</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>A path is a distinct trace in direct acyclic graph from a specific particular concept to the most general concept in the ontology, which is the concept without any parent or superclass(</neontometrics:MetricDescription>
         <neontometrics:MetricInterpretation>TNOP represents an ontology’s hierarchical
@@ -853,13 +859,13 @@ complexity and its value is proportionate to difficulties in navigating and visu
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_TNOR -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#ComplexityMetrics_TNOR">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Class_Declarations"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Complexity_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Total Number Of Relations: The sum of the number of relations of each concept in an ontology.</neontometrics:MetricDefinition>
         <neontometrics:MetricInterpretation>As ontology consists of concepts and relations, TNOC and TNOR are the two basic attributes of ontology, we can see the change of basic size of an ontology by analyzing these two attributes. As path consists of relations and can reflect the inner structure and hierarchy of ontology,</neontometrics:MetricInterpretation>
     </owl:Class>
@@ -1254,7 +1260,8 @@ complexity and its value is proportionate to difficulties in navigating and visu
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Average_Breath -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Average_Breath">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Structural_Ontology_Measures"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -1267,8 +1274,7 @@ complexity and its value is proportionate to difficulties in navigating and visu
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Structural_Ontology_Measures"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Average size of the levels of the ontology</neontometrics:MetricDefinition>
     </owl:Class>
     
@@ -1277,7 +1283,8 @@ complexity and its value is proportionate to difficulties in navigating and visu
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Average_Depth -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Average_Depth">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Structural_Ontology_Measures"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -1290,8 +1297,7 @@ complexity and its value is proportionate to difficulties in navigating and visu
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Structural_Ontology_Measures"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Average size of the branches of the given ontology</neontometrics:MetricDefinition>
     </owl:Class>
     
@@ -1300,7 +1306,8 @@ complexity and its value is proportionate to difficulties in navigating and visu
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Breath_Variance -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Breath_Variance">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Structural_Ontology_Measures"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -1313,8 +1320,7 @@ complexity and its value is proportionate to difficulties in navigating and visu
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Structural_Ontology_Measures"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Variance of the size of the levels in the ontology</neontometrics:MetricDefinition>
     </owl:Class>
     
@@ -1323,7 +1329,8 @@ complexity and its value is proportionate to difficulties in navigating and visu
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Depth_Variance -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Depth_Variance">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Structural_Ontology_Measures"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -1336,8 +1343,7 @@ complexity and its value is proportionate to difficulties in navigating and visu
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Structural_Ontology_Measures"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Variance of the size of the branches in the ontology</neontometrics:MetricDefinition>
     </owl:Class>
     
@@ -1363,17 +1369,17 @@ complexity and its value is proportionate to difficulties in navigating and visu
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Maximum_Breath -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Maximum_Breath">
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
-                <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Maximum_Breath"/>
-            </owl:Restriction>
-        </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Structural_Ontology_Measures"/>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#similarTo"/>
                 <owl:someValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Maximal_Breath"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
+                <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Maximum_Breath"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Size of the largest level of the ontology</neontometrics:MetricDefinition>
@@ -1384,17 +1390,17 @@ complexity and its value is proportionate to difficulties in navigating and visu
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Maximum_Depth -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Maximum_Depth">
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
-                <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Maximum_Depth"/>
-            </owl:Restriction>
-        </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Structural_Ontology_Measures"/>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#similarTo"/>
                 <owl:someValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_DITOnto"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
+                <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Maximum_Depth"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Size of the longest branch in the given ontology</neontometrics:MetricDefinition>
@@ -1405,13 +1411,13 @@ complexity and its value is proportionate to difficulties in navigating and visu
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Minimum_Breath -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Minimum_Breath">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Structural_Ontology_Measures"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Minimum_Breath"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Structural_Ontology_Measures"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Size of the narrowest level of the ontology</neontometrics:MetricDefinition>
     </owl:Class>
     
@@ -1420,13 +1426,13 @@ complexity and its value is proportionate to difficulties in navigating and visu
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Minimum_Depth -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Minimum_Depth">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Structural_Ontology_Measures"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Minimum_Depth"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Structural_Ontology_Measures"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Size of the shortest branch in the given ontology</neontometrics:MetricDefinition>
     </owl:Class>
     
@@ -1435,13 +1441,13 @@ complexity and its value is proportionate to difficulties in navigating and visu
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Number_Of_Classes -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Number_Of_Classes">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Knowledge_Coverage_and_Popularity_Measures"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Knowledge_Coverage_and_Popularity_Measures"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Number of classes in a given ontology</neontometrics:MetricDefinition>
     </owl:Class>
     
@@ -1450,13 +1456,13 @@ complexity and its value is proportionate to difficulties in navigating and visu
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Number_Of_Individuals -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Number_Of_Individuals">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Knowledge_Coverage_and_Popularity_Measures"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Individuals"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Knowledge_Coverage_and_Popularity_Measures"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Number of individuals in a given ontology</neontometrics:MetricDefinition>
     </owl:Class>
     
@@ -1465,7 +1471,8 @@ complexity and its value is proportionate to difficulties in navigating and visu
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Number_Of_Properties -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Number_Of_Properties">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Knowledge_Coverage_and_Popularity_Measures"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#sum"/>
                 <owl:allValuesFrom>
@@ -1477,8 +1484,7 @@ complexity and its value is proportionate to difficulties in navigating and visu
                     </owl:Class>
                 </owl:allValuesFrom>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#FernandezEtAl_Knowledge_Coverage_and_Popularity_Measures"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Number of properties in a given ontology</neontometrics:MetricDefinition>
     </owl:Class>
     
@@ -1889,7 +1895,8 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_ANOnto -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_ANOnto">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -1914,8 +1921,7 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Mean number of annotations per class.</neontometrics:MetricDefinition>
         <neontometrics:MetricInterpretation>Best: x&gt;0.8. Worst: x&lt;0.2</neontometrics:MetricInterpretation>
         <rdfs:label>Annotation Richness</rdfs:label>
@@ -1926,7 +1932,8 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_AROnto -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_AROnto">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -1951,8 +1958,7 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Mean number of attributes per class.</neontometrics:MetricDefinition>
         <neontometrics:MetricInterpretation>Best: x&gt;0.8. Worst: x&lt;0.2</neontometrics:MetricInterpretation>
         <rdfs:label>Attribute Richness</rdfs:label>
@@ -2089,7 +2095,8 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_CBOnto2 -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_CBOnto2">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -2102,8 +2109,7 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricInterpretation>Best: x:1-3. Worst: x&gt;12</neontometrics:MetricInterpretation>
         <rdfs:label>Coupling between Objects 2</rdfs:label>
     </owl:Class>
@@ -2113,7 +2119,8 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_CROnto -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_CROnto">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -2126,8 +2133,7 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricInterpretation>Best: x&gt;0.8. Worst: x&lt;0.2</neontometrics:MetricInterpretation>
         <rdfs:label>Class Richness</rdfs:label>
     </owl:Class>
@@ -2344,13 +2350,13 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_DITOnto -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_DITOnto">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Maximum_Depth"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Depth of subsumption hierarchy: Length of the largest path from Thing to a leaf
 class.</neontometrics:MetricDefinition>
         <neontometrics:MetricInterpretation>Best: x:1-2. Worst: x&gt;8</neontometrics:MetricInterpretation>
@@ -2500,7 +2506,8 @@ class.</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_INRonto -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_INRonto">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -2513,8 +2520,7 @@ class.</neontometrics:MetricDefinition>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricInterpretation>Best: x&gt;0.8. Worst: x&lt;0.2</neontometrics:MetricInterpretation>
         <rdfs:label>Relationships per class</rdfs:label>
     </owl:Class>
@@ -2640,7 +2646,8 @@ class.</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_LCOMOnto -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_LCOMOnto">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -2653,8 +2660,7 @@ class.</neontometrics:MetricDefinition>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDescription>The semantic and conceptual relatedness of classes can be used to measure the separation of responsibilities and independence of components of ontologies.</neontometrics:MetricDescription>
         <neontometrics:MetricInterpretation>Best: x:1-2. Worst: x&gt;8</neontometrics:MetricInterpretation>
         <rdfs:label>Lack of cohesion in methods</rdfs:label>
@@ -2800,7 +2806,8 @@ Duque-Ramos, Astrid; Fernández-Breis, J. T.; Stevens, R.; Aussenac-Gilles, Nath
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_NACOnto -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_NACOnto">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -2813,8 +2820,7 @@ Duque-Ramos, Astrid; Fernández-Breis, J. T.; Stevens, R.; Aussenac-Gilles, Nath
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Number of Ancestor Classes: Mean number of ancestor classes per leaf class. It is the number of direct superclasses per leaf class.</neontometrics:MetricDefinition>
         <neontometrics:MetricInterpretation>Best: x:1-2. Worst: x&gt;8</neontometrics:MetricInterpretation>
         <rdfs:label>Number of ancestor classes</rdfs:label>
@@ -2825,7 +2831,8 @@ Duque-Ramos, Astrid; Fernández-Breis, J. T.; Stevens, R.; Aussenac-Gilles, Nath
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_NOCOnto -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_NOCOnto">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -2851,8 +2858,7 @@ Duque-Ramos, Astrid; Fernández-Breis, J. T.; Stevens, R.; Aussenac-Gilles, Nath
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Number of Children: Mean number of direct subclasses. It is the number of relationships divided by the number of classes minus the relationships of Thing.</neontometrics:MetricDefinition>
         <neontometrics:MetricInterpretation>Best: x:1-2. Worst: x&gt;8</neontometrics:MetricInterpretation>
         <rdfs:label>Number of children</rdfs:label>
@@ -2863,7 +2869,8 @@ Duque-Ramos, Astrid; Fernández-Breis, J. T.; Stevens, R.; Aussenac-Gilles, Nath
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_NOMOnto -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_NOMOnto">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -2888,8 +2895,7 @@ Duque-Ramos, Astrid; Fernández-Breis, J. T.; Stevens, R.; Aussenac-Gilles, Nath
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Number of properties: Number of properties per class.</neontometrics:MetricDefinition>
         <neontometrics:MetricInterpretation>Best: x:1-2. Worst: x&gt;8</neontometrics:MetricInterpretation>
         <rdfs:label>Number of properties</rdfs:label>
@@ -2909,7 +2915,8 @@ Duque-Ramos, Astrid; Fernández-Breis, J. T.; Stevens, R.; Aussenac-Gilles, Nath
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_POnto -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_POnto">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -2922,8 +2929,7 @@ Duque-Ramos, Astrid; Fernández-Breis, J. T.; Stevens, R.; Aussenac-Gilles, Nath
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricInterpretation>Best: x&gt;0.8. Worst: x&lt;0.2</neontometrics:MetricInterpretation>
         <rdfs:label>Ancestors per class</rdfs:label>
     </owl:Class>
@@ -2933,7 +2939,8 @@ Duque-Ramos, Astrid; Fernández-Breis, J. T.; Stevens, R.; Aussenac-Gilles, Nath
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_PROnto -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_PROnto">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -2959,8 +2966,7 @@ Duque-Ramos, Astrid; Fernández-Breis, J. T.; Stevens, R.; Aussenac-Gilles, Nath
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricInterpretation>Best: x&gt;0.8. Worst: x&lt;0.2</neontometrics:MetricInterpretation>
         <rdfs:label>Properties Richness</rdfs:label>
     </owl:Class>
@@ -3015,7 +3021,8 @@ Duque-Ramos, Astrid; Fernández-Breis, J. T.; Stevens, R.; Aussenac-Gilles, Nath
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_RFCOnto -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_RFCOnto">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -3054,8 +3061,7 @@ Duque-Ramos, Astrid; Fernández-Breis, J. T.; Stevens, R.; Aussenac-Gilles, Nath
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Response for a class: Number of properties that can be directly accessed from the class.</neontometrics:MetricDefinition>
         <neontometrics:MetricInterpretation>Best: x:1-3. Worst: x&gt;12</neontometrics:MetricInterpretation>
         <rdfs:label>Response for a class</rdfs:label>
@@ -3066,7 +3072,8 @@ Duque-Ramos, Astrid; Fernández-Breis, J. T.; Stevens, R.; Aussenac-Gilles, Nath
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_RROnto -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_RROnto">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -3104,8 +3111,7 @@ Duque-Ramos, Astrid; Fernández-Breis, J. T.; Stevens, R.; Aussenac-Gilles, Nath
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Relationship Richness: Number of properties defined in the ontology divided by the number of relationships and properties</neontometrics:MetricDefinition>
         <neontometrics:MetricInterpretation>Best: x&gt;0.8. Worst: x&lt;0.2</neontometrics:MetricInterpretation>
         <rdfs:label>Relationship Richness</rdfs:label>
@@ -3320,7 +3326,8 @@ Different ontologies with subjective features and particular perspective on the 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_TMOnto -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_TMOnto">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -3333,8 +3340,7 @@ Different ontologies with subjective features and particular perspective on the 
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Mean number of parents per class. ∑| RCi| / ∑|Ci|-∑|C(DP)i|; where Ci is the i-th class in the ontology and C(DP)i is the i-th class in the ontology with more than one direct parent.</neontometrics:MetricDefinition>
         <neontometrics:MetricInterpretation>Best: x:1-2. Worst: x&gt;8</neontometrics:MetricInterpretation>
         <rdfs:label>Tangledness</rdfs:label>
@@ -3345,7 +3351,8 @@ Different ontologies with subjective features and particular perspective on the 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_TMOnto2 -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_TMOnto2">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -3358,8 +3365,7 @@ Different ontologies with subjective features and particular perspective on the 
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricInterpretation>Best: x:1-2. Worst: x&gt;8</neontometrics:MetricInterpretation>
         <rdfs:label>Tangledness 2</rdfs:label>
     </owl:Class>
@@ -3463,7 +3469,8 @@ Different ontologies with subjective features and particular perspective on the 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_WMCOnto -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_WMCOnto">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -3489,8 +3496,7 @@ Different ontologies with subjective features and particular perspective on the 
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Weighted Method Count: Mean number of properties and relationships per class.</neontometrics:MetricDefinition>
         <neontometrics:MetricInterpretation>Best: x:1-2. Worst: x&gt;8</neontometrics:MetricInterpretation>
         <rdfs:label>Weighted method count</rdfs:label>
@@ -3501,7 +3507,8 @@ Different ontologies with subjective features and particular perspective on the 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_WMCOnto2 -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_WMCOnto2">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -3514,8 +3521,7 @@ Different ontologies with subjective features and particular perspective on the 
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricInterpretation>Best: x:1-2. Worst: x&gt;8</neontometrics:MetricInterpretation>
         <rdfs:label>Weighted method count 2</rdfs:label>
     </owl:Class>
@@ -3525,13 +3531,13 @@ Different ontologies with subjective features and particular perspective on the 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Absolute_Breath -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Absolute_Breath">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Breath"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Total_Breath"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Breath"/>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -3539,13 +3545,13 @@ Different ontologies with subjective features and particular perspective on the 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Absolute_Depth -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Absolute_Depth">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Depth"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Total_Depth"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Depth"/>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -3553,13 +3559,13 @@ Different ontologies with subjective features and particular perspective on the 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Absolute_Leaf_Cardinality -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Absolute_Leaf_Cardinality">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Fan-Outness"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Leaf_Classes"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Fan-Outness"/>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -3567,13 +3573,13 @@ Different ontologies with subjective features and particular perspective on the 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Absolute_Sibling_Cardinality -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Absolute_Sibling_Cardinality">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Fan-Outness"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Class_Declarations"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Fan-Outness"/>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -3581,7 +3587,8 @@ Different ontologies with subjective features and particular perspective on the 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Anonymous_classes_ratio -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Anonymous_classes_ratio">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_logical_adequacy"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -3594,8 +3601,7 @@ Different ontologies with subjective features and particular perspective on the 
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_logical_adequacy"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The cardinality of the set of anonymous classes divided by the cardinality of the set of (class) nodes.</neontometrics:MetricDefinition>
     </owl:Class>
     
@@ -3604,7 +3610,8 @@ Different ontologies with subjective features and particular perspective on the 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Average_Breath -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Average_Breath">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Breath"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -3617,8 +3624,7 @@ Different ontologies with subjective features and particular perspective on the 
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Breath"/>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -3626,7 +3632,8 @@ Different ontologies with subjective features and particular perspective on the 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Average_Depth -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Average_Depth">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Depth"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -3639,8 +3646,7 @@ Different ontologies with subjective features and particular perspective on the 
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Depth"/>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -3648,7 +3654,8 @@ Different ontologies with subjective features and particular perspective on the 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Average_Sibling_Fan-Outness -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Average_Sibling_Fan-Outness">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Fan-Outness"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -3661,8 +3668,7 @@ Different ontologies with subjective features and particular perspective on the 
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Fan-Outness"/>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -3688,7 +3694,8 @@ Different ontologies with subjective features and particular perspective on the 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Axiom-class_ratio -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Axiom-class_ratio">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_logical_adequacy"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -3701,8 +3708,7 @@ Different ontologies with subjective features and particular perspective on the 
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_logical_adequacy"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The cardinality of the set of classes represents by nodes in g divided by the cardinality of the set of axioms represented by subgraphs in g.</neontometrics:MetricDefinition>
     </owl:Class>
     
@@ -3711,7 +3717,8 @@ Different ontologies with subjective features and particular perspective on the 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Class_relation_ratio -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Class_relation_ratio">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_logical_adequacy"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -3724,8 +3731,7 @@ Different ontologies with subjective features and particular perspective on the 
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_logical_adequacy"/>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -3850,7 +3856,8 @@ understood, manipulated, and exploited.</neontometrics:MetricDescription>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Cycle_Ratio -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Cycle_Ratio">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_logical_adequacy"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -3863,8 +3870,7 @@ understood, manipulated, and exploited.</neontometrics:MetricDescription>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_logical_adequacy"/>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -3914,13 +3920,13 @@ understood, manipulated, and exploited.</neontometrics:MetricDescription>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Generic_complexity -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Generic_complexity">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_logical_adequacy"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Computational_Complexity"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_logical_adequacy"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDescription>a complexity scale, e.g. the one used for description logics</neontometrics:MetricDescription>
     </owl:Class>
     
@@ -3929,7 +3935,8 @@ understood, manipulated, and exploited.</neontometrics:MetricDescription>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Individual-Class_ratio -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Individual-Class_ratio">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_logical_adequacy"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -3942,8 +3949,7 @@ understood, manipulated, and exploited.</neontometrics:MetricDescription>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_logical_adequacy"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The cardinality of the set of classes represents by nodes in g divided by the cardinality of the set of individuals represented by special nodes in g.</neontometrics:MetricDefinition>
     </owl:Class>
     
@@ -3952,7 +3958,8 @@ understood, manipulated, and exploited.</neontometrics:MetricDescription>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Inverse_relations_ratio -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Inverse_relations_ratio">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_logical_adequacy"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -3965,8 +3972,7 @@ understood, manipulated, and exploited.</neontometrics:MetricDescription>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_logical_adequacy"/>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -3974,13 +3980,13 @@ understood, manipulated, and exploited.</neontometrics:MetricDescription>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Maximal_Breath -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Maximal_Breath">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Breath"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Maximum_Breath"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Breath"/>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -3988,13 +3994,13 @@ understood, manipulated, and exploited.</neontometrics:MetricDescription>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Maximal_Depth -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Maximal_Depth">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Depth"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Maximum_Depth"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Depth"/>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -4002,13 +4008,13 @@ understood, manipulated, and exploited.</neontometrics:MetricDescription>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Maximal_Leaf_Fan-Outness -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Maximal_Leaf_Fan-Outness">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Fan-Outness"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#max_Fanoutness_of_Leaf_Classes"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Fan-Outness"/>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -4016,13 +4022,13 @@ understood, manipulated, and exploited.</neontometrics:MetricDescription>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Maximal_Sibling_Fan-Outness -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Maximal_Sibling_Fan-Outness">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Fan-Outness"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Maximum_Subclasses_of_a_Class"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Fan-Outness"/>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -4142,7 +4148,8 @@ ordering criteria that are assumed as quality indicators</neontometrics:MetricDe
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Modularity_rate -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Modularity_rate">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_modularity"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -4155,8 +4162,7 @@ ordering criteria that are assumed as quality indicators</neontometrics:MetricDe
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_modularity"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>A module is any subgraph sg of a graph g, where the set of graph elements S’ for sg is such that S’ ⊆ S.
 Two modules sg1 and sg2 are disjoint when only ≥0 isa arcs ai connect sg1 to sg2, and each ai has the same direction.
 
@@ -4195,7 +4201,8 @@ m = n_m / n_s where n_m is the cardinality of M and n_s is the cardinalty of S( 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Ratio_of_Leaf_Fan-Outness -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Ratio_of_Leaf_Fan-Outness">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Fan-Outness"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -4208,8 +4215,7 @@ m = n_m / n_s where n_m is the cardinality of M and n_s is the cardinalty of S( 
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Fan-Outness"/>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -4217,7 +4223,8 @@ m = n_m / n_s where n_m is the cardinality of M and n_s is the cardinalty of S( 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Ratio_of_Sibling_Fan-Outness -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Ratio_of_Sibling_Fan-Outness">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Fan-Outness"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -4230,8 +4237,7 @@ m = n_m / n_s where n_m is the cardinality of M and n_s is the cardinalty of S( 
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Fan-Outness"/>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -4239,7 +4245,8 @@ m = n_m / n_s where n_m is the cardinality of M and n_s is the cardinalty of S( 
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Ratio_of_sibling_nodes_featuring_a_shared_differentia_specifica -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Ratio_of_sibling_nodes_featuring_a_shared_differentia_specifica">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_differentia_specifica"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -4252,8 +4259,7 @@ m = n_m / n_s where n_m is the cardinality of M and n_s is the cardinalty of S( 
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_differentia_specifica"/>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -4344,7 +4350,8 @@ detail, with a rich formalization of conceptual choices and motivations</neontom
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Weighted_Ratio_Of_Sibling_Fan-Outness -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Weighted_Ratio_Of_Sibling_Fan-Outness">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Fan-Outness"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -4357,8 +4364,7 @@ detail, with a rich formalization of conceptual choices and motivations</neontom
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Fan-Outness"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricInterpretation>meaningful only when metric values or lists of values are represented as classes. For metric spaces this is rarely practiced, specially becaue languages like OWL have separate domains for datatypes.</neontometrics:MetricInterpretation>
     </owl:Class>
     
@@ -4367,7 +4373,8 @@ detail, with a rich formalization of conceptual choices and motivations</neontom
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Weighted_Ratio_of_Leaf_Fan-Outness -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Weighted_Ratio_of_Leaf_Fan-Outness">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Fan-Outness"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -4380,8 +4387,7 @@ detail, with a rich formalization of conceptual choices and motivations</neontom
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQual_Measures_for_Fan-Outness"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricInterpretation>meaningful only when metric values or lists of values are represented as classes. For metric spaces this is rarely practiced, specially becaue languages like OWL have separate domains for datatypes.</neontometrics:MetricInterpretation>
     </owl:Class>
     
@@ -4520,7 +4526,8 @@ detail, with a rich formalization of conceptual choices and motivations</neontom
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Attribute_Richness -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Attribute_Richness">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Schema_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -4543,8 +4550,7 @@ detail, with a rich formalization of conceptual choices and motivations</neontom
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Schema_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Formally, the attribute richness (AR) is defined as the average number of attributes (slots) per class. It is computed as the number attributes for all classes (att) divided by the number of classes (C).</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>The number of attributes (slots) that are defined for each class can indicate both the quality of ontology design and the amount of information pertaining to instance data. In general we assume that the more slots that are defined the more knowledge the ontology conveys.</neontometrics:MetricDescription>
         <neontometrics:MetricInterpretation>The result will be a real number representing the average number of attributes per class, which gives insight into how much knowledge about classes is in the schema. An ontology with a high value for the AR indicates that each class has a high number of attributes on the average, while a lower value might indicate that less information is provided about each class.</neontometrics:MetricInterpretation>
@@ -4555,7 +4561,8 @@ detail, with a rich formalization of conceptual choices and motivations</neontom
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Average_Population -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Average_Population">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Knowledgebase_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -4564,12 +4571,11 @@ detail, with a rich formalization of conceptual choices and motivations</neontom
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
-                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Instances_Metrics"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Individuals"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Knowledgebase_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Formally, the average population (P) of classes in a KB is defined as the number of instances of the KB (I) divided by the number of classes defined in the ontology schema (C).
 P = I / C</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>(average distribution of instances across all classes): This measure is an indication of the number of instances compared to the number of classes. It can be useful if the ontology developer is not sure if enough instances were extracted compared to the number of classes.</neontometrics:MetricDescription>
@@ -4581,13 +4587,13 @@ P = I / C</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_ClassInstance_Distribution -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_ClassInstance_Distribution">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Knowledgebase_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#standardDeviationOf"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Instance_Assertions_on_Class"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Knowledgebase_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The class instance distribution of an ontology is defined as the standard deviation in the number of instances per class.</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>This metric is also useful to evaluate the instance extraction process. It provides an indication on how instances are spread across the classes of the schema. It can be used to discover problems in the instance extraction process.</neontometrics:MetricDescription>
     </owl:Class>
@@ -4597,13 +4603,13 @@ P = I / C</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Connectivity -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Connectivity">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Instance_Assertions_on_Class"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The connectivity of a class (Conn(Ci)) is defined as the total number of relationships instances of the class have with instances of other classes.
 Conn(Ci)  = |NIREL(Ci)|</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>This metric gives an indication of the centrality of a class. With the importance metric mentioned below, both metrics provide a better understanding of how focal some classes are in the KB, which might be help in cases where a user has two ontologies with the similar classes defined in their schemas, but classes that are be important to the user play a central role in one of them, while being on the boundary in the other.</neontometrics:MetricDescription>
@@ -4628,7 +4634,8 @@ F = Ci(I) / Ci`(I)</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Importance -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Importance">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -4641,8 +4648,7 @@ F = Ci(I) / Ci`(I)</neontometrics:MetricDefinition>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The importance of a class (Imp(Ci)) is defined as the number of instances that belong to the inheritance subtree rooted at Ci in the KB(inst(Ci)) compared to the total number of class instances in the KB (CI).
 Imp(Ci) = Inst(Ci)/KB(CI)</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>This metric is important because it helps in identifying which areas of the schema are in focus when the instances are extracted and inform the user of the suitability of his/her intended use. It will also help direct the ontology developer or data extractor to where s/he should focus on getting data if the intention is to get a consistent coverage of all classes in the schema. Although this measure does not consider the real world semantics, where some classes naturally have more instances than others, the class importance can still be used (together with the class connectivity measure mentioned above) to give an indication on what parts of the ontology are considered focal and what parts are on the edges.</neontometrics:MetricDescription>
@@ -4653,7 +4659,8 @@ Imp(Ci) = Inst(Ci)/KB(CI)</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Inheritance_Richness -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Inheritance_Richness">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Schema_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -4666,8 +4673,7 @@ Imp(Ci) = Inst(Ci)/KB(CI)</neontometrics:MetricDefinition>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Schema_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Formally, the inheritance richness of class Ci is defined as the average number of subclasses per class in the subtree. The number of subclasses for a class Ci is defined as Hc (Cl,Ci) and the number of nodes in the subtree is C&apos;l.</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>This measure details the schema IRS metric mentioned above and describes the distribution of information in the current class subtree per class. This measure is a good indication of how well knowledge is grouped into different categoreis and subcategories under this class.</neontometrics:MetricDescription>
         <neontometrics:MetricInterpretation>The result of the formula will be a real number representing the average number of classes per schema level. The interpretation of the results of this metric depends highly on the nature of the ontology. Classes in an ontology that represents a very specific domain will have low IRC values, while classes in an ontology that represents a wide domain will usually have higher IRC values.</neontometrics:MetricInterpretation>
@@ -4687,13 +4693,13 @@ Imp(Ci) = Inst(Ci)/KB(CI)</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Readability -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Readability">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Annotations_on_Class"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Formally, the readability (Rd) of a class Ci is defined as the sum of the number attributes that are comments and the number of attributes that are labels the class has.</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>This metric indicates the existence of human readable descriptions in the ontology, such as comments, labels, or captions. This metric can be a good indication if the ontology is going to be queried and the results listed to users.</neontometrics:MetricDescription>
         <neontometrics:MetricInterpretation>The result of the formula will be an integer representing the availability of human-readable information for the instances of the current class.</neontometrics:MetricInterpretation>
@@ -4704,7 +4710,8 @@ Imp(Ci) = Inst(Ci)/KB(CI)</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Relationship_Richness -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Relationship_Richness">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -4717,8 +4724,7 @@ Imp(Ci) = Inst(Ci)/KB(CI)</neontometrics:MetricDefinition>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Formally, the relationship richness (RR) of a class Ci is defined as the number of relationships that are being used by instances Ii that belong to Ci (P(Ii,Ij)) compared to the number of relationships that are defined for Ci at the schema level (P(Ci,Cj))
 RRc = (P(Ii, Ij), Ii eCi(I))/P(Ci, Cj)</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>This is an important metric reflecting how much of the properties in each class in the schema is actually being used at the instances level. It is a good indication of the how well the extraction process performed in the utilization of information defined at the schema level.</neontometrics:MetricDescription>
@@ -4730,7 +4736,8 @@ RRc = (P(Ii, Ij), Ii eCi(I))/P(Ci, Cj)</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Relationship_Utiliization -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Relationship_Utiliization">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -4743,8 +4750,7 @@ RRc = (P(Ii, Ij), Ii eCi(I))/P(Ci, Cj)</neontometrics:MetricDefinition>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The relationship richness (RU) of a class Ci is defined as the number of relationships that are being used by instances Ii that belong to Ci (P(Ii,Ij)) compared to the number of relationships that are defined for Ci at the schema level (P(Ci,Cj)).
 RU(Ci) = IREL(Ci) / CREL(Ci)</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>This metric reflects how the relationships defined for each class in the schema are being used at the instances level. It is a good indication of the how well the extraction process performed in the utilization of information defined at the schema level. This metric can be used to distinguish between two ontologies having similar schemas but one of them utilizes only a few of the available relationships while other utilizes more.</neontometrics:MetricDescription>
@@ -4755,7 +4761,8 @@ RU(Ci) = IREL(Ci) / CREL(Ci)</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Utilization -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Class_Utilization">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Knowledgebase_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -4768,8 +4775,7 @@ RU(Ci) = IREL(Ci) / CREL(Ci)</neontometrics:MetricDefinition>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Knowledgebase_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The class utilization (CU) of an ontology is defined as the ratio of the number of populated classes (C`) divided by the total number of classes defined in the ontology schema (C).</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>This metric reflects how classes defined in the schema are being utilized in the KB. This metric can be used to differentiate between two ontologies having the same classes defined in their schemas but one of them populates more classes than the other one, indicating a richer KB.</neontometrics:MetricDescription>
         <neontometrics:MetricInterpretation>The result will be a percentage indicating how the KB utilizes classes defined in the schema. Thus, if the KB has a very low CU, then the KB does not have data that exemplifies all the knowledge that exists in the schema. This metric will be very useful in situations where instances are being extracted into an ontology and it is needed to evaluate the results of the extraction process.</neontometrics:MetricInterpretation>
@@ -4780,13 +4786,13 @@ RU(Ci) = IREL(Ci) / CREL(Ci)</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Cohesion -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Cohesion">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Knowledgebase_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Connected_Graphs"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Knowledgebase_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The cohesion (Coh) of an ontology is defined as the number of connected components (CC) of the graph representing the KB.</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>This metric represents the number of connected components in the KB. This metric can particularly help if &apos;islands&apos; form in the KB as a result of extracting data from separate sources that do not have common knowledge, giving insight into what areas need more instances in order to enable the different connected components to connect to each other. Having less connected components (ideally 1) can be helpful, for example, in finding more useful semantic-associations [3] in the ontology.</neontometrics:MetricDescription>
         <neontometrics:MetricInterpretation>The result will be an integer representing the number of connected components in the ontology.</neontometrics:MetricInterpretation>
@@ -4797,7 +4803,8 @@ RU(Ci) = IREL(Ci) / CREL(Ci)</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Inheritance_Richness -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Inheritance_Richness">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Schema_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -4810,8 +4817,7 @@ RU(Ci) = IREL(Ci) / CREL(Ci)</neontometrics:MetricDefinition>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Schema_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Formally, the inheritance richness of the schema (IRs) is defined as the average number of subclasses per class.</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>This measure describes the distribution of information across different levels of the ontology inheritance tree or the fan-out of parent classes. This is a good indication of how well knowledge is grouped into different categories and subcategories in the ontology. This measure can distinguish a horizontal ontology from a vertical ontology or an ontology with different levels of specialization. A horizontal (or flat) ontology is an ontology that has a small number of inheritance levels, and each class has a relatively large number of subclasses. In contrast, a vertical ontology contains a large number of inheritance levels where classes have a small number of subclasses. This metric can be measured for the whole schema or for a subtree of the schema.</neontometrics:MetricDescription>
         <neontometrics:MetricInterpretation>The result of the formula will be a real number representing the average number of subclasses per class. An ontology with a low IRS would be or a vertical nature, which might reflect a very detailed type of knowledge that the ontology represents. while an ontology with a high IRS would be of a horizontal nature, which means that ontology represents a wide range of general knowledge.</neontometrics:MetricInterpretation>
@@ -4823,7 +4829,6 @@ RU(Ci) = IREL(Ci) / CREL(Ci)</neontometrics:MetricDefinition>
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Instance_Metrics">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA"/>
-        <owl:disjointWith rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Schema_Metrics"/>
         <neontometrics:MetricDescription>The way instances are placed within an ontology is also a very important aspect of ontology evaluation. The placement of instance data and distribution of the data can indicate the effectiveness of the ontology design and the amount of knowledge represented by the ontology. Instance metrics can divided on three main sub-dimensions: Overall KB (knowledgebase) metrics that evaluates the overall placement of instances with regard to the schema, class-specific metrics that evaluate the instances of a specific class and compare it to instances of other classes, and relationship-specific metrics that evaluate the instances of a specific relationship and compare it to instances of other relationships.</neontometrics:MetricDescription>
     </owl:Class>
     
@@ -4841,7 +4846,8 @@ RU(Ci) = IREL(Ci) / CREL(Ci)</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Relationship_Diversity -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Relationship_Diversity">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Schema_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -4854,8 +4860,7 @@ RU(Ci) = IREL(Ci) / CREL(Ci)</neontometrics:MetricDefinition>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Schema_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The relationship diversity (RD) of a schema is defined as the ratio of the number of noninheritance relationships (P), divided by the total number of relationships defined in the schema (the sum of the number of inheritance relationships (H) and noninheritance relationships (P)).
 RD = P / (H +P)</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>This metric reflects the diversity of relationships in the ontology. An ontology that contains mostly inheritance relationships (taxonomy) usually conveys less information than an ontology that contains a diverse set of relationships. However, in some applications, users might be interestedin ontologies with mostly inheritance relationships (e.g. species classification), and OntoQA gives the user the option to specify whether she prefers a taxonomy or an ontology with diverse relationships.</neontometrics:MetricDescription>
@@ -4867,7 +4872,8 @@ RD = P / (H +P)</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Relationship_Importance -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Relationship_Importance">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Relationship_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -4880,8 +4886,7 @@ RD = P / (H +P)</neontometrics:MetricDefinition>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Relationship_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The importance of a relationship (Imp(Ri)) is defined as the number of instances of relationship Ri in the KB (inst(Ri)) compared to the total number of property instances in the KB (RI)
 Imp(Ri) = Inst(Ri) / KB (RI)</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>Relationship Importance: This metric measures the percentage of instances of a relationship with respect to the total number of relationship instances in the KB. This metric is important in that it will help in identifying which schema relationships were in focus when the instances were extracted and inform the user of the suitability of his/her intended use. This metric can also help in directing the instance extraction process to include a more diverse set of relationships the KB does not include the required diversity.</neontometrics:MetricDescription>
@@ -4902,7 +4907,8 @@ Imp(Ri) = Inst(Ri) / KB (RI)</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Relationship_Richness -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Relationship_Richness">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Schema_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -4915,8 +4921,7 @@ Imp(Ri) = Inst(Ri) / KB (RI)</neontometrics:MetricDefinition>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Schema_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Formally, the relationship Diversity (RR) of a schema is defined as the ratio of the number of relationships (P) defined in the schema, divided by the sum of the number of subclasses (SC) (which is the same as the number of inheritance relationships).
 RR = P / (SC + P)</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>This metric reflects the diversity of relations and placement of relations in the ontology. An ontology that contains many relations other than class-subclass relations is richer than a taxonomy with only class-subclass relationships.</neontometrics:MetricDescription>
@@ -4928,7 +4933,8 @@ RR = P / (SC + P)</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Schema_Deepness -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Schema_Deepness">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Schema_Metrics"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -4941,8 +4947,7 @@ RR = P / (SC + P)</neontometrics:MetricDefinition>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OntoQA_Schema_Metrics"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The schema depth of the schema (SD) is defined as the average number of subclasses per class.
 SD = H/C</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>This measure describes the distribution of classes across different levels of the ontology inheritance tree. This measure can distinguish a shallow ontology from a deep ontology. A shallow ontology is an ontology that has a small number of inheritance levels, and each class has a relatively large number of subclasses. In contrast, a deep ontology contains a large number of inheritance levels where classes have a small number of subclasses</neontometrics:MetricDescription>
@@ -5513,7 +5518,8 @@ SD = H/C</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Fanout_of_Non-Leaf_Classes_(AF-NL) -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Fanout_of_Non-Leaf_Classes_(AF-NL)">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -5526,8 +5532,7 @@ SD = H/C</neontometrics:MetricDefinition>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The Average Fanout of Non-LeafClasses (AF-NL) is defined as the Number of Fanouts (NoF) divided by Number of Non-leaf Classes explicitly defined in the ontology Oi .</neontometrics:MetricDefinition>
     </owl:Class>
     
@@ -5536,7 +5541,8 @@ SD = H/C</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Fanout_of_Root_Class_(AF-R) -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Fanout_of_Root_Class_(AF-R)">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -5549,8 +5555,7 @@ SD = H/C</neontometrics:MetricDefinition>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The Average Fanout of Root Classes (AF-R) is defined to be the Number of Fanouts (NoF) divided by the Number of Root Classes in the ontology Oi .</neontometrics:MetricDefinition>
     </owl:Class>
     
@@ -5559,7 +5564,8 @@ SD = H/C</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Fanout_per_Class_(AF-C) -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Fanout_per_Class_(AF-C)">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -5572,8 +5578,7 @@ SD = H/C</neontometrics:MetricDefinition>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The Average Fanout per Class (AF-C) is the Number of Fanouts (NoF) divided by Number of Classes (NoC) explicitly defined in the ontology Oi</neontometrics:MetricDefinition>
     </owl:Class>
     
@@ -5582,7 +5587,8 @@ SD = H/C</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Properties_per_Class_(AP-C) -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Average_Properties_per_Class_(AP-C)">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl"/>
+        <rdfs:subClassOf>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
@@ -5595,8 +5601,7 @@ SD = H/C</neontometrics:MetricDefinition>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The Average Properties per Class (AP-C) is the number of properties explicitly defined in the ontology Oi divided by the number of classes explicitly defined in the ontology Oi .</neontometrics:MetricDefinition>
     </owl:Class>
     
@@ -5605,13 +5610,13 @@ SD = H/C</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Maximum_Depth_of_Inheritance_Tree_(MaxDIT) -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Maximum_Depth_of_Inheritance_Tree_(MaxDIT)">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Maximum_Depth"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>The Maximum Depth of Inheritance Tree (MaxDIT) of the ontology Oi is defined as follows. A depth is the total number of nodes in a path. A path starts from the root node to the leaf node. All distinct paths in the ontology Oi include every path from each root node to each leaf node if there exists an inheritance path from the root node to the leaf node. The root node is the first level in each path.</neontometrics:MetricDefinition>
     </owl:Class>
     
@@ -5620,13 +5625,13 @@ SD = H/C</neontometrics:MetricDefinition>
     <!-- http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Number_of_Properties_(NOP) -->
 
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl_Number_of_Properties_(NOP)">
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#directlyUsesMetric"/>
                 <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Object_Property_Class_Assertion"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OrmeEtAl"/>
+        </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Number of Properties (NoP) is the number of properties explicitly defined in the ontology Oi .</neontometrics:MetricDefinition>
         <neontometrics:MetricDescription>Example. Each class can possess properties (but is not required to). Class 1 has one property, class 2 has two properties, class 3 has no properties, class 4 has three properties, and class 5 has one property. Thus, NoP = 7.</neontometrics:MetricDescription>
     </owl:Class>
