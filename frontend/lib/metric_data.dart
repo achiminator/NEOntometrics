@@ -132,23 +132,22 @@ class RepositoryData {
         }
         ontologyFiles.add(OntologyData(file["fileName"], commits));
       }
-    }
-    else if (graphqlInput?.containsKey("getOntologyFile") ?? false) {
+    } else if (graphqlInput?.containsKey("getOntologyFile") ?? false) {
       Map<String, dynamic> root =
           graphqlInput?["getOntologyFile"]["edges"][0]["node"];
       repository = "Single Ontology File";
-        
-        var commits = <Map<String, String>>[];
-        var metrics = <String, dynamic>{};
-        var metricsConverted = <String, String>{};
-        for (Map<String, dynamic> commitNode in root["commit"]["edges"]) {
-          metrics.addAll(commitNode["node"]);
-          for (var key in metrics.keys) {
-            metricsConverted[key] = metrics[key].toString();
-          }
-          commits.add(Map.from(metricsConverted));
+
+      var commits = <Map<String, String>>[];
+      var metrics = <String, dynamic>{};
+      var metricsConverted = <String, String>{};
+      for (Map<String, dynamic> commitNode in root["commit"]["edges"]) {
+        metrics.addAll(commitNode["node"]);
+        for (var key in metrics.keys) {
+          metricsConverted[key] = metrics[key].toString();
         }
-        ontologyFiles.add(OntologyData(root["fileName"], commits));
+        commits.add(Map.from(metricsConverted));
+      }
+      ontologyFiles.add(OntologyData(root["fileName"], commits));
     }
   }
 
@@ -205,6 +204,9 @@ class OntologyData {
             firstChar = false;
             continue;
           }
+          if (char == "_") {
+            continue;
+          }
           if (char.toUpperCase() == char) {
             newMetricName += " ";
           }
@@ -213,6 +215,17 @@ class OntologyData {
         returnMap.addAll({newMetricName: newResult});
       }
       returnList.add(returnMap);
+    }
+    if (returnList.length == 1) {
+      Map<String, String> newReturnMap = {};
+      if (returnList[0]["Commit Time"] == "null") {
+        for (var element in returnList[0].keys) {
+          if (returnList[0][element] != "null") {
+            newReturnMap[element] = returnList[0][element] ?? "";
+          }
+        }
+        returnList[0] = newReturnMap;
+      }
     }
     return returnList;
   }

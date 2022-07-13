@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:neonto_frontend/markdown_handler.dart';
 import 'dart:html' as html;
 
+import 'package:neonto_frontend/settings.dart';
+
 //import 'markdown_handler.dart';
 class IndexPage extends StatelessWidget {
   const IndexPage({Key? key}) : super(key: key);
@@ -42,6 +44,12 @@ class IndexPage extends StatelessWidget {
                       iconSize: 50,
                       onPressed: () => html.window.open("mailto:achim.reiz@uni-rostock.de", "Contact by Mail"),
                       icon: const Icon(Icons.mail))),
+              Expanded(
+                  child: IconButton(
+                      tooltip: "GraphQL-Endpoint",
+                      iconSize: 50,
+                      onPressed: () => html.window.open(Settings().apiUrl + "/graphql", "GraphQL"),
+                      icon: const Icon(Icons.compare_arrows_outlined))),
               Expanded(
                 child: IconButton(
                     tooltip: "Contact Me LinkedIn",
