@@ -8,7 +8,6 @@ services:
     ports:
      - '6379:6379'
 
-
   # Creates the tables necessary in the database
   migrateDB:
     restart: "no"
@@ -21,7 +20,7 @@ services:
     environment:
       db_password: 'KMmsWrwRBBeQLXDO'
       inDocker: "True"
-    command: bash -c "python manage.py makemigrations rest --noinput && python manage.py migrate"
+    command: [ "bash", "-c", "python", "manage.py", "makemigrations", "rest", "--noinput", "&&", "python", "manage.py", "migrate" ]
 
   # This is the main application for the git metric aggregation
   neontometricsapi:
@@ -31,8 +30,8 @@ services:
     # The starting of the mySQL-Database takes longer than the start up of the django webapp.
 
     # Wait-for-it.sh ensures that the database is up and running before starting django.
-    command: bash -c "python manage.py runserver 0.0.0.0:8000"
-    #command: 'python manage.py runserver 0.0.0.0:8000' 
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    #command: 'python manage.py runserver 0.0.0.0:8000'
     ports:
       - '8086:8000'
     depends_on:
@@ -43,13 +42,13 @@ services:
       inDocker: "True"
     volumes:
       - gitStorage:/code/repositoryCollection:ro
-  
+
   neontometrics_worker:
     restart: always
     image: neontometrics:latest
-    command: python manage.py rqworker
+    command: ["python",  "manage.py",  "rqworker"]
     deploy:
-      replicas: 4
+      replicas: 3
     depends_on:
       - neontometricsapi
       - neontometrics_db
@@ -60,7 +59,7 @@ services:
       inDocker: "True"
     volumes:
       - gitStorage:/code/repositoryCollection:rw
-      
+
   # the REST-Calculation Engine
   opi:
     ports:
@@ -68,7 +67,7 @@ services:
     restart: always
     container_name: opi
     environment:
-      JVM_OPTS: -Xmx12g -Xms12g -XX:MaxPermSize=2g
+      JVM_OPTS: -Xmx14g -Xms13g -XX:MaxPermSize=4g
     build:
       context: ./Opi
     image: opi:latest
@@ -93,10 +92,10 @@ services:
     ports:
       - '3366:3306'
     environment:
-      MYSQL_DATABASE: 'neontometrics'
-      MYSQL_USER: 'neontometrics'
-      MYSQL_PASSWORD: 'KMmsWrwRBBeQLXDO'
-      MYSQL_ROOT_PASSWORD: 'KMmsWrwRBBeQLXDO'
+      MYSQL_DATABASE: neontometrics
+      MYSQL_USER: neontometrics
+      MYSQL_PASSWORD: KMmsWrwRBBeQLXDO
+      MYSQL_ROOT_PASSWORD: KMmsWrwRBBeQLXDO
     volumes:
       - neontometricsdb:/var/lib/mysql
 volumes:
