@@ -1,16 +1,11 @@
 # neonto_frontend
 
-A new Flutter project.
+*The frontend for the NEOntometrics application.*
 
-## Getting Started
+The frontend is written in the multiplattform language flutter and compiled via docker compose to a web project. On starting time, it calls the [API](http://api.neontometrics.informatik.uni-rostock.de/metricexplorer) for information on metrics that are up for calculation, which are then dynamically displayed on the pages *Metric Explorer* and *Calculation Engine*.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+If one starts a request, the frontend first
+1. Performs a queue-request to check whether a repository or ontology file is already in the Database or queue
+2. If the metric is already in the  queue, but not yet finished, the queue information is returned. If it is not yet known in the system, the user can put the repository or file in the queue to be analyzed.
+3. If the metrics are already calculated in the database, the frontend builds a GraphQL call with the selected metrics and retrieves the ontology metrics.
+4. The selected Metrics are displayed on the frontend. 
