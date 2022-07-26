@@ -173,6 +173,7 @@ EMAIL_PORT = 587
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
+        'OPTIONS': {'charset': 'utf8mb4'},
         'NAME': 'neontometrics',
         'USER': 'neontometrics',
         'PASSWORD':os.environ['db_password'],
