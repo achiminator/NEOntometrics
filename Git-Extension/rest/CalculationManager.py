@@ -31,8 +31,7 @@ class CalculationManager:
             django_rq.enqueue(calculationManager.ontologyFileWORepo, url, reasonerSelected, job_id=jobId)
         # If no file is given, analyze the whole REPO
         else:
-            metrics = django_rq.enqueue(calculationManager.getObjects, repositoryUrl=url.repository,
-                                        classMetrics=classMetrics, reasoner=reasonerSelected, job_id=jobId)
+            django_rq.enqueue(calculationManager.getObjects, repositoryUrl=url.repository, classMetrics=classMetrics, reasoner=reasonerSelected, job_id=jobId)
         
     
 

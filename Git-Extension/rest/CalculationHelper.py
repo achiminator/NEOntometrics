@@ -1,7 +1,8 @@
 from urllib.parse import urlparse
 import re
 import argparse
-from pygit2 import repository
+
+import requests
 
 
 class GitUrlParser:
@@ -23,21 +24,34 @@ class GitUrlParser:
             input (str): URL to git-REPO or Git-File
 
         """
+        
+        if input.endswith("/"):
+            input = input [:-1]
         self.url = input
         urlParsed = urlparse(input)
-        # Check if an URL to a ontology file is given
-        if ".rdf" in input or ".ttl" in input or ".owl" in input:
-            # Check if the URL directly accesses an link
-            if "blob" in input:
-                self.repository = input.split("blob")[0]
-                self.repository = self.repository[self.repository.index(
-                    urlParsed.netloc): -1]
-                self.branch = input.split("blob")[1].split("/")[1]
-                self.file = input.split("blob")[1][len(self.branch)+2:]
+
+        # pygit2 does not support a simple check on wether a git repository is available at a given location. Thus, I
+        # manualy added the first stage of the http-git protocol for a simple check on availability.
+        if not(input.startswith("http://") or input.startswith("https://")):
+            input = "http://" + input
+        response = requests.get(input + "/info/refs?service=git-upload-pack")
+        
+        if(response.status_code == 200 and "application/x-git-upload-pack-advertisement" in response.headers["Content-Type"]):
+            # Check if an URL to a ontology file is given
+            if ".rdf" in input or ".ttl" in input or ".owl" in input:
+                # Check if the URL directly accesses an link
+                if "blob" in input:
+                    self.repository = input.split("blob")[0]
+                    self.repository = self.repository[self.repository.index(
+                        urlParsed.netloc): -1]
+                    self.branch = input.split("blob")[1].split("/")[1]
+                    self.file = input.split("blob")[1][len(self.branch)+2:]
+                else:
+                    self.file = self.url[self.url.index(urlParsed.netloc):]
             else:
-                self.file = self.url[self.url.index(urlParsed.netloc):]
+                self.repository = self.url[self.url.index(urlParsed.netloc):]
         else:
-            self.repository = self.url[self.url.index(urlParsed.netloc):]
+            self.file = self.url[self.url.index(urlParsed.netloc):]
         if self.repository.endswith("/"):
             self.repository = self.repository[:-1]
         self.service = urlParsed.netloc.replace("www.", "")
