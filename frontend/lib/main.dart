@@ -103,12 +103,31 @@ class EntryPage extends StatelessWidget {
           title: const Text("NEOntometrics"),
           centerTitle: true,
         ),
-        body: TabBarView(children: [
-          const IndexPage(),
-          MetricExplorer(metricData),
-          CalculationEngine(metricData),
-        ]),
+        body: contentOrToSmall(context),
       ),
     );
+  }
+
+/// Implements a check on whether the screen size is sufficient to show the content.
+  Widget contentOrToSmall(BuildContext context) {
+    if (MediaQuery.of(context).size.width < 1000 || MediaQuery.of(context).size.height < 600) {
+      return const Center(
+        child: ListTile(
+            title: Text("Desktop App"),
+            subtitle: Text(
+              "The NEOntometrics application is optimized for Desktop Computers. Please Visit it with a device with proper screen size.",
+              softWrap: true,
+            ),
+            leading: Icon(
+              Icons.desktop_windows,
+            )),
+      );
+    } else {
+      return TabBarView(children: [
+        const IndexPage(),
+        MetricExplorer(metricData),
+        CalculationEngine(metricData),
+      ]);
+    }
   }
 }
