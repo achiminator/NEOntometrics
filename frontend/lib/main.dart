@@ -115,7 +115,7 @@ class EntryPage extends StatelessWidget {
         child: ListTile(
             title: Text("Desktop App"),
             subtitle: Text(
-              "The NEOntometrics application is optimized for Desktop Computers. Please Visit it with a device with proper screen size.",
+              "The NEOntometrics application is optimized for desktop computers. Please visit it with a device with proper screen size.",
               softWrap: true,
             ),
             leading: Icon(
