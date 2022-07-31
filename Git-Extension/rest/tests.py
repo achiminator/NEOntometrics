@@ -1,25 +1,139 @@
+from fileinput import filename
 from django.db.models.fields.related import ManyToManyField
-from ontoMetricsAPI.settings import DATABASES
-from rest import views
-from rest_framework.test import APIRequestFactory, DjangoTestAdapter
-from django.test import TestCase, utils
+from django.test import TestCase
+from rest.CalculationHelper import GitUrlParser
 from rest.CalculationManager import CalculationManager
-from rest.metricOntologyHandler import OntologyHandler
-import json, time, requests
+from graphene_django.utils.testing import GraphQLTestCase
 
-from rest.models import Metrics
+from rest.metricOntologyHandler import OntologyHandler
+import json, requests
+
+from rest.models import Commit, OntologyFile, Repository
 # Create your tests here.
 # Unit Tests
-# class GitMetricsTest(TestCase):
-#     git = GitHandler()
-#     def test_SingleSweetOntology(self):
-#         git = GitHandler()
-#         success = git.getObject(repositoryUrl="github.com/ESIPFed/sweet", objectLocation="src/human.ttl", classMetrics="True")
-#         self.assertTrue(dict)
-#     def test_WholePuppetOntology(self):
-#         git = GitHandler()
-#         success = git.getObjects(repositoryUrl="https://github.com/kbarber/puppet-ontologies/", objectLocation="src/human.ttl", classMetrics="True")
 
+class URLParserTest(TestCase):
+    """Tests the class that converts URLs to the internal GitURLParser Object"""
+    def testSingleOntology(self):
+        """Checks if a single Ontology is recognized properly"""
+        url = GitUrlParser()
+        url.parse("https://purl.industrialontologies.org/ontology/core/Core")
+        self.assertEqual("", url.repository) # If a single ontology is loaded, the repository-field of the url object shall be empty.
+    def testInvalidOntology(self):
+        url = GitUrlParser()
+        url.parse("https://purl.industrialonasdftologies.org/ontology/core/Core")
+        self.assertFalse(url.validResource)
+    def testWholeRepository(self):
+        """Checks if a Whole repository is loaded parset correctly."""
+        url = GitUrlParser()
+        url.parse("https://github.com/achiminator/TestOnto")
+        print(url.repository)
+        self.assertEqual("github.com/achiminator/TestOnto", url.repository) 
+        self.assertEqual("", url.file)
+        self.assertEqual(url.service, "github.com")
+    
+    def testFileOfRepository(self):
+        """Checks if the combination of file and repository is recognized propertly"""
+        url = GitUrlParser()
+        url.parse("https://github.com/achiminator/TestOnto/blob/main/testOntology2.owl")
+        self.assertEqual("github.com/achiminator/TestOnto", url.repository) 
+        self.assertEqual("testOntology2.owl", url.file)
+        self.assertEqual(url.service, "github.com") 
+
+
+
+class OntologyAnalysisTests(TestCase):
+    """tests whether the Ontologies are analyzed properly."""
+    calcManager = CalculationManager()
+    
+    def testSingleOntology(self):
+        """Tests if a single ontology is recognized and analyzed properly"""
+        url = GitUrlParser()
+        url.parse("https://purl.industrialontologies.org/ontology/core/Core")
+        self.calcManager.ontologyFileWORepo(url, True)
+        res = OntologyFile.objects.filter(fileName=url.file)
+        self.assertEqual(1, len(res))
+        resInner = Commit.objects.filter(metricSource = res[0])
+        self.assertEqual(1, len(resInner))
+        self.assertGreater(resInner[0].axioms, 0)
+
+    def testRepository(self):
+        """Tests if a repository is recognized and analyzed properly"""
+        url = GitUrlParser()
+        url.parse("https://github.com/achiminator/TestOnto")
+        self.calcManager.getObjects(url.repository, False, False)
+        res = Repository.objects.get(repository = url.repository)
+        resInner = OntologyFile.objects.filter(repository = res)
+        self.assertGreater(len(resInner), 0)
+        
+class GraphQLTests(GraphQLTestCase):
+    """Tests a running GraphQL Instance"""
+    GRAPHQL_URL = "http://localhost:8086/graphql"
+    def testMutateQueue(self):
+        res = self.query("""mutation update_queueInfo{
+            update_queueInfo(
+                reasoner: false
+                update: true
+                url: "https://github.com/kbarber/puppet-ontologies/"
+            ) {
+                error
+                errorMessage
+                queueInformation {
+                urlInSystem
+                taskFinished
+                performsUpdate
+                taskStarted
+                queuePosition
+                analyzedCommits
+                totalCommits
+                analyzedOntologies
+                analysableOntologies
+                url
+                repository
+                service
+                fileName
+                error
+                errorMessage
+                }
+            }
+        }
+        """, op_name="update_queueInfo")
+        self.assertResponseNoErrors(res)
+        self.assertFalse(json.loads(res.content)["data"]["update_queueInfo"]["error"])
+
+    def testGetQuery(self):
+        res = self.query("""query getRepository{getRepository(repository: "https://github.com/kbarber/puppet-ontologies/") {
+            edges {
+            node {
+                repository
+                ontologyfile_set {
+                edges {
+                    node {
+                    id
+                    fileName
+                    branch
+                    commit {
+                        edges {
+                        node {
+                            pk
+                            Size
+                            AuthorEmail
+                            anonymousClasses
+                        }
+                        }
+                    }
+                    }
+                }
+                }
+            }
+            }
+        }
+        }
+        """, op_name="getRepository")
+        self.assertResponseNoErrors(res)
+        res = json.loads(res.content)
+        print(res)
+        
 
 class ConsistencyTests(TestCase):
     
@@ -30,7 +144,7 @@ class ConsistencyTests(TestCase):
         corresponds to the database model
         """
         ontology = OntologyHandler()
-        dbFields =  Metrics._meta.get_fields()
+        dbFields =  Commit._meta.get_fields()
         dbFieldsName = []
         for field in dbFields:
             if(not(isinstance(field, ManyToManyField))):
@@ -49,70 +163,4 @@ class ConsistencyTests(TestCase):
     def metricCalculationTest(self):
         metricDict = self.ontology.getMetricDict()
         
-        
-
-# class RESTTests(TestCase):
-#     puppetSize = 0
-    
-
-#     def setUp(self):
-#         utils.teardown_test_environment()
-#         utils.setup_test_environment()
-#     def test_sweetHuman(self):
-#         """analyses the sweet Human Ontology"""
-#         respData = self.asyncQuery("https://github.com/ESIPFed/sweet/blob/master/src/human.ttl")
-#         self.assertIn("branch", respData[0])
-    
-#     def test_puppetOntologyWhole(self):
-#         """Downloads the Whole Puppet Ontology without ClassMetrics
-#         """
-        
-#         respData = self.asyncQuery("https://github.com/kbarber/puppet-ontologies/")
-#         self.assertIn("branch", respData[0])
-    
-#     def test_puppetOntologyWholeAgain(self):
-#         """Queries the  Puppet Ontology again (It should not be downloaded again)
-#         """
-#         respData = self.asyncQuery("https://github.com/kbarber/puppet-ontologies/")
-#         self.assertIn("branch", respData[0])
-    
-#     def test_puppetOntologySingleWithoutClassMetrics(self):
-#         """Tests a single puppet Ontology WITHOUT classes
-#         """
-#         respData = self.asyncQuery("https://github.com/kbarber/puppet-ontologies/blob/master/puppet-disco/base-types.owl")
-#         self.assertIn("branch", respData)
-
-#     def test_puppetOntologySingleWithClassMetrics(self):
-#         """Tests a single puppet Ontology WITH classMetrics
-#         """
-#         resp = self.asyncQuery("https://github.com/kbarber/puppet-ontologies/blob/master/puppet-disco/base-types.owl", True)
-#         self.assertIn("ClassMetrics", respData)
-#     def deleteSinglePuppetOntology(self):
-#         """Delets one ontology of the puppet repository
-#         """
-#         resp = self.client.delete("/git", {"url": "https://github.com/kbarber/puppet-ontologies/blob/master/puppet-disco/base-types.owl", "class":"True" })
-#         self.assertEqual(200, resp.status_code)
-#     def test_puppetOntologyWholeAfterDelete(self):
-#         """Prior to the execution of this test, one Ontology has been deleted. The Number should still be the same like in the first
-#         """
-#         respData = self.asyncQuery("https://github.com/kbarber/puppet-ontologies/")
-#         self.assertEqual(len(respData), 5)
-    
-#     def asyncQuery(self, url: str, classMetrics=False) -> dict:
-#         """Handles the Asynchronous Nature of the Service
-
-#         Args:
-#             url (str): [description]
-#             classMetrics (bool, optional): [description]. Defaults to False.
-
-#         Returns:
-#             dict: [description]
-#         """
-#         resp = self.client.get("/git", {"url": url, "class": str(classMetrics)})
-#         while "taskFinished" in json.loads(resp.content):
-#             time.sleep(2)
-#             resp = self.client.get("/git", {"url": url, "class": str(classMetrics)})
-#             print(resp)
-#             print(resp.content)
-#         return json.loads(resp.content)
         

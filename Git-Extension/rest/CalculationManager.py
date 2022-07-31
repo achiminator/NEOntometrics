@@ -121,15 +121,8 @@ class CalculationManager:
         repo.reset(repo.references.objects[len(repo.references.objects)-1].target, Git.GIT_RESET_HARD)
 
         # This part is for counting how much ontologies are to be calculated in this repository
-        currentJob = rq.job.get_current_job()
         analyzedOntologies = 0
-
-
-        currentJob.save_meta()
-        
         opi = OpiHandler()
-
-        
         commitList = []
         itemPaths = []
         
@@ -158,24 +151,23 @@ class CalculationManager:
                 alreadyExistingCommits = {}
         commitCounter = 0
         alreadyCalculatedHex = []
-        job = rq.job.get_current_job()
+        currentJob = rq.job.get_current_job()
         # Iterates through the Repository, finding the relevant Commits based on paths
         for commit in commitList:
             commitCounter += 1
-            job.meta.update({ 
-                "totalCommits": len(commitList),
-                "ananlyzedCommits": commitCounter
-            })
-            job.save_meta()
             analyzedOntologies =0 
             for ontologyDBObject in ontologyDBObjects:
                 if ontologyDBObject.fileName not in self._getOntologyPathsInTree("", commit.tree).keys():
                     continue
 
                 analyzedOntologies += 1
-                currentJob.meta = {"analysableOntologies": len(itemPaths),
-                           "analyzedOntologies": analyzedOntologies}
-                job.save_meta()
+                if(currentJob != None):
+                    # It is None while we do testing
+                    currentJob.meta = {"analysableOntologies": len(itemPaths),
+                            "analyzedOntologies": analyzedOntologies, 
+                            "totalCommits": len(commitList),
+                "ananlyzedCommits": commitCounter}
+                    job.save_meta()
 
                 obj = self._getFittingObject(ontologyDBObject.fileName, commit.tree)
                 
