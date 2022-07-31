@@ -74,7 +74,7 @@ class QueueInformation:
                     query = q2
             else:
                 throw: DatabaseError("No given Data in the Database")
-            if(query.count() > 0):
+            if("query" in locals() and query.count() > 0):
                 self.urlInSystem = True
                 self.taskFinished = True
 

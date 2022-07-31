@@ -138,6 +138,9 @@ class QueueMutation(graphene.Mutation):
         if queueInfo.urlInSystem and update == False:
             self.error = True
             self.errorMessage = "URL is already in the Queue"
+        elif queueInfo.url.validResource == False:
+            self.error = True
+            self.errorMessage = "Under the given URL, there is no available and_or accessible resource"
         else:
             urlObject = GitUrlParser()
             urlObject.parse(url)
@@ -217,6 +220,7 @@ class Query(graphene.ObjectType):
             analyzedOntologies=queueInfo.analyzedOntologies,
             analysableOntologies=queueInfo.analysableOntologies,
             ontologyFileOnly=queueInfo.ontologyFileOnly,
+            validUrl=queueInfo.url.validResource,
             url=queueInfo.url.url,
             repository=queueInfo.url.repository,
             service=queueInfo.url.service,
