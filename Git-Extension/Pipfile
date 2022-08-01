@@ -20,6 +20,7 @@ graphene-django = "*"
 django = "<4"
 django-filter = "*"
 django-newsletter = "*"
+dj-rest-auth = "*"
 
 [dev-packages]
 autopep8 = "*"
