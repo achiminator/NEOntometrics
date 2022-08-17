@@ -20,7 +20,7 @@ WHERE {
     OPTIONAL { ?itemName rdfs:subClassOf _:v0 .
     _:v0 owl:onProperty metric:implementedBy ;
                     owl:hasValue ?implementationName }
-    OPTIONAL { ?itemName metric:metricInterpretation ?interpretation } .
+    OPTIONAL { ?itemName metric:MetricInterpretation ?interpretation } .
     OPTIONAL { ?itemName rdfs:seeAlso ?seeAlso }
     
 }
