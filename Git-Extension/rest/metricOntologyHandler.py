@@ -17,7 +17,7 @@ class OntologyHandler:
             uriResult (str): The result item from the sparql query (e.g.: "http://uni-rostock.de/NEOntometrics#CohesionMetric")
 
         Returns:
-            str: The class name without the URI-representatin (e.g.: "CohesionMetric")
+            str: The class name witho ut the URI-representatin (e.g.: "CohesionMetric")
         """
         return re.sub("((.*)#)", "", uriResult).replace("_", " ")
 
@@ -51,7 +51,7 @@ class OntologyHandler:
         Returns:
             list: List of implemented metrics, according to ontology.
         """
-        rdf = rdflib.Graph(store="OxMemory")
+        rdf = rdflib.Graph(store="Oxigraph")
         rdf.parse(
             location="rest/metricOntology/OntologyMetrics.owl", format="application/rdf+xml")
         qres = self.getElementalMetricDescriptions(rdf)
@@ -75,6 +75,37 @@ class OntologyHandler:
         else:
             raise Exception("Fatal Error: MetricDict Accessed before calculated")
     def calculateMetricDict(self, rdf)->list:
+
+
+        def buildCalculationDict(calculationDict: dict, level:int, line)->dict:
+            """Recursive function for extracting the calculation objects out of the SPARQL-request and transforming it into a dict
+
+            Args:
+                calculationDict (dict): The current calculation dict to extent
+                level (int): The recursion level
+                line (_type_): the SPARQL-result line
+
+            Returns:
+                dict: Build nested dictionary containing the function.
+            """
+            
+            if(line["property"+ str(level)] != None and line["value"+ str(level)] != None):
+                if(str(line["value" + str(level)]) == "seeProperty"+ str(level + 1)):
+                    s = self.resURI2str(line["property"+ str(level)])
+                    if (s in calculationDict):
+                        calculationDict.update({s: buildCalculationDict(calculationDict[s], level+1, line)})
+                    else:                
+                        calculationDict.update({s: buildCalculationDict({}, level+1, line)})
+                else:
+                    if calculationDict.get(self.resURI2str(line["property" + str(level)])) == None:
+                        calculationDict.update({self.resURI2str(line["property" + str(level)]): [
+                                               self.resURI2str(line["value"+ str(level)])]})
+                    else:
+                        calculationDict.get(self.resURI2str(line["property" + str(level)])).append(
+                            self.resURI2str(line["value"+str(level)]))
+            return calculationDict
+            
+
         with open("rest/metricOntology/metricQuery.sparql", "r") as f:
             query = f.read()
         qres = rdf.query(query)
@@ -82,7 +113,7 @@ class OntologyHandler:
         calculationDict = {}
         previousitem = None
         for line in qres:
-            if("Orme" in line[0]):
+            if("RFCOnto" in line[0]):
                 print("pass")
             if previousitem == None and not calculationDict.get("directlyUsesMetric"):
                 previousitem = line
@@ -90,30 +121,7 @@ class OntologyHandler:
                 print(self.__buildLambdaFunctionFromOntology(calculationDict))
                 metricDict.append(self.buildMetricDict(calculationDict, previousitem))
                 calculationDict = {}
-            if(line["property"] != None and line["value"] != None):
-                #print (line["metric"] + ", " + line["property"] + ", " + line["value"] + "\\n" )
-                if(str(line["value"]) == "seeProperty2"):
-                    if calculationDict.get(self.resURI2str(line["property"])) == None:
-                        calculationDict.update({
-                            self.resURI2str(line["property"]):  {
-                                self.resURI2str(line["property2"]): [self.resURI2str(line["value2"])]
-                            }
-                        })
-                    elif calculationDict[self.resURI2str(line["property"])].get(self.resURI2str(line["property2"])) == None:
-                        calculationDict[self.resURI2str(line["property"])].update({
-                            self.resURI2str(line["property2"]): [self.resURI2str(line["value2"])]
-                        })
-                    else:
-                        calculationDict[self.resURI2str(line["property"])].get(
-                            self.resURI2str(line["property2"])).append(self.resURI2str(line["value2"]))
-
-                else:
-                    if calculationDict.get(self.resURI2str(line["property"])) == None:
-                        calculationDict.update({self.resURI2str(line["property"]): [
-                                               self.resURI2str(line["value"])]})
-                    else:
-                        calculationDict.get(self.resURI2str(line["property"])).append(
-                            self.resURI2str(line["value"]))
+            calculationDict.update(buildCalculationDict(calculationDict=calculationDict, level= 1, line=line))
 
             previousitem = line
 
@@ -147,6 +155,22 @@ class OntologyHandler:
         Returns:
             str: A ready to use calculation function
         """
+
+        def splitCalculationDict(calculationDict:dict)->list:
+            returnList = []
+            input = deepcopy(calculationDict)
+            if "divisor" in input and "numerator" in input:
+                returnList.append({"divisor": input["divisor"], "numerator": input["numerator"]})
+                input.pop("divisor")
+                input.pop("numerator")
+            if("minuend" in input and "subtrahend" in input):
+                returnList.append({"minuend": input["minuend"], "subtrahend": input["subtrahend"]})
+                input.pop("minuend")
+                input.pop("subtrahend")
+            
+            returnList.append(input)
+            return returnList
+
         calculationParts = []
         calculationConnectedBy = ""
         returnString = ""
@@ -203,7 +227,13 @@ class OntologyHandler:
 
         elif calculationDict.get("multiplication"):
             calculationConnectedBy = "*"
-            calculationParts = calculationDict["multiplication"]
+            if(type(calculationDict["multiplication"]) == dict):
+                calculationParts = []
+                for element in splitCalculationDict(calculationDict["multiplication"]):
+
+                    calculationParts.append(self.__buildLambdaFunctionFromOntology(element))
+            else:
+                calculationParts = calculationDict["multiplication"]
 
         elif calculationDict.get("directlyUsesMetric"):
             if len(calculationDict["directlyUsesMetric"]) > 1:
@@ -214,7 +244,10 @@ class OntologyHandler:
 
         if(calculationConnectedBy in ["*", "+", ""]):
             for calculationPart in calculationParts:
-                returnString += " " + calculationPart + " " + calculationConnectedBy
+                if(" " in calculationPart): # If there is a whitespace, then there is more than one metric involved and we need brackets
+                    returnString += " (" + calculationPart + ") " + calculationConnectedBy    
+                else:
+                    returnString += " " + calculationPart + " " + calculationConnectedBy
             returnString = returnString[1:-1]
         elif(calculationConnectedBy in ["/", "-"]):
             returnString = "(" + str(calculationParts[0]) + ") " + str(
@@ -227,7 +260,7 @@ class OntologyHandler:
         Returns:
             list: JSON-Tree with the relevant information.
         """
-        rdf = rdflib.Graph(store="OxMemory")
+        rdf = rdflib.Graph(store="Memory")
         rdf.parse(
             location="rest/metricOntology/OntologyMetrics.owl", format="application/rdf+xml")
 
