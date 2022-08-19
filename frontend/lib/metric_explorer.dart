@@ -28,7 +28,6 @@ class _MetricExplorerState extends State<MetricExplorer> {
               child: Row(
                 children: [
                   Expanded(
-                      
                       child: Container(
                           alignment: Alignment.topCenter,
                           child: SingleChildScrollView(
@@ -50,21 +49,63 @@ class _MetricExplorerState extends State<MetricExplorer> {
 
   String _buildLatexFunction(String input) {
     if (input == "") return input;
-    RegExp exp = RegExp(r"\) [\/] \(");
-    String calculationMethodology = exp.stringMatch(input) ?? input;
-    var splitted = input.split(exp);
-    for (var i = 0; i < splitted.length; i++) {
-      splitted[i] = splitted[i].replaceAll("(", "");
-      splitted[i] = splitted[i].replaceAll(")", "");
+    var fracts = input.split("/");
+    if (fracts.length == 1) {
+      return fracts[0];
     }
-    calculationMethodology = calculationMethodology.replaceAll(" ", "");
-    calculationMethodology = calculationMethodology.replaceAll(")", "");
-    calculationMethodology = calculationMethodology.replaceAll("(", "");
-    if (calculationMethodology == "/") {
-      return ("x = \\frac {${splitted[0]}}{${splitted[1]}}");
-    } else {
-      return ("x = " + splitted[0]);
+    var fractResult = "";
+    int openBrackets = 0;
+    var notClosedBracket = false;
+    var other = "";
+    var otherCalcSymbol = "";
+    int counter = -1;
+    for (var f in fracts[0].split("")) {
+      counter++;
+      if (f == "(") {
+        openBrackets++;
+      } else if (f == ")") {
+        openBrackets--;
+      }
+      if (openBrackets == 0 && (f == "*" || f == "+" || f == "-")) {
+        other = fracts[0].substring(0, counter - 1);
+        otherCalcSymbol = f;
+      }
     }
+    notClosedBracket = openBrackets != 0;
+    if (otherCalcSymbol != "") {
+      fracts[0] = fracts[0].replaceFirst(otherCalcSymbol, "");
+    }
+    counter = -1;
+    fracts[0] = fracts[0].substring(other.length);
+
+    for (var f in fracts[1].split("")) {
+      counter++;
+      if (f == "(") {
+        openBrackets++;
+      } else if (f == ")") {
+        openBrackets--;
+      }
+      if (openBrackets == 0 && notClosedBracket) {
+        other += fracts[1].substring(counter + 1);
+        fracts[1] = fracts[1].substring(0, counter + 1);
+        if (notClosedBracket) {
+          fracts[0] = fracts[0].replaceFirst("(", "");
+          fracts[1] = fracts[1]
+              .split("")
+              .reversed
+              .join()
+              .replaceFirst(")", "")
+              .split("")
+              .reversed
+              .join();
+        }
+
+        break;
+      }
+    }
+    fractResult =
+        "\\frac {${fracts[0].trim()}}{${fracts[1].trim()}} $otherCalcSymbol ${other.trim()}";
+    return (fractResult);
   }
 
   Widget buildDetails() {
@@ -203,7 +244,8 @@ class _MetricExplorerState extends State<MetricExplorer> {
       }
     }
 
-    var expansionPanelList = RepaintBoundary(child:ExpansionPanelList(
+    var expansionPanelList = RepaintBoundary(
+        child: ExpansionPanelList(
       expansionCallback: (panelIndex, isExpanded) {
         setState(() {
           items[panelIndex].toggled = !isExpanded;

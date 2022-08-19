@@ -250,8 +250,12 @@ class OntologyHandler:
                     returnString += " " + calculationPart + " " + calculationConnectedBy
             returnString = returnString[1:-1]
         elif(calculationConnectedBy in ["/", "-"]):
-            returnString = "(" + str(calculationParts[0]) + ") " + str(
-                calculationConnectedBy) + " (" + str(calculationParts[1]) + ")"
+            if " " in calculationParts[0]:
+                calculationParts[0] = "(" + str(calculationParts[0]) + ")"
+            if " " in calculationParts[1]:
+                calculationParts[1] = "(" + str(calculationParts[1]) + ")"
+            returnString = str(calculationParts[0]) + " " + str(
+                calculationConnectedBy) + " " + str(calculationParts[1]) 
         return returnString
 
     def getMetricExplorer(self) -> list:
