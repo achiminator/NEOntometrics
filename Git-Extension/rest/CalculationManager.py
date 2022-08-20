@@ -167,7 +167,7 @@ class CalculationManager:
                             "analyzedOntologies": analyzedOntologies, 
                             "totalCommits": len(commitList),
                 "ananlyzedCommits": commitCounter}
-                    job.save_meta()
+                    currentJob.save_meta()
 
                 obj = self._getFittingObject(ontologyDBObject.fileName, commit.tree)
                 

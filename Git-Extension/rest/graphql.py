@@ -220,7 +220,6 @@ class Query(graphene.ObjectType):
             analyzedOntologies=queueInfo.analyzedOntologies,
             analysableOntologies=queueInfo.analysableOntologies,
             ontologyFileOnly=queueInfo.ontologyFileOnly,
-            validUrl=queueInfo.url.validResource,
             url=queueInfo.url.url,
             repository=queueInfo.url.repository,
             service=queueInfo.url.service,
