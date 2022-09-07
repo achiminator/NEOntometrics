@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'dart:html' as html;
+import 'package:neonto_frontend/trackerHelper.dart';
 
 class MarkDownHandler {
   Widget buildMarkDownElement(String mdLocation) {
@@ -17,7 +17,7 @@ class MarkDownHandler {
                     fitContent: true,
                     styleSheet: MarkdownStyleSheet(textScaleFactor: 1.2),
                     onTapLink: (text, href, title) =>
-                        html.window.open(href!, "resouce"),
+                        TrackerHelper.htmlOpenWindow(href!, "resouce"),
                   )));
         } else {
           return const Center(child: CircularProgressIndicator());

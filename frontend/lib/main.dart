@@ -3,10 +3,12 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:neonto_frontend/indexpage.dart';
+import 'package:neonto_frontend/settings.dart';
+import 'package:neonto_frontend/trackerHelper.dart';
 import 'metric_explorer.dart';
 import 'calculationsettings.dart';
 import 'metric_data.dart';
-import 'dart:html' as html;
+import 'package:matomo_tracker/matomo_tracker.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,6 +20,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    MatomoTracker.instance.initialize(
+      siteId: Settings.matomoWebsiteID,
+      url: Settings.matomoWebsite,
+    );
+
     return MaterialApp(
       scrollBehavior: MyCustomWebScrollBehavior(),
       title: 'NEOntometrics',
@@ -67,7 +74,7 @@ class EntryPage extends StatelessWidget {
                     TextStyle(color: Theme.of(context).colorScheme.onPrimary),
               ),
               TextButton(
-                  onPressed: () => html.window.open(
+                  onPressed: () => TrackerHelper.htmlOpenWindow(
                       "https://www.wirtschaftsinformatik.uni-rostock.de/footer/impressum/",
                       "Impressum"),
                   child: Text(
@@ -77,7 +84,7 @@ class EntryPage extends StatelessWidget {
                         decoration: TextDecoration.underline),
                   )),
               TextButton(
-                  onPressed: () => html.window.open(
+                  onPressed: () => TrackerHelper.htmlOpenWindow(
                       "https://www.wirtschaftsinformatik.uni-rostock.de/en/footer/imprint/",
                       "Impressum"),
                   child: Text(
@@ -108,9 +115,10 @@ class EntryPage extends StatelessWidget {
     );
   }
 
-/// Implements a check on whether the screen size is sufficient to show the content.
+  /// Implements a check on whether the screen size is sufficient to show the content.
   Widget contentOrToSmall(BuildContext context) {
-    if (MediaQuery.of(context).size.width < 1000 || MediaQuery.of(context).size.height < 600) {
+    if (MediaQuery.of(context).size.width < 1000 ||
+        MediaQuery.of(context).size.height < 600) {
       return const Center(
         child: ListTile(
             title: Text("Desktop App"),

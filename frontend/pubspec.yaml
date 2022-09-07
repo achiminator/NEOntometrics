@@ -42,6 +42,7 @@ dependencies:
   graphql: ^5.0.1
   flutter_easyloading: ^3.0.3
   flutter_svg: ^1.0.3
+  matomo_tracker: ^1.2.1
 
 dev_dependencies:
   flutter_test:

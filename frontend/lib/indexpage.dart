@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:matomo_tracker/matomo_tracker.dart';
 import 'package:neonto_frontend/markdown_handler.dart';
-import 'dart:html' as html;
-
 import 'package:neonto_frontend/settings.dart';
+import 'package:neonto_frontend/trackerHelper.dart';
 
 //import 'markdown_handler.dart';
 class IndexPage extends StatelessWidget {
@@ -10,6 +10,9 @@ class IndexPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // MatomoTracker.instance.trackEvent(eventName: "MainPageVisit", action: "visit", eventCategory: "Main");
+    
+    MatomoTracker.instance.trackScreen(context, eventName: "Main");
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 150),
       child: SingleChildScrollView(
@@ -42,18 +45,23 @@ class IndexPage extends StatelessWidget {
                   child: IconButton(
                       tooltip: "Write an E-Mail",
                       iconSize: 50,
-                      onPressed: () => html.window.open("mailto:achim.reiz@uni-rostock.de", "Contact by Mail"),
+                      onPressed: () => TrackerHelper.htmlOpenWindow(
+                          "mailto:achim.reiz@uni-rostock.de",
+                          "Contact by Mail"),
                       icon: const Icon(Icons.mail))),
               Expanded(
                   child: IconButton(
                       tooltip: "GraphQL-Endpoint",
                       iconSize: 50,
-                      onPressed: () => html.window.open(Settings().apiUrl + "/graphql", "GraphQL"),
+                      onPressed: () => TrackerHelper.htmlOpenWindow(
+                          Settings().apiUrl + "/graphql", "GraphQL"),
                       icon: const Icon(Icons.compare_arrows_outlined))),
               Expanded(
                 child: IconButton(
                     tooltip: "Contact Me LinkedIn",
-                    onPressed: () => html.window.open("https://www.linkedin.com/in/achim-reiz-9a1aaa94/", "Contact me by LinkedIn"),
+                    onPressed: () => TrackerHelper.htmlOpenWindow(
+                        "https://www.linkedin.com/in/achim-reiz-9a1aaa94/",
+                        "Contact me by LinkedIn"),
                     iconSize: 40,
                     icon: Image.asset("linkedin.png")),
               ),
@@ -68,13 +76,17 @@ class IndexPage extends StatelessWidget {
                   child: IconButton(
                       tooltip: "GitHub",
                       iconSize: 50,
-                      onPressed: () => html.window.open("https://github.com/Uni-Rostock-Win/NEOntometrics", "GitHub"),
+                      onPressed: () => TrackerHelper.htmlOpenWindow(
+                          "https://github.com/Uni-Rostock-Win/NEOntometrics",
+                          "GitHub"),
                       icon: Image.asset("GitHub.png"))),
               Expanded(
                   child: IconButton(
                       tooltip: "Rostock University",
                       iconSize: 50,
-                      onPressed: () => html.window.open("http://www.wirtschaftsinformatik.uni-rostock.de/", "Rostock University"),
+                      onPressed: () => TrackerHelper.htmlOpenWindow(
+                          "http://www.wirtschaftsinformatik.uni-rostock.de/",
+                          "Rostock University"),
                       icon: const Icon(Icons.school))),
               const Expanded(
                 child: Text(""),
@@ -82,7 +94,7 @@ class IndexPage extends StatelessWidget {
             ],
           ),
           const Divider(),
-           MarkDownHandler().buildMarkDownElement("homepage.md")
+          MarkDownHandler().buildMarkDownElement("homepage.md")
         ]),
       ),
     );

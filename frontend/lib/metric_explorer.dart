@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
-import 'dart:html' as html;
+import 'package:matomo_tracker/matomo_tracker.dart';
 import 'package:neonto_frontend/metric_data.dart';
+import 'package:neonto_frontend/trackerHelper.dart';
 
-class _MetricExplorerState extends State<MetricExplorer> {
+class _MetricExplorerState extends State<MetricExplorer> with TraceableClientMixin {
+  @override
+  String get traceName => 'Open Metric Explorer';
+
+  @override
+  String get traceTitle => "MetricExplorer";
   _MetricExplorerState();
 
   late Future<List<MetricExplorerItem>> metricExplorerData;
@@ -193,7 +199,7 @@ class _MetricExplorerState extends State<MetricExplorer> {
                 subtitle: const Text("See Also"),
               ),
             ),
-            onTap: () => html.window.open(seeAlso, "resouce"),
+            onTap: () => TrackerHelper.htmlOpenWindow(seeAlso, "resouce"),
           ),
         );
       } else {
@@ -280,6 +286,7 @@ class _MetricExplorerState extends State<MetricExplorer> {
           activeInterpretation = item.interpretation;
           activeImplementationName = item.implentationName ?? "";
           seeAlso = item.seeAlso;
+          MatomoTracker.instance.trackEvent(eventCategory: "Main", action: "Open Explorer Element + $activeItemName");
 
           calculation = _buildLatexFunction(item.calculation ?? "");
         }),
