@@ -342,7 +342,8 @@ class _CalculationEngineState extends State<CalculationEngine>
 }
 
 class AnalyzmentAgreement extends StatefulWidget {
-  const AnalyzmentAgreement(this.reasoner, this.urlController, {Key? key})
+  const AnalyzmentAgreement(this.reasoner, this.urlController,
+      {Key? key})
       : super(key: key);
   final bool reasoner;
   final TextEditingController urlController;
@@ -391,12 +392,17 @@ class _AnalyzmentAgreementState extends State<AnalyzmentAgreement> {
                   if (jsonResponse.hasException) {
                     Snacks(context).displayErrorSnackBar(
                         jsonResponse.exception.toString(), context);
+                  } else if (jsonResponse.data?["update_queueInfo"]["error"] ==
+                      true) {
+                    Snacks(context).displayErrorSnackBar(
+                        jsonResponse.data?["update_queueInfo"]["errorMessage"],
+                        context);
                   } else {
                     Snacks(context).progressSnackBar(QueueInformation(
                         jsonResponse.data?["update_queueInfo"]));
                   }
-                });
                 Navigator.pop(context);
+                });
               }
             }),
         TextButton(
