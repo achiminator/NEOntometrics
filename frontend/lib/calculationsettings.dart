@@ -26,6 +26,9 @@ class _CalculationEngineState extends State<CalculationEngine>
   @override
   String get traceTitle => "Calculation";
   bool reasoner = false;
+
+  /// Handles the Tickbox that people are okay with the analsis of the data.
+  bool analysisAgreement = false;
   Set<MetricExplorerItem> selectedElementsForCalculation = {};
   _CalculationEngineState();
   late Widget markDownDescription = const CircularProgressIndicator();
@@ -242,33 +245,8 @@ class _CalculationEngineState extends State<CalculationEngine>
         else if (!queueInformation.urlInSystem) {
           showDialog(
               context: context,
-              builder: (BuildContext context) => AlertDialog(
-                    title: const Text("Data not yet in Database"),
-                    content: Text(
-                        "There is no data yet in the system. Would you like to calculate ontology metrics for the given URL?\n${urlController.text}"),
-                    actions: [
-                      TextButton(
-                          child: const Text("Yes, Put in Queue"),
-                          onPressed: () {
-                            response = graphQL.putInQueue(
-                                urlController.text, reasoner);
-                            response.then((jsonResponse) {
-                              if (jsonResponse.hasException) {
-                                Snacks(context).displayErrorSnackBar(
-                                    jsonResponse.exception.toString(), context);
-                              } else {
-                                Snacks(context).progressSnackBar(
-                                    QueueInformation(jsonResponse
-                                        .data?["update_queueInfo"]));
-                              }
-                            });
-                            Navigator.pop(context);
-                          }),
-                      TextButton(
-                          child: const Text("Abort"),
-                          onPressed: () => Navigator.pop(context))
-                    ],
-                  ));
+              builder: (BuildContext context) =>
+                  AnalyzmentAgreement(reasoner, urlController));
         } else if (!queueInformation.taskFinished &&
             !queueInformation.performsUpdate) {
           Snacks(context).progressSnackBar(queueInformation);
@@ -360,6 +338,71 @@ class _CalculationEngineState extends State<CalculationEngine>
             },
           ),
         ));
+  }
+}
+
+class AnalyzmentAgreement extends StatefulWidget {
+  const AnalyzmentAgreement(this.reasoner, this.urlController, {Key? key})
+      : super(key: key);
+  final bool reasoner;
+  final TextEditingController urlController;
+
+  @override
+  State<AnalyzmentAgreement> createState() => _AnalyzmentAgreementState();
+}
+
+class _AnalyzmentAgreementState extends State<AnalyzmentAgreement> {
+  bool agreement = false;
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text("Data not yet in Database"),
+      content: SizedBox(
+        height: 170,
+        child: Column(children: [
+          Text(
+              "There is no data yet in the system. Would you like to calculate ontology metrics for the given URL?\n${widget.urlController.text}"),
+          CheckboxListTile(
+              value: agreement,
+              contentPadding: const EdgeInsets.symmetric(vertical: 20),
+              onChanged: (value) => setState(() {
+                    // analysisAgreement = value ??= false;
+                    agreement = value ??= false;
+                  }),
+              title: const Text(
+                "I agree that the corresponding data will be permanently stored on the server for further analysis.",
+                style: TextStyle(fontStyle: FontStyle.italic),
+              ))
+        ]),
+      ),
+      actions: [
+        TextButton(
+            child: const Text("Yes, Put in Queue"),
+            style: agreement
+                ? TextButton.styleFrom()
+                : TextButton.styleFrom(
+                    primary: Theme.of(context).disabledColor,
+                    enableFeedback: agreement),
+            onPressed: () {
+              if (agreement) {
+                var response = GraphQLHandler()
+                    .putInQueue(widget.urlController.text, widget.reasoner);
+                response.then((jsonResponse) {
+                  if (jsonResponse.hasException) {
+                    Snacks(context).displayErrorSnackBar(
+                        jsonResponse.exception.toString(), context);
+                  } else {
+                    Snacks(context).progressSnackBar(QueueInformation(
+                        jsonResponse.data?["update_queueInfo"]));
+                  }
+                });
+                Navigator.pop(context);
+              }
+            }),
+        TextButton(
+            child: const Text("Abort"), onPressed: () => Navigator.pop(context))
+      ],
+    );
   }
 }
 
