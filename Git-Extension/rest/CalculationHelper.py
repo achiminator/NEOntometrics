@@ -48,10 +48,10 @@ class GitUrlParser:
             except requests.ConnectionError:
                 self.validResource=False
                 return
+            response = requests.get(input + "/info/refs?service=git-upload-pack")
             if(response.status_code == 200 and "application/x-git-upload-pack-advertisement" in response.headers["Content-Type"]):
                 self.validResource = True
 
-            response = requests.get(input + "/info/refs?service=git-upload-pack")
         if(self.validResource or "blob" in input):
             # Check if an URL to a ontology file is given
             if ".rdf" in input or ".ttl" in input or ".owl" in input:
