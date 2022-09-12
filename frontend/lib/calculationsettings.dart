@@ -341,9 +341,9 @@ class _CalculationEngineState extends State<CalculationEngine>
   }
 }
 
+/// A widget containing an interactive [AlertDialog] including a Checkbox for storing consent.
 class AnalyzmentAgreement extends StatefulWidget {
-  const AnalyzmentAgreement(this.reasoner, this.urlController,
-      {Key? key})
+  const AnalyzmentAgreement(this.reasoner, this.urlController, {Key? key})
       : super(key: key);
   final bool reasoner;
   final TextEditingController urlController;
@@ -379,32 +379,29 @@ class _AnalyzmentAgreementState extends State<AnalyzmentAgreement> {
       actions: [
         TextButton(
             child: const Text("Yes, Put in Queue"),
-            style: agreement
-                ? TextButton.styleFrom()
-                : TextButton.styleFrom(
-                    primary: Theme.of(context).disabledColor,
-                    enableFeedback: agreement),
-            onPressed: () {
-              if (agreement) {
-                var response = GraphQLHandler()
-                    .putInQueue(widget.urlController.text, widget.reasoner);
-                response.then((jsonResponse) {
-                  if (jsonResponse.hasException) {
-                    Snacks(context).displayErrorSnackBar(
-                        jsonResponse.exception.toString(), context);
-                  } else if (jsonResponse.data?["update_queueInfo"]["error"] ==
-                      true) {
-                    Snacks(context).displayErrorSnackBar(
-                        jsonResponse.data?["update_queueInfo"]["errorMessage"],
-                        context);
-                  } else {
-                    Snacks(context).progressSnackBar(QueueInformation(
-                        jsonResponse.data?["update_queueInfo"]));
+            onPressed: agreement
+                ? () {
+                    var response = GraphQLHandler()
+                        .putInQueue(widget.urlController.text, widget.reasoner);
+                    response.then((jsonResponse) {
+                      if (jsonResponse.hasException) {
+                        Snacks(context).displayErrorSnackBar(
+                            jsonResponse.exception.toString(), context);
+                      } else if (jsonResponse.data?["update_queueInfo"]
+                              ["error"] ==
+                          true) {
+                        Snacks(context).displayErrorSnackBar(
+                            jsonResponse.data?["update_queueInfo"]
+                                ["errorMessage"],
+                            context);
+                      } else {
+                        Snacks(context).progressSnackBar(QueueInformation(
+                            jsonResponse.data?["update_queueInfo"]));
+                      }
+                      Navigator.pop(context);
+                    });
                   }
-                Navigator.pop(context);
-                });
-              }
-            }),
+                : null),
         TextButton(
             child: const Text("Abort"), onPressed: () => Navigator.pop(context))
       ],
@@ -412,6 +409,7 @@ class _AnalyzmentAgreementState extends State<AnalyzmentAgreement> {
   }
 }
 
+/// An overlay that presents the classes that have already been analyzed
 class AlreadyCalculatedSelectionOverlay extends StatelessWidget {
   const AlreadyCalculatedSelectionOverlay({
     Key? key,
