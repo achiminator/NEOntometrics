@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
 import 'package:download/download.dart';
 import 'package:matomo_tracker/matomo_tracker.dart';
+import 'package:neonto_frontend/analytic/analytic_view.dart';
 import 'package:neonto_frontend/metric_data.dart';
 import 'package:neonto_frontend/settings.dart';
 import 'package:neonto_frontend/trackerHelper.dart';
@@ -108,7 +109,10 @@ class _CalculationViewState extends State<CalculationView>
     if (queueInformation.queuePosition == null) {
       return IconButton(
         onPressed: () {
-          MatomoTracker.instance.trackEvent(action:"Trigger Update", eventCategory: "Calculation", eventName: widget.repositoryName );
+          MatomoTracker.instance.trackEvent(
+              action: "Trigger Update",
+              eventCategory: "Calculation",
+              eventName: widget.repositoryName);
           GraphQLHandler()
               .putInQueue(widget.repositoryName, widget.reasonerSelected,
                   update: true)
@@ -253,11 +257,59 @@ class _CalculationViewState extends State<CalculationView>
     }
     var data = TableData(tableRows);
 
-    return (PaginatedDataTable(
-      showFirstLastButtons: true,
-      source: data,
-      columns: columns,
-    ));
+    return Column(
+      children: [
+        (PaginatedDataTable(
+          showFirstLastButtons: true,
+          source: data,
+          columns: columns,
+        )),
+        // the analytic view Button
+        Padding(
+          padding: const EdgeInsets.only(top: 50.0),
+          child: ElevatedButton.icon(
+            onPressed: () {
+              var metricForOntologyFile =
+                  metricDataForOntologyFile.getDisplayMetrics();
+
+              if (metricForOntologyFile.first.length - 9 <= 5) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AnalyticView(
+                            widget.repositoryName,
+                          )),
+                );
+              } else {
+                final snackBar = SnackBar(
+                  backgroundColor:
+                      Theme.of(context).colorScheme.secondaryContainer,
+                  content: ListTile(
+                    textColor: Theme.of(context).colorScheme.onSecondary,
+                    title: const Text(
+                        'You must select 5 of mertics maximum. Please Try again!'),
+                  ),
+                  duration: const Duration(seconds: 5),
+                  action: SnackBarAction(
+                    label: 'close',
+                    textColor: Theme.of(context).colorScheme.onSecondary,
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    },
+                  ),
+                );
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              }
+            },
+            icon: const Icon(
+              Icons.analytics,
+              size: 24.0,
+            ),
+            label: const Text('show the analytic'),
+          ),
+        ),
+      ],
+    );
   }
 
   /// Initiates a .csv download of the displayed ontology metrics.
