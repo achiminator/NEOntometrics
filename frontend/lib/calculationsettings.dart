@@ -1,3 +1,4 @@
+import 'package:matomo_tracker/matomo_tracker.dart';
 import 'package:neonto_frontend/settings.dart';
 import "calculationview.dart";
 import "graphql.dart";
@@ -17,8 +18,17 @@ class CalculationEngine extends StatefulWidget {
   _CalculationEngineState createState() => _CalculationEngineState();
 }
 
-class _CalculationEngineState extends State<CalculationEngine> {
+class _CalculationEngineState extends State<CalculationEngine>
+    with TraceableClientMixin {
+  @override
+  String get traceName => 'Trigger Calculation Settings';
+
+  @override
+  String get traceTitle => "Calculation";
   bool reasoner = false;
+
+  /// Handles the Tickbox that people are okay with the analsis of the data.
+  bool analysisAgreement = false;
   Set<MetricExplorerItem> selectedElementsForCalculation = {};
   _CalculationEngineState();
   late Widget markDownDescription = const CircularProgressIndicator();
@@ -147,6 +157,9 @@ class _CalculationEngineState extends State<CalculationEngine> {
                         padding: const EdgeInsets.only(right: 25),
                         child: OutlinedButton(
                             onPressed: () {
+                              MatomoTracker.instance.trackEvent(
+                                  eventCategory: "Calculation",
+                                  action: "clickAlreadyCalculated");
                               var dialog =
                                   const AlreadyCalculatedSelectionOverlay();
                               showDialog(
@@ -170,135 +183,7 @@ class _CalculationEngineState extends State<CalculationEngine> {
                           controller: urlController,
                           decoration: InputDecoration(
                               suffixIcon: IconButton(
-                                onPressed: () {
-                                  if (urlController.text == "") {
-                                    Snacks(context).displayErrorSnackBar(
-                                        "No valid ontology given. Please enter an URL to a valid Ontology.",
-                                        context);
-                                  } else {
-                                    // At first, we ask the service if the ontology is already known in the system.
-                                    Future<QueryResult<dynamic>> response =
-                                        graphQL
-                                            .queueFromAPI(urlController.text);
-                                    response.then((graphQlResponse) {
-                                      if (graphQlResponse.hasException) {
-                                        Snacks(context).displayErrorSnackBar(
-                                            graphQlResponse.exception
-                                                .toString(),
-                                            context);
-                                      }
-                                      var queueInformation = QueueInformation(
-                                          graphQlResponse.data);
-                                      if (queueInformation.error) {
-                                        Snacks(context).displayErrorSnackBar(
-                                            queueInformation.errorMessage,
-                                            context);
-                                      }
-                                      // The reponse urlInSystem = False states that there is no information on the given ontology already stored in the system.
-                                      // Thus, we ask the user if we shall put it into the queue.
-                                      else if (!queueInformation.urlInSystem) {
-                                        showDialog(
-                                            context: context,
-                                            builder:
-                                                (BuildContext context) =>
-                                                    AlertDialog(
-                                                      title: const Text(
-                                                          "Data not yet in Database"),
-                                                      content: Text(
-                                                          "There is no data yet in the system. Would you like to calculate ontology metrics for the given URL?\n${urlController.text}"),
-                                                      actions: [
-                                                        TextButton(
-                                                            child: const Text(
-                                                                "Yes, Put in Queue"),
-                                                            onPressed: () {
-                                                              response = graphQL
-                                                                  .putInQueue(
-                                                                      urlController
-                                                                          .text,
-                                                                      reasoner);
-                                                              response.then(
-                                                                  (jsonResponse) {
-                                                                if (jsonResponse
-                                                                    .hasException) {
-                                                                  Snacks(context).displayErrorSnackBar(
-                                                                      jsonResponse
-                                                                          .exception
-                                                                          .toString(),
-                                                                      context);
-                                                                } else {
-                                                                  Snacks(context)
-                                                                      .progressSnackBar(
-                                                                          QueueInformation(
-                                                                              jsonResponse.data?["update_queueInfo"]));
-                                                                }
-                                                              });
-                                                              Navigator.pop(
-                                                                  context);
-                                                            }),
-                                                        TextButton(
-                                                            child: const Text(
-                                                                "Abort"),
-                                                            onPressed: () =>
-                                                                Navigator.pop(
-                                                                    context))
-                                                      ],
-                                                    ));
-                                      } else if (!queueInformation
-                                              .taskFinished &&
-                                          !queueInformation.performsUpdate) {
-                                        Snacks(context)
-                                            .progressSnackBar(queueInformation);
-                                      }
-                                      // If the first query on the queue information state that the metrics are already in the ontology file,
-                                      // then, retrieve the date with another GraphQL query.F
-                                      else if (queueInformation.taskFinished ||
-                                          queueInformation.performsUpdate) {
-                                        String graphQlQueryAppender = graphQL
-                                            .selectedMetrics2GraphQLInsertion(
-                                                selectedElementsForCalculation);
-
-                                        Future<QueryResult<dynamic>>
-                                            futureResponse;
-                                        if (queueInformation.repository != "") {
-                                          futureResponse = graphQL
-                                              .getRepositoryMetricsFromAPI(
-                                                  queueInformation.repository,
-                                                  graphQlQueryAppender);
-                                        } else {
-                                          futureResponse =
-                                              graphQL.getOntologyMetricsFromAPI(
-                                                  queueInformation.fileName,
-                                                  graphQlQueryAppender);
-                                        }
-                                        futureResponse.then((graphQlResponse) {
-                                          if (graphQlResponse.hasException) {
-                                            EasyLoading.dismiss();
-                                            Snacks(context)
-                                                .displayErrorSnackBar(
-                                                    graphQlResponse.exception
-                                                        .toString(),
-                                                    context);
-                                          } else {
-                                            EasyLoading.dismiss();
-                                            Navigator.push(context,
-                                                MaterialPageRoute(
-                                                    builder: (context) {
-                                              return CalculationView(
-                                                  RepositoryData(
-                                                      graphQlResponse.data),
-                                                  urlController.text,
-                                                  queueInformation,
-                                                  reasoner);
-                                            }));
-                                          }
-                                        });
-                                        EasyLoading.show(
-                                            status:
-                                                "We're fetching the Ontology Data...");
-                                      }
-                                    });
-                                  }
-                                },
+                                onPressed: triggerCalculation,
                                 icon: const Icon(Icons.send),
                                 tooltip: "Send",
                               ),
@@ -332,6 +217,72 @@ class _CalculationEngineState extends State<CalculationEngine> {
     return Column(
       children: calculationCategorySetting,
     );
+  }
+
+  void triggerCalculation() {
+    MatomoTracker.instance.trackSearch(
+        searchKeyword: urlController.text, searchCategory: "ontologyRequest");
+    if (urlController.text == "") {
+      Snacks(context).displayErrorSnackBar(
+          "No valid ontology given. Please enter an URL to a valid Ontology.",
+          context);
+    } else {
+      // At first, we ask the service if the ontology is already known in the system.
+      Future<QueryResult<dynamic>> response =
+          graphQL.queueFromAPI(urlController.text);
+      response.then((graphQlResponse) {
+        if (graphQlResponse.hasException) {
+          Snacks(context).displayErrorSnackBar(
+              graphQlResponse.exception.toString(), context);
+        }
+        var queueInformation = QueueInformation(graphQlResponse.data);
+        if (queueInformation.error) {
+          Snacks(context)
+              .displayErrorSnackBar(queueInformation.errorMessage, context);
+        }
+        // The reponse urlInSystem = False states that there is no information on the given ontology already stored in the system.
+        // Thus, we ask the user if we shall put it into the queue.
+        else if (!queueInformation.urlInSystem) {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) =>
+                  AnalyzmentAgreement(reasoner, urlController));
+        } else if (!queueInformation.taskFinished &&
+            !queueInformation.performsUpdate) {
+          Snacks(context).progressSnackBar(queueInformation);
+        }
+        // If the first query on the queue information state that the metrics are already in the ontology file,
+        // then, retrieve the date with another GraphQL query.F
+        else if (queueInformation.taskFinished ||
+            queueInformation.performsUpdate) {
+          String graphQlQueryAppender = graphQL
+              .selectedMetrics2GraphQLInsertion(selectedElementsForCalculation);
+
+          Future<QueryResult<dynamic>> futureResponse;
+          if (queueInformation.repository != "") {
+            futureResponse = graphQL.getRepositoryMetricsFromAPI(
+                queueInformation.repository, graphQlQueryAppender);
+          } else {
+            futureResponse = graphQL.getOntologyMetricsFromAPI(
+                queueInformation.fileName, graphQlQueryAppender);
+          }
+          futureResponse.then((graphQlResponse) {
+            if (graphQlResponse.hasException) {
+              EasyLoading.dismiss();
+              Snacks(context).displayErrorSnackBar(
+                  graphQlResponse.exception.toString(), context);
+            } else {
+              EasyLoading.dismiss();
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return CalculationView(RepositoryData(graphQlResponse.data),
+                    urlController.text, queueInformation, reasoner);
+              }));
+            }
+          });
+          EasyLoading.show(status: "We're fetching the Ontology Data...");
+        }
+      });
+    }
   }
 
   ///Builds the Selection Widget for each metric category and the associated sub metrics on the bases of [MetricExplorerItem].
@@ -390,6 +341,75 @@ class _CalculationEngineState extends State<CalculationEngine> {
   }
 }
 
+/// A widget containing an interactive [AlertDialog] including a Checkbox for storing consent.
+class AnalyzmentAgreement extends StatefulWidget {
+  const AnalyzmentAgreement(this.reasoner, this.urlController, {Key? key})
+      : super(key: key);
+  final bool reasoner;
+  final TextEditingController urlController;
+
+  @override
+  State<AnalyzmentAgreement> createState() => _AnalyzmentAgreementState();
+}
+
+class _AnalyzmentAgreementState extends State<AnalyzmentAgreement> {
+  bool agreement = false;
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text("Data not yet in Database"),
+      content: SizedBox(
+        height: 170,
+        child: Column(children: [
+          Text(
+              "There is no data yet in the system. Would you like to calculate ontology metrics for the given URL?\n${widget.urlController.text}"),
+          CheckboxListTile(
+              value: agreement,
+              contentPadding: const EdgeInsets.symmetric(vertical: 20),
+              onChanged: (value) => setState(() {
+                    // analysisAgreement = value ??= false;
+                    agreement = value ??= false;
+                  }),
+              title: const Text(
+                "I agree that the corresponding data will be permanently stored on the server for further analysis.",
+                style: TextStyle(fontStyle: FontStyle.italic),
+              ))
+        ]),
+      ),
+      actions: [
+        TextButton(
+            child: const Text("Yes, Put in Queue"),
+            onPressed: agreement
+                ? () {
+                    var response = GraphQLHandler()
+                        .putInQueue(widget.urlController.text, widget.reasoner);
+                    response.then((jsonResponse) {
+                      if (jsonResponse.hasException) {
+                        Snacks(context).displayErrorSnackBar(
+                            jsonResponse.exception.toString(), context);
+                      } else if (jsonResponse.data?["update_queueInfo"]
+                              ["error"] ==
+                          true) {
+                        Snacks(context).displayErrorSnackBar(
+                            jsonResponse.data?["update_queueInfo"]
+                                ["errorMessage"],
+                            context);
+                      } else {
+                        Snacks(context).progressSnackBar(QueueInformation(
+                            jsonResponse.data?["update_queueInfo"]));
+                      }
+                      Navigator.pop(context);
+                    });
+                  }
+                : null),
+        TextButton(
+            child: const Text("Abort"), onPressed: () => Navigator.pop(context))
+      ],
+    );
+  }
+}
+
+/// An overlay that presents the classes that have already been analyzed
 class AlreadyCalculatedSelectionOverlay extends StatelessWidget {
   const AlreadyCalculatedSelectionOverlay({
     Key? key,

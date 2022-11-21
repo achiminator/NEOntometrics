@@ -167,7 +167,7 @@ class CalculationManager:
                             "analyzedOntologies": analyzedOntologies, 
                             "totalCommits": len(commitList),
                 "ananlyzedCommits": commitCounter}
-                    job.save_meta()
+                    currentJob.save_meta()
 
                 obj = self._getFittingObject(ontologyDBObject.fileName, commit.tree)
                 
@@ -260,6 +260,7 @@ class CalculationManager:
         commit = Commit.objects.get(id=pkCommit)
         ontology = commit.metricSource
         repository = ontology.repository
+        os.makedirs('ontologies', exist_ok=True)
         internalOntologyUrl = "ontologies/" + str(hash(commit.CommitID))
         shutil.copy(repository.gitRepositoryFile.path, internalOntologyUrl+ "_packed.zip")
         shutil.unpack_archive( internalOntologyUrl + "_packed.zip", internalOntologyUrl)

@@ -1,80 +1,117 @@
-    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-    PREFIX owl: <http://www.w3.org/2002/07/owl#>
-    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-    PREFIX metric: <http://neontometrics.informatik.informatik.uni-rostock.de#>
-    SELECT distinct ?framework ?metricCategory ?metric ?description ?definition ?interpretation ?property ?value ?property2 ?value2 
-    WHERE {
-        ?framework rdfs:subClassOf metric:Quality_Frameworks .
-        ?metric rdfs:subClassOf* ?framework ;
-        rdfs:subClassOf ?metricCategory .
-        ?metricCategory a owl:Class . # Hinders that anonomous classes are shown as well
-        # Retrieves the metrics that are connected using the "directlyUses"- Object Property
-        OPTIONAL {
-            # At first get all subClass nodes before the metrics
-            ?metric rdfs:subClassOf ?subClass . {
-                # Then get the ones that are directly connected to the Elemental_Metrics
-                ?subClass owl:onProperty ?property .             
-                {
-                    ?subClass owl:allValuesFrom ?tmpValue .
-                }
-                # This first Union gathers direct aggregations like sums. It is also used
-                # later on to do the same on more encapsulated levels
-                UNION {
-                    ?subClass owl:allValuesFrom _:tmp .
-                    _:tmp owl:intersectionOf _:intersect0 .
-                    _:intersect0 rdf:rest*/rdf:first ?tmpValue. 
-                }.
-                
-                # The next three little lines extract the names of implemented metrics (represented 
-                # as individuals in the metric ontology)
-                ?tmpValue rdfs:subClassOf _:v0 .
-                _:v0 owl:onProperty metric:implementedBy ;
-                    owl:hasValue ?afterTmpValue # It is still not the final version of the metric so 
-                    # we can do the check later on if we need to dig a level further (see if -clause)
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX metric: <http://neontometrics.informatik.informatik.uni-rostock.de#>
+SELECT distinct ?framework ?metricCategory ?metric ?description ?definition ?interpretation ?property1 ?value1 ?property2 ?value2 ?property3 ?value3
+WHERE {
+    ?framework rdfs:subClassOf metric:Quality_Frameworks .
+    ?metric rdfs:subClassOf* ?framework ;
+    rdfs:subClassOf ?metricCategory .
+    ?metricCategory a owl:Class . # Hinders that anonomous classes are shown as well
+    # Retrieves the metrics that are connected using the "directlyUses"- Object Property
+    OPTIONAL {
+        # At first get all subClass nodes before the metrics
+        ?metric rdfs:subClassOf ?subClass . {
+            # Then get the ones that are directly connected to the Elemental_Metrics
+            ?subClass owl:onProperty ?property1 .             
+            {
+                ?subClass owl:allValuesFrom ?rawValue .
             }
+            # This first Union gathers direct aggregations like sums. It is also used
+            # later on to do the same on more encapsulated levels
             UNION {
-                # Afterwards, get the calculated properties, consisting of a calculation method
-                ?subClass owl:intersectionOf _:intersect .
-                _:intersect  rdf:rest*/rdf:first _:list1. 
-                _:list1 owl:onProperty ?property ;
-                    owl:allValuesFrom ?tmpValue .
-                OPTIONAL {
-                    # Some of the resulting nodes are blank (intersection of other calculations, see below). That is why for this part, we need to make the connection 
-                    # between the metric implementations and the elemental metrics optional.
-                    ?tmpValue rdfs:subClassOf _:v1 .
-                    _:v1 owl:onProperty metric:implementedBy ;
-                        owl:hasValue ?afterTmpValue
-                } .
-                OPTIONAL {
-                # And at last, some of the calculation methods are in itself based on a caluclation (e.g.: a/(a-b)).
-                # This inner calculation is displayed using the formula below which examines ?tmpValue of the calculation before.
-                    {?tmpValue   owl:intersectionOf _:intersect2 .
-                    _:intersect2  rdf:rest*/rdf:first _:list2. 
-                    _:list2 owl:onProperty ?property2 ;
-                        owl:allValuesFrom ?tmpValue2 .
-                    }                
-                    UNION {
-                        ?tmpValue owl:onProperty ?property2 ;
-                            owl:allValuesFrom _:tmp2 .
-                        _:tmp2 owl:intersectionOf _:intersect3 .
-                        _:intersect3 rdf:rest*/rdf:first ?tmpValue2. 
-                    }.
-                
+                ?subClass owl:allValuesFrom [
+                    owl:intersectionOf  [
+                            rdf:rest*/rdf:first ?rawValue
+                    ]
+                ] 
+            }             
+        }
 
-                    ?tmpValue2 rdfs:subClassOf _:v2 . 
-                    _:v2 owl:onProperty metric:implementedBy ;
-                        owl:hasValue ?value2
-                }
+        UNION {
+            # Some of the main level directly indicate a list of connected math-relationships at the top level.
+            {
+            ?subClass owl:intersectionOf [
+                rdf:rest*/rdf:first [ 
+                    owl:onProperty ?property1 ;
+                    owl:allValuesFrom ?rawValue 
+                    ]
+                ].
             }
-        } .        
-        # Gathers the Annotations of the metric    
-        OPTIONAL { ?metric metric:MetricDescription ?description } .
-        OPTIONAL {	?metric metric:MetricDefinition ?definition } .
-        OPTIONAL {	?metric metric:MetricDefinition ?interpretation } .
-        BIND ( IF(isBlank(?tmpValue), "seeProperty2", ?afterTmpValue) AS ?value ).
-        FILTER (NOT EXISTS{?sub rdfs:subClassOf ?metric})
-        FILTER (!isBlank(?metricCategory ))
-       
-    }
+        }
+        OPTIONAL {
+                # The next three little lines extract the names of implemented metrics (represented 
+                # as individuals in the metric ontology). As some of the ?rawValues indicate further hierachy-levels
+                # using blank nodes, this check has to be optional
+            ?rawValue rdfs:subClassOf [ 
+                owl:onProperty metric:implementedBy ;
+                owl:hasValue ?afterrawValue
+            ]
+        } .
+        OPTIONAL {
+        # And at last, some of the calculation methods are in itself based on a caluclation (e.g.: a/(a-b)).
+        # This inner calculation is displayed using the formula below which examines ?rawValue of the calculation before.
+        # It files the fields "value2" and "property 2"
+            
+            # The next two sections basically to the same as in the previous field but for the second level. It even happens a third time..
+            {
+                ?rawValue owl:intersectionOf [
+                    rdf:rest*/rdf:first [
+                        owl:onProperty ?property2 ;
+                        owl:allValuesFrom ?rawValue2 
+                    ]
+                ].
+            }      
+            UNION {
+                ?rawValue owl:onProperty ?property2 ;
+                    owl:allValuesFrom [
+                        owl:intersectionOf [
+                            rdf:rest*/rdf:first ?rawValue2
+                        ]
+                    ]. 
+            } .
+        OPTIONAL{
+            ?rawValue2 rdfs:subClassOf [
+                    owl:onProperty metric:implementedBy ;
+                    owl:hasValue ?afterrawValue2
+                    ]}
+
+            OPTIONAL {
+                {
+                    ?rawValue2 owl:intersectionOf [
+                        rdf:rest*/rdf:first [
+                            owl:onProperty ?property3 ;
+                            owl:allValuesFrom ?rawValue3 
+                        ]
+                    ].
+                }      
+                UNION {
+                    ?rawValue2 owl:onProperty ?property3 ;
+                        owl:allValuesFrom [
+                            owl:intersectionOf [
+                                rdf:rest*/rdf:first ?rawValue3
+                            ]
+                        ]. 
+                } .
+                ?rawValue3 rdfs:subClassOf [
+                    owl:onProperty metric:implementedBy ;
+                        owl:hasValue ?value3
+                    ]
+            }                    
+        }
+        
+    } .
+
+    # Gathers the Annotations of the metric    
+    OPTIONAL { ?metric metric:MetricDescription ?description } .
+    OPTIONAL {	?metric metric:MetricDefinition ?definition } .
+    OPTIONAL {	?metric metric:MetricDefinition ?interpretation } .
+    BIND ( IF(isBlank(?rawValue), "seeProperty2", ?afterrawValue) AS ?value1 ).
+    BIND ( IF(isBlank(?rawValue2), "seeProperty3", ?afterrawValue2) AS ?value2 ).
+    FILTER (NOT EXISTS{?sub rdfs:subClassOf ?metric})
+    FILTER (isIRI(?value1) || isIRI(?value2) || isIRI(?value3)) # At least one of the value must have a valid reference to an object
+    FILTER (!isBlank(?metricCategory ))
+    #FILTER (?metric =  metric:OQuaRE_RFCOnto) # For testing purposes.
+}
 ORDER BY ?metric

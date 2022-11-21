@@ -3,7 +3,7 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX metric: <http://neontometrics.informatik.informatik.uni-rostock.de#>
-SELECT DISTINCT ?itemName ?description ?definition ?interpretation ?implementedAs ?superClass ?seeAlso ?implementationName
+SELECT DISTINCT ?itemName ?description ?definition ?interpretation ?implementedAs ?superClass ?seeAlso ?implementationName 
 WHERE {
 
     {
@@ -12,6 +12,7 @@ WHERE {
     UNION
     {
         ?itemName rdfs:subClassOf* metric:Elemental_Metrics .
+        BIND(1 as ?isElementalMetric)
     }
     
     OPTIONAL {?itemName rdfs:subClassOf ?superClass }
@@ -20,7 +21,8 @@ WHERE {
     OPTIONAL { ?itemName rdfs:subClassOf _:v0 .
     _:v0 owl:onProperty metric:implementedBy ;
                     owl:hasValue ?implementationName }
-    OPTIONAL { ?itemName metric:metricInterpretation ?interpretation } .
+    OPTIONAL { ?itemName metric:MetricInterpretation ?interpretation } .
     OPTIONAL { ?itemName rdfs:seeAlso ?seeAlso }
     
 }
+ORDER BY DESC(?isElementalMetric)

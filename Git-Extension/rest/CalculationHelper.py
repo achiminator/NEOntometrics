@@ -3,6 +3,7 @@ from socket import timeout
 from urllib.parse import urlparse
 import re
 import argparse
+from xml.dom import ValidationErr
 
 import requests
 
@@ -16,7 +17,7 @@ class GitUrlParser:
     file = ""
     service = ""
     branch = ""
-    validResource = True
+    validResource = False
 
     def parse(self, input: str):
         """Parses a Git-URL and saves it into Repository (git-service, including owner and repo). If a specific file is assessed,
@@ -32,22 +33,26 @@ class GitUrlParser:
             input = input [:-1]
         self.url = input
         urlParsed = urlparse(input)
+        
+        if ("github" in input): # If it is in github, it is an repository anyway, so no need to check..
+            self.validResource = True
+        else:
+            # pygit2 does not support a simple check on wether a git repository is available at a given location. Thus, I
+            # manualy added the first stage of the http-git protocol for a simple check on availability.
+            if not(input.startswith("http://") or input.startswith("https://")):
+                input = "https://" + input
+            try:
+                validityCheck = requests.head(input, timeout=2)
+                if validityCheck.status_code != 200:
+                    raise requests.ConnectionError()
+            except requests.ConnectionError:
+                self.validResource=False
+                return
+            response = requests.get(input + "/info/refs?service=git-upload-pack")
+            if(response.status_code == 200 and "application/x-git-upload-pack-advertisement" in response.headers["Content-Type"]):
+                self.validResource = True
 
-        # pygit2 does not support a simple check on wether a git repository is available at a given location. Thus, I
-        # manualy added the first stage of the http-git protocol for a simple check on availability.
-        if not(input.startswith("http://") or input.startswith("https://")):
-            input = "http://" + input
-        try:
-            validityCheck = requests.head(input, timeout=2)
-            if validityCheck.status_code != 200:
-                raise requests.ConnectionError()
-        except requests.ConnectionError:
-            self.validResource=False
-            return
-
-
-        response = requests.get(input + "/info/refs?service=git-upload-pack")
-        if(response.status_code == 200 and "application/x-git-upload-pack-advertisement" in response.headers["Content-Type"] or "blob" in input):
+        if(self.validResource or "blob" in input):
             # Check if an URL to a ontology file is given
             if ".rdf" in input or ".ttl" in input or ".owl" in input:
                 # Check if the URL directly accesses an link

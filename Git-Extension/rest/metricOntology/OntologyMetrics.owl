@@ -2067,8 +2067,8 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
                             <owl:Class>
                                 <owl:intersectionOf rdf:parseType="Collection">
                                     <owl:Restriction>
-                                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
-                                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Super_Classes"/>
+                                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#minuend"/>
+                                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                                     </owl:Restriction>
                                     <owl:Restriction>
                                         <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#subtrahend"/>
@@ -2079,8 +2079,8 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
                         </owl:allValuesFrom>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#minuend"/>
-                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Super_Classes"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
@@ -2100,12 +2100,12 @@ Here, a thing that is the subclass of the heartDisease and located near the hear
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#minuend"/>
-                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Super_Classes"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#divisor"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#subtrahend"/>
-                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Super_Classes"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
@@ -2652,7 +2652,7 @@ class.</neontometrics:MetricDefinition>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#divisor"/>
-                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Leaf_Classes"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Path_Length_To_Leaf_Classes"/>
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
@@ -3023,28 +3023,36 @@ Duque-Ramos, Astrid; Fernández-Breis, J. T.; Stevens, R.; Aussenac-Gilles, Nath
     <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_RFCOnto">
         <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#OQuaRE_Metrics"/>
         <rdfs:subClassOf>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#divisor"/>
-                        <owl:allValuesFrom>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#multiplication"/>
+                <owl:allValuesFrom>
+                    <owl:Class>
+                        <owl:intersectionOf rdf:parseType="Collection">
                             <owl:Class>
                                 <owl:intersectionOf rdf:parseType="Collection">
                                     <owl:Restriction>
-                                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#minuend"/>
-                                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
+                                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#divisor"/>
+                                        <owl:allValuesFrom>
+                                            <owl:Class>
+                                                <owl:intersectionOf rdf:parseType="Collection">
+                                                    <owl:Restriction>
+                                                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#minuend"/>
+                                                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
+                                                    </owl:Restriction>
+                                                    <owl:Restriction>
+                                                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#subtrahend"/>
+                                                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Subclasses_Of_Thing"/>
+                                                    </owl:Restriction>
+                                                </owl:intersectionOf>
+                                            </owl:Class>
+                                        </owl:allValuesFrom>
                                     </owl:Restriction>
                                     <owl:Restriction>
-                                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#subtrahend"/>
-                                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Subclasses_Of_Thing"/>
+                                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
+                                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Class_Declarations"/>
                                     </owl:Restriction>
                                 </owl:intersectionOf>
                             </owl:Class>
-                        </owl:allValuesFrom>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
-                        <owl:allValuesFrom>
                             <owl:Restriction>
                                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#sum"/>
                                 <owl:allValuesFrom>
@@ -3052,15 +3060,14 @@ Duque-Ramos, Astrid; Fernández-Breis, J. T.; Stevens, R.; Aussenac-Gilles, Nath
                                         <owl:intersectionOf rdf:parseType="Collection">
                                             <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Data_Property_Assertions"/>
                                             <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Object_Property_Class_Assertion"/>
-                                            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Sub_Class_Declarations"/>
                                         </owl:intersectionOf>
                                     </owl:Class>
                                 </owl:allValuesFrom>
                             </owl:Restriction>
-                        </owl:allValuesFrom>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
+                        </owl:intersectionOf>
+                    </owl:Class>
+                </owl:allValuesFrom>
+            </owl:Restriction>
         </rdfs:subClassOf>
         <neontometrics:MetricDefinition>Response for a class: Number of properties that can be directly accessed from the class.</neontometrics:MetricDefinition>
         <neontometrics:MetricInterpretation>Best: x:1-3. Worst: x&gt;12</neontometrics:MetricInterpretation>
@@ -3341,7 +3348,7 @@ Different ontologies with subjective features and particular perspective on the 
                 </owl:intersectionOf>
             </owl:Class>
         </rdfs:subClassOf>
-        <neontometrics:MetricDefinition>Mean number of parents per class. ∑| RCi| / ∑|Ci|-∑|C(DP)i|; where Ci is the i-th class in the ontology and C(DP)i is the i-th class in the ontology with more than one direct parent.</neontometrics:MetricDefinition>
+        <neontometrics:MetricDefinition>Mean number of parents per class.</neontometrics:MetricDefinition>
         <neontometrics:MetricInterpretation>Best: x:1-2. Worst: x&gt;8</neontometrics:MetricInterpretation>
         <rdfs:label>Tangledness</rdfs:label>
     </owl:Class>
@@ -3475,6 +3482,10 @@ Different ontologies with subjective features and particular perspective on the 
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#divisor"/>
+                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom>
                             <owl:Restriction>
                                 <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#sum"/>
@@ -3489,10 +3500,6 @@ Different ontologies with subjective features and particular perspective on the 
                                 </owl:allValuesFrom>
                             </owl:Restriction>
                         </owl:allValuesFrom>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
-                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Classes"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
@@ -4537,15 +4544,17 @@ detail, with a rich formalization of conceptual choices and motivations</neontom
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#numerator"/>
                         <owl:allValuesFrom>
-                            <owl:Class>
-                                <owl:intersectionOf rdf:parseType="Collection">
-                                    <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Object_Properties"/>
-                                    <owl:Restriction>
-                                        <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#sum"/>
-                                        <owl:allValuesFrom rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Data_Properties"/>
-                                    </owl:Restriction>
-                                </owl:intersectionOf>
-                            </owl:Class>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#sum"/>
+                                <owl:allValuesFrom>
+                                    <owl:Class>
+                                        <owl:intersectionOf rdf:parseType="Collection">
+                                            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Data_Properties"/>
+                                            <rdf:Description rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Object_Properties"/>
+                                        </owl:intersectionOf>
+                                    </owl:Class>
+                                </owl:allValuesFrom>
+                            </owl:Restriction>
                         </owl:allValuesFrom>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -4976,6 +4985,15 @@ SD = H/C</neontometrics:MetricDefinition>
 - Let -&gt; be a mapping from set Ci ,to Cj such that Ci -&gt; Cj if class Cj is a subclass of class Ci
 - Let &amp; be a mapping from set Ci to set Pj such that Ci &amp; Pj if class Ci includes property Pj as part of its definition.</neontometrics:MetricDefinition>
         <rdfs:seeAlso>Orme, Anthony Mark; Yao, Haining; Etzkorn, Letha H. (2007): Indicating ontology data quality, stability, and completeness throughout ontology evolution. In Journal of Software Maintenance and Evolution 19 (1), pp. 49–75. DOI: 10.1002/smr.341.</rdfs:seeAlso>
+    </owl:Class>
+    
+
+
+    <!-- http://neontometrics.informatik.informatik.uni-rostock.de#Path_Length_To_Leaf_Classes -->
+
+    <owl:Class rdf:about="http://neontometrics.informatik.informatik.uni-rostock.de#Path_Length_To_Leaf_Classes">
+        <rdfs:subClassOf rdf:resource="http://neontometrics.informatik.informatik.uni-rostock.de#Path_Metrics"/>
+        <neontometrics:MetricDefinition>The summed up length of the pathes from root to the leaf classes.</neontometrics:MetricDefinition>
     </owl:Class>
     
 

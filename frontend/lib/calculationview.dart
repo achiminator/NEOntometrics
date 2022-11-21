@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
 import 'package:download/download.dart';
+import 'package:matomo_tracker/matomo_tracker.dart';
 import 'package:neonto_frontend/metric_data.dart';
 import 'package:neonto_frontend/settings.dart';
-import 'dart:html' as html;
+import 'package:neonto_frontend/trackerHelper.dart';
 
 import 'graphql.dart';
 import 'notifications.dart';
@@ -41,7 +42,14 @@ class TableData extends DataTableSource {
   int get selectedRowCount => 0;
 }
 
-class _CalculationViewState extends State<CalculationView> {
+class _CalculationViewState extends State<CalculationView>
+    with TraceableClientMixin {
+  @override
+  String get traceName => 'Trigger Calculation View';
+
+  @override
+  String get traceTitle => "Calculation";
+
   /// indicates whether the ontology is currently in the update-queue. Null indicates that it is not.
   int activeMetricFile = 0;
 
@@ -50,6 +58,10 @@ class _CalculationViewState extends State<CalculationView> {
   final scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
+    MatomoTracker.instance.trackEvent(
+        eventCategory: "Calculation",
+        action:
+            "Open File: ${widget.repositoryData.ontologyFiles[activeMetricFile].fileName}");
     return Scaffold(
         appBar: AppBar(
             title: Row(
@@ -95,21 +107,24 @@ class _CalculationViewState extends State<CalculationView> {
   Widget updateIcon() {
     if (queueInformation.queuePosition == null) {
       return IconButton(
-        onPressed: () => GraphQLHandler()
-            .putInQueue(widget.repositoryName, widget.reasonerSelected,
-                update: true)
-            .then((value) {
-          if (value.hasException) {
-            Snacks(context)
-                .displayErrorSnackBar(value.exception.toString(), context);
-          } else {
-            setState(() {
-              queueInformation =
-                  QueueInformation(value.data?["update_queueInfo"]);
-            });
-            Snacks(context).progressSnackBar(queueInformation);
-          }
-        }),
+        onPressed: () {
+          MatomoTracker.instance.trackEvent(action:"Trigger Update", eventCategory: "Calculation", eventName: widget.repositoryName );
+          GraphQLHandler()
+              .putInQueue(widget.repositoryName, widget.reasonerSelected,
+                  update: true)
+              .then((value) {
+            if (value.hasException) {
+              Snacks(context)
+                  .displayErrorSnackBar(value.exception.toString(), context);
+            } else {
+              setState(() {
+                queueInformation =
+                    QueueInformation(value.data?["update_queueInfo"]);
+              });
+              Snacks(context).progressSnackBar(queueInformation);
+            }
+          });
+        },
         tooltip: "Put the metrics update into the queue.",
         icon: const Icon(Icons.update),
       );
@@ -187,7 +202,7 @@ class _CalculationViewState extends State<CalculationView> {
       //Add Download Button
       if (widget.queueInformation.repository != "") {
         cells.add(DataCell(IconButton(
-          onPressed: () => html.window.open(
+          onPressed: () => TrackerHelper.htmlOpenWindow(
               Settings().apiUrl +
                   "/downloadOntology/" +
                   metricDataForOntologyFile
@@ -198,8 +213,8 @@ class _CalculationViewState extends State<CalculationView> {
         )));
       } else {
         cells.add(DataCell(IconButton(
-          onPressed: () => html.window
-              .open("http://" + widget.queueInformation.fileName, "Download"),
+          onPressed: () => TrackerHelper.htmlOpenWindow(
+              "http://" + widget.queueInformation.fileName, "Download"),
           icon: const Icon(Icons.download),
           tooltip: "Download the ontology file.",
         )));
@@ -268,6 +283,11 @@ class _CalculationViewState extends State<CalculationView> {
     );
     final stream =
         Stream.fromIterable(csv.toString().replaceAll("\n", ". ").codeUnits);
+    MatomoTracker.instance.trackEvent(
+        eventCategory: "Calculation",
+        eventName:
+            "Download ${widget.repositoryData.ontologyFiles[activeMetricFile].fileName}",
+        action: "Metric Download");
     download(stream, "metrics.csv");
   }
 }

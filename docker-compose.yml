@@ -11,6 +11,7 @@ services:
   # Creates the tables necessary in the database
   migrateDB:
     restart: "no"
+    container_name: migrationService
     build:
       dockerfile: Dockerfile
       context: ./Git-Extension
@@ -99,6 +100,23 @@ services:
       MYSQL_ROOT_PASSWORD: KMmsWrwRBBeQLXDO
     volumes:
       - neontometricsdb:/var/lib/mysql
+    
+    # Analytics Service
+  matomo:
+    restart: always
+    container_name: matomo
+    image: matomo:latest
+    environment:
+      MATOMO_DATABASE_HOST: neontometrics_db
+      MATOMO_DATABASE_USERNAME: neontometrics
+      MATOMO_DATABASE_PASSWORD: KMmsWrwRBBeQLXDO
+      MATOMO_DATABASE_DBNAME: matomo
+    ports:
+    - 6377:80
+    volumes:
+    - matomo:/var/www/html
+
 volumes:
   neontometricsdb:
   gitStorage:
+  matomo:
