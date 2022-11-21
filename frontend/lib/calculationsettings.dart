@@ -1,4 +1,7 @@
+import 'package:get/get.dart';
 import 'package:matomo_tracker/matomo_tracker.dart';
+import 'package:neonto_frontend/analytic/controllers/analytic_controller.dart';
+import 'package:neonto_frontend/analytic/controllers/controllers.dart';
 import 'package:neonto_frontend/settings.dart';
 import "calculationview.dart";
 import "graphql.dart";
@@ -34,11 +37,51 @@ class _CalculationEngineState extends State<CalculationEngine>
   late Widget markDownDescription = const CircularProgressIndicator();
   var urlController = TextEditingController();
   var graphQL = GraphQLHandler();
+
   @override
   void initState() {
     super.initState();
     markDownDescription =
         MarkDownHandler().buildMarkDownElement("calculationdescription.md");
+  }
+
+  saveData({required var data}) {
+    List list = [];
+    for (var item in data) {
+      // print('>>>>>>>>>>>>> ${item['node']['commit']['edges'].isNotEmpty
+      //     ?item['node']['commit']['edges'].last['node'] : ''}');
+      Map<String, dynamic> data = {
+        //in Map speichert den 'fileName', 'commit data last commit'
+        'fileName': item['node']['fileName'],
+        'commit': item['node']['commit']['edges'].isNotEmpty
+            ? item['node']['commit']['edges'].last['node']
+            : {}
+      };
+      list.add(data);
+    }
+    analyticController.listData = list;
+  }
+
+  saveNameSelect({required var data}) {
+    List list = [];
+    for (int i = 0; i < data.length; i++) {
+      String name = data
+          .elementAt(i)
+          .itemName
+          .toString()
+          .replaceAll(' ', '_')
+          .replaceAll('-', '')
+          .replaceAll('(', '')
+          .replaceAll(')', '');
+      if (name != 'Computational_Complexity' &&
+          name != 'Consistent_Ontology' &&
+          name != 'OQual_Generic_complexity' &&
+          name != 'Reasoner_Active') {
+        list.add(analyticController.getName(name: name));
+      }
+    }
+    analyticController.listString = list;
+    // print(list);
   }
 
   @override
@@ -227,6 +270,7 @@ class _CalculationEngineState extends State<CalculationEngine>
           "No valid ontology given. Please enter an URL to a valid Ontology.",
           context);
     } else {
+      saveNameSelect(data: selectedElementsForCalculation);
       // At first, we ask the service if the ontology is already known in the system.
       Future<QueryResult<dynamic>> response =
           graphQL.queueFromAPI(urlController.text);
@@ -272,6 +316,10 @@ class _CalculationEngineState extends State<CalculationEngine>
               Snacks(context).displayErrorSnackBar(
                   graphQlResponse.exception.toString(), context);
             } else {
+              //  print('graphQlResponse.data');
+              saveData(
+                  data: graphQlResponse.data!['getRepository']['edges'][0]
+                      ['node']['ontologyfile_set']['edges']);
               EasyLoading.dismiss();
               Navigator.push(context, MaterialPageRoute(builder: (context) {
                 return CalculationView(RepositoryData(graphQlResponse.data),
