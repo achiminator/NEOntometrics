@@ -23,10 +23,30 @@ And of course, if you have any questions, inquiries, or ideas, feel free to cont
 # Using the application
 
 ## The Metric explorer
+The Metric Explorer informs on available measurable features of the ontology_ and is a repository of available metrics in NEOntometrics and beyond, with the two main categories _Elemental Metrics_ and _Quality Framworks_. It provides knowledge of the measurable attributes of ontologies and published metric frameworks. A click on the ℹ️-icon on the left opens the details page of the given item. The _Metric Explorer_ has two main elements.
 
-The page _Metric Explorer_ is a repository of available metrics in NEOntometrics and beyond, with the two main categories _Elemental Metrics_ and _Quality Framworks_. The former contains the underlying atomic measurements of the ontologies. The NEOntometrics authors created all information shown in this category. _Quality Frameworks_, on the opposite, shows the ontology quality metrics developed by other researchers, like the OntoQA Metrics by Tartir et al. Here, all information originates from the authors of the given frameworks.
 
-The page provides information on five categories (though not all metrics are annotated with all descriptional elements). _Metric Definition_ contains the formal definition of the metrics and how they are calculated, while _Metric Description_ supplements a more human-readable explanation and is, at times, an example. _Metric Interpretation_ guides practical usage. _Calculation_ explains their decompositions into the _Elemental Metrics_ using the metric names returned by the API_,_ and _seeAlso_ links to further resources like the corresponding papers or additional reads.
+The **Elemental Metrics** contain the atomic attributes of an ontology that we can measure and that are stored in the database. Examples are graph-related attributes like _depth_ or _breath_, or owl-related _axioms count_, like the number of `owl:equivalentTo` relationships, or the number of transitive object properties.
+
+These elements come with explanations of the underlying measured attributes and, at times, link to further reads. The NEOntometrics authors maintain the elemental metrics and their descriptions. Not all of the elements are implemented (yet). If they are, they have an _implementation name_ connected. The _implementation name_ is the machine-readable identifier, e.g., for the GraphQL interface.
+
+The **Quality Frameworks** are the metric frameworks proposed in the literature. The top-level item of these elements points to the originating resource from which all of their human-readable explanations originate. The underlying metric literature for these frameworks has a great variety in their level of detail. Some describe their measures extensively, including an interpretation, while others only propose the metric. The availability of explanations in the metric explorer mirrors this heterogeneity.
+
+The calculation of the quality frameworks metrics is formalized by linking them to the _Elemental_Metrics_. This linkage homogenizes the metric measures: Often, the quality frameworks proposed by authors of distant countries and research backgrounds use different symbols to describe the same concepts. Here, the _Elemental_Metrics_ provide a common language for the ontology attributes. The field _calculation_ is filled if
+
+ 
+
+## Calculating Ontology Metrics
+
+The core functionality of NEOntometrics, the metric calculation, is accessible via the _Calculation_-Tab. The application can either analyze single ontology files or git-based repositories.
+
+1.  At first, a user needs to select the ontology metrics that are important to him. One can choose the essential attributes from the _Elemental Metrics_ or measures that quality frameworks like OntoQA have proposed. Hovering over the elements shows additional information identically to parts of the Metric Explorer. It is possible to select all metrics from a given category by clicking the checkbox on the right or choosing individual ones.
+2.  NEOntometrics comes with an inference engine based on [HermiT](http://www.hermit-reasoner.com/). Using NEOntometrics and a reasoner unveils how much and which aspects are implicit in the ontology. However, using the reasoner requires much computational power and is deactivated for ontologies smaller than 0.3 MB.
+3.  The text field at the bottom of the page points to the ontology or repository that should be analyzed. You can put any public available git repository or ontology file in this text box. To explore already calculated ontologies, the _Already Calculated_ button shows the repositories already in the database. These repositories can be a starting point for further exploration.
+4.  A click on the arrow starts the metric request. If the metric is unknown in the system, the application asks to queue the calculation task. If it is already in the queue, a notification informs of the progress.
+
+Once the data is analyzed, a click on the arrow leads to the metric results presented as a paginated table, representing the measured values for the different ontology versions. The drop-down menu in the header allows for selecting the various ontology files, and the download button ⬇️ exports the metrics into a .csv-file. The update button 🔂 puts the metric into the queue again and retrieves the new version (for git-based repositories).
+
 
   ## Using the Calculation-Frontend
 
@@ -57,6 +77,11 @@ The ``Elementary_Metrics`` are connected to metric instances named identically t
 **Fig. 1.** Excerpt of the Metric Ontology. The given _OntoQA_ metric is stored as `OntoQA_Class_Inheritance_Richness subClassOf (divisor only Classes) and (numerator only Sub_Class_Declarations)`.
 
 Further, all elements have rich annotations, providing human-centered meaning to the metrics. The `Elemental Metrics` have descriptions of the kind of measured attributes. The `Metric Frameworks` contain  the information from the corresponding papers. Additionally, links to further online resources or scientific publications are provided. These annotations are the foundation for the *Metric Explorer*, where users find help on the application.
+
+All the information on ontology metrics is formalized in a metric ontology. You can find more details on the functionality and how to extend the metric ontology in the paper:
+
+>_Reiz, Achim; Sandkuhl, Kurt (2022 - 2022): An Ontology for Ontology Metrics: Creating a Shared Understanding of Measurable Attributes for Humans and Machines. In : Proceedings of the 14th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management. 14th International Conference on Knowledge Engineering and Ontology Development. Valletta, Malta, 10/24/2022 - 10/26/2022: SCITEPRESS - Science and Technology Publications, pp. 193–199._
+
 
 ## The Architecture Of Application
 
