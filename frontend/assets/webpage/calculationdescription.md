@@ -1,3 +1,5 @@
+# Analyzing with NEOntometrics
+
 The application can either analyze single ontology files or git-based repositories.
 
 1.  At first, a user needs to select the ontology metrics that are important to him. One can choose the essential attributes from the _Elemental Metrics_ or measures that quality frameworks like OntoQA have proposed. Hovering over the elements shows additional information identically to parts of the Metric Explorer. It is possible to select all metrics from a given category by clicking the checkbox on the right or choosing individual ones.
