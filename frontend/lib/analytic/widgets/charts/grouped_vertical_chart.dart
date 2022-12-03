@@ -25,25 +25,31 @@ class LegendOptions extends StatefulWidget {
     return LegendOptions(
       _createSampleData(),
       animate: true,
-    );}
+    );
+  }
   @override
   State<LegendOptions> createState() => _LegendOptionsState();
-/// Create series list with multiple series
+
+  /// Create series list with multiple series
   static List<charts.Series<OntologyData, String>> _createSampleData() {
     List<charts.Series<OntologyData, String>> ResultList = [];
-     int index = 0;
+    int index = 0;
     //List data are Ontologyfiles
     for (var ontologyFile in analyticController.listData) {
       List<OntologyData> OntologyDataList = [];
       //listString are metrics
       for (var metricName in analyticController.listString) {
         double metricResultNumber =
-            (ontologyFile['commit'][metricName] == null ||
-                    ontologyFile['commit'][metricName] == false)
+            (ontologyFile['commit']['edges'].last['node'][metricName] == null ||
+                    ontologyFile['commit']['edges'].last['node'][metricName] ==
+                        false)
                 ? 0
-                : double.parse(ontologyFile['commit'][metricName].toString());
+                : double.parse(ontologyFile['commit']['edges']
+                    .last['node'][metricName]
+                    .toString());
         OntologyDataList.add(
-            OntologyData(metricName, metricResultNumber, colorList[index]));
+            OntologyData(metricName, metricResultNumber, colorList1[index]));
+        // print(OntologyDataList);
       }
       charts.Series<OntologyData, String> chart =
           charts.Series<OntologyData, String>(
@@ -70,7 +76,7 @@ class _LegendOptionsState extends State<LegendOptions> {
     return Column(
       children: [
         buildChart(),
-        Padding(
+        /* Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: IconButton(
             onPressed: () {
@@ -82,7 +88,7 @@ class _LegendOptionsState extends State<LegendOptions> {
             ),
             tooltip: "Export as PDF",
           ),
-        ),
+        ),*/
       ],
     );
   }
@@ -112,7 +118,7 @@ class _LegendOptionsState extends State<LegendOptions> {
                     // Change the line colors to match text color.
                     lineStyle: charts.LineStyleSpec(
                         color: charts.MaterialPalette.black)),
-                //  viewport: new charts.OrdinalViewport('', 2),
+                viewport: charts.OrdinalViewport('', 2),
               ),
 
               barRendererDecorator: charts.BarLabelDecorator<String>(),
@@ -151,9 +157,8 @@ class _LegendOptionsState extends State<LegendOptions> {
                       fontFamily: 'Georgia',
                       fontSize: 11),
                 ),
-
-                //  new charts.SlidingViewport(),
-                //   charts.PanAndZoomBehavior(),
+                charts.SlidingViewport(),
+                charts.PanAndZoomBehavior(),
               ],
             ),
           ),

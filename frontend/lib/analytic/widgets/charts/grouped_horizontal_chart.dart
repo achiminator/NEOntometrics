@@ -49,18 +49,19 @@ class HorizontalBarChartWithSecondaryAxis extends StatefulWidget {
       List<OntologyData> ontologyDataList = [];
       for (var metricName in analyticController.listString) {
         double metricResultNumber =
-            (ontologyFile['commit'][metricName] == null ||
-                    ontologyFile['commit'][metricName] == false)
+            (ontologyFile['commit']['edges'].last['node'][metricName] == null ||
+                    ontologyFile['commit']['edges'].last['node'][metricName] ==
+                        false)
                 ? 0
-                : double.parse(ontologyFile['commit'][metricName].toString());
+                : double.parse(ontologyFile['commit']['edges']
+                    .last['node'][metricName]
+                    .toString());
         ontologyDataList.add(
-            OntologyData(metricName, metricResultNumber, colorList[index]));
+            OntologyData(metricName, metricResultNumber, colorList1[index]));
       }
       charts.Series<OntologyData, String> chart =
           charts.Series<OntologyData, String>(
         id: ontologyFile['fileName'],
-        // colorFn: (_, __) => charts.MaterialPalette.teal.shadeDefault,
-        // seriesColor: (_),
         labelAccessorFn: (OntologyData ontologyData, _) =>
             '${ontologyData.metricResult.toStringAsFixed(2)}',
         domainFn: (OntologyData ontologyData, _) => ontologyData.metric,
@@ -85,7 +86,7 @@ class _HorizontalBarChartWithSecondaryAxisState
     return Column(
       children: [
         buildchart(),
-        Padding(
+        /*  Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: IconButton(
             onPressed: () {
@@ -98,6 +99,7 @@ class _HorizontalBarChartWithSecondaryAxisState
             tooltip: "Export as PDF",
           ),
         ),
+        */
       ],
     );
   }
@@ -117,9 +119,9 @@ class _HorizontalBarChartWithSecondaryAxisState
             widget.seriesList,
 
             animate: widget.animate,
-            //    domainAxis: charts.OrdinalAxisSpec(
-            //     viewport: charts.OrdinalViewport('', 2),
-            //   ),
+            domainAxis: charts.OrdinalAxisSpec(
+              viewport: charts.OrdinalViewport('', 2),
+            ),
             barRendererDecorator: charts.BarLabelDecorator<String>(),
 
             barGroupingType: charts.BarGroupingType.grouped,
@@ -157,9 +159,8 @@ class _HorizontalBarChartWithSecondaryAxisState
               charts.InitialSelection(selectedDataConfig: [
                 charts.SeriesDatumConfig<String>('Clicks', '')
               ]),
-
-              // charts.SlidingViewport(),
-              //  charts.PanAndZoomBehavior(),
+              charts.SlidingViewport(),
+              charts.PanAndZoomBehavior(),
             ],
             vertical: false,
             // It is important when using both primary and secondary axes to choose

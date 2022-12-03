@@ -272,15 +272,15 @@ class _CalculationViewState extends State<CalculationView>
               var metricForOntologyFile =
                   metricDataForOntologyFile.getDisplayMetrics();
 
-              if (metricForOntologyFile.first.length - 9 <= 5) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AnalyticView(
-                            widget.repositoryName,
-                          )),
-                );
-              } else {
+              //  if (metricForOntologyFile.first.length - 9 <= 5) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => AnalyticView(
+                        widget.repositoryName, widget.repositoryData)),
+              );
+              //}
+              /* else {
                 final snackBar = SnackBar(
                   backgroundColor:
                       Theme.of(context).colorScheme.secondaryContainer,
@@ -299,7 +299,7 @@ class _CalculationViewState extends State<CalculationView>
                   ),
                 );
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              }
+              } */
             },
             icon: const Icon(
               Icons.analytics,

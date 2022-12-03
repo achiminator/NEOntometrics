@@ -5,14 +5,17 @@
 /// different color from the main series color. The line renderer supports
 /// drawing points with the "includePoints" option, but those points will share
 /// the same color as the line.
+import 'dart:js_util';
+
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
-
+import 'package:neonto_frontend/analytic/constants/color.dart';
 import 'package:neonto_frontend/analytic/constants/style.dart';
 
 import 'package:neonto_frontend/analytic/controllers/controllers.dart';
 
 import 'package:neonto_frontend/analytic/helpers/save_file_web.dart';
+import 'package:neonto_frontend/metric_data.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
@@ -36,51 +39,61 @@ class DateTimeComboLinePointChart extends StatefulWidget {
 
   /// Create one series with sample hard coded data.
   static List<charts.Series<TimeSeriesSales, DateTime>> _createSampleData() {
-    final desktopSalesData = [
-      TimeSeriesSales(DateTime(2017, 9, 19), 5),
-      TimeSeriesSales(DateTime(2017, 9, 26), 25),
-      TimeSeriesSales(DateTime(2017, 10, 3), 100),
-      TimeSeriesSales(DateTime(2017, 10, 10), 75),
-    ];
+    List<charts.Series<TimeSeriesSales, DateTime>> ResultList = [];
+    int index = 0;
+    List files = [];
+    List firstOntologyFile = [];
+    for (var file in analyticController.listData) {
+      files.add(file['fileName']);
+    }
 
-    final tableSalesData = [
-      TimeSeriesSales(DateTime(2017, 9, 19), 10),
-      TimeSeriesSales(DateTime(2017, 9, 26), 50),
-      TimeSeriesSales(DateTime(2017, 10, 3), 200),
-      TimeSeriesSales(DateTime(2017, 10, 10), 150),
-    ];
+    if (files.length > 1) {
+      firstOntologyFile.add(analyticController.listData.first);
+    } else {
+      firstOntologyFile.add(analyticController.listData.first);
+    }
+    List selectedFile = [];
+    for (var f in analyticController.theSelectedOntologyFile) {
+      selectedFile.add(f);
+    }
 
-    final mobileSalesData = [
-      TimeSeriesSales(DateTime(2017, 9, 19), 10),
-      TimeSeriesSales(DateTime(2017, 9, 26), 50),
-      TimeSeriesSales(DateTime(2017, 10, 3), 200),
-      TimeSeriesSales(DateTime(2017, 10, 10), 150),
-    ];
+    print(selectedFile);
+    //print(firstOntologyFile);
 
-    return [
-      charts.Series<TimeSeriesSales, DateTime>(
-        id: 'Desktop',
-        colorFn: (_, __) => charts.Color(r: 38, g: 201, b: 155),
-        domainFn: (TimeSeriesSales sales, _) => sales.time,
-        measureFn: (TimeSeriesSales sales, _) => sales.sales,
-        data: desktopSalesData,
-      ),
-      charts.Series<TimeSeriesSales, DateTime>(
-        id: 'Tablet',
-        colorFn: (_, __) => charts.Color(r: 7, g: 85, b: 63),
-        domainFn: (TimeSeriesSales sales, _) => sales.time,
-        measureFn: (TimeSeriesSales sales, _) => sales.sales,
-        data: tableSalesData,
-      ),
-      charts.Series<TimeSeriesSales, DateTime>(
-          id: 'Mobile',
-          colorFn: (_, __) => charts.Color(r: 33, g: 145, b: 113),
-          domainFn: (TimeSeriesSales sales, _) => sales.time,
-          measureFn: (TimeSeriesSales sales, _) => sales.sales,
-          data: mobileSalesData)
-        // Configure our custom point renderer for this series.
-        ..setAttribute(charts.rendererIdKey, 'customPoint'),
-    ];
+    for (var ontolgyFile in selectedFile) {
+      List<List<TimeSeriesSales>> OntologyDataList = [];
+      List<TimeSeriesSales> metricList = [];
+      print(ontolgyFile);
+
+      for (var metricName in analyticController.listString) {
+        print(metricName);
+        DateTime commitTime =
+            DateTime.parse(ontolgyFile['CommitTime'].toString());
+        print(commitTime);
+        var metricResult = (ontolgyFile == null || ontolgyFile == false)
+            ? 0
+            : ontolgyFile[metricName];
+        print(metricResult);
+
+        // print('${metricName}, ${commitTime}, ${metricResult}');
+        metricList.add(TimeSeriesSales(
+            commitTime, int.parse(metricResult), colorList[index]));
+      }
+      OntologyDataList.add(metricList);
+      charts.Series<TimeSeriesSales, DateTime> chart =
+          charts.Series<TimeSeriesSales, DateTime>(
+              data: metricList,
+              id: 'metricName',
+              domainFn: (TimeSeriesSales sales, _) => sales.time,
+              measureFn: (TimeSeriesSales sales, _) => sales.sales,
+              colorFn: (TimeSeriesSales sales, _) => sales.color,
+              labelAccessorFn: (TimeSeriesSales sales, _) => '${sales.sales}');
+
+      ResultList.add(chart);
+      index++;
+    }
+
+    return ResultList;
   }
 }
 
@@ -175,6 +188,7 @@ class _DateTimeComboLinePointChartState
                 child: charts.TimeSeriesChart(
                   widget.seriesList,
                   animate: widget.animate,
+
                   // Configure the default renderer as a line renderer. This will be used
                   // for any series that does not define a rendererIdKey.
                   //
@@ -186,6 +200,7 @@ class _DateTimeComboLinePointChartState
                         // ID used to link series to this renderer.
                         customRendererId: 'customPoint')
                   ],
+
                   // Optionally pass in a [DateTimeFactory] used by the chart. The factory
                   // should create the same type of [DateTime] as the data provided. If none
                   // specified, the default creates local date time.
@@ -222,6 +237,11 @@ class _DateTimeComboLinePointChartState
 class TimeSeriesSales {
   final DateTime time;
   final int sales;
+  final charts.Color color;
 
-  TimeSeriesSales(this.time, this.sales);
+  TimeSeriesSales(
+    this.time,
+    this.sales,
+    this.color,
+  );
 }

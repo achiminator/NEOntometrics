@@ -1,6 +1,4 @@
-import 'package:get/get.dart';
 import 'package:matomo_tracker/matomo_tracker.dart';
-import 'package:neonto_frontend/analytic/controllers/analytic_controller.dart';
 import 'package:neonto_frontend/analytic/controllers/controllers.dart';
 import 'package:neonto_frontend/settings.dart';
 import "calculationview.dart";
@@ -48,16 +46,24 @@ class _CalculationEngineState extends State<CalculationEngine>
   saveData({required var data}) {
     List list = [];
     for (var item in data) {
+      var commit = item['node']['commit']['edges'].isNotEmpty
+          ? item['node']['commit']
+          : {};
+      //  print(commit);
+      //   for (var comm in commit) {
+      //  commit = comm['node']['CommitMessage'];
+
       // print('>>>>>>>>>>>>> ${item['node']['commit']['edges'].isNotEmpty
       //     ?item['node']['commit']['edges'].last['node'] : ''}');
-      Map<String, dynamic> data = {
+      //  print(item);
+
+      Map<String, dynamic> data1 = {
         //in Map speichert den 'fileName', 'commit data last commit'
         'fileName': item['node']['fileName'],
-        'commit': item['node']['commit']['edges'].isNotEmpty
-            ? item['node']['commit']['edges'].last['node']
-            : {}
+        'commit': commit
       };
-      list.add(data);
+
+      list.add(data1);
     }
     analyticController.listData = list;
   }

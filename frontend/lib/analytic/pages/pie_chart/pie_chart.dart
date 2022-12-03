@@ -6,6 +6,7 @@ class PieChartPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PieChartPages();
+    return Container();
+    // PieChartPages();
   }
 }

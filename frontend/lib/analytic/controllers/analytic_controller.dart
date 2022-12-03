@@ -1,9 +1,11 @@
 import 'package:get/get.dart';
+import 'package:neonto_frontend/metric_data.dart';
 
 class AnalyticController extends GetxController {
   static AnalyticController instance = Get.find();
   List listString = [].obs;
   List listData = [];
+  List theSelectedOntologyFile = [].obs;
   Rx<List<String>> selectedOptionList = Rx<List<String>>([]);
   var selectedOption = ''.obs;
   String getName({required String name}) {
