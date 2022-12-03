@@ -28,5 +28,6 @@ urlpatterns = [
     path('django-rq/', include('django_rq.urls')),
     path('downloadOntology/<int:pk>', views.DownloadOntologyFile.as_view()),
     path('newsletter/', include('newsletter.urls')),
+    path('dj-rest-auth/', include('dj_rest_auth.urls')),
     path("graphql", csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),
 ]
