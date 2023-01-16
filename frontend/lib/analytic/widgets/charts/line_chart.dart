@@ -8,16 +8,20 @@
 import 'dart:js_util';
 
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:charts_flutter/flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:neonto_frontend/analytic/constants/color.dart';
 import 'package:neonto_frontend/analytic/constants/style.dart';
 
 import 'package:neonto_frontend/analytic/controllers/controllers.dart';
+import 'package:neonto_frontend/analytic/helpers/custom.dart';
 
 import 'package:neonto_frontend/analytic/helpers/save_file_web.dart';
 import 'package:neonto_frontend/metric_data.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
+import 'package:charts_flutter/src/text_style.dart' as style;
+import 'dart:math';
 
 class DateTimeComboLinePointChart extends StatefulWidget {
   final List<charts.Series<dynamic, DateTime>> seriesList;
@@ -38,9 +42,10 @@ class DateTimeComboLinePointChart extends StatefulWidget {
       _DateTimeComboLinePointChartState();
 
   /// Create one series with sample hard coded data.
-  static List<charts.Series<TimeSeriesSales, DateTime>> _createSampleData() {
-    List<charts.Series<TimeSeriesSales, DateTime>> ResultList = [];
+  static List<charts.Series<OntologyData, DateTime>> _createSampleData() {
+    List<charts.Series<OntologyData, DateTime>> ResultList = [];
     int index = 0;
+    int i = 0;
     List files = [];
     List firstOntologyFile = [];
     for (var file in analyticController.listData) {
@@ -60,39 +65,38 @@ class DateTimeComboLinePointChart extends StatefulWidget {
     print(selectedFile);
     //print(firstOntologyFile);
 
-    for (var ontolgyFile in selectedFile) {
-      List<List<TimeSeriesSales>> OntologyDataList = [];
-      List<TimeSeriesSales> metricList = [];
-      print(ontolgyFile);
+    List<List<OntologyData>> OntologyDataList = [];
+    DateTime commitTime;
+    var metricResult;
 
-      for (var metricName in analyticController.listString) {
-        print(metricName);
-        DateTime commitTime =
-            DateTime.parse(ontolgyFile['CommitTime'].toString());
-        print(commitTime);
-        var metricResult = (ontolgyFile == null || ontolgyFile == false)
+    for (var metricName in analyticController.listString) {
+      List<OntologyData> metricList = [];
+      for (var ontolgyFile in selectedFile) {
+        metricResult = (ontolgyFile == null || ontolgyFile == false)
             ? 0
             : ontolgyFile[metricName];
-        print(metricResult);
 
-        // print('${metricName}, ${commitTime}, ${metricResult}');
-        metricList.add(TimeSeriesSales(
-            commitTime, int.parse(metricResult), colorList[index]));
+        commitTime = DateTime.parse(ontolgyFile['CommitTime'].toString());
+
+        metricList.add(OntologyData(
+            metricName, commitTime, int.parse(metricResult), colorList[index]));
+
+        metricResult = analyticController.metricresult;
+        print(analyticController.metricresult);
       }
-      OntologyDataList.add(metricList);
-      charts.Series<TimeSeriesSales, DateTime> chart =
-          charts.Series<TimeSeriesSales, DateTime>(
+      //   print(metricList);
+      charts.Series<OntologyData, DateTime> chart =
+          charts.Series<OntologyData, DateTime>(
               data: metricList,
-              id: 'metricName',
-              domainFn: (TimeSeriesSales sales, _) => sales.time,
-              measureFn: (TimeSeriesSales sales, _) => sales.sales,
-              colorFn: (TimeSeriesSales sales, _) => sales.color,
-              labelAccessorFn: (TimeSeriesSales sales, _) => '${sales.sales}');
-
-      ResultList.add(chart);
+              id: metricName,
+              domainFn: (OntologyData ontologyData, _) => ontologyData.time,
+              measureFn: (OntologyData ontologyData, _) => ontologyData.result,
+              colorFn: (OntologyData ontologyData, _) => ontologyData.color,
+              labelAccessorFn: (OntologyData ontologyData, _) =>
+                  '${ontologyData.result}');
       index++;
+      ResultList.add(chart);
     }
-
     return ResultList;
   }
 }
@@ -149,8 +153,6 @@ class _DateTimeComboLinePointChartState
               child: DropdownButton<String>(
                   hint: Text(
                     "select a metric",
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSecondary),
                   ),
                   dropdownColor:
                       Theme.of(context).colorScheme.secondaryContainer,
@@ -171,7 +173,6 @@ class _DateTimeComboLinePointChartState
       value: item,
       child: Text(
         item,
-        style: TextStyle(color: Theme.of(context).colorScheme.onSecondary),
       ));
 
   buildchart() {
@@ -188,6 +189,51 @@ class _DateTimeComboLinePointChartState
                 child: charts.TimeSeriesChart(
                   widget.seriesList,
                   animate: widget.animate,
+
+                  behaviors: [
+                    charts.ChartTitle('Line Chart',
+                        // subTitle:'Ontology file: ${analyticController.theSelectedOntologyFile}',
+                        behaviorPosition: charts.BehaviorPosition.top,
+                        titleOutsideJustification:
+                            charts.OutsideJustification.start,
+                        // Set a larger inner padding than the default (10) to avoid
+                        // rendering the text too close to the top measure axis tick label.
+                        // The top tick label may extend upwards into the top margin region
+                        // if it is located at the top of the draw area.
+                        innerPadding: 18),
+                    //  charts.ChartTitle('Bottom title text',
+                    //     behaviorPosition: charts.BehaviorPosition.bottom,
+                    //     titleOutsideJustification:
+                    //         charts.OutsideJustification.middleDrawArea),
+                    //   charts.ChartTitle('Start title',
+                    //       behaviorPosition: charts.BehaviorPosition.start,
+                    //      titleOutsideJustification:
+                    //          charts.OutsideJustification.middleDrawArea),
+                    //   charts.ChartTitle('End title',
+                    //       behaviorPosition: charts.BehaviorPosition.end,
+                    //       titleOutsideJustification:
+                    //          charts.OutsideJustification.middleDrawArea),
+                    LinePointHighlighter(
+                        symbolRenderer: CustomCircleSymbolRenderer())
+                  ],
+                  selectionModels: [
+                    SelectionModelConfig(
+                        type: charts.SelectionModelType.info,
+                        changedListener: (SelectionModel model) {
+                          if (model.hasDatumSelection)
+                            model.selectedDatum
+                                .forEach((charts.SeriesDatum datumPair) {
+                              List selectedDatum = [];
+                              selectedDatum.add({
+                                'text':
+                                    '${datumPair.datum.x}: ${datumPair.datum.y}'
+                              });
+                            });
+
+                          print(model.selectedSeries[0]
+                              .measureFn(model.selectedDatum[0].index));
+                        })
+                  ],
 
                   // Configure the default renderer as a line renderer. This will be used
                   // for any series that does not define a rendererIdKey.
@@ -234,14 +280,16 @@ class _DateTimeComboLinePointChartState
 }
 
 /// Sample time series data type.
-class TimeSeriesSales {
+class OntologyData {
+  final name;
   final DateTime time;
-  final int sales;
+  final int result;
   final charts.Color color;
 
-  TimeSeriesSales(
+  OntologyData(
+    this.name,
     this.time,
-    this.sales,
+    this.result,
     this.color,
   );
 }
