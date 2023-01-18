@@ -5,11 +5,11 @@ import 'package:neonto_frontend/analytic/controllers/controllers.dart';
 import 'package:neonto_frontend/analytic/helpers/save_file_web.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:intl/intl.dart';
+
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 class LineChart extends StatefulWidget {
-  LineChart({Key? key}) : super(key: key);
+  const LineChart({Key? key}) : super(key: key);
 
   @override
   _LineChartState createState() => _LineChartState();
@@ -29,7 +29,7 @@ class _LineChartState extends State<LineChart> {
   Widget build(BuildContext context) {
     List selectedFile = [];
     var chart;
-    DateTime commitTime;
+    var commitTime;
     var metricResult;
 
     for (var file in analyticController.theSelectedOntologyFile) {
@@ -40,10 +40,15 @@ class _LineChartState extends State<LineChart> {
       List<OntologyData> metricList = [];
 
       for (var ontologyFile in selectedFile) {
-        metricResult = (ontologyFile == null || ontologyFile == false)
-            ? 0
+        metricResult = (ontologyFile[metricName] == null ||
+                ontologyFile[metricName] == false)
+            ? ontologyFile[metricName] = 0
             : ontologyFile[metricName];
-        commitTime = DateTime.parse(ontologyFile['CommitTime']);
+        print(ontologyFile[metricName]);
+        commitTime = (ontologyFile[metricName] == null ||
+                ontologyFile[metricName] == false)
+            ? 0
+            : DateTime.parse(ontologyFile['CommitTime']);
         metricList.add(
             OntologyData(metricName, commitTime, double.parse(metricResult)));
       }
