@@ -45,7 +45,6 @@ class DateTimeComboLinePointChart extends StatefulWidget {
   static List<charts.Series<OntologyData, DateTime>> _createSampleData() {
     List<charts.Series<OntologyData, DateTime>> ResultList = [];
     int index = 0;
-    int i = 0;
     List files = [];
     List firstOntologyFile = [];
     for (var file in analyticController.listData) {
