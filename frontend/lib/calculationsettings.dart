@@ -280,6 +280,7 @@ class _CalculationEngineState extends State<CalculationEngine>
       // At first, we ask the service if the ontology is already known in the system.
       Future<QueryResult<dynamic>> response =
           graphQL.queueFromAPI(urlController.text);
+
       response.then((graphQlResponse) {
         if (graphQlResponse.hasException) {
           Snacks(context).displayErrorSnackBar(

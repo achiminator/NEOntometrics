@@ -1,12 +1,11 @@
 ///the new one
 
 import 'package:flutter/material.dart';
+import 'package:neonto_frontend/analytic/analytic_view.dart';
 import 'package:neonto_frontend/analytic/controllers/controllers.dart';
-import 'package:neonto_frontend/analytic/helpers/save_file_web.dart';
-import 'package:screenshot/screenshot.dart';
+import 'package:neonto_frontend/analytic/helpers/availableNames.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-
-import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 class LineChart extends StatefulWidget {
   const LineChart({Key? key}) : super(key: key);
@@ -17,116 +16,137 @@ class LineChart extends StatefulWidget {
 
 class _LineChartState extends State<LineChart> {
   TooltipBehavior? _tooltipBehavior;
-  ScreenshotController screenshotController = ScreenshotController();
+  late ZoomPanBehavior _zoomPanBehavior;
 
   @override
   void initState() {
+    _zoomPanBehavior = ZoomPanBehavior(
+        enablePinching: true,
+        zoomMode: ZoomMode.xy,
+        enablePanning: true,
+        enableDoubleTapZooming: true);
     _tooltipBehavior = TooltipBehavior(enable: true);
     super.initState();
   }
 
   @override
+  int activeMetricFile = 0;
   Widget build(BuildContext context) {
+    var model = Provider.of<Model>(context);
+
     List selectedFile = [];
     var chart;
     var commitTime;
-    var metricResult;
 
     for (var file in analyticController.theSelectedOntologyFile) {
       selectedFile.add(file);
+      model.changeName();
     }
     List<LineSeries> chartData = [];
     for (var metricName in analyticController.listString) {
       List<OntologyData> metricList = [];
 
       for (var ontologyFile in selectedFile) {
-        metricResult = (ontologyFile[metricName] == null ||
-                ontologyFile[metricName] == false)
-            ? ontologyFile[metricName] = 0
-            : ontologyFile[metricName];
-        print(ontologyFile[metricName]);
-        commitTime = (ontologyFile[metricName] == null ||
+        if (ontologyFile[metricName] != "null") {
+          var metricResult = double.parse(ontologyFile[metricName]);
+
+          /* double metricResult = (ontologyFile[metricName] == null ||
                 ontologyFile[metricName] == false)
             ? 0
-            : DateTime.parse(ontologyFile['CommitTime']);
-        metricList.add(
-            OntologyData(metricName, commitTime, double.parse(metricResult)));
+            :  */
+          commitTime = (ontologyFile[metricName] == null ||
+                  ontologyFile[metricName] == false ||
+                  ontologyFile[metricName] == 'null')
+              ? 0
+              : ontologyFile['CommitTime'];
+          metricList.add(OntologyData(
+              metricName, DateTime.parse(commitTime), metricResult));
+        }
       }
-      chartData.add(LineSeries<OntologyData, num>(
-        name: metricName,
-        dataSource: metricList,
-        xValueMapper: (OntologyData salesdata, _) => salesdata.year.year,
-        yValueMapper: (OntologyData salesdata, _) => salesdata.sales,
-      ));
+      chartData.add(LineSeries<OntologyData, DateTime>(
+          name: metricName,
+          dataSource: metricList,
+          xValueMapper: (OntologyData salesdata, _) => salesdata.year,
+          yValueMapper: (OntologyData salesdata, _) => salesdata.sales,
+          markerSettings: MarkerSettings(isVisible: true)));
     }
 
     SafeArea(
-        child: Scaffold(
+        child: chart = Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Row(
+          children: [
+            Expanded(
+                flex: 2,
+                child: ListTile(
+                  iconColor: Theme.of(context).colorScheme.onPrimary,
+                  textColor: Theme.of(context).colorScheme.onPrimary,
+                  title: const Text("Analytic View"),
+                  subtitle: Text(analyticController.repositoryName),
+                  leading: const Icon(Icons.add_chart_outlined),
+                )),
+            Expanded(
+                flex: 4,
+                child: ListTile(
+                  textColor: Theme.of(context).colorScheme.onPrimary,
+                  iconColor: Theme.of(context).colorScheme.onPrimary,
+                  leading: const Icon(Icons.filter_none_outlined),
+                  title: DropdownButton(
+                    dropdownColor: Theme.of(context).colorScheme.primary,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary),
+                    value: activeMetricFile,
+                    items: AvailableNames.getAvailableFileNames(
+                        analyticController.repositoryData),
+                    onChanged: (value) => setState(() {
+                      activeMetricFile = value as int;
+
+                      var t = analyticController
+                          .repositoryData.ontologyFiles[value].metrics;
+
+                      analyticController.theSelectedOntologyFile = t;
+                      model.changeName();
+                    }),
+                  ),
+                ))
+          ],
+        ),
+      ),
       body: chart = Column(
         children: [
           Container(
             width: MediaQuery.of(context).size.width / 1.3,
             height: MediaQuery.of(context).size.height / 1.4,
-            child: Screenshot(
-                child: chart = SfCartesianChart(
-                  title: ChartTitle(text: 'Line Chart'),
-                  legend: Legend(isVisible: true),
-                  tooltipBehavior: _tooltipBehavior,
-                  series: chartData,
-                  primaryXAxis: NumericAxis(
-                    edgeLabelPlacement: EdgeLabelPlacement.shift,
-                  ),
-                  primaryYAxis: NumericAxis(
-                    labelFormat: '{value}',
-                    //  numberFormat: NumberFormat.simpleCurrency(decimalDigits: 0)
-                  ),
-                ),
-                controller: screenshotController),
-          ),
-          IconButton(
-            onPressed: () {
-              _exportAsPdf();
-            },
-            icon: Icon(
-              Icons.download,
-              color: Theme.of(context).colorScheme.secondaryContainer,
+            child: SfCartesianChart(
+              title: ChartTitle(text: 'Line Chart'),
+              legend: Legend(isVisible: true),
+              tooltipBehavior: _tooltipBehavior,
+              zoomPanBehavior: _zoomPanBehavior,
+              series: chartData,
+              primaryXAxis: DateTimeAxis(
+                autoScrollingDeltaType: DateTimeIntervalType.auto,
+                edgeLabelPlacement: EdgeLabelPlacement.shift,
+              ),
+              primaryYAxis: NumericAxis(
+                labelFormat: '{value}',
+                //  numberFormat: NumberFormat.simpleCurrency(decimalDigits: 0)
+              ),
             ),
-            tooltip: "Export as PDF",
-          )
+          ),
         ],
       ),
     ));
-    return chart;
-  }
-
-  Future<void> _exportAsPdf() async {
-    final image = await screen();
-
-    final PdfBitmap pfdbit = PdfBitmap(image);
-    final PdfDocument document = PdfDocument();
-    document.pageSettings.size = Size(750, 750);
-    final PdfPage page = document.pages.add();
-    final Size pageSize = page.getClientSize();
-    page.graphics.drawImage(pfdbit, Rect.fromLTWH(0, 0, 700, 700));
-    await FileSave.fileSave(await document.save(), 'chart.pdf');
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(5))),
-      duration: Duration(milliseconds: 2000),
-      content: Text('Chart has been exported as PDF document.'),
-    ));
-  }
-
-  screen() {
-    var image = screenshotController.capture();
-    return image;
+    return ChangeNotifierProvider(
+      create: (context) => Model(),
+      child: chart,
+    );
   }
 }
 
 class OntologyData {
   OntologyData(this.name, this.year, this.sales);
   final name;
-  final DateTime year;
-  final double sales;
+  final year;
+  final sales;
 }

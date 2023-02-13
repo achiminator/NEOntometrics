@@ -1,11 +1,11 @@
 import 'package:charts_flutter/flutter.dart' as charts;
 
-class OntologyData {
+class OntologyData1 {
   final String metric;
-  final double metricResult;
-  final charts.Color color;
+  double metricResult;
+  final color;
 
-  OntologyData(
+  OntologyData1(
     this.metric,
     this.metricResult,
     this.color,

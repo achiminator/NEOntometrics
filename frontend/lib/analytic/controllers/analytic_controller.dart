@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:neonto_frontend/metric_data.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class AnalyticController extends GetxController {
   static AnalyticController instance = Get.find();
@@ -8,6 +10,11 @@ class AnalyticController extends GetxController {
   String metricresult = '';
   Rx<List<String>> selectedOptionList = Rx<List<String>>([]);
   var selectedOption = ''.obs;
+  List<LineSeries> chartData = [];
+  var repositoryData;
+  var repositoryName;
+
+  List listSelectedData = [];
   String getName({required String name}) {
     if (name == 'Annotation_Assertions') {
       return 'annotationAssertionsAxioms';
