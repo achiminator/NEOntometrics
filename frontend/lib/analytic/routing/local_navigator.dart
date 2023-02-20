@@ -17,6 +17,7 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
 
     case lineChartPageRoute:
       return _getPageRoute(const LineChartPage());
+
     default:
       return _getPageRoute(const Text("default"));
   }

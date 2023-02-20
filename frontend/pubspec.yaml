@@ -88,8 +88,6 @@ flutter:
   - assets/GitHub.png
   - assets/neonto_logo.svg
   - assets/vertical_chart.png
-  - assets/horizontal_chart.png
-  - assets/pie_chart.png
   - assets/line_chart.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

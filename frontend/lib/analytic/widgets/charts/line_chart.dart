@@ -1,9 +1,8 @@
-///the new one
-
 import 'package:flutter/material.dart';
 import 'package:neonto_frontend/analytic/analytic_view.dart';
 import 'package:neonto_frontend/analytic/controllers/controllers.dart';
 import 'package:neonto_frontend/analytic/helpers/availableNames.dart';
+import 'package:neonto_frontend/analytic/models/data.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -40,7 +39,6 @@ class _LineChartState extends State<LineChart> {
 
     for (var file in analyticController.theSelectedOntologyFile) {
       selectedFile.add(file);
-      model.changeName();
     }
     List<LineSeries> chartData = [];
     for (var metricName in analyticController.listString) {
@@ -49,25 +47,20 @@ class _LineChartState extends State<LineChart> {
       for (var ontologyFile in selectedFile) {
         if (ontologyFile[metricName] != "null") {
           var metricResult = double.parse(ontologyFile[metricName]);
-
-          /* double metricResult = (ontologyFile[metricName] == null ||
-                ontologyFile[metricName] == false)
-            ? 0
-            :  */
           commitTime = (ontologyFile[metricName] == null ||
                   ontologyFile[metricName] == false ||
                   ontologyFile[metricName] == 'null')
               ? 0
               : ontologyFile['CommitTime'];
           metricList.add(OntologyData(
-              metricName, DateTime.parse(commitTime), metricResult));
+              metricName, metricResult, DateTime.parse(commitTime)));
         }
       }
       chartData.add(LineSeries<OntologyData, DateTime>(
           name: metricName,
           dataSource: metricList,
           xValueMapper: (OntologyData salesdata, _) => salesdata.year,
-          yValueMapper: (OntologyData salesdata, _) => salesdata.sales,
+          yValueMapper: (OntologyData salesdata, _) => salesdata.metricResult,
           markerSettings: MarkerSettings(isVisible: true)));
     }
 
@@ -115,22 +108,29 @@ class _LineChartState extends State<LineChart> {
       ),
       body: chart = Column(
         children: [
-          Container(
-            width: MediaQuery.of(context).size.width / 1.3,
-            height: MediaQuery.of(context).size.height / 1.4,
-            child: SfCartesianChart(
-              title: ChartTitle(text: 'Line Chart'),
-              legend: Legend(isVisible: true),
-              tooltipBehavior: _tooltipBehavior,
-              zoomPanBehavior: _zoomPanBehavior,
-              series: chartData,
-              primaryXAxis: DateTimeAxis(
-                autoScrollingDeltaType: DateTimeIntervalType.auto,
-                edgeLabelPlacement: EdgeLabelPlacement.shift,
-              ),
-              primaryYAxis: NumericAxis(
-                labelFormat: '{value}',
-                //  numberFormat: NumberFormat.simpleCurrency(decimalDigits: 0)
+          Padding(
+            padding: const EdgeInsets.only(top: 20.0, left: 20),
+            child: Container(
+              width: MediaQuery.of(context).size.width / 1.2,
+              height: MediaQuery.of(context).size.height / 1.3,
+              child: SfCartesianChart(
+                title: ChartTitle(
+                    text:
+                        'the development of metrics in an ontology file over time \n number of commits: ${analyticController.theSelectedOntologyFile.length}'),
+                legend: Legend(
+                    isVisible: true,
+                    overflowMode: LegendItemOverflowMode.wrap,
+                    position: LegendPosition.bottom),
+                tooltipBehavior: _tooltipBehavior,
+                zoomPanBehavior: _zoomPanBehavior,
+                series: chartData,
+                primaryXAxis: DateTimeAxis(
+                  autoScrollingDeltaType: DateTimeIntervalType.auto,
+                  edgeLabelPlacement: EdgeLabelPlacement.shift,
+                ),
+                primaryYAxis: NumericAxis(
+                  labelFormat: '{value}',
+                ),
               ),
             ),
           ),
@@ -142,11 +142,4 @@ class _LineChartState extends State<LineChart> {
       child: chart,
     );
   }
-}
-
-class OntologyData {
-  OntologyData(this.name, this.year, this.sales);
-  final name;
-  final year;
-  final sales;
 }

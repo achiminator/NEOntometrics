@@ -53,7 +53,7 @@ class MenuuController extends GetxController {
         return Container(
             child: IconButton(
           onPressed: () {},
-          tooltip: 'To compare the ontology files',
+          tooltip: 'to compare the ontology files',
           icon: Icon(
             Icons.info,
             color: active,
@@ -64,7 +64,7 @@ class MenuuController extends GetxController {
         return Container(
             child: IconButton(
           onPressed: () {},
-          tooltip: 'To see the development of metrics over time',
+          tooltip: 'to see the development of metrics over time',
           icon: Icon(
             Icons.info,
             color: active,
