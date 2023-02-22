@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:neonto_frontend/analytic/analytic_view.dart';
 import 'package:neonto_frontend/analytic/routing/local_navigator.dart';
 import 'package:neonto_frontend/analytic/widgets/Sidemenu/menu.dart';
 
@@ -11,7 +12,10 @@ class LargeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(children: [
       Expanded(
-        child: const Menu(),
+        child: Scaffold(
+          appBar: AppBar(),
+          body: Menu(),
+        ),
       ),
       Expanded(
           flex: 5,

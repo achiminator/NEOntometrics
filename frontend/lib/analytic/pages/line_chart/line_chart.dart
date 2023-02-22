@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:neonto_frontend/analytic/constants/custom_text.dart';
 import 'package:neonto_frontend/analytic/widgets/charts/line_chart.dart';
 
 class LineChartPage extends StatelessWidget {
@@ -7,8 +6,6 @@ class LineChartPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: DateTimeComboLinePointChart.withSampleData(),
-    );
+    return Container(child: LineChart());
   }
 }

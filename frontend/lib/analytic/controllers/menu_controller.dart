@@ -5,7 +5,7 @@ import 'package:neonto_frontend/analytic/routing/routes.dart';
 
 class MenuuController extends GetxController {
   static MenuuController instance = Get.find();
-  var activeElement = horizontalChartPageRoute
+  var activeElement = verticalChartPageRoute
       .obs; // at the beginning this Page will be the ActivPage
   var hoverElement = "".obs;
 
@@ -33,24 +33,6 @@ class MenuuController extends GetxController {
           ),
         );
 
-      case pieChartPageRoute:
-        return Container(
-          child: Image.asset(
-            './pie_chart.png',
-            width: 170,
-            height: 170,
-          ),
-        );
-
-      case horizontalChartPageRoute:
-        return Container(
-          child: Image.asset(
-            '/horizontal_chart.png',
-            width: 170,
-            height: 170,
-          ),
-        );
-
       case lineChartPageRoute:
         return Container(
           child: Image.asset(
@@ -71,29 +53,7 @@ class MenuuController extends GetxController {
         return Container(
             child: IconButton(
           onPressed: () {},
-          tooltip: 'To compare the ontology files',
-          icon: Icon(
-            Icons.info,
-            color: active,
-          ),
-        ));
-
-      case pieChartPageRoute:
-        return Container(
-            child: IconButton(
-          onPressed: () {},
-          tooltip: 'To know how much space a metric takes in an ontology file',
-          icon: Icon(
-            Icons.info,
-            color: active,
-          ),
-        ));
-
-      case horizontalChartPageRoute:
-        return Container(
-            child: IconButton(
-          onPressed: () {},
-          tooltip: 'To compare the ontology files',
+          tooltip: 'to compare the ontology files',
           icon: Icon(
             Icons.info,
             color: active,
@@ -104,7 +64,7 @@ class MenuuController extends GetxController {
         return Container(
             child: IconButton(
           onPressed: () {},
-          tooltip: 'To see the development of a metric over time',
+          tooltip: 'to see the development of metrics over time',
           icon: Icon(
             Icons.info,
             color: active,
