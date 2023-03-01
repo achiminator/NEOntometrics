@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:neonto_frontend/analytic/controllers/controllers.dart';
 import 'package:neonto_frontend/analytic/helpers/reponsiveness.dart';
 import 'package:neonto_frontend/analytic/widgets/large_screen.dart';
-import 'package:neonto_frontend/analytic/widgets/Sidemenu/menu.dart';
+import 'package:neonto_frontend/analytic/widgets/menu.dart';
 import 'package:neonto_frontend/analytic/widgets/small_screen.dart';
 import 'package:neonto_frontend/graphql.dart';
 import 'package:neonto_frontend/metric_data.dart';
@@ -77,11 +77,9 @@ class _WidgetChildState extends State<WidgetChild> {
 
 class Model extends ChangeNotifier {
   var name = analyticController.theSelectedOntologyFile;
-  var data = analyticController.listSelectedData;
 
   changeName() {
     name = analyticController.theSelectedOntologyFile;
-    data = analyticController.listSelectedData;
 
     notifyListeners();
   }

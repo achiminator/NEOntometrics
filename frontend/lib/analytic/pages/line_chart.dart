@@ -6,14 +6,14 @@ import 'package:neonto_frontend/analytic/models/data.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-class LineChart extends StatefulWidget {
-  const LineChart({Key? key}) : super(key: key);
+class LineChartPage extends StatefulWidget {
+  const LineChartPage({Key? key}) : super(key: key);
 
   @override
-  _LineChartState createState() => _LineChartState();
+  State<LineChartPage> createState() => _LineChartPageState();
 }
 
-class _LineChartState extends State<LineChart> {
+class _LineChartPageState extends State<LineChartPage> {
   TooltipBehavior? _tooltipBehavior;
   late ZoomPanBehavior _zoomPanBehavior;
 
@@ -54,6 +54,7 @@ class _LineChartState extends State<LineChart> {
               : ontologyFile['CommitTime'];
           metricList.add(OntologyData(
               metricName, metricResult, DateTime.parse(commitTime)));
+          metricList.sort((a, b) => a.year.compareTo(b.year));
         }
       }
       chartData.add(LineSeries<OntologyData, DateTime>(
