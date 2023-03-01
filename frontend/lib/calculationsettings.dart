@@ -98,8 +98,8 @@ class _CalculationEngineState extends State<CalculationEngine>
         padding: const EdgeInsets.all(20),
         child: Column(children: [
           SizedBox(
-            height: 310,
-            width: 1200,
+            height: 450,
+            width: 1400,
             child:
                 Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
               Expanded(
@@ -114,7 +114,7 @@ class _CalculationEngineState extends State<CalculationEngine>
                         size: 115,
                         color: Theme.of(context).colorScheme.onSecondary)),
               ),
-              Expanded(flex: 3, child: markDownDescription)
+              Expanded(flex: 4, child: markDownDescription)
             ]),
           ),
           const Divider(),
@@ -204,26 +204,31 @@ class _CalculationEngineState extends State<CalculationEngine>
                       Container(
                         width: 300,
                         padding: const EdgeInsets.only(right: 25),
-                        child: OutlinedButton(
-                            onPressed: () {
-                              MatomoTracker.instance.trackEvent(
-                                  eventCategory: "Calculation",
-                                  action: "clickAlreadyCalculated");
-                              var dialog =
-                                  const AlreadyCalculatedSelectionOverlay();
-                              showDialog(
-                                      barrierDismissible: true,
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return dialog;
-                                      })
-                                  .then((value) =>
-                                      {urlController.text = value ?? ""});
-                            },
-                            child: const ListTile(
-                              leading: Icon(Icons.list),
-                              title: Text("Already Calculated"),
-                            )),
+                        child: Tooltip(
+                          message: "A list of already calculated Ontologies.",
+                          child: ElevatedButton(           
+                              onPressed: () {
+                                MatomoTracker.instance.trackEvent(
+                                    eventCategory: "Calculation",
+                                    action: "clickAlreadyCalculated");
+                                var dialog =
+                                    const AlreadyCalculatedSelectionOverlay();
+                                showDialog(
+                                        barrierDismissible: true,
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return dialog;
+                                        })
+                                    .then((value) =>
+                                        {urlController.text = value ?? ""});
+                              },
+                              child: const ListTile(
+                                iconColor: Colors.white,
+                                textColor: Colors.white,
+                                leading: Icon(Icons.list),
+                                title: Text("Already Calculated"),
+                              )),
+                        ),
                       ),
                       Expanded(
                         child: TextFormField(

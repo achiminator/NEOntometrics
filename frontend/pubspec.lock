@@ -36,6 +36,7 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.9.0"
+    version: "2.9.0"
   barcode:
     dependency: transitive
     description:
@@ -462,13 +463,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.8.0"
-  multiselect:
-    dependency: "direct main"
-    description:
-      name: multiselect
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.7"
   nested:
     dependency: transitive
     description:
@@ -810,27 +804,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.1"
-  syncfusion_flutter_charts:
-    dependency: "direct main"
-    description:
-      name: syncfusion_flutter_charts
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "20.4.43"
-  syncfusion_flutter_core:
-    dependency: transitive
-    description:
-      name: syncfusion_flutter_core
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "20.4.43"
-  syncfusion_flutter_pdf:
-    dependency: "direct main"
-    description:
-      name: syncfusion_flutter_pdf
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "20.3.52"
   term_glyph:
     dependency: transitive
     description:
@@ -979,5 +952,5 @@ packages:
     source: hosted
     version: "3.1.0"
 sdks:
-  dart: ">=2.17.0 <3.0.0"
+  dart: ">=2.17.0-0 <3.0.0"
   flutter: ">=2.10.0"
