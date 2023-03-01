@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:neonto_frontend/analytic/constants/style.dart';
-import 'package:neonto_frontend/analytic/routing/routes.dart';
+import 'package:neonto_frontend/analytic/routing/local_navigator.dart';
 
 class MenuuController extends GetxController {
   static MenuuController instance = Get.find();

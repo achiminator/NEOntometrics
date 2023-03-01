@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:neonto_frontend/analytic/controllers/controllers.dart';
 import 'package:neonto_frontend/analytic/pages/bar_chart.dart';
-import 'package:neonto_frontend/analytic/pages/line_chart/line_chart.dart';
-import 'package:neonto_frontend/analytic/routing/routes.dart';
+import 'package:neonto_frontend/analytic/pages/line_chart.dart';
+
+// routes
+const verticalChartPageRoute = 'Vertical Chart';
+const lineChartPageRoute = 'Line Chart';
+
+// the list of all routes
+List sideMenuItems = [
+  verticalChartPageRoute,
+  lineChartPageRoute,
+];
 
 Navigator localNavigator() => Navigator(
       key: navigationController.navigationKey,
