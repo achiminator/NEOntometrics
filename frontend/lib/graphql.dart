@@ -145,7 +145,7 @@ class GraphQLHandler {
   }
   /// Queries *all* metrics for a given ontology, but only shows the last two commits. Used to outline the changes made recently.
   Future<QueryResult<dynamic>> getLastTwoCommits(
-      String url, String graphQlQueryAppender) {
+      String url) {
         // I know that hard coding all the available measures is less than ideal, but it is a quick fix so that Randa can continue to work on the visualizations. It will be fixed later on.
     var graphQlMetricQuery = """{
   getRepository(repository: "$url") {
