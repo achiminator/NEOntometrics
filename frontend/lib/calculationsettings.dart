@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:neonto_frontend/markdown_handler.dart';
 import 'package:neonto_frontend/metric_data.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-
 import 'notifications.dart';
 
 class CalculationEngine extends StatefulWidget {
@@ -98,7 +97,7 @@ class _CalculationEngineState extends State<CalculationEngine>
         padding: const EdgeInsets.all(20),
         child: Column(children: [
           SizedBox(
-            height: 450,
+            height: 500,
             width: 1400,
             child:
                 Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
@@ -206,7 +205,7 @@ class _CalculationEngineState extends State<CalculationEngine>
                         padding: const EdgeInsets.only(right: 25),
                         child: Tooltip(
                           message: "A list of already calculated Ontologies.",
-                          child: ElevatedButton(           
+                          child: ElevatedButton(
                               onPressed: () {
                                 MatomoTracker.instance.trackEvent(
                                     eventCategory: "Calculation",

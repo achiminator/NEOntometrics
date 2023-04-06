@@ -34,7 +34,7 @@ class _AnalyticViewState extends State<AnalyticView> {
           return;
         }
         lastTwoVersions = RepositoryData(value.data);
-        print(lastTwoVersions);
+        analyticController.repositoryNameForCommits = lastTwoVersions;
       });
     }
     return ChangeNotifierProvider(

@@ -41,6 +41,14 @@ class MenuuController extends GetxController {
             height: 170,
           ),
         );
+      case differencesPageRoute:
+        return Container(
+          child: Image.asset(
+            './Show_me_the_differences.png',
+            width: 170,
+            height: 170,
+          ),
+        );
 
       default:
         return Text('default');
@@ -65,6 +73,17 @@ class MenuuController extends GetxController {
             child: IconButton(
           onPressed: () {},
           tooltip: 'to see the development of metrics over time',
+          icon: Icon(
+            Icons.info,
+            color: active,
+          ),
+        ));
+      case differencesPageRoute:
+        return Container(
+            child: IconButton(
+          onPressed: () {},
+          tooltip:
+              'to see which metrics have changed compared to the previous version (commit)',
           icon: Icon(
             Icons.info,
             color: active,

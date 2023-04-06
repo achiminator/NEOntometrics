@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:neonto_frontend/metric_data.dart';
 
 class AnalyticController extends GetxController {
   static AnalyticController instance = Get.find();
@@ -7,6 +8,10 @@ class AnalyticController extends GetxController {
   List theSelectedOntologyFile = [].obs;
   var repositoryData;
   var repositoryName;
+  List<Map<String, String>> firstTwoCommit = [];
+
+  RepositoryData? repositoryNameForCommits;
+  int? theNumberOfChangedFiles;
 
   String getName({required String name}) {
     if (name == 'Annotation_Assertions') {

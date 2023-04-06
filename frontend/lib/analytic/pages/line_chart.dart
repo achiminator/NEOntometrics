@@ -62,13 +62,14 @@ class _LineChartPageState extends State<LineChartPage> {
           dataSource: metricList,
           xValueMapper: (OntologyData salesdata, _) => salesdata.year,
           yValueMapper: (OntologyData salesdata, _) => salesdata.metricResult,
-          markerSettings: MarkerSettings(isVisible: true)));
+          markerSettings: const MarkerSettings(isVisible: true)));
     }
 
     SafeArea(
         child: chart = Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        elevation: 0.0,
         title: Row(
           children: [
             Expanded(

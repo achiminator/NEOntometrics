@@ -64,6 +64,7 @@ class _VerticalChartPageState extends State<VerticalChartPage> {
       child: chart = Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: false,
+            elevation: 0.0,
             title: Row(
               children: [
                 Expanded(
