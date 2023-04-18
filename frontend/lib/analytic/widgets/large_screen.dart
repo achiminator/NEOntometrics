@@ -17,7 +17,7 @@ class LargeScreen extends StatelessWidget {
         ),
       ),
       Expanded(
-          flex: 5,
+          flex: 10,
           child: Container(
             child: localNavigator(),
           ))

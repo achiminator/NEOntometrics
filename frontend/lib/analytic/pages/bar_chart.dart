@@ -61,35 +61,62 @@ class _VerticalChartPageState extends State<VerticalChartPage> {
     }
 
     SafeArea(
-      child: chart = Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            elevation: 0.0,
-            title: Row(
-              children: [
-                Expanded(
-                    flex: 2,
-                    child: ListTile(
-                      iconColor: Theme.of(context).colorScheme.onPrimary,
-                      textColor: Theme.of(context).colorScheme.onPrimary,
-                      title: const Text("Analytic View"),
-                      subtitle: Text(analyticController.repositoryName),
-                      leading: const Icon(Icons.add_chart_outlined),
-                    )),
-              ],
-            ),
-          ),
-          body: Column(
+        child: chart = Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        elevation: 0.0,
+        title: Row(
+          children: [
+            Expanded(
+                flex: 2,
+                child: ListTile(
+                  iconColor: Theme.of(context).colorScheme.onPrimary,
+                  textColor: Theme.of(context).colorScheme.onPrimary,
+                  title: const Text("Analytic View"),
+                  subtitle: Text(analyticController.repositoryName),
+                  leading: const Icon(Icons.add_chart_outlined),
+                )),
+          ],
+        ),
+      ),
+      body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
             children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 15.0),
+                child: Container(
+                  height: MediaQuery.of(context).size.height / 6,
+                  width: MediaQuery.of(context).size.width / 1.3,
+                  child: const Center(
+                    child: Text(
+                        'This diagram can be used to compare the ontology files. '
+                        'All ontology files stored in the repository are displayed on the X-axis.'
+                        ' On the \n Y-axis metrics are displayed that are already selected in calculation Engine.\n • By clicking on the legend below the ontology files can be selected or deselected \n '
+                        '• The chart can also be scrolled to the right to view all metrics.\n'
+                        ' • By double clicking the diagram can be enlarged',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w300, fontSize: 16)),
+                  ),
+                ),
+              ),
+              const Divider(
+                indent: 50,
+                endIndent: 50,
+              ),
               Padding(
                 padding: const EdgeInsets.only(top: 20.0, left: 20),
                 child: Container(
-                  width: MediaQuery.of(context).size.width / 1.2,
-                  height: MediaQuery.of(context).size.height / 1.3,
+                  width: MediaQuery.of(context).size.width / 1.3,
+                  height: MediaQuery.of(context).size.height / 1.4,
                   child: SfCartesianChart(
                     title: ChartTitle(
                         text:
-                            'the comparison between the ontology files in a repository \n  number of ontology files: ${analyticController.listData.length}'),
+                            'number of ontology files: ${analyticController.listData.length}',
+                        textStyle: TextStyle(
+                            color:
+                                Theme.of(context).colorScheme.primaryContainer,
+                            fontWeight: FontWeight.w400)),
                     tooltipBehavior: _tooltipBehavior,
                     zoomPanBehavior: _zoomPanBehavior,
                     legend: (Legend(
@@ -113,7 +140,7 @@ class _VerticalChartPageState extends State<VerticalChartPage> {
               )
             ],
           )),
-    );
+    ));
 
     return ChangeNotifierProvider(
       create: (context) => Model(),

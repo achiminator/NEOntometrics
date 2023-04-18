@@ -7,7 +7,7 @@ import 'package:neonto_frontend/analytic/pages/line_chart.dart';
 // routes
 const verticalChartPageRoute = 'Vertical Chart';
 const lineChartPageRoute = 'Line Chart';
-const differencesPageRoute = 'Show me the differences';
+const differencesPageRoute = 'Show me the \n differences';
 
 // the list of all routes
 List sideMenuItems = [

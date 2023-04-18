@@ -13,7 +13,7 @@ class Menu extends StatelessWidget {
   Widget build(BuildContext context) {
     double _width = MediaQuery.of(context).size.width;
     return Container(
-      color: light,
+      color: Theme.of(context).colorScheme.primaryContainer,
       child: ListView(children: [
         if (ResponsiveWidget.isSmallScreen(context))
           Column(
@@ -42,15 +42,17 @@ class Menu extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           //To fill the menu with the SideMenuItems
           children: sideMenuItems
-              .map((itemName) => SideMenuItem(
-                    itemName: itemName,
-                    onTap: () {
-                      if (!menuController.isActive(itemName)) {
-                        menuController.ChangeActiveElementPage(itemName);
+              .map((itemName) => Center(
+                    child: SideMenuItem(
+                      itemName: itemName,
+                      onTap: () {
+                        if (!menuController.isActive(itemName)) {
+                          menuController.ChangeActiveElementPage(itemName);
 
-                        navigationController.navigateTo(itemName);
-                      }
-                    },
+                          navigationController.navigateTo(itemName);
+                        }
+                      },
+                    ),
                   ))
               .toList(),
         )
@@ -67,61 +69,69 @@ class DisplayedMenuItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      onHover: (value) {
-        value
-            ? menuController.onHover(itemName!)
-            : menuController.onHover("not hovering");
-      },
-      child: Obx(() => Container(
-            color: menuController.isHovering(itemName!)
-                ? lightGrey.withOpacity(.1)
-                : Colors.transparent,
-            child: Row(
-              children: [
-                Visibility(
-                  visible: menuController.isHovering(itemName!) ||
-                      menuController.isActive(itemName!),
-                  child: Container(
-                    width: 3,
-                    height: 72,
-                    color: dark,
-                  ),
-                  maintainSize: true,
-                  maintainState: true,
-                  maintainAnimation: true,
-                ),
-                Expanded(
-                    child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(16),
-                      child: menuController.returnChartImage(itemName!),
-                    ),
-                    menuController.retrunTooltip(itemName!),
-                    if (!menuController.isActive(itemName!))
-                      Flexible(
-                          child: CustomText(
-                        text: itemName,
-                        color: menuController.isHovering(itemName!)
-                            ? dark
-                            : lightGrey,
-                      ))
-                    else
-                      Flexible(
-                          child: CustomText(
-                        text: itemName,
+    return Center(
+      child: InkWell(
+        onTap: onTap,
+        onHover: (value) {
+          value
+              ? menuController.onHover(itemName!)
+              : menuController.onHover("not hovering");
+        },
+        child: Obx(() => Container(
+              color: menuController.isHovering(itemName!)
+                  ? lightGrey.withOpacity(.1)
+                  : Colors.transparent,
+              child: Row(
+                children: [
+                  Visibility(
+                    visible: menuController.isHovering(itemName!) ||
+                        menuController.isActive(itemName!),
+                    child: Center(
+                      child: Container(
+                        width: 3,
+                        height: 72,
                         color: dark,
-                        size: 18,
-                        weight: FontWeight.bold,
-                      ))
-                  ],
-                ))
-              ],
-            ),
-          )),
+                      ),
+                    ),
+                    maintainSize: true,
+                    maintainState: true,
+                    maintainAnimation: true,
+                  ),
+                  Expanded(
+                      child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                            top: 30, bottom: 30, left: 16, right: 16),
+                        child: menuController.returnChartIcon(itemName!),
+                      ),
+                      if (!menuController.isActive(itemName!))
+                        Flexible(
+                            child: Center(
+                          child: CustomText(
+                            size: 16,
+                            weight: FontWeight.w400,
+                            text: itemName,
+                            color: menuController.isHovering(itemName!)
+                                ? dark
+                                : lightGrey,
+                          ),
+                        ))
+                      else
+                        Flexible(
+                            child: CustomText(
+                          text: itemName,
+                          color: dark,
+                          size: 17,
+                          weight: FontWeight.w400,
+                        ))
+                    ],
+                  ))
+                ],
+              ),
+            )),
+      ),
     );
   }
 }
@@ -135,9 +145,11 @@ class SideMenuItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DisplayedMenuItem(
-      itemName: itemName,
-      onTap: onTap,
+    return Center(
+      child: DisplayedMenuItem(
+        itemName: itemName,
+        onTap: onTap,
+      ),
     );
   }
 }

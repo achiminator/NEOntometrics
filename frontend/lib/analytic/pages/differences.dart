@@ -39,6 +39,25 @@ class _DifferencesState extends State<Differences> {
         child: Column(
           children: [
             Padding(
+              padding: const EdgeInsets.only(top: 15.0),
+              child: Container(
+                height: MediaQuery.of(context).size.height / 6,
+                width: MediaQuery.of(context).size.width / 1.3,
+                child: const Center(
+                  child: Text(
+                      'The focus here is on the last two commits. The visualization results are not dependent on which metrics are selected in the calculation engine (as in the first two visualizations Typs),'
+                      ' rather all metrics in the last two commits are compared with each other and if a metric has changed '
+                      'compared to the previous version, then this change will be displayed.  ',
+                      style:
+                          TextStyle(fontWeight: FontWeight.w300, fontSize: 16)),
+                ),
+              ),
+            ),
+            const Divider(
+              indent: 50,
+              endIndent: 50,
+            ),
+            Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 children: [
@@ -46,13 +65,11 @@ class _DifferencesState extends State<Differences> {
                     alignment: Alignment.bottomCenter,
                     child: Text(
                       'all ontology files: ${analyticController.listData.length}, changed files: ${analyticController.theNumberOfChangedFiles}',
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.w300),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.primaryContainer,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w400),
                     ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Divider(),
                   ),
                 ],
               ),
