@@ -57,6 +57,7 @@ class _CalculationViewState extends State<CalculationView>
   /// The information on the queue are dynamic and can be altered if we trigger an update.
   late QueueInformation queueInformation = widget.queueInformation;
   final scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     MatomoTracker.instance.trackEvent(
@@ -176,9 +177,11 @@ class _CalculationViewState extends State<CalculationView>
     return ontologyFiles;
   }
 
+  int _rowPerPage = PaginatedDataTable.defaultRowsPerPage;
   Widget metricWidgetBuilder(int activeFile) {
     List<DataColumn> columns = [];
     List<DataRow> tableRows = [];
+
     OntologyData metricDataForOntologyFile =
         widget.repositoryData.ontologyFiles[activeFile];
     if (metricDataForOntologyFile.metrics.isEmpty) {
@@ -226,10 +229,27 @@ class _CalculationViewState extends State<CalculationView>
 
       for (String key in metricForOntologyFile.keys) {
         if (columns.isEmpty) {
-          columns.add(const DataColumn(label: Text("File")));
+          columns.add(DataColumn(
+            label: Text(
+              "File",
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400),
+            ),
+            numeric: true,
+          ));
         }
         if (firstRow) {
-          columns.add(DataColumn(label: Text(key)));
+          columns.add(DataColumn(
+            label: Text(
+              key,
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400),
+            ),
+          ));
         }
         if (key == "Commit Message" &&
             metricForOntologyFile[key].toString().contains("\n")) {
@@ -257,58 +277,45 @@ class _CalculationViewState extends State<CalculationView>
     }
     var data = TableData(tableRows);
 
-    return Column(
-      children: [
-        (PaginatedDataTable(
-          showFirstLastButtons: true,
-          source: data,
-          columns: columns,
-        )),
-        // the analytic view Button
-        Padding(
-          padding: const EdgeInsets.only(top: 50.0),
-          child: ElevatedButton.icon(
-            onPressed: () {
-              var metricForOntologyFile =
-                  metricDataForOntologyFile.getDisplayMetrics();
-
-              //  if (metricForOntologyFile.first.length - 9 <= 5) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => AnalyticView(
-                        widget.repositoryName, widget.repositoryData)),
-              );
-              //}
-              /* else {
-                final snackBar = SnackBar(
-                  backgroundColor:
-                      Theme.of(context).colorScheme.secondaryContainer,
-                  content: ListTile(
-                    textColor: Theme.of(context).colorScheme.onSecondary,
-                    title: const Text(
-                        'You must select 5 of mertics maximum. Please Try again!'),
-                  ),
-                  duration: const Duration(seconds: 5),
-                  action: SnackBarAction(
-                    label: 'close',
-                    textColor: Theme.of(context).colorScheme.onSecondary,
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                    },
-                  ),
-                );
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              } */
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          PaginatedDataTable(
+            showFirstLastButtons: true,
+            source: data,
+            columns: columns,
+            onRowsPerPageChanged: (r) {
+              setState(() {
+                _rowPerPage = r!;
+              });
             },
-            icon: const Icon(
-              Icons.analytics,
-              size: 24.0,
-            ),
-            label: const Text('show the analytic'),
+            rowsPerPage: _rowPerPage,
+            sortAscending: true,
           ),
-        ),
-      ],
+
+          // the analytic view Button
+          Padding(
+            padding: const EdgeInsets.only(top: 50.0),
+            child: ElevatedButton.icon(
+              onPressed: () {
+                var metricForOntologyFile =
+                    metricDataForOntologyFile.getDisplayMetrics();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AnalyticView(
+                          widget.repositoryName, widget.repositoryData)),
+                );
+              },
+              icon: const Icon(
+                Icons.analytics,
+                size: 24.0,
+              ),
+              label: const Text('show the analytic'),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

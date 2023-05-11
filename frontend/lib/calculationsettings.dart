@@ -20,6 +20,14 @@ class CalculationEngine extends StatefulWidget {
 
 class _CalculationEngineState extends State<CalculationEngine>
     with TraceableClientMixin {
+  bool _isClicked = false;
+
+  void _animateButton() {
+    setState(() {
+      _isClicked = !_isClicked;
+    });
+  }
+
   @override
   String get traceName => 'Trigger Calculation Settings';
 
@@ -345,6 +353,8 @@ class _CalculationEngineState extends State<CalculationEngine>
   }
 
   ///Builds the Selection Widget for each metric category and the associated sub metrics on the bases of [MetricExplorerItem].
+  Map<MetricExplorerItem, bool> _isExpandedMap = {};
+
   Widget buildCalculationSetting(MetricExplorerItem data,
       [bool initiallyActive = false]) {
     var leafElements =
@@ -352,51 +362,81 @@ class _CalculationEngineState extends State<CalculationEngine>
     if (initiallyActive) {
       selectedElementsForCalculation.addAll(leafElements);
     }
-    return Container(
-        padding: const EdgeInsets.all(10),
-        child: CheckboxListTile(
-          title: Text(data.itemName),
-          secondary: const Icon(Icons.account_tree_outlined),
-          subtitle: Wrap(
-            spacing: 3,
-            runSpacing: 3,
-            children: (List<MetricExplorerItem> data) {
-              List<Widget> chips = [];
-              for (MetricExplorerItem item in data) {
-                chips.add(RepaintBoundary(
-                  child: Tooltip(
-                      message: (item.definition) != ""
-                          ? item.definition
-                          : item.description,
-                      child: FilterChip(
-                        label: Text(item.itemName),
-                        selected: selectedElementsForCalculation.contains(item),
-                        onSelected: (bool value) {
-                          setState(() {
-                            if (value) {
-                              selectedElementsForCalculation.add(item);
-                            } else {
-                              selectedElementsForCalculation.remove(item);
-                            }
-                          });
-                        },
-                      )),
-                ));
-              }
-              return chips;
-            }(leafElements),
+
+    if (!_isExpandedMap.containsKey(data)) {
+      _isExpandedMap[data] = false;
+    }
+
+    return ExpansionPanelList(
+      expansionCallback: (int index, bool isExpanded) {
+        setState(() {
+          _isExpandedMap[data] = !isExpanded;
+        });
+      },
+      children: [
+        ExpansionPanel(
+          headerBuilder: (BuildContext context, bool isExpanded) {
+            return InkWell(
+              onTap: () {
+                setState(() {
+                  _isExpandedMap[data] = !_isExpandedMap[data]!;
+                });
+              },
+              child: CheckboxListTile(
+                title: Text(data.itemName),
+                secondary: const Icon(Icons.account_tree_outlined),
+                value: selectedElementsForCalculation.containsAll(leafElements),
+                onChanged: (value) => setState(() {
+                  if (value ?? false) {
+                    selectedElementsForCalculation.addAll(leafElements);
+                  } else {
+                    selectedElementsForCalculation.removeAll(leafElements);
+                  }
+                }),
+              ),
+            );
+          },
+          body: Container(
+            padding: const EdgeInsets.all(10),
+            child: Wrap(
+              spacing: 3,
+              runSpacing: 3,
+              children: (List<MetricExplorerItem> data) {
+                List<Widget> chips = [];
+                for (MetricExplorerItem item in data) {
+                  chips.add(
+                    RepaintBoundary(
+                      child: Tooltip(
+                        message: (item.definition) != ""
+                            ? item.definition
+                            : item.description,
+                        child: FilterChip(
+                          label: Text(item.itemName),
+                          selected:
+                              selectedElementsForCalculation.contains(item),
+                          onSelected: (bool value) {
+                            setState(() {
+                              if (value) {
+                                selectedElementsForCalculation.add(item);
+                              } else {
+                                selectedElementsForCalculation.remove(item);
+                              }
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                return chips;
+              }(leafElements),
+            ),
           ),
-          value: selectedElementsForCalculation.containsAll(leafElements),
-          onChanged: (value) => setState(
-            () {
-              if (value ?? false) {
-                selectedElementsForCalculation.addAll(leafElements);
-              } else {
-                selectedElementsForCalculation.removeAll(leafElements);
-              }
-            },
-          ),
-        ));
+          isExpanded: _isExpandedMap[data] ?? false,
+          canTapOnHeader: true,
+        ),
+      ],
+    );
   }
 }
 
