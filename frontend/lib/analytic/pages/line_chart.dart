@@ -45,7 +45,7 @@ class _LineChartPageState extends State<LineChartPage> {
       List<OntologyData> metricList = [];
 
       for (var ontologyFile in selectedFile) {
-        if (ontologyFile[metricName] != "null") {
+        if (ontologyFile[metricName] != "null" && ontologyFile[metricName] != null) {
           var metricResult = double.parse(ontologyFile[metricName]);
           commitTime = (ontologyFile[metricName] == null ||
                   ontologyFile[metricName] == false ||

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:neonto_frontend/analytic/controllers/controllers.dart';
-import 'package:neonto_frontend/analytic/helpers/reponsiveness.dart';
 import 'package:neonto_frontend/analytic/widgets/large_screen.dart';
 import 'package:neonto_frontend/analytic/widgets/menu.dart';
-import 'package:neonto_frontend/analytic/widgets/small_screen.dart';
 import 'package:neonto_frontend/graphql.dart';
 import 'package:neonto_frontend/metric_data.dart';
 import 'package:neonto_frontend/notifications.dart';
@@ -39,39 +37,35 @@ class _AnalyticViewState extends State<AnalyticView> {
     }
     return ChangeNotifierProvider(
       create: (context) => Model(),
-      child: WidgetChild(widget.repositoryName, widget.repositoryData),
+      child: InnerAnalyticView(widget.repositoryName, widget.repositoryData),
     );
   }
 }
 
-class WidgetChild extends StatefulWidget {
+class InnerAnalyticView extends StatefulWidget {
   final String repositoryName;
   RepositoryData repositoryData;
-  WidgetChild(
+  InnerAnalyticView(
     this.repositoryName,
     this.repositoryData, {
     Key? key,
   }) : super(key: key);
 
   @override
-  State<WidgetChild> createState() => _WidgetChildState();
+  State<InnerAnalyticView> createState() => _InnerAnalyticViewState();
 }
 
-class _WidgetChildState extends State<WidgetChild> {
+class _InnerAnalyticViewState extends State<InnerAnalyticView> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     analyticController.repositoryData = widget.repositoryData;
     analyticController.repositoryName = widget.repositoryName;
-    return Scaffold(
-        drawer: ResponsiveWidget.isSmallScreen(context)
-            ? const Drawer(child: Menu())
-            : null,
-        body: const ResponsiveWidget(
-          largeScreen: LargeScreen(),
-          smallScreen: SmallScreen(),
-        ));
+    return const Scaffold(
+      drawer: Drawer(child: Menu()),
+      body: LargeScreen(),
+    );
   }
 }
 

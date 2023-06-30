@@ -56,13 +56,6 @@ class _CalculationEngineState extends State<CalculationEngine>
       var commit = item['node']['commit']['edges'].isNotEmpty
           ? item['node']['commit']
           : {};
-      //  print(commit);
-      //   for (var comm in commit) {
-      //  commit = comm['node']['CommitMessage'];
-
-      // print('>>>>>>>>>>>>> ${item['node']['commit']['edges'].isNotEmpty
-      //     ?item['node']['commit']['edges'].last['node'] : ''}');
-      //  print(item);
 
       Map<String, dynamic> data1 = {
         //in Map speichert den 'fileName', 'commit data last commit'
