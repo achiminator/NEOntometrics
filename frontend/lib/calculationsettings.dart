@@ -1,6 +1,7 @@
 import 'package:matomo_tracker/matomo_tracker.dart';
 import 'package:neonto_frontend/analytic/controllers/controllers.dart';
 import 'package:neonto_frontend/settings.dart';
+import 'package:provider/provider.dart';
 import "calculationview.dart";
 import "graphql.dart";
 import 'package:graphql/client.dart';
@@ -334,8 +335,9 @@ class _CalculationEngineState extends State<CalculationEngine>
                       ['node']['ontologyfile_set']['edges']);
               EasyLoading.dismiss();
               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return CalculationView(RepositoryData(graphQlResponse.data),
-                    urlController.text, queueInformation, reasoner);
+                var repositoryData = RepositoryData(graphQlResponse.data);
+                return CalculationView(repositoryData, urlController.text,
+                    queueInformation, reasoner);
               }));
             }
           });

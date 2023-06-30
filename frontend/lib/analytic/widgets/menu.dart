@@ -16,28 +16,6 @@ class Menu extends StatelessWidget {
       child: ListView(children: [
         Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(height: 40),
-            Row(
-              children: [
-                SizedBox(width: _width / 48),
-                Padding(padding: EdgeInsets.only(right: 12)),
-                Flexible(
-                  child: CustomText(
-                    text: "Select a chart type",
-                    size: 20,
-                    color: dark,
-                  ),
-                ),
-                SizedBox(
-                  width: _width / 48,
-                )
-              ],
-            ),
-          ],
-        ),
-        Column(
-          mainAxisSize: MainAxisSize.min,
           //To fill the menu with the SideMenuItems
           children: sideMenuItems
               .map((itemName) => Center(

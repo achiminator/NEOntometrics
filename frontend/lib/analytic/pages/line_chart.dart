@@ -3,8 +3,11 @@ import 'package:neonto_frontend/analytic/analytic_view.dart';
 import 'package:neonto_frontend/analytic/controllers/controllers.dart';
 import 'package:neonto_frontend/analytic/helpers/availableNames.dart';
 import 'package:neonto_frontend/analytic/models/data.dart';
+import 'package:neonto_frontend/metric_data.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+
+//import '../../metric_data.dart';
 
 class LineChartPage extends StatefulWidget {
   const LineChartPage({Key? key}) : super(key: key);
@@ -32,7 +35,7 @@ class _LineChartPageState extends State<LineChartPage> {
   int activeMetricFile = 0;
   Widget build(BuildContext context) {
     var model = Provider.of<Model>(context);
-
+    setActiveFile(activeMetricFile, model);
     List selectedFile = [];
     var chart;
     var commitTime;
@@ -42,26 +45,28 @@ class _LineChartPageState extends State<LineChartPage> {
     }
     List<LineSeries> chartData = [];
     for (var metricName in analyticController.listString) {
-      List<OntologyData> metricList = [];
+      List<OntologyChartData> metricList = [];
 
       for (var ontologyFile in selectedFile) {
-        if (ontologyFile[metricName] != "null" && ontologyFile[metricName] != null) {
+        if (ontologyFile[metricName] != "null" &&
+            ontologyFile[metricName] != null) {
           var metricResult = double.parse(ontologyFile[metricName]);
           commitTime = (ontologyFile[metricName] == null ||
                   ontologyFile[metricName] == false ||
                   ontologyFile[metricName] == 'null')
               ? 0
               : ontologyFile['CommitTime'];
-          metricList.add(OntologyData(
+          metricList.add(OntologyChartData(
               metricName, metricResult, DateTime.parse(commitTime)));
           metricList.sort((a, b) => a.year.compareTo(b.year));
         }
       }
-      chartData.add(LineSeries<OntologyData, DateTime>(
+      chartData.add(LineSeries<OntologyChartData, DateTime>(
           name: metricName,
           dataSource: metricList,
-          xValueMapper: (OntologyData salesdata, _) => salesdata.year,
-          yValueMapper: (OntologyData salesdata, _) => salesdata.metricResult,
+          xValueMapper: (OntologyChartData salesdata, _) => salesdata.year,
+          yValueMapper: (OntologyChartData salesdata, _) =>
+              salesdata.metricResult,
           markerSettings: const MarkerSettings(isVisible: true)));
     }
 
@@ -94,15 +99,8 @@ class _LineChartPageState extends State<LineChartPage> {
                           value: activeMetricFile,
                           items: AvailableNames.getAvailableFileNames(
                               analyticController.repositoryData),
-                          onChanged: (value) => setState(() {
-                            activeMetricFile = value as int;
-
-                            var t = analyticController
-                                .repositoryData.ontologyFiles[value].metrics;
-
-                            analyticController.theSelectedOntologyFile = t;
-                            model.changeName();
-                          }),
+                          onChanged: (value) =>
+                              setState(() => setActiveFile(value, model)),
                         ),
                       ))
                 ],
@@ -171,5 +169,14 @@ class _LineChartPageState extends State<LineChartPage> {
       create: (context) => Model(),
       child: chart,
     );
+  }
+
+  /// Sets the [OntologyFile]-id of the [RepositoryData] class, retrieves the values
+  /// and sets the necessary variables for the Lineplot-View
+  void setActiveFile(Object? value, Model model) {
+    activeMetricFile = value as int;
+    var t = analyticController.repositoryData.ontologyFiles[value].metrics;
+    analyticController.theSelectedOntologyFile = t;
+    model.changeName();
   }
 }

@@ -36,7 +36,7 @@ class _VerticalChartPageState extends State<VerticalChartPage> {
     List<ChartSeries> chartData = [];
 
     for (var ontologyFile in analyticController.listData) {
-      List<OntologyData> metricList = [];
+      List<OntologyChartData> metricList = [];
       for (var metricName in analyticController.listString) {
         if (ontologyFile['commit'].isEmpty) continue;
         double metricResultNumber =
@@ -47,15 +47,15 @@ class _VerticalChartPageState extends State<VerticalChartPage> {
                 : double.parse(ontologyFile['commit']['edges']
                     .last['node'][metricName]
                     .toString());
-        metricList.add(OntologyData(metricName, metricResultNumber));
+        metricList.add(OntologyChartData(metricName, metricResultNumber));
       }
       chartData.add(
-        ColumnSeries<OntologyData, dynamic>(
+        ColumnSeries<OntologyChartData, dynamic>(
             enableTooltip: true,
             name: ontologyFile['fileName'],
             dataSource: metricList,
-            xValueMapper: (OntologyData data, _) => data.metric,
-            yValueMapper: (OntologyData data, _) => data.metricResult,
+            xValueMapper: (OntologyChartData data, _) => data.metric,
+            yValueMapper: (OntologyChartData data, _) => data.metricResult,
             spacing: 0.1),
       );
     }
