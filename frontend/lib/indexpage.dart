@@ -1,10 +1,9 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:matomo_tracker/matomo_tracker.dart';
 import 'package:neonto_frontend/markdown_handler.dart';
 import 'package:neonto_frontend/settings.dart';
 import 'package:neonto_frontend/trackerHelper.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 //import 'markdown_handler.dart';
 class IndexPage extends StatefulWidget {
@@ -27,6 +26,8 @@ class _IndexPageState extends State<IndexPage> {
     // MatomoTracker.instance.trackEvent(eventName: "MainPageVisit", action: "visit", eventCategory: "Main");
 
     MatomoTracker.instance.trackScreen(context, eventName: "Main");
+    var ytController = YoutubePlayerController.fromVideoId(videoId: "OPQGNFV8M9g", params: YoutubePlayerParams(showFullscreenButton: true));
+    ytController.playVideo();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 150),
       child: SingleChildScrollView(
@@ -110,7 +111,8 @@ class _IndexPageState extends State<IndexPage> {
           const Divider(),
           Padding(
             padding: const EdgeInsets.all(13.0),
-            child: Container(height: 500, child: Text('f')),
+            child: Container(
+                height: 500, child: YoutubePlayer(controller: ytController)),
           ),
           MarkDownHandler().buildMarkDownElement("homepage.md")
         ]),
