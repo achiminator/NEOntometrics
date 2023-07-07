@@ -46,7 +46,7 @@ class CalculationManager:
         returnObject = {}
         try:
             getOntologyResponse = requests.get("http://" + url.file, timeout=settings.SINGLEONTOLOGYRETRIEVETIMOUT)
-            ontology = getOntologyResponse.text.replace("\n", "")
+            ontology = getOntologyResponse.text
             returnObject["Size"] =len(getOntologyResponse.content)
         except:
             returnObject["Size"] = 0
