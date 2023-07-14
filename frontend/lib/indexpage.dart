@@ -3,16 +3,31 @@ import 'package:matomo_tracker/matomo_tracker.dart';
 import 'package:neonto_frontend/markdown_handler.dart';
 import 'package:neonto_frontend/settings.dart';
 import 'package:neonto_frontend/trackerHelper.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 //import 'markdown_handler.dart';
-class IndexPage extends StatelessWidget {
+class IndexPage extends StatefulWidget {
   const IndexPage({Key? key}) : super(key: key);
+
+  @override
+  State<IndexPage> createState() => _IndexPageState();
+}
+
+class _IndexPageState extends State<IndexPage> {
+  final videoURL = 'https://www.youtube.com/watch?v=OPQGNFV8M9g';
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     // MatomoTracker.instance.trackEvent(eventName: "MainPageVisit", action: "visit", eventCategory: "Main");
-    
+
     MatomoTracker.instance.trackScreen(context, eventName: "Main");
+    var ytController = YoutubePlayerController.fromVideoId(videoId: "OPQGNFV8M9g", params: YoutubePlayerParams(showFullscreenButton: true));
+    ytController.playVideo();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 150),
       child: SingleChildScrollView(
@@ -94,6 +109,11 @@ class IndexPage extends StatelessWidget {
             ],
           ),
           const Divider(),
+          Padding(
+            padding: const EdgeInsets.all(13.0),
+            child: Container(
+                height: 500, child: YoutubePlayer(controller: ytController)),
+          ),
           MarkDownHandler().buildMarkDownElement("homepage.md")
         ]),
       ),

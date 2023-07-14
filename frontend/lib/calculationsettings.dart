@@ -1,5 +1,7 @@
 import 'package:matomo_tracker/matomo_tracker.dart';
+import 'package:neonto_frontend/analytic/controllers/controllers.dart';
 import 'package:neonto_frontend/settings.dart';
+import 'package:provider/provider.dart';
 import "calculationview.dart";
 import "graphql.dart";
 import 'package:graphql/client.dart';
@@ -7,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:neonto_frontend/markdown_handler.dart';
 import 'package:neonto_frontend/metric_data.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-
 import 'notifications.dart';
 
 class CalculationEngine extends StatefulWidget {
@@ -20,6 +21,14 @@ class CalculationEngine extends StatefulWidget {
 
 class _CalculationEngineState extends State<CalculationEngine>
     with TraceableClientMixin {
+  bool _isClicked = false;
+
+  void _animateButton() {
+    setState(() {
+      _isClicked = !_isClicked;
+    });
+  }
+
   @override
   String get traceName => 'Trigger Calculation Settings';
 
@@ -34,11 +43,52 @@ class _CalculationEngineState extends State<CalculationEngine>
   late Widget markDownDescription = const CircularProgressIndicator();
   var urlController = TextEditingController();
   var graphQL = GraphQLHandler();
+
   @override
   void initState() {
     super.initState();
     markDownDescription =
         MarkDownHandler().buildMarkDownElement("calculationdescription.md");
+  }
+
+  saveData({required var data}) {
+    List list = [];
+    for (var item in data) {
+      var commit = item['node']['commit']['edges'].isNotEmpty
+          ? item['node']['commit']
+          : {};
+
+      Map<String, dynamic> data1 = {
+        //in Map speichert den 'fileName', 'commit data last commit'
+        'fileName': item['node']['fileName'],
+        'commit': commit
+      };
+
+      list.add(data1);
+    }
+    analyticController.listData = list;
+  }
+
+  saveNameSelect({required var data}) {
+    List list = [];
+    for (int i = 0; i < data.length; i++) {
+      String name = data
+          .elementAt(i)
+          .itemName
+          .toString()
+          .replaceAll(' ', '_')
+          .replaceAll('-', '')
+          .replaceAll('(', '')
+          .replaceAll(')', '');
+      if (name != 'Computational_Complexity' &&
+          name != 'Consistent_Ontology' &&
+          name != 'OQual_Generic_complexity' &&
+          name != 'Reasoner_Active') {
+        list.add(analyticController.getName(name: name));
+      }
+    }
+    analyticController.listString = list;
+    // print(list);
   }
 
   @override
@@ -49,7 +99,7 @@ class _CalculationEngineState extends State<CalculationEngine>
         padding: const EdgeInsets.all(20),
         child: Column(children: [
           SizedBox(
-            height: 450,
+            height: 500,
             width: 1400,
             child:
                 Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
@@ -157,7 +207,7 @@ class _CalculationEngineState extends State<CalculationEngine>
                         padding: const EdgeInsets.only(right: 25),
                         child: Tooltip(
                           message: "A list of already calculated Ontologies.",
-                          child: ElevatedButton(           
+                          child: ElevatedButton(
                               onPressed: () {
                                 MatomoTracker.instance.trackEvent(
                                     eventCategory: "Calculation",
@@ -232,9 +282,11 @@ class _CalculationEngineState extends State<CalculationEngine>
           "No valid ontology given. Please enter an URL to a valid Ontology.",
           context);
     } else {
+      saveNameSelect(data: selectedElementsForCalculation);
       // At first, we ask the service if the ontology is already known in the system.
       Future<QueryResult<dynamic>> response =
           graphQL.queueFromAPI(urlController.text);
+
       response.then((graphQlResponse) {
         if (graphQlResponse.hasException) {
           Snacks(context).displayErrorSnackBar(
@@ -277,10 +329,15 @@ class _CalculationEngineState extends State<CalculationEngine>
               Snacks(context).displayErrorSnackBar(
                   graphQlResponse.exception.toString(), context);
             } else {
+              //  print('graphQlResponse.data');
+              saveData(
+                  data: graphQlResponse.data!['getRepository']['edges'][0]
+                      ['node']['ontologyfile_set']['edges']);
               EasyLoading.dismiss();
               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return CalculationView(RepositoryData(graphQlResponse.data),
-                    urlController.text, queueInformation, reasoner);
+                var repositoryData = RepositoryData(graphQlResponse.data);
+                return CalculationView(repositoryData, urlController.text,
+                    queueInformation, reasoner);
               }));
             }
           });
@@ -291,6 +348,8 @@ class _CalculationEngineState extends State<CalculationEngine>
   }
 
   ///Builds the Selection Widget for each metric category and the associated sub metrics on the bases of [MetricExplorerItem].
+  Map<MetricExplorerItem, bool> _isExpandedMap = {};
+
   Widget buildCalculationSetting(MetricExplorerItem data,
       [bool initiallyActive = false]) {
     var leafElements =
@@ -298,51 +357,81 @@ class _CalculationEngineState extends State<CalculationEngine>
     if (initiallyActive) {
       selectedElementsForCalculation.addAll(leafElements);
     }
-    return Container(
-        padding: const EdgeInsets.all(10),
-        child: CheckboxListTile(
-          title: Text(data.itemName),
-          secondary: const Icon(Icons.account_tree_outlined),
-          subtitle: Wrap(
-            spacing: 3,
-            runSpacing: 3,
-            children: (List<MetricExplorerItem> data) {
-              List<Widget> chips = [];
-              for (MetricExplorerItem item in data) {
-                chips.add(RepaintBoundary(
-                  child: Tooltip(
-                      message: (item.definition) != ""
-                          ? item.definition
-                          : item.description,
-                      child: FilterChip(
-                        label: Text(item.itemName),
-                        selected: selectedElementsForCalculation.contains(item),
-                        onSelected: (bool value) {
-                          setState(() {
-                            if (value) {
-                              selectedElementsForCalculation.add(item);
-                            } else {
-                              selectedElementsForCalculation.remove(item);
-                            }
-                          });
-                        },
-                      )),
-                ));
-              }
-              return chips;
-            }(leafElements),
+
+    if (!_isExpandedMap.containsKey(data)) {
+      _isExpandedMap[data] = false;
+    }
+
+    return ExpansionPanelList(
+      expansionCallback: (int index, bool isExpanded) {
+        setState(() {
+          _isExpandedMap[data] = !isExpanded;
+        });
+      },
+      children: [
+        ExpansionPanel(
+          headerBuilder: (BuildContext context, bool isExpanded) {
+            return InkWell(
+              onTap: () {
+                setState(() {
+                  _isExpandedMap[data] = !_isExpandedMap[data]!;
+                });
+              },
+              child: CheckboxListTile(
+                title: Text(data.itemName),
+                secondary: const Icon(Icons.account_tree_outlined),
+                value: selectedElementsForCalculation.containsAll(leafElements),
+                onChanged: (value) => setState(() {
+                  if (value ?? false) {
+                    selectedElementsForCalculation.addAll(leafElements);
+                  } else {
+                    selectedElementsForCalculation.removeAll(leafElements);
+                  }
+                }),
+              ),
+            );
+          },
+          body: Container(
+            padding: const EdgeInsets.all(10),
+            child: Wrap(
+              spacing: 3,
+              runSpacing: 3,
+              children: (List<MetricExplorerItem> data) {
+                List<Widget> chips = [];
+                for (MetricExplorerItem item in data) {
+                  chips.add(
+                    RepaintBoundary(
+                      child: Tooltip(
+                        message: (item.definition) != ""
+                            ? item.definition
+                            : item.description,
+                        child: FilterChip(
+                          label: Text(item.itemName),
+                          selected:
+                              selectedElementsForCalculation.contains(item),
+                          onSelected: (bool value) {
+                            setState(() {
+                              if (value) {
+                                selectedElementsForCalculation.add(item);
+                              } else {
+                                selectedElementsForCalculation.remove(item);
+                              }
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                return chips;
+              }(leafElements),
+            ),
           ),
-          value: selectedElementsForCalculation.containsAll(leafElements),
-          onChanged: (value) => setState(
-            () {
-              if (value ?? false) {
-                selectedElementsForCalculation.addAll(leafElements);
-              } else {
-                selectedElementsForCalculation.removeAll(leafElements);
-              }
-            },
-          ),
-        ));
+          isExpanded: _isExpandedMap[data] ?? false,
+          canTapOnHeader: true,
+        ),
+      ],
+    );
   }
 }
 

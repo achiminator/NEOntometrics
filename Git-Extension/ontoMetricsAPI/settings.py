@@ -62,11 +62,11 @@ logging.config.dictConfig({
 
 ALLOWED_HOSTS = ["*", "localhost"]
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_RENDERER_CLASSES': [
-#         'rest_framework.renderers.JSONRenderer',
-#     ]
-# }
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
 
 # Application definition
 
@@ -85,6 +85,8 @@ INSTALLED_APPS = [
     'django_rq',
     'corsheaders',
     'graphene_django',
+    'rest_framework.authtoken',
+    'dj_rest_auth',
     'newsletter'
 ]
 SITE_ID = 1 # Because this error https://stackoverflow.com/questions/35388637/runtimeerror-model-class-django-contrib-sites-models-site-doesnt-declare-an-ex
@@ -113,14 +115,7 @@ ONTOLOGYLIMIT = -1
 REASONINGLIMIT = 348576
 CLASSMETRICSLIMIT = 348576
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_PARSER_CLASSES': [
-#         'rest_framework_xml.parsers.XMLParser',
-#     ],
-#     'DEFAULT_RENDERER_CLASSES': [
-#         'rest_framework_xml.renderers.XMLRenderer',
-#     ],
-# }
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',

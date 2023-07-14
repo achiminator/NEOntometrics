@@ -143,10 +143,10 @@ class GraphQLHandler {
         document: parseString(graphQlMetricQuery)));
     return futureResonse;
   }
+
   /// Queries *all* metrics for a given ontology, but only shows the last two commits. Used to outline the changes made recently.
-  Future<QueryResult<dynamic>> getLastTwoCommits(
-      String url, String graphQlQueryAppender) {
-        // I know that hard coding all the available measures is less than ideal, but it is a quick fix so that Randa can continue to work on the visualizations. It will be fixed later on.
+  Future<QueryResult<dynamic>> getLastTwoCommits(String url) {
+    // I know that hard coding all the available measures is less than ideal, but it is a quick fix so that Randa can continue to work on the visualizations. It will be fixed later on.
     var graphQlMetricQuery = """{
   getRepository(repository: "$url") {
     edges {
@@ -158,7 +158,7 @@ class GraphQLHandler {
               id
               fileName
               branch
-              commit {
+              commit (last:2){
                 edges {
                   node {
                     CommitTime
@@ -256,7 +256,6 @@ class GraphQLHandler {
                     deprecatedIndividuals
                     inconsistentClasses
                     consistencyCheckSuccessful
-                    pk
                     CohesionMetrics_ADITLN
                     CohesionMetrics_NoL
                     CohesionMetrics_NoR
@@ -348,7 +347,8 @@ class GraphQLHandler {
         document: parseString(graphQlMetricQuery)));
     return futureResonse;
   }
-/// Returns Ontology Metrics from a single Ontology File (Not a Repository).
+
+  /// Returns Ontology Metrics from a single Ontology File (Not a Repository).
   Future<QueryResult<dynamic>> getOntologyMetricsFromAPI(
       String url, String graphQlQueryAppender) {
     var graphQlMetricQuery = """{

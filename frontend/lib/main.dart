@@ -2,6 +2,10 @@ import 'dart:async' show Future;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get.dart';
+import 'package:neonto_frontend/analytic/controllers/analytic_controller.dart';
+import 'package:neonto_frontend/analytic/controllers/menu_controller.dart';
+import 'package:neonto_frontend/analytic/controllers/navigation_controller.dart';
 import 'package:neonto_frontend/indexpage.dart';
 import 'package:neonto_frontend/settings.dart';
 import 'package:neonto_frontend/trackerHelper.dart';
@@ -11,6 +15,9 @@ import 'metric_data.dart';
 import 'package:matomo_tracker/matomo_tracker.dart';
 
 void main() {
+  Get.put(MenuuController());
+  Get.put(NavigationController());
+  Get.put(AnalyticController());
   runApp(const MyApp());
 }
 

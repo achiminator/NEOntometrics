@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
+
 import "settings.dart";
 import 'package:http/http.dart' as http;
 
@@ -110,7 +112,7 @@ class MetricExplorerItemFactory {
 ///
 ///The constructor unnpacks the GraphQL response, and the object is used by the detailedView for further
 ///displaying of the calculated values.
-class RepositoryData {
+class RepositoryData extends ChangeNotifier{
   /// Unpack the GraphQL reponse and create an object containing the ontology metrics with the constructor.
   RepositoryData(Map<String, dynamic>? graphqlInput) {
     if (graphqlInput?.containsKey("getRepository") ?? false) {
