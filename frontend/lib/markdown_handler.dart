@@ -15,7 +15,8 @@ class MarkDownHandler {
                   child: MarkdownBody(
                     data: snapshot.data as String,
                     fitContent: true,
-                    styleSheet: MarkdownStyleSheet(textScaleFactor: 1.2),
+                    styleSheet: MarkdownStyleSheet(
+                        textScaler: const TextScaler.linear(1.2)),
                     onTapLink: (text, href, title) =>
                         TrackerHelper.htmlOpenWindow(href!, "resouce"),
                   )));

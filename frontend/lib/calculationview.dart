@@ -60,10 +60,6 @@ class _CalculationViewState extends State<CalculationView>
 
   @override
   Widget build(BuildContext context) {
-    MatomoTracker.instance.trackEvent(
-        eventCategory: "Calculation",
-        action:
-            "Open File: ${widget.repositoryData.ontologyFiles[activeMetricFile].fileName}");
     return Scaffold(
         appBar: AppBar(
             title: Row(
@@ -110,10 +106,6 @@ class _CalculationViewState extends State<CalculationView>
     if (queueInformation.queuePosition == null) {
       return IconButton(
         onPressed: () {
-          MatomoTracker.instance.trackEvent(
-              action: "Trigger Update",
-              eventCategory: "Calculation",
-              eventName: widget.repositoryName);
           GraphQLHandler()
               .putInQueue(widget.repositoryName, widget.reasonerSelected,
                   update: true)
@@ -342,11 +334,6 @@ class _CalculationViewState extends State<CalculationView>
     );
     final stream =
         Stream.fromIterable(csv.toString().replaceAll("\n", ". ").codeUnits);
-    MatomoTracker.instance.trackEvent(
-        eventCategory: "Calculation",
-        eventName:
-            "Download ${widget.repositoryData.ontologyFiles[activeMetricFile].fileName}",
-        action: "Metric Download");
     download(stream, "metrics.csv");
   }
 }

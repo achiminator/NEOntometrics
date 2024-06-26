@@ -209,9 +209,6 @@ class _CalculationEngineState extends State<CalculationEngine>
                           message: "A list of already calculated Ontologies.",
                           child: ElevatedButton(
                               onPressed: () {
-                                MatomoTracker.instance.trackEvent(
-                                    eventCategory: "Calculation",
-                                    action: "clickAlreadyCalculated");
                                 var dialog =
                                     const AlreadyCalculatedSelectionOverlay();
                                 showDialog(

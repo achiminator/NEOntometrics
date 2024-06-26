@@ -25,7 +25,6 @@ class _IndexPageState extends State<IndexPage> {
   Widget build(BuildContext context) {
     // MatomoTracker.instance.trackEvent(eventName: "MainPageVisit", action: "visit", eventCategory: "Main");
 
-    MatomoTracker.instance.trackScreen(context, eventName: "Main");
     var ytController = YoutubePlayerController.fromVideoId(videoId: "OPQGNFV8M9g", params: YoutubePlayerParams(showFullscreenButton: true));
     ytController.playVideo();
     return Padding(

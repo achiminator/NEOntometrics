@@ -7,7 +7,7 @@ class TrackerHelper {
 
   /// Opens an html window (Equivalent to html.window.open), but also sends the information to the Matomo tracker.
   static void htmlOpenWindow(String link, String linkDescription) {
-    MatomoTracker.instance.trackOutlink(link);
+    MatomoTracker.instance.trackOutlink(link:link);
     html.window.open(link, linkDescription);
   }
 }

@@ -1,4 +1,3 @@
-version: '3.4'
 services:
   # Redis Image is necessary for the asyncronous scheduling in the docker application
   redis-scheduler:
@@ -101,22 +100,6 @@ services:
     volumes:
       - neontometricsdb:/var/lib/mysql
     
-    # Analytics Service
-  matomo:
-    restart: always
-    container_name: matomo
-    image: matomo:latest
-    environment:
-      MATOMO_DATABASE_HOST: neontometrics_db
-      MATOMO_DATABASE_USERNAME: neontometrics
-      MATOMO_DATABASE_PASSWORD: KMmsWrwRBBeQLXDO
-      MATOMO_DATABASE_DBNAME: matomo
-    ports:
-    - 6377:80
-    volumes:
-    - matomo:/var/www/html
-
 volumes:
   neontometricsdb:
   gitStorage:
-  matomo:

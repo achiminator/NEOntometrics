@@ -33,7 +33,7 @@ class _VerticalChartPageState extends State<VerticalChartPage> {
     var model = Provider.of<Model>(context);
     var chart;
 
-    List<ChartSeries> chartData = [];
+    List<CartesianSeries> chartData = [];
 
     for (var ontologyFile in analyticController.listData) {
       List<OntologyChartData> metricList = [];

@@ -30,27 +30,28 @@ dependencies:
   flutter:
     sdk: flutter
   download: any
-  flutter_markdown: ^0.6.9
-  csv: ^5.0.1
+  flutter_markdown: ^0.7.2+1
+  csv: ^6.0.0
   url_launcher: ^6.0.18
-  http: 0.13.4 
+  http: ^1.2.1 
   json_serializable: ^6.1.4
   flutter_math_fork: ^0.7.1
   graphql: ^5.0.1
   flutter_easyloading: ^3.0.3
   flutter_svg: ^2.0.3
-  matomo_tracker: ^1.2.1
+  matomo_tracker: ^4.1.1
   provider: ^6.0.3
   printing: ^5.9.3
-  google_fonts: ^3.0.1
-  multiselect: ^0.0.7
+  google_fonts: ^6.2.1
+  multiselect: ^0.1.1
   get: ^4.6.5
-  screenshot: ^1.2.3
-  syncfusion_flutter_charts: ^20.4.43
-  syncfusion_flutter_pdf: ^20.3.48
-  youtube_player_iframe: ^4.0.4
+  screenshot: ^3.0.0
+  syncfusion_flutter_charts: ^26.1.39
+  syncfusion_flutter_pdf: ^26.1.39
+  youtube_player_iframe: ^5.1.2
 
   
+  gql: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -60,7 +61,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^1.0.0
+  flutter_lints: ^4.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -82,8 +83,8 @@ flutter:
   - assets/linkedin.png
   - assets/GitHub.png
   - assets/neonto_logo.svg
-  - assets/vertical_chart.png
-  - assets/line_chart.png
+  - assets/Vertical_Chart.png
+  - assets/Line_Chart.png
   - assets/show_me_the_differences.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

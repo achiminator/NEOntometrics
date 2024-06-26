@@ -4,7 +4,8 @@ import 'package:matomo_tracker/matomo_tracker.dart';
 import 'package:neonto_frontend/metric_data.dart';
 import 'package:neonto_frontend/trackerHelper.dart';
 
-class _MetricExplorerState extends State<MetricExplorer> with TraceableClientMixin {
+class _MetricExplorerState extends State<MetricExplorer>
+    with TraceableClientMixin {
   @override
   String get traceName => 'Open Metric Explorer';
 
@@ -286,7 +287,10 @@ class _MetricExplorerState extends State<MetricExplorer> with TraceableClientMix
           activeInterpretation = item.interpretation;
           activeImplementationName = item.implentationName ?? "";
           seeAlso = item.seeAlso;
-          MatomoTracker.instance.trackEvent(eventCategory: "Main", action: "Open Explorer Element + $activeItemName");
+          MatomoTracker.instance.trackEvent(
+              eventInfo: EventInfo(
+                  category: "Main",
+                  action: "Open Explorer Element + $activeItemName"));
 
           calculation = _buildLatexFunction(item.calculation ?? "");
         }),
