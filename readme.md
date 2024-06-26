@@ -3,7 +3,7 @@
 
 Welcome to **NEOntometrics**. It offers a flexible endpoint for calculating ontology metrics online, directly from an online resource or a git-based repository. You can use the service online on neontometrics.com or visit api.informatik.uni-rostock.de for the GraphQL API. Here you can also find information on how the service functions and
 
-The scientific papers that further describe the service are currently under review. As soon as they are accepted, we will provide them here as well.
+The scientific papers that further describe the service are currently under review. As soon as they are accepted, I will provide them here as well.
 
 # Getting NEOntometrics
 
@@ -15,10 +15,11 @@ NEOntometrics is available online at http://neontometrics.com.
 
 NEOntometrics is based on a variety of Micro-Services orchestrated using docker. An up-to-date docker installation that includes docker-compose is mandatory for running the software.
 
-1.  At first, clone the repository to the future locale location.
+1.  At first, clone the repository to the future locale location. Pass the flag `-c core.longpaths=true ` to allow for longer file names, thus:
+ `git clone -c core.longpaths=true https://github.com/achiminator/NEOntometrics`
 2.  Edit the docker-compose.yml file and **change** the **password**. The password secures the communication between the database and the other micro services.
-3.  in `frontend/lib/settings.dart`, replace the url for `final String apiUrl = "http://api.neontometrics.informatik.uni-rostock.de";` with the URL to your servers. Otherwise, the GUIwill still query use our backend.
-4.  To launch the service, first build the _NEOntometrics-API_, _Worker_, and _OPI_ with: docker-compose build
+3.  in `frontend/lib/settings.dart`, replace the url for `final String apiUrl = "http://api.neontometrics.informatik.uni-rostock.de";` with the URL to your servers. Otherwise, the GUIwill still query use our backend. For running it locally, set it to `http://localhost:8086`.
+4.  To launch the service, first build the _NEOntometrics-API_, _Worker_, and _OPI_ services with `docker-compose build`
 5.  If the build run successful and the images are created, you can start the services with: docker compose up -d
 6.  That's it. The server should be up and running. The locations are available at the ports specified in the docker file. Happy Evaluations!
 
@@ -56,3 +57,31 @@ The core functionality of NEOntometrics, the metric calculation, is accessible v
 4.  A click on the arrow starts the metric request. If the metric is unknown in the system, the application asks to queue the calculation task. If it is already in the queue, a notification informs of the progress.
 
 Once the data is analyzed, a click on the arrow leads to the metric results presented as a paginated table, representing the measured values for the different ontology versions. The drop-down menu in the header allows for selecting the various ontology files, and the download button ⬇️ exports the metrics into a .csv-file. The update button 🔂 puts the metric into the queue again and retrieves the new version (for git-based repositories).
+
+# How to Extend NEOntometrics
+
+## Adapting NEOntometrics with the Metric Ontology
+The metrics are structured by the metric ontology, in `\Git-Extension\rest\metricOntology\OntologyMetrics.owl`. Every change made to the metric ontology is reflected in the application after a restart, thus, allowing to perform speedy adoptions.
+
+The ontology was developed utilizing the open-source software [Protégé](https://protege.stanford.edu/). I recommend using the same software for performing individual changes. 
+
+### Structure of the Ontology
+The classes _Elemental_Metrics_ and _Quality_Frameworks_ form the metric calculation's foundation. The _Elemental_Metrics_ reflect the atomic measurements calculated by the OPI-Java application, the _Quality_Framworks_ allow to restructure and use the calculated _Elemental_Metrics_.
+
+The measurements in *Elemental_Metrics* are connected to the calculated OPI metrics and the database fields  using the object property *implementedBy* with a connection to an indidividual. 
+
+The *Quality_Frameworks* reuse the calcualted metrics. For doing so, there are various object properties available, reflecting the primary mathematical calculations like sum, division, and multiplication. Via nesting multiple statements, complex calculations can be mapped.
+
+
+### Working on Existing Ontology Metrics:
+It might be useful to delete, rename or restructure given metrics. That can be achieved by altering the subclass hierachy of the *Quality_Frameworks* in Protégé. Here, it is also possible to create new elements. (I recommend to reuse existing measurements to modify the ontology by an example.)
+The ontology supports extension through formalized properties for adding descriptions like (_MetricDefinition_, _MetricDescription_, _MetricInterpretation_) and object properties that link _Quality_Frameworks_ to _Elemental_Metrics_ for the calculation logic.
+
+### Adding new Elemental Metrics
+In unique cases, the given set of *Elemental_Metrics* might not be sufficient. For these cases, it is possible to extend the atomic, calculated measurements. However, that is a larger endavor that requires
+- A change of the database structure in `Git-Extension/rest/models.py` and a commit of the database changes using the django ORM functions `py manage.py makemigrations rest` and `py manage.py migrate`.
+- An implementation of the new measurements in OPI - new measures can be introduced by extending one of the existing `main.java.neontometrics.calc`-packages and save the result in the exsting `returnObject`-map.
+- An extension of the metric ontology by adding (1.) a new Elemental Metric and a corresponding individual.
+- The name of the individual **MUST** conform exactly to (1.) the name of the field in the database, and (2.) the a JSON key in the return value of the OPI file.
+
+I hope you find NEOntometrics useful for you given use-case. If you have any questions, feel free to reach out either by [mail](mailto:achim.reiz@uni-rostock.de), [LinkedIn](https://www.linkedin.com/in/reiz/) (preferred), or GitHub Issue.
