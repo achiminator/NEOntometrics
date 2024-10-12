@@ -20,7 +20,7 @@ services:
     environment:
       db_password: 'KMmsWrwRBBeQLXDO'
       inDocker: "True"
-    command: [ "bash", "-c", "python", "manage.py", "makemigrations", "rest", "--noinput", "&&", "python", "manage.py", "migrate" ]
+    command: ["bash", "-c", "python manage.py makemigrations rest --noinput && python manage.py migrate"]
 
   # This is the main application for the git metric aggregation
   neontometricsapi:
