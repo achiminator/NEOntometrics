@@ -59,15 +59,16 @@ class _LineChartPageState extends State<LineChartPage> {
               : ontologyFile['CommitTime'];
           metricList.add(OntologyChartData(
               metricName, metricResult, DateTime.parse(commitTime)));
-          metricList.sort((a, b) => a.year.compareTo(b.year));
         }
       }
+      if (metricList.isEmpty) continue;
+      metricList.sort((a, b) => a.datetime!.compareTo(b.datetime!));
+
       chartData.add(LineSeries<OntologyChartData, DateTime>(
           name: metricName,
           dataSource: metricList,
-          xValueMapper: (OntologyChartData salesdata, _) => salesdata.year,
-          yValueMapper: (OntologyChartData salesdata, _) =>
-              salesdata.metricResult,
+          xValueMapper: (OntologyChartData data, _) => data.datetime,
+          yValueMapper: (OntologyChartData data, _) => data.metricResult,
           markerSettings: const MarkerSettings(isVisible: true)));
     }
 

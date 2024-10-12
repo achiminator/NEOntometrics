@@ -1,7 +1,7 @@
 class OntologyChartData {
   final String metric;
   final metricResult;
-  final year;
+  final DateTime? datetime;
 
-  OntologyChartData(this.metric, this.metricResult, [this.year]);
+  OntologyChartData(this.metric, this.metricResult, [this.datetime]);
 }
