@@ -89,7 +89,7 @@ services:
     restart: always
     container_name: neontometrics_db
     command: ["mysqld", "--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"] # Without specifying utf8mb4, utf8mb3 is used, hindering the storage of emoticons.
-    image: mariadb:latest
+    image: mysql:latest
     ports:
       - '3366:3306'
     environment:

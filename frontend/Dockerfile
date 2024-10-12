@@ -1,4 +1,4 @@
-FROM ghcr.io/cirruslabs/flutter:stable AS flutterbuild
+FROM ghcr.io/cirruslabs/flutter:3.19.6 AS flutterbuild
 
 COPY . /frontend
 WORKDIR /frontend

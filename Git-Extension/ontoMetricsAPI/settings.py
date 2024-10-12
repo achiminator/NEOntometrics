@@ -78,7 +78,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'sorl.thumbnail',
     'rest_framework',
     'rest',
     'django_filters',
@@ -86,8 +85,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'graphene_django',
     'rest_framework.authtoken',
-    'dj_rest_auth',
-    'newsletter'
+    'dj_rest_auth'
 ]
 SITE_ID = 1 # Because this error https://stackoverflow.com/questions/35388637/runtimeerror-model-class-django-contrib-sites-models-site-doesnt-declare-an-ex
 RQ_SHOW_ADMIN_LINK = True 
@@ -148,7 +146,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'ontoMetricsAPI.wsgi.application'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-NEWSLETTER_THUMBNAIL = 'sorl-thumbnail'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.office365.com'
 EMAIL_HOST_USER = 'neontometric@outlook.com'
