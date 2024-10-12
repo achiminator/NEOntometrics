@@ -10,7 +10,9 @@ import 'package:provider/provider.dart';
 class AnalyticView extends StatefulWidget {
   final String repositoryName;
   RepositoryData repositoryData;
-  AnalyticView(this.repositoryName, this.repositoryData, {Key? key})
+  final List<MetricExplorerItem> calculatableItems;
+  AnalyticView(this.calculatableItems, this.repositoryName, this.repositoryData,
+      {Key? key})
       : super(key: key);
 
   @override
@@ -24,7 +26,7 @@ class _AnalyticViewState extends State<AnalyticView> {
   Widget build(BuildContext context) {
     if (lastTwoVersions == null) {
       GraphQLHandler()
-          .getLastTwoCommits(widget.repositoryData.repository)
+          .getLastTwoCommits(widget.repositoryData.repository, widget.calculatableItems )
           .then((value) {
         if (value.hasException) {
           Snacks(context)
@@ -64,7 +66,9 @@ class _InnerAnalyticViewState extends State<InnerAnalyticView> {
     analyticController.repositoryName = widget.repositoryName;
     return Scaffold(
       drawer: const Drawer(child: Menu()),
-      body: ChangeNotifierProvider(create: (context) => widget.repositoryData, child: const LargeScreen()),
+      body: ChangeNotifierProvider(
+          create: (context) => widget.repositoryData,
+          child: const LargeScreen()),
     );
   }
 }

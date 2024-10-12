@@ -14,8 +14,9 @@ class CalculationView extends StatefulWidget {
   final RepositoryData repositoryData;
   final String repositoryName;
   final QueueInformation queueInformation;
+  final List<MetricExplorerItem> calculatableItems;
   final bool reasonerSelected;
-  const CalculationView(this.repositoryData, this.repositoryName,
+  const CalculationView(this.repositoryData, this.calculatableItems, this.repositoryName,
       this.queueInformation, this.reasonerSelected,
       {Key? key})
       : super(key: key);
@@ -296,7 +297,9 @@ class _CalculationViewState extends State<CalculationView>
                   context,
                   MaterialPageRoute(
                       builder: (context) => AnalyticView(
-                          widget.repositoryName, widget.repositoryData)),
+                          widget.calculatableItems,
+                          widget.repositoryName,
+                          widget.repositoryData)),
                 );
               },
               icon: const Icon(

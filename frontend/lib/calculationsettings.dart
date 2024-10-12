@@ -12,8 +12,9 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'notifications.dart';
 
 class CalculationEngine extends StatefulWidget {
-  final Future<List<MetricExplorerItem>> metricData;
-  const CalculationEngine(this.metricData, {Key? key}) : super(key: key);
+  final Future<List<MetricExplorerItem>> metricExplorerItems;
+  const CalculationEngine(this.metricExplorerItems, {Key? key})
+      : super(key: key);
 
   @override
   _CalculationEngineState createState() => _CalculationEngineState();
@@ -29,6 +30,7 @@ class _CalculationEngineState extends State<CalculationEngine>
     });
   }
 
+  late List<MetricExplorerItem> metricExplorerItems;
   @override
   String get traceName => 'Trigger Calculation Settings';
 
@@ -59,7 +61,6 @@ class _CalculationEngineState extends State<CalculationEngine>
           : {};
 
       Map<String, dynamic> data1 = {
-        //in Map speichert den 'fileName', 'commit data last commit'
         'fileName': item['node']['fileName'],
         'commit': commit
       };
@@ -69,10 +70,11 @@ class _CalculationEngineState extends State<CalculationEngine>
     analyticController.listData = list;
   }
 
-  saveNameSelect({required var data}) {
+  storeSelectedMetricsToDiagramViews(
+      Set<MetricExplorerItem> metricExplorerItems) {
     List list = [];
-    for (int i = 0; i < data.length; i++) {
-      String name = data
+    for (int i = 0; i < metricExplorerItems.length; i++) {
+      String name = metricExplorerItems
           .elementAt(i)
           .itemName
           .toString()
@@ -184,11 +186,13 @@ class _CalculationEngineState extends State<CalculationEngine>
                     ),
                   ),
                   FutureBuilder(
-                    future: widget.metricData,
+                    future: widget.metricExplorerItems,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState != ConnectionState.done) {
                         return const Center(child: RefreshProgressIndicator());
                       } else {
+                        metricExplorerItems =
+                            snapshot.data as List<MetricExplorerItem>;
                         return (Container(
                           padding: const EdgeInsets.all(20.0),
                           child: Container(
@@ -256,11 +260,13 @@ class _CalculationEngineState extends State<CalculationEngine>
 
   /// Takes the root element of the [List<MetricExplorerItem>] after the return call.
   /// First extracts the elemental metrics, afterwards iterates over all other subClasses.
-  Widget buildCalculationSettings(List<MetricExplorerItem> data) {
+  Widget buildCalculationSettings(
+      List<MetricExplorerItem> metricExplorerItems) {
     List<Widget> calculationCategorySetting = [];
     //at first, add the elemental metrics, which are always at the top of the list.
-    calculationCategorySetting.add(buildCalculationSetting(data[0]));
-    for (var element in data[1].subClass) {
+    calculationCategorySetting
+        .add(buildCalculationSetting(metricExplorerItems[0]));
+    for (var element in metricExplorerItems[1].subClass) {
       calculationCategorySetting
           //The expanded is necessary because the elements will be wrapped in a Collumn Item.
           .add(buildCalculationSetting(element));
@@ -279,7 +285,7 @@ class _CalculationEngineState extends State<CalculationEngine>
           "No valid ontology given. Please enter an URL to a valid Ontology.",
           context);
     } else {
-      saveNameSelect(data: selectedElementsForCalculation);
+      storeSelectedMetricsToDiagramViews(selectedElementsForCalculation);
       // At first, we ask the service if the ontology is already known in the system.
       Future<QueryResult<dynamic>> response =
           graphQL.queueFromAPI(urlController.text);
@@ -333,8 +339,13 @@ class _CalculationEngineState extends State<CalculationEngine>
               EasyLoading.dismiss();
               Navigator.push(context, MaterialPageRoute(builder: (context) {
                 var repositoryData = RepositoryData(graphQlResponse.data);
-                return CalculationView(repositoryData, urlController.text,
-                    queueInformation, reasoner);
+                return CalculationView(
+                    repositoryData,
+                    MetricExplorerItem.getAllCalculatableItems(
+                        metricExplorerItems),
+                    urlController.text,
+                    queueInformation,
+                    reasoner);
               }));
             }
           });

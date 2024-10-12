@@ -27,6 +27,27 @@ class MetricExplorerItem {
     return leafItems;
   }
 
+  static List<MetricExplorerItem> getAllCalculatableItems(
+      List<MetricExplorerItem> inputItems) {
+    List<MetricExplorerItem> leafItems = [];
+    for (var item in inputItems) {
+      if (item.implentationName == "pk") {
+        continue;
+      }
+      if (item.subClass.isEmpty) {
+        if (item.implentationName != "") {
+          leafItems.add(item);
+        }
+      } else {
+        for (var subItem in item.subClass) {
+          leafItems.addAll(getAllCalculatableItems([subItem]));
+        }
+      }
+    }
+
+    return leafItems;
+  }
+
   MetricExplorerItem(
       {required this.itemName,
       required this.description,
@@ -112,7 +133,7 @@ class MetricExplorerItemFactory {
 ///
 ///The constructor unnpacks the GraphQL response, and the object is used by the detailedView for further
 ///displaying of the calculated values.
-class RepositoryData extends ChangeNotifier{
+class RepositoryData extends ChangeNotifier {
   /// Unpack the GraphQL reponse and create an object containing the ontology metrics with the constructor.
   RepositoryData(Map<String, dynamic>? graphqlInput) {
     if (graphqlInput?.containsKey("getRepository") ?? false) {

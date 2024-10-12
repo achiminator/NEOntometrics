@@ -91,7 +91,7 @@ class _DifferencesState extends State<Differences> {
       return ExpansionPanelList(
         expansionCallback: (int index, bool isExpanded) {
           setState(() {
-            _ontologyFiles![index].isExpanded = !isExpanded;
+            _ontologyFiles![index].isExpanded = !_ontologyFiles![index].isExpanded;
           });
         },
         children: _ontologyFiles!.map<ExpansionPanel>((Item item) {
@@ -148,7 +148,6 @@ List<Item>? generateItems(int numberOfItems) {
 
   for (var metrics in data!.ontologyFiles) {
     List<Items> items = [];
-    int i = 0;
     //if only one commit (i.e. one version) available in the ontolgyfile --> does not need to be added to the item list
     if (metrics.metrics.length == 1) {
       numberOfItems = numberOfItems - 1;
@@ -160,114 +159,50 @@ List<Item>? generateItems(int numberOfItems) {
       continue;
     }
 // insert the metrics in lists
-    theCurrentversion =
-        metrics.metrics.last.values.toList().getRange(11, 170).toList();
-    thePreviousVersion =
-        metrics.metrics.first.values.toList().getRange(11, 170).toList();
-    theMetricName =
-        metrics.metrics.first.keys.toList().getRange(11, 170).toList();
+    theCurrentversion = metrics.metrics.last.values.toList();
+    thePreviousVersion = metrics.metrics.first.values.toList();
+    theMetricName = metrics.metrics.first.keys.toList();
 
-    for (var metricItem in theCurrentversion) {
-      // i == 28,73,74,75,76,83, 133 the metrics here return a string
-      if (i != 28 &&
-          i != 73 &&
-          i != 74 &&
-          i != 75 &&
-          i != 76 &&
-          i != 83 &&
-          i != 133) {
-        if (theCurrentversion[i] == 'null') {
-          theCurrentversion[i] = 0.toString();
-        } else if (thePreviousVersion[i] == 'null') {
-          thePreviousVersion[i] = 0.toString();
-        } else if (double.parse(theCurrentversion[i]) ==
-            double.parse(thePreviousVersion[i])) {
-          i++;
-        } else if (double.parse(theCurrentversion[i]) >
-            double.parse(thePreviousVersion[i])) {
-          items.add(
-            Items(
-              metrics.fileName,
-              theMetricName[i].toString(),
-              const Icon(
-                Icons.arrow_upward_outlined,
-                size: 20,
-                color: Colors.green,
-              ),
-              currentVersion: theCurrentversion[i].toString(),
-              previousVersion: thePreviousVersion[i].toString(),
-            ),
-          );
-          i++;
-        } else if (double.parse(theCurrentversion[i]) <
-            double.parse(thePreviousVersion[i])) {
-          items.add(
-            Items(
-              metrics.fileName,
-              theMetricName[i].toString(),
-              const Icon(
-                Icons.arrow_downward_outlined,
-                size: 20,
-                color: Colors.red,
-              ),
-              currentVersion: theCurrentversion[i].toString(),
-              previousVersion: thePreviousVersion[i].toString(),
-            ),
-          );
-          i++;
-        }
-      } else if (i == 28 || i == 73 || i == 74 || i == 75 || i == 133) {
-        // the metrics here return a link
-        if (theCurrentversion[i] == 'null') {
-          theCurrentversion[i] = '[]';
-        }
-        if (thePreviousVersion[i] == 'null') {
-          thePreviousVersion[i] = '[]';
-        }
+    for (var i = 0; theCurrentversion.length > i; i++) {
+      if (theCurrentversion[i] == 'null' || thePreviousVersion[i] == 'null') {
+        continue;
+      }
 
-        if (theCurrentversion[i] != thePreviousVersion[i]) {
-          if (thePreviousVersion[i] == '[]') {
-            thePreviousVersion[i] = 'no data';
-          }
-          if (theCurrentversion[i] == '[]') {
-            theCurrentversion[i] = 'no data';
-          }
-          items.add(
-            Items(
-              metrics.fileName,
-              theMetricName[i].toString(),
-              const Icon(
-                Icons.link,
-                size: 20,
-                color: Colors.blue,
-              ),
-              currentVersion: theCurrentversion[i].toString(),
-              previousVersion: thePreviousVersion[i].toString(),
-            ),
-          );
-        }
-        i++;
+      if (double.tryParse(theCurrentversion[i]) ==
+          double.tryParse(thePreviousVersion[i])) {
+        continue;
       }
-      // the metrics here return a boolen
-      else if (i == 76 || i == 83) {
-        if (theCurrentversion[i] != thePreviousVersion[i]) {
-          items.add(
-            Items(
-              metrics.fileName,
-              theMetricName[i].toString(),
-              const Icon(
-                Icons.question_mark,
-                size: 20,
-                color: Colors.pink,
-              ),
-              currentVersion: theCurrentversion[i].toString(),
-              previousVersion: thePreviousVersion[i].toString(),
+      if ((double.tryParse(theCurrentversion[i]) ?? 0) >
+          (double.tryParse(thePreviousVersion[i]) ?? 0)) {
+        items.add(
+          Items(
+            metrics.fileName,
+            theMetricName[i].toString(),
+            const Icon(
+              Icons.arrow_upward_outlined,
+              size: 20,
+              color: Colors.green,
             ),
-          );
-        }
-        i++;
-      }
+            currentVersion: theCurrentversion[i].toString(),
+            previousVersion: thePreviousVersion[i].toString(),
+          ),
+        );
+      } else {}
+      items.add(
+        Items(
+          metrics.fileName,
+          theMetricName[i].toString(),
+          const Icon(
+            Icons.arrow_downward_outlined,
+            size: 20,
+            color: Colors.red,
+          ),
+          currentVersion: theCurrentversion[i].toString(),
+          previousVersion: thePreviousVersion[i].toString(),
+        ),
+      );
     }
+
     if (items.isEmpty) {
       numberOfItems = numberOfItems - 1;
     } else {

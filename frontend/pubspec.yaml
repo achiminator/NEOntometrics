@@ -45,8 +45,8 @@ dependencies:
   google_fonts: ^6.2.1
   multiselect: ^0.1.1
   get: ^4.6.5
-  syncfusion_flutter_charts: 25.2.7
-  syncfusion_flutter_pdf: 25.2.7
+  syncfusion_flutter_charts: 26.2.14
+  syncfusion_flutter_pdf: 26.2.14
   youtube_player_iframe: ^5.1.2
 
   
