@@ -5,6 +5,11 @@ Welcome to **NEOntometrics**. It offers a flexible endpoint for calculating onto
 
 The scientific papers that further describe the service are currently under review. As soon as they are accepted, I will provide them here as well.
 
+## Getting Help
+If you encounter any problems, please do not hesitate to reach out. For bugs and issues that occur during deploying the service yourself or developing it further, it is probably best to create an issue here on Github. I'm also stoked for new features or to help people get started in their developments.
+
+For questions regarding the measurements themselves or a discussion on the tool, you can also reach me well on Linkedin: https://www.linkedin.com/in/reiz/
+
 # Getting NEOntometrics
 
 ## Using the Service Online
