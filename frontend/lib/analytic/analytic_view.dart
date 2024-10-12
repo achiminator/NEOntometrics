@@ -63,8 +63,8 @@ class _InnerAnalyticViewState extends State<InnerAnalyticView> {
     analyticController.repositoryData = widget.repositoryData;
     analyticController.repositoryName = widget.repositoryName;
     return Scaffold(
-      drawer: Drawer(child: Menu()),
-      body: ChangeNotifierProvider(create: (context) => widget.repositoryData, child: LargeScreen()),
+      drawer: const Drawer(child: Menu()),
+      body: ChangeNotifierProvider(create: (context) => widget.repositoryData, child: const LargeScreen()),
     );
   }
 }

@@ -8,8 +8,8 @@ class AvailableNames {
     for (OntologyData ontologyData in repositoryData.ontologyFiles) {
       ontologyFiles.add(
         DropdownMenuItem(
-          child: Text(ontologyData.fileName),
           value: counter,
+          child: Text(ontologyData.fileName),
         ),
       );
       counter++;

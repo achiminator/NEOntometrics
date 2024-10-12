@@ -28,14 +28,14 @@ class MenuuController extends GetxController {
             child: IconButton(
                 onPressed: () {},
                 tooltip: 'to compare the ontology files',
-                icon: Icon(Icons.bar_chart, color: Colors.white)));
+                icon: const Icon(Icons.bar_chart, color: Colors.white)));
 
       case lineChartPageRoute:
         return Container(
           child: IconButton(
               onPressed: () {},
               tooltip: 'to see the development of metrics over time',
-              icon: Icon(
+              icon: const Icon(
                 Icons.stacked_line_chart_outlined,
                 color: Colors.white,
               )),
@@ -46,10 +46,10 @@ class MenuuController extends GetxController {
                 onPressed: () {},
                 tooltip:
                     'to see which metrics have changed compared to the previous version (commit)',
-                icon: Icon(Icons.difference, color: Colors.white)));
+                icon: const Icon(Icons.difference, color: Colors.white)));
 
       default:
-        return Text('default');
+        return const Text('default');
     }
   }
 }

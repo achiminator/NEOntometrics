@@ -255,7 +255,7 @@ class _MetricExplorerState extends State<MetricExplorer>
         child: ExpansionPanelList(
       expansionCallback: (panelIndex, isExpanded) {
         setState(() {
-          items[panelIndex].toggled = !isExpanded;
+          items[panelIndex].toggled = !items[panelIndex].toggled ;
         });
       },
       children: panelList,

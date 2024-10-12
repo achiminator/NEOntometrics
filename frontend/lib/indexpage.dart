@@ -25,7 +25,7 @@ class _IndexPageState extends State<IndexPage> {
   Widget build(BuildContext context) {
     // MatomoTracker.instance.trackEvent(eventName: "MainPageVisit", action: "visit", eventCategory: "Main");
 
-    var ytController = YoutubePlayerController.fromVideoId(videoId: "OPQGNFV8M9g", params: YoutubePlayerParams(showFullscreenButton: true));
+    var ytController = YoutubePlayerController.fromVideoId(videoId: "OPQGNFV8M9g", params: const YoutubePlayerParams(showFullscreenButton: true));
     ytController.playVideo();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 150),
@@ -68,7 +68,7 @@ class _IndexPageState extends State<IndexPage> {
                       tooltip: "GraphQL-Endpoint",
                       iconSize: 50,
                       onPressed: () => TrackerHelper.htmlOpenWindow(
-                          Settings().apiUrl + "/graphql", "GraphQL"),
+                          "${Settings().apiUrl}/graphql", "GraphQL"),
                       icon: const Icon(Icons.compare_arrows_outlined))),
               Expanded(
                 child: IconButton(
@@ -110,7 +110,7 @@ class _IndexPageState extends State<IndexPage> {
           const Divider(),
           Padding(
             padding: const EdgeInsets.all(13.0),
-            child: Container(
+            child: SizedBox(
                 height: 500, child: YoutubePlayer(controller: ytController)),
           ),
           MarkDownHandler().buildMarkDownElement("homepage.md")

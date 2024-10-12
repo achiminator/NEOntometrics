@@ -6,7 +6,7 @@ import 'metric_data.dart';
 
 class GraphQLHandler {
   final _graphQlClient = GraphQLClient(
-      link: HttpLink(Settings().apiUrl + "/graphql"),
+      link: HttpLink("${Settings().apiUrl}/graphql"),
       cache: GraphQLCache(),
       alwaysRebroadcast: true);
 

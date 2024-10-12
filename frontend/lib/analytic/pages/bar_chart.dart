@@ -31,7 +31,7 @@ class _VerticalChartPageState extends State<VerticalChartPage> {
   @override
   Widget build(BuildContext context) {
     var model = Provider.of<Model>(context);
-    var chart;
+    Scaffold chart;
 
     List<CartesianSeries> chartData = [];
 
@@ -85,7 +85,7 @@ class _VerticalChartPageState extends State<VerticalChartPage> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 15.0),
-                child: Container(
+                child: SizedBox(
                   height: MediaQuery.of(context).size.height / 6,
                   width: MediaQuery.of(context).size.width / 1.3,
                   child: const Center(
@@ -106,7 +106,7 @@ class _VerticalChartPageState extends State<VerticalChartPage> {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 20.0, left: 20),
-                child: Container(
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width / 1.3,
                   height: MediaQuery.of(context).size.height / 1.4,
                   child: SfCartesianChart(
@@ -119,20 +119,20 @@ class _VerticalChartPageState extends State<VerticalChartPage> {
                             fontWeight: FontWeight.w400)),
                     tooltipBehavior: _tooltipBehavior,
                     zoomPanBehavior: _zoomPanBehavior,
-                    legend: (Legend(
+                    legend: (const Legend(
                         toggleSeriesVisibility: true,
                         isVisible: true,
                         overflowMode: LegendItemOverflowMode.wrap,
                         position: LegendPosition.bottom)),
                     series: chartData,
-                    primaryXAxis: CategoryAxis(
+                    primaryXAxis: const CategoryAxis(
                       autoScrollingDelta: 2,
-                      majorGridLines: const MajorGridLines(width: 0),
-                      majorTickLines: const MajorTickLines(width: 0),
+                      majorGridLines: MajorGridLines(width: 0),
+                      majorTickLines: MajorTickLines(width: 0),
                       maximumLabelWidth: 60,
                       edgeLabelPlacement: EdgeLabelPlacement.shift,
                     ),
-                    primaryYAxis: NumericAxis(
+                    primaryYAxis: const NumericAxis(
                       edgeLabelPlacement: EdgeLabelPlacement.shift,
                     ),
                   ),

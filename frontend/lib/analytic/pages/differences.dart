@@ -4,7 +4,7 @@ import 'package:neonto_frontend/analytic/models/differences_model.dart';
 import 'package:neonto_frontend/metric_data.dart';
 
 class Differences extends StatefulWidget {
-  Differences({Key? key}) : super(key: key);
+  const Differences({Key? key}) : super(key: key);
 
   @override
   _DifferencesState createState() => _DifferencesState();
@@ -40,7 +40,7 @@ class _DifferencesState extends State<Differences> {
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 15.0),
-              child: Container(
+              child: SizedBox(
                 height: MediaQuery.of(context).size.height / 6,
                 width: MediaQuery.of(context).size.width / 1.3,
                 child: const Center(

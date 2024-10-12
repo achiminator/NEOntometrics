@@ -10,7 +10,7 @@ class Menu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double _width = MediaQuery.of(context).size.width;
+    double width = MediaQuery.of(context).size.width;
     return Container(
       color: Theme.of(context).colorScheme.primaryContainer,
       child: ListView(children: [
@@ -62,6 +62,9 @@ class DisplayedMenuItem extends StatelessWidget {
                   Visibility(
                     visible: menuController.isHovering(itemName!) ||
                         menuController.isActive(itemName!),
+                    maintainSize: true,
+                    maintainState: true,
+                    maintainAnimation: true,
                     child: Center(
                       child: Container(
                         width: 3,
@@ -69,16 +72,13 @@ class DisplayedMenuItem extends StatelessWidget {
                         color: dark,
                       ),
                     ),
-                    maintainSize: true,
-                    maintainState: true,
-                    maintainAnimation: true,
                   ),
                   Expanded(
                       child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                             top: 30, bottom: 30, left: 16, right: 16),
                         child: menuController.returnChartIcon(itemName!),
                       ),

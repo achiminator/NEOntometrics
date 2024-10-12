@@ -38,6 +38,7 @@ class MyApp extends StatelessWidget {
       builder: EasyLoading
           .init(), // Necessary for showing the loading screen on the Calculation-Page
       theme: ThemeData(
+        useMaterial3: false,
         colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.teal),
       ),
       home: EntryPage(),

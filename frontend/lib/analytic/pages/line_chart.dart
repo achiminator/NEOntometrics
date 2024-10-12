@@ -33,11 +33,12 @@ class _LineChartPageState extends State<LineChartPage> {
 
   @override
   int activeMetricFile = 0;
+  @override
   Widget build(BuildContext context) {
     var model = Provider.of<Model>(context);
     setActiveFile(activeMetricFile, model);
     List selectedFile = [];
-    var chart;
+    Widget chart;
     var commitTime;
 
     for (var file in analyticController.theSelectedOntologyFile) {
@@ -112,7 +113,7 @@ class _LineChartPageState extends State<LineChartPage> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 15.0),
-                    child: Container(
+                    child: SizedBox(
                       height: MediaQuery.of(context).size.height / 6,
                       width: MediaQuery.of(context).size.width / 1.3,
                       child: const Center(
@@ -133,7 +134,7 @@ class _LineChartPageState extends State<LineChartPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 20.0, left: 20),
-                    child: Container(
+                    child: SizedBox(
                       width: MediaQuery.of(context).size.width / 1.3,
                       height: MediaQuery.of(context).size.height / 1.4,
                       child: SfCartesianChart(
@@ -145,18 +146,18 @@ class _LineChartPageState extends State<LineChartPage> {
                                     .colorScheme
                                     .primaryContainer,
                                 fontWeight: FontWeight.w400)),
-                        legend: Legend(
+                        legend: const Legend(
                             isVisible: true,
                             overflowMode: LegendItemOverflowMode.wrap,
                             position: LegendPosition.bottom),
                         tooltipBehavior: _tooltipBehavior,
                         zoomPanBehavior: _zoomPanBehavior,
                         series: chartData,
-                        primaryXAxis: DateTimeAxis(
+                        primaryXAxis: const DateTimeAxis(
                           autoScrollingDeltaType: DateTimeIntervalType.auto,
                           edgeLabelPlacement: EdgeLabelPlacement.shift,
                         ),
-                        primaryYAxis: NumericAxis(
+                        primaryYAxis: const NumericAxis(
                           labelFormat: '{value}',
                         ),
                       ),

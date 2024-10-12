@@ -345,7 +345,7 @@ class _CalculationEngineState extends State<CalculationEngine>
   }
 
   ///Builds the Selection Widget for each metric category and the associated sub metrics on the bases of [MetricExplorerItem].
-  Map<MetricExplorerItem, bool> _isExpandedMap = {};
+  final Map<MetricExplorerItem, bool> _isExpandedMap = {};
 
   Widget buildCalculationSetting(MetricExplorerItem data,
       [bool initiallyActive = false]) {
@@ -362,7 +362,7 @@ class _CalculationEngineState extends State<CalculationEngine>
     return ExpansionPanelList(
       expansionCallback: (int index, bool isExpanded) {
         setState(() {
-          _isExpandedMap[data] = !isExpanded;
+          _isExpandedMap[data] = !_isExpandedMap[data]!;
         });
       },
       children: [
@@ -425,7 +425,7 @@ class _CalculationEngineState extends State<CalculationEngine>
             ),
           ),
           isExpanded: _isExpandedMap[data] ?? false,
-          canTapOnHeader: true,
+          canTapOnHeader: false,
         ),
       ],
     );
@@ -469,7 +469,6 @@ class _AnalyzmentAgreementState extends State<AnalyzmentAgreement> {
       ),
       actions: [
         TextButton(
-            child: const Text("Yes, Put in Queue"),
             onPressed: agreement
                 ? () {
                     var response = GraphQLHandler()
@@ -492,7 +491,8 @@ class _AnalyzmentAgreementState extends State<AnalyzmentAgreement> {
                       Navigator.pop(context);
                     });
                   }
-                : null),
+                : null,
+            child: const Text("Yes, Put in Queue")),
         TextButton(
             child: const Text("Abort"), onPressed: () => Navigator.pop(context))
       ],
@@ -531,7 +531,7 @@ class AlreadyCalculatedSelectionOverlay extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 2),
                       child: Chip(
                         label: Text(
-                          element["ontologyFiles"].toString() + " ",
+                          "${element["ontologyFiles"]} ",
                           textAlign: TextAlign.right,
                         ),
                         avatar: const Icon(Icons.filter_none),
