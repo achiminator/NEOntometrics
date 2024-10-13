@@ -35,24 +35,20 @@ class _VerticalChartPageState extends State<VerticalChartPage> {
 
     List<CartesianSeries> chartData = [];
 
-    for (var ontologyFile in analyticController.listData) {
+    for (var ontologyFile in analyticController.repositoryData!.ontologyFiles) {
       List<OntologyChartData> metricList = [];
-      for (var metricName in analyticController.listString) {
-        if (ontologyFile['commit'].isEmpty) continue;
-        double metricResultNumber =
-            (ontologyFile['commit']['edges'].last['node'][metricName] == null ||
-                    ontologyFile['commit']['edges'].last['node'][metricName] ==
-                        false)
-                ? 0
-                : double.parse(ontologyFile['commit']['edges']
-                    .last['node'][metricName]
-                    .toString());
-        metricList.add(OntologyChartData(metricName, metricResultNumber));
-      }
+      if (ontologyFile.metrics.isEmpty) continue;
+      ontologyFile.metrics.last.forEach((key, value) {
+        var result = double.tryParse(value);
+        if (result != null) {
+          metricList.add(OntologyChartData(key, result));
+        }
+      });
+      if (metricList.isEmpty) continue;
       chartData.add(
         ColumnSeries<OntologyChartData, dynamic>(
             enableTooltip: true,
-            name: ontologyFile['fileName'],
+            name: ontologyFile.fileName,
             dataSource: metricList,
             xValueMapper: (OntologyChartData data, _) => data.metric,
             yValueMapper: (OntologyChartData data, _) => data.metricResult,

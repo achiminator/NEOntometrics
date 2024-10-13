@@ -70,29 +70,6 @@ class _CalculationEngineState extends State<CalculationEngine>
     analyticController.listData = list;
   }
 
-  storeSelectedMetricsToDiagramViews(
-      Set<MetricExplorerItem> metricExplorerItems) {
-    List list = [];
-    for (int i = 0; i < metricExplorerItems.length; i++) {
-      String name = metricExplorerItems
-          .elementAt(i)
-          .itemName
-          .toString()
-          .replaceAll(' ', '_')
-          .replaceAll('-', '')
-          .replaceAll('(', '')
-          .replaceAll(')', '');
-      if (name != 'Computational_Complexity' &&
-          name != 'Consistent_Ontology' &&
-          name != 'OQual_Generic_complexity' &&
-          name != 'Reasoner_Active') {
-        list.add(analyticController.getName(name: name));
-      }
-    }
-    analyticController.listString = list;
-    // print(list);
-  }
-
   @override
   Widget build(
     BuildContext context,
@@ -285,7 +262,7 @@ class _CalculationEngineState extends State<CalculationEngine>
           "No valid ontology given. Please enter an URL to a valid Ontology.",
           context);
     } else {
-      storeSelectedMetricsToDiagramViews(selectedElementsForCalculation);
+      analyticController.selectedMeasures = selectedElementsForCalculation;
       // At first, we ask the service if the ontology is already known in the system.
       Future<QueryResult<dynamic>> response =
           graphQL.queueFromAPI(urlController.text);

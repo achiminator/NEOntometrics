@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:neonto_frontend/analytic/analytic_view.dart';
 import 'package:neonto_frontend/analytic/controllers/controllers.dart';
 import 'package:neonto_frontend/analytic/helpers/availableNames.dart';
@@ -33,43 +34,41 @@ class _LineChartPageState extends State<LineChartPage> {
 
   @override
   int activeMetricFile = 0;
+  List<LineSeries> chartData = [];
   @override
   Widget build(BuildContext context) {
     var model = Provider.of<Model>(context);
     setActiveFile(activeMetricFile, model);
-    List selectedFile = [];
     Widget chart;
-    var commitTime;
-
-    for (var file in analyticController.theSelectedOntologyFile) {
-      selectedFile.add(file);
-    }
-    List<LineSeries> chartData = [];
-    for (var metricName in analyticController.listString) {
-      List<OntologyChartData> metricList = [];
-
-      for (var ontologyFile in selectedFile) {
-        if (ontologyFile[metricName] != "null" &&
-            ontologyFile[metricName] != null) {
-          var metricResult = double.parse(ontologyFile[metricName]);
-          commitTime = (ontologyFile[metricName] == null ||
-                  ontologyFile[metricName] == false ||
-                  ontologyFile[metricName] == 'null')
-              ? 0
-              : ontologyFile['CommitTime'];
-          metricList.add(OntologyChartData(
-              metricName, metricResult, DateTime.parse(commitTime)));
+    chartData = [];
+    if (analyticController.theSelectedOntologyFile!.metrics.isNotEmpty) {
+      for (var oneMetricIteration in analyticController
+          .theSelectedOntologyFile!.metrics[0].keys
+          .toList()) {
+        if (oneMetricIteration == "pk" || oneMetricIteration == "Size")
+          continue;
+        List<OntologyChartData> metricList = [];
+        for (var metricValues
+            in analyticController.theSelectedOntologyFile!.metrics) {
+          if (metricValues.containsKey(oneMetricIteration)) {
+            var value = double.tryParse(metricValues[oneMetricIteration]!);
+            var commitTime = metricValues['CommitTime']!;
+            if (value != null) {
+              metricList.add(OntologyChartData(
+                  oneMetricIteration, value, DateTime.parse(commitTime)));
+            }
+          }
         }
-      }
-      if (metricList.isEmpty) continue;
-      metricList.sort((a, b) => a.datetime!.compareTo(b.datetime!));
+        if (metricList.isEmpty) continue;
 
-      chartData.add(LineSeries<OntologyChartData, DateTime>(
-          name: metricName,
-          dataSource: metricList,
-          xValueMapper: (OntologyChartData data, _) => data.datetime,
-          yValueMapper: (OntologyChartData data, _) => data.metricResult,
-          markerSettings: const MarkerSettings(isVisible: true)));
+        metricList.sort((a, b) => a.datetime!.compareTo(b.datetime!));
+        chartData.add(LineSeries<OntologyChartData, DateTime>(
+            name: oneMetricIteration,
+            dataSource: metricList,
+            xValueMapper: (OntologyChartData data, _) => data.datetime,
+            yValueMapper: (OntologyChartData data, _) => data.metricResult,
+            markerSettings: const MarkerSettings(isVisible: true)));
+      }
     }
 
     SafeArea(
@@ -138,30 +137,35 @@ class _LineChartPageState extends State<LineChartPage> {
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width / 1.3,
                       height: MediaQuery.of(context).size.height / 1.4,
-                      child: SfCartesianChart(
-                        title: ChartTitle(
-                            text:
-                                'number of commits: ${analyticController.theSelectedOntologyFile.length}',
-                            textStyle: TextStyle(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .primaryContainer,
-                                fontWeight: FontWeight.w400)),
-                        legend: const Legend(
-                            isVisible: true,
-                            overflowMode: LegendItemOverflowMode.wrap,
-                            position: LegendPosition.bottom),
-                        tooltipBehavior: _tooltipBehavior,
-                        zoomPanBehavior: _zoomPanBehavior,
-                        series: chartData,
-                        primaryXAxis: const DateTimeAxis(
-                          autoScrollingDeltaType: DateTimeIntervalType.auto,
-                          edgeLabelPlacement: EdgeLabelPlacement.shift,
-                        ),
-                        primaryYAxis: const NumericAxis(
-                          labelFormat: '{value}',
-                        ),
-                      ),
+                      child: chartData.isEmpty
+                          ? const ListTile(
+                              leading: Icon(Icons.error),
+                              title: Text("No Data!"))
+                          : SfCartesianChart(
+                              title: ChartTitle(
+                                  text:
+                                      'number of commits: ${analyticController.theSelectedOntologyFile!.metrics.length}',
+                                  textStyle: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primaryContainer,
+                                      fontWeight: FontWeight.w400)),
+                              legend: const Legend(
+                                  isVisible: true,
+                                  overflowMode: LegendItemOverflowMode.wrap,
+                                  position: LegendPosition.bottom),
+                              tooltipBehavior: _tooltipBehavior,
+                              zoomPanBehavior: _zoomPanBehavior,
+                              series: chartData,
+                              primaryXAxis: const DateTimeAxis(
+                                autoScrollingDeltaType:
+                                    DateTimeIntervalType.auto,
+                                edgeLabelPlacement: EdgeLabelPlacement.shift,
+                              ),
+                              primaryYAxis: const NumericAxis(
+                                labelFormat: '{value}',
+                              ),
+                            ),
                     ),
                   ),
                 ],
@@ -177,8 +181,8 @@ class _LineChartPageState extends State<LineChartPage> {
   /// and sets the necessary variables for the Lineplot-View
   void setActiveFile(Object? value, Model model) {
     activeMetricFile = value as int;
-    var t = analyticController.repositoryData.ontologyFiles[value].metrics;
-    analyticController.theSelectedOntologyFile = t;
+    analyticController.theSelectedOntologyFile =
+        analyticController.repositoryData.ontologyFiles[value];
     model.changeName();
   }
 }

@@ -26,7 +26,8 @@ class _AnalyticViewState extends State<AnalyticView> {
   Widget build(BuildContext context) {
     if (lastTwoVersions == null) {
       GraphQLHandler()
-          .getLastTwoCommits(widget.repositoryData.repository, widget.calculatableItems )
+          .getLastTwoCommits(
+              widget.repositoryData.repository, widget.calculatableItems)
           .then((value) {
         if (value.hasException) {
           Snacks(context)
@@ -74,10 +75,10 @@ class _InnerAnalyticViewState extends State<InnerAnalyticView> {
 }
 
 class Model extends ChangeNotifier {
-  var name = analyticController.theSelectedOntologyFile;
+  var name = analyticController.theSelectedOntologyFile?.fileName ?? "";
 
   changeName() {
-    name = analyticController.theSelectedOntologyFile;
+    name = analyticController.theSelectedOntologyFile?.fileName ?? "";
 
     notifyListeners();
   }

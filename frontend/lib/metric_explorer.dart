@@ -33,6 +33,7 @@ class _MetricExplorerState extends State<MetricExplorer>
           return (Container(
               padding: const EdgeInsets.all(20.0),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
                       child: Container(
@@ -47,7 +48,6 @@ class _MetricExplorerState extends State<MetricExplorer>
                   ),
                   Expanded(child: buildDetails()),
                 ],
-                crossAxisAlignment: CrossAxisAlignment.center,
               )));
         }
       },
@@ -255,7 +255,7 @@ class _MetricExplorerState extends State<MetricExplorer>
         child: ExpansionPanelList(
       expansionCallback: (panelIndex, isExpanded) {
         setState(() {
-          items[panelIndex].toggled = !items[panelIndex].toggled ;
+          items[panelIndex].toggled = !items[panelIndex].toggled;
         });
       },
       children: panelList,
